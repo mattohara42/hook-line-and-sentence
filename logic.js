@@ -100,8 +100,18 @@ export function rankForState(tiers, locations) {
   return rank;
 }
 
+// Split a phrase into an ordered token stream: runs of non-space chars (words)
+// and single-space separators, each its own token — the unit the Stream reel
+// consumes (A1). Word tokens are typed letter-by-letter; space tokens are the
+// forgiving inter-word beat. Punctuation rides inside word tokens for now; A5
+// splits it out. "a lad" → ["a", " ", "lad"]; "" → [].
+export function tokenize(text) {
+  return text.match(/\S+|\s/g) ?? [];
+}
+
 // Words matched to a fish's difficulty, mixing in easier ones only when the
 // unlocked pool is too thin to fill minSize (e.g. stage 1's lone hard word).
+// Also feeds the Stream: pass the phrase pool instead of words (A1).
 export function buildReelPool(words, difficulty, minSize) {
   let floor = difficulty, pool;
   do {

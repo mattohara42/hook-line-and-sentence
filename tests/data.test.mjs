@@ -11,6 +11,7 @@ import { CONFIG } from "../config.js";
 
 const load = p => JSON.parse(readFileSync(new URL(p, import.meta.url), "utf8"));
 const words = load("../data/words.json");
+const phrases = load("../data/phrases.json");
 const fish  = load("../data/fish.json");
 const blocklist = new Set(load("../data/blocklist.json"));
 const TIERS = new Set(Object.keys(CONFIG.size.weightRangeByTier)); // source of truth
@@ -41,6 +42,29 @@ test("no duplicate words", () => {
 test("no blocklisted non-word slips into the pool (the 'sie' class of bug)", () => {
   assert.ok(blocklist.size > 0, "blocklist.json should be non-empty");
   assert.equal(offenders(words, w => blocklist.has(w.w), w => w.w), "", "blocklisted word in pool");
+});
+
+test("phrases.json is a non-empty array of well-formed multi-word entries (A1)", () => {
+  assert.ok(Array.isArray(phrases) && phrases.length > 0);
+  // lowercase words joined by single spaces, at least two words
+  assert.equal(offenders(phrases, p => !/^[a-z]+( [a-z]+)+$/.test(p.w), p => p.w), "", "phrase not lowercase multi-word");
+  assert.equal(offenders(phrases, p => !Number.isInteger(p.d) || p.d < 1 || p.d > 4, p => p.w), "", "difficulty d not in 1..4");
+  assert.equal(offenders(phrases, p => !p.theme, p => p.w), "", "missing theme");
+  assert.equal(offenders(phrases, p => p.location !== "stream", p => p.w), "", "phrase not tagged location:stream");
+});
+
+test("phrase.letters is the dedup-sorted non-space letters (unlock-gating invariant)", () => {
+  const wrong = p => p.letters !== [...new Set(p.w.replace(/\s/g, ""))].sort().join("");
+  assert.equal(offenders(phrases, wrong, p => `${p.w}→${p.letters}`), "", "letters ≠ dedup-sorted(non-space)");
+});
+
+test("no duplicate phrases; home-row-easy phrases exist for Stream entry (A1)", () => {
+  const list = phrases.map(p => p.w);
+  assert.equal(list.length, new Set(list).size, "duplicate phrase");
+  // a kid graduating to the Stream needs at least one phrase within the home row
+  const homeRow = new Set("asdfghjkl");
+  assert.ok(phrases.some(p => [...p.letters].every(l => homeRow.has(l))),
+    "need a home-row-only phrase so the Stream is playable at any letter stage");
 });
 
 test("fish.json is a non-empty array of well-formed entries", () => {

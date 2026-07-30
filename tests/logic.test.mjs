@@ -7,7 +7,7 @@ import { CONFIG } from "../config.js";
 import {
   unlockedStageCount, lettersForStages, pickTier, weightClass, rollWeight, buildReelPool,
   applyTension, catchReward, isPersonalBest, countsTowardTiming, overallAccuracy,
-  locationsForRods, rankForState,
+  locationsForRods, rankForState, tokenize,
 } from "../logic.js";
 
 const stages = [
@@ -172,6 +172,14 @@ test("rankForState: furthest unlocked location, never below the home rank", () =
   assert.equal(rankForState(tiers, ["pond", "stream"]), "mackerel");
   assert.equal(rankForState(tiers, ["pond", "stream", "ocean"]), "marlin");
   assert.equal(rankForState(tiers, []), "minnow");   // defends to the home rank
+});
+
+test("tokenize splits a phrase into ordered word and single-space tokens", () => {
+  assert.deepEqual(tokenize("a lad has"), ["a", " ", "lad", " ", "has"]);
+  assert.deepEqual(tokenize("hi"), ["hi"]);          // a single word is one token
+  assert.deepEqual(tokenize(""), []);                // empty text → no tokens
+  // the reel keeps only word tokens; the count is what wordsToLand uses
+  assert.equal(tokenize("cast the line").filter(t => !/\s/.test(t)).length, 3);
 });
 
 test("overallAccuracy sums correct vs. error keystrokes across the letter map", () => {

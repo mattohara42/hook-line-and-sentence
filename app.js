@@ -6,6 +6,8 @@ import * as logic from "./logic.js";   // pure game math (unit-tested in tests/l
 
 let FULL_POOL = [];              // every entry from data/words.json
 let WORDS = [];                  // entries typeable with the unlocked letters
+let FULL_PHRASES = [];           // every entry from data/phrases.json (Stream, A1)
+let PHRASES = [];                // phrases typeable with the unlocked letters
 let FISH = [];                   // full roster from data/fish.json
 let unlockedLetters = new Set();
 
@@ -191,7 +193,9 @@ function unlockedStageCount(total) { return logic.unlockedStageCount(CONFIG.unlo
 function recomputeUnlocks() {
   const n = unlockedStageCount(totalCatches());
   unlockedLetters = logic.lettersForStages(CONFIG.unlock.stages, n);
-  WORDS = FULL_POOL.filter(e => [...e.letters].every(l => unlockedLetters.has(l)));
+  const typeable = e => [...e.letters].every(l => unlockedLetters.has(l));
+  WORDS = FULL_POOL.filter(typeable);
+  PHRASES = FULL_PHRASES.filter(typeable);   // Stream shows only phrases the kid can type
   renderKeyLocks();
 }
 
@@ -265,7 +269,9 @@ let typed = 0;
 let tension = 0;
 let fish = null;           // roster entry currently on the line
 let junk = null;           // junk item on the line instead of a fish (comedy), or null
-let reelPool = [];         // words matched to the hooked fish's difficulty
+let reelPool = [];         // words matched to the hooked fish's difficulty (Pond)
+let reelWords = null;      // Stream: ordered phrase word-tokens; null = Pond word mode
+let awaitingSpace = false; // Stream: word done, waiting for the forgiving spacebar beat
 let wordsToLand = 0;
 let wordsLeft = 0;
 let inputLocked = false;
@@ -551,6 +557,7 @@ function startCast() {
   el.fish.style.removeProperty("--fish-color");
   el.fish.style.removeProperty("background-image");   // clear a junk sprite swap
   junk = null;
+  reelWords = null; awaitingSpace = false;            // clear any Stream phrase reel
   setStatus(pick(PUNS.cast));
   renderWord();
 }
@@ -573,8 +580,21 @@ function bite() {
   junk = Math.random() < CONFIG.junk.chance ? pick(CONFIG.junk.items) : null;
   const tier = junk ? "common" : pickTier();          // junk reels like an easy common
   fish = junk ? null : pick(FISH.filter(f => f.tier === tier));
-  reelPool = buildReelPool(junk ? 1 : fish.difficulty);
-  wordsToLand = CONFIG.reel.wordsToLandByTier[tier];
+  // Content is chosen by where the kid is fishing (A1): the Stream reels a
+  // whole phrase (walk its word-tokens, type the spaces); the Pond reels random
+  // words as before. Ocean's "sentences" fall back to phrases until A5.
+  const difficulty = junk ? 1 : fish.difficulty;
+  const contentType = CONFIG.tiers.find(t => t.location === save.location)?.content ?? "words";
+  const usePhrases = contentType !== "words" && PHRASES.length > 0;
+  if (usePhrases) {
+    const entry = pick(logic.buildReelPool(PHRASES, difficulty, CONFIG.reel.minPhrasePoolSize));
+    reelWords = logic.tokenize(entry.w).filter(t => !/\s/.test(t));
+    wordsToLand = reelWords.length;
+  } else {
+    reelWords = null;
+    reelPool = buildReelPool(difficulty);
+    wordsToLand = CONFIG.reel.wordsToLandByTier[tier];
+  }
   wordsLeft = wordsToLand;
   el.fish.classList.add("hooked");
   if (junk) {
@@ -596,7 +616,12 @@ function bite() {
   nextReelWord();
 }
 
-function nextReelWord() { target = pick(reelPool).w; typed = 0; lastKeyTime = 0; renderWord(); }
+// Stream walks the phrase's words in order (index = words already landed);
+// Pond pulls a fresh random word each crank.
+function nextReelWord() {
+  target = reelWords ? reelWords[wordsToLand - wordsLeft] : pick(reelPool).w;
+  typed = 0; lastKeyTime = 0; renderWord();
+}
 
 function wordComplete() {
   wordsLeft--;
@@ -608,10 +633,23 @@ function wordComplete() {
   sfxWordTick();
   el.word.classList.remove("pop"); void el.word.offsetWidth; el.word.classList.add("pop");
   if (wordsLeft <= 0) return land(true);
-  inputLocked = true;
+  if (reelWords) {   // Stream: the spacebar is the beat between words (self-paced, no timer)
+    awaitingSpace = true;
+    el.word.innerHTML = `<span class="done">${target}</span><span class="todo space-cue">␣</span>`;
+    updateGuide(null);
+    return;
+  }
+  inputLocked = true;   // Pond: the timed reel-crank beat
   el.word.innerHTML = `<span class="done">${target}</span>`;
   updateGuide(null);
   later(() => { inputLocked = false; nextReelWord(); }, CONFIG.reel.wordPauseMs);
+}
+
+// The Stream's inter-word beat: a correct spacebar advances to the next word.
+function advanceAfterSpace() {
+  awaitingSpace = false;
+  el.word.classList.remove("pop"); void el.word.offsetWidth; el.word.classList.add("pop");
+  nextReelWord();
 }
 
 function land(success) {
@@ -728,9 +766,24 @@ function recordKey(expected, correct) {
 document.addEventListener("keydown", (e) => {
   if (!save || pickerOpen || collectionOpen || shopOpen || nudgeOpen || progressOpen || journalOpen || inputLocked) return;
   if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+  // Spacebar: the Stream's forgiving inter-word beat (A1). Only advances when a
+  // word is done and awaiting it; otherwise swallowed (never adds tension), so a
+  // stray space is always safe. preventDefault stops the page from scrolling.
+  if (e.key === " ") {
+    e.preventDefault();
+    if (phase === "reel" && awaitingSpace) advanceAfterSpace();
+    return;
+  }
   if (e.key.length !== 1) return;
   const key = e.key.toLowerCase();
   if (!/[a-z]/.test(key)) return;
+
+  // Waiting on the space beat: letters are forgiven (a nudge, no tension/stats).
+  if (awaitingSpace) {
+    el.word.classList.remove("shakeword"); void el.word.offsetWidth; el.word.classList.add("shakeword");
+    return;
+  }
 
   const expected = target[typed];
   if (key === expected) {
@@ -1275,7 +1328,8 @@ function activateProfile(id) {
 }
 
 try {
-  [FULL_POOL, FISH] = await Promise.all([loadJson("data/words.json"), loadJson("data/fish.json")]);
+  [FULL_POOL, FULL_PHRASES, FISH] = await Promise.all([
+    loadJson("data/words.json"), loadJson("data/phrases.json"), loadJson("data/fish.json")]);
   migrateLegacySave();
   showProfilePicker();
   syncInit();                        // fire-and-forget: wires sign-in + pulls when ready,

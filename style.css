@@ -246,6 +246,8 @@ h1 {
 }
 #word .done { color: var(--moss); }
 #word .todo { color: var(--ink); }
+/* Stream (A1): the "press space" cue shown after a completed phrase word */
+#word .space-cue { color: var(--gold); opacity: 0.85; }
 #word.shakeword { animation: shakeword 0.16s; }
 @keyframes shakeword { 25% { transform: translateX(calc(-50% - 6px)); } 75% { transform: translateX(calc(-50% + 6px)); } }
 #word.pop { animation: wordpop 0.22s ease; }

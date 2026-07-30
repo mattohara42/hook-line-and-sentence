@@ -13,6 +13,7 @@ export const CONFIG = {
     // reel words match the fish's difficulty; if the unlocked pool has fewer
     // candidates than this, easier difficulties are mixed in until it doesn't
     minReelPoolSize: 8,
+    minPhrasePoolSize: 3,   // Stream phrase pool floor (A1 — the curated set is small)
     recastDelayMs: 1500,    // pause on the catch/escape message before recasting
   },
 
@@ -48,10 +49,13 @@ export const CONFIG = {
   // kid is currently fishing. Pond/Minnow is always open and never changes (no
   // timers, no speed pressure). Muskie is a prestige rank awarded on the
   // legendary catch (A8), not a location — so it isn't in this table.
+  // `content` selects what the reel serves at each spot: "words" (Pond),
+  // "phrases" (Stream, A1 — multi-word with a typed spacebar), "sentences"
+  // (Ocean, A5 — falls back to phrases until then).
   tiers: [
-    { rank: "minnow",   location: "pond",   locationName: "the Pond",   label: "Minnow Wrangler", badge: "🐟" },
-    { rank: "mackerel", location: "stream", locationName: "the Stream", label: "Mackerel Master", badge: "🎣" },
-    { rank: "marlin",   location: "ocean",  locationName: "the Ocean",  label: "Marlin Hunter",   badge: "🗡️" },
+    { rank: "minnow",   location: "pond",   locationName: "the Pond",   label: "Minnow Wrangler", badge: "🐟", content: "words"     },
+    { rank: "mackerel", location: "stream", locationName: "the Stream", label: "Mackerel Master", badge: "🎣", content: "phrases"   },
+    { rank: "marlin",   location: "ocean",  locationName: "the Ocean",  label: "Marlin Hunter",   badge: "🗡️", content: "sentences" },
   ],
 
   shop: {
