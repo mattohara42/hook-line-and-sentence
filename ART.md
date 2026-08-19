@@ -81,31 +81,66 @@ subject. Re-exporting cleanly from Gemini is better when you can get it.
 
 ## Open art requests
 
-### A3 — the Stream biome (only real art A3 needs)
+### ✅ A3 — the Stream biome (landed)
 
-The Stream's **fish need no art**: they reuse the shared per-tier sprites
-(`fish-common/rare/legendary.png`) tinted by each species' `color` in
-`data/fish.json` (dace, chub, trout, salmon…). Only the **background scene** is
-outstanding, and it's already wired to appear the moment the file exists.
+`assets/background-stream.png` exists and is wired (`#scene.loc-stream` layers
+it over the pond scene). Nothing outstanding. Stream **fish need no art** — they
+reuse the shared per-tier sprites tinted by each species' `color`.
+
+### A6 — the Ocean biome (Marlin tier)
+
+Phase 2's serial art dependency. Two real requests here — the **scene** and the
+**one legendary that gets its own sprite (Muskie Quixote)**. Everything else the
+Ocean adds reuses existing art: the ~8–10 ocean sport fish (marlin, tuna,
+mahi…) share the per-tier sprites tinted by `color`, exactly like the Stream, so
+they need **no new art**.
 
 ```
-ART NEEDED: the Stream fishing scene (Mackerel tier background)
-Prompt:   Pixel art side-view of a cozy forest stream for a fishing game,
-          chunky clean pixels, warm dawn palette but cooler and greener than the
-          pond — teal-to-emerald flowing water, mossy banks, smooth river rocks,
-          overhanging ferns and reeds, a few pines and muted purple hills behind,
-          warm sky with soft gold light. A calm shallow riffle in the middle
-          where a boat/kid can sit at the waterline (waterline ~55% down, like
-          the pond scene). No text, no UI, no characters, no boat, no fish, no
-          watermark, no baked-in shadow. Landscape scene, fills the frame.
-Save as:  assets/background-stream.png
+ART NEEDED: the Ocean fishing scene (Marlin tier background)
+Prompt:   Pixel art side-view of a cozy open-ocean horizon for a fishing game,
+          chunky clean pixels, same warm dawn/dusk mood as the pond and stream
+          but deeper and bluer — teal shallows fading to deep indigo-blue open
+          water, gentle rolling swells, a low far shoreline of muted purple
+          hills, a couple of tiny distant sailboat silhouettes on the horizon,
+          warm sky with soft gold light and a few soft clouds. Calm water in the
+          middle where a boat/kid sits at the waterline (waterline ~55% down,
+          matching the pond scene). No text, no UI, no characters, no boat in the
+          foreground, no fish, no watermark, no baked-in shadow. Landscape scene,
+          fills the frame.
+Save as:  assets/background-ocean.png
 Size:     match assets/background.png's aspect (~1152×466 / roughly 2.47:1),
           waterline at ~55% height so the existing boat/bobber/fish positions sit
           right; pixelated-friendly, opaque full-bleed (a scene, not a sprite).
-Wired in: style.css `#scene.loc-stream` layers this over the pond background, so
-          it lights up automatically when the file lands — no code change needed.
+Wired in: not yet — A6 adds `#scene.loc-ocean` mirroring the `.loc-stream` rule
+          in style.css (layers this over the pond background). Drop the PNG now;
+          it lights up when A6's one-line CSS rule lands.
 ```
 
-Until this PNG exists the Stream simply shows the pond scene (the fish, the
-location label, and the collection are already Stream-aware). Ocean scene +
-ocean fish come later (A6).
+```
+ART NEEDED: Muskie Quixote — the Ocean legendary hero fish (A6/A8)
+Prompt:   Pixel art of a single legendary muskie (muskellunge) fish for a cozy
+          fishing game, chunky clean pixels, warm dawn lake palette (teal water
+          accents, gold highlights) — a long, sleek, slightly comic predator fish
+          with a big toothy grin, mottled olive-green and bronze body with dark
+          vertical tiger-stripe bars, large flowing fins and tail, one bright
+          determined eye. A touch of quixotic grandeur — noble, adventurous,
+          lovable-underdog energy — but still a clean readable silhouette that
+          reads at small size. Side profile facing right, single centered
+          subject, transparent background, no text, no UI, no watermark, no baked
+          -in shadow. Landscape framing.
+Save as:  assets/fish-muskie.png
+Size:     ~128×86 (landscape ~3:2, matching the other fish sprites' proportions
+          but higher-res since it's the hero), transparent background, tight crop
+          to the sprite. Pixelated-friendly.
+Wired in: not yet — A6/A8 point the Ocean's legendary tier at this instead of the
+          shared fish-legendary.png (a `#fish.tier-legendary.loc-ocean` override,
+          or a per-species sprite hook). It's the one Ocean fish worth distinct
+          art; the rest tint the shared sprite.
+```
+
+**Optional / not yet wired — deep-sea + fly rod shop icons.** The advanced plan
+lists rod icons, but the shop doesn't render rod art today (rods have no `file`
+field the way boats do). If we want them, they'd be small transparent sprites
+(`assets/rod-fly.png`, `assets/rod-deepsea.png`, ~64×64) and would need a small
+shop-UI change to show them — worth doing as its own step, not blocking A6. Say
+the word and I'll spec them properly.
