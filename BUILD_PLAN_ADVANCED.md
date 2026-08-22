@@ -4,11 +4,11 @@ Companion to `SPEC.md`, `BUILD_PLAN.md` (v1), and the **Advanced Progression**
 epic in `BACKLOG.md`. This breaks the epic into sized, ordered, verifiable
 milestones — same rules as v1: **one milestone at a time, each ends playable.**
 
-**Status:** A6 done (2026-08-22) — **Phase 2 (the Ocean) is playable end to
-end**; A7 (sport-fish "fight" mechanic) is next. All three biomes now have
-their own fish, content and gate. The only outstanding art is the two Ocean
-PNGs (background + the Muskie hero sprite) and the Stream background —
-requests in `ART.md`; the scenes self-resolve when they land.
+**Status:** A7 done (2026-08-22) — **only A8 (the Muskie prestige capstone)
+remains in this epic.** All three biomes have their own fish, content, gate and
+pacing. The only outstanding art is the two Ocean PNGs (background + the Muskie
+hero sprite) and the Stream background — requests in `ART.md`; the scenes
+self-resolve when they land.
 **Prerequisite:** close v1 (M4b Firestore live-verified) first — this epic
 adds new save fields, so it wants a stable sync base and a clean migration
 story. (Met — v1 complete.)
@@ -178,11 +178,35 @@ capitals, and chases their own best time.
   coins, rank-up ceremony on purchase, rank→marlin, all three spots in the
   switcher, ocean fish actually served, sentences reeling, journal grouped.)*
 
-### A7 — Sport-fish "fight" mechanic
-- `app.js`: sentence reeled in clauses; the fish "runs" (a beat) between
-  clauses; bigger fish take more segments to land (extend
-  `wordsToLandByTier` → segments).
+### ✅ A7 — Sport-fish "fight" mechanic (done 2026-08-22)
+- `config.js`: `CONFIG.fight` — `fromLocations:["ocean"]`,
+  `segmentsByTier` (common/uncommon 1, rare 2, legendary 3), plus the two beat
+  lengths and the dart distance. *Deviation from the sketch, deliberate:* this
+  is its own knob rather than an extension of `reel.wordsToLandByTier`, because
+  that one belongs to word-mode — i.e. **the Pond**. Widening it would have
+  changed the one thing this epic promises never to touch.
+- `logic.js`: `segmentsForTier()` (1 everywhere that isn't a fight water, so
+  the Pond and Stream can't be reached by this) and `pickDistinct()`, which
+  fills a multi-segment fight without reeling the same sentence three times —
+  it only repeats once the pool is genuinely exhausted. Both tested.
+- `app.js`: a catch now spans `reelSegments`; `wordsToLand` sums the whole
+  fight so the reel meter still counts down truthfully to the landing. The
+  fish runs at every mid-sentence clause break and again between sentences.
+- **The run is pure theatre.** It nudges `fishTX` outward and lets the existing
+  swim RAF ease the fish away, then restores the true target — so **no progress
+  is ever undone and tension is never touched.** It's drama, not a setback, and
+  the flavour lines are encouraging rather than scolding: the kid hasn't done
+  anything wrong. Slow + careful still always lands, exactly as guardrail 1
+  requires. Set `clauseRunMs`/`segmentRunMs` to 0 to keep the drama, drop the pause.
+- `tests/`: a data guard that every fight water has enough reachable sentences
+  to fill its longest fight without repeats.
 - **Done when:** an Ocean landing has clause-runs; tension is still error-only.
+  *(Verified: 60 unit tests + two real-browser Playwright runs. The fight run
+  asserted a clause run mid-sentence, a segment run between sentences, a rare
+  fought over 14 words across two sentences, and — the guardrails — that a run
+  never raises tension, never undoes progress, and that accurate typing never
+  escapes. A separate regression confirmed the **Pond and Stream see no runs at
+  all**, still land catches, and throw no errors.)*
 
 ### A8 — Muskie prestige capstone
 - `logic.js`/`app.js`: landing **Muskie Quixote** awards the **Muskie** rank +

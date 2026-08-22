@@ -8,7 +8,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { CONFIG } from "../config.js";
-import { wordCount } from "../logic.js";
+import { wordCount, buildReelPool } from "../logic.js";
 
 const load = p => JSON.parse(readFileSync(new URL(p, import.meta.url), "utf8"));
 const words = load("../data/words.json");
@@ -121,6 +121,21 @@ test("no duplicate sentences", () => {
 test("no blocklisted non-word slips into a sentence (same guard as the word pool)", () => {
   const bad = s => s.text.toLowerCase().replace(/[.,!?]/g, "").split(" ").some(w => blocklist.has(w));
   assert.equal(offenders(sentences, bad, s => s.text), "", "blocklisted word in sentence");
+});
+
+test("every fight water has enough sentences to fill its longest fight without repeats (A7)", () => {
+  // mirrors app.js's buildPhrasePool: content for this spot, widened to the
+  // fish's difficulty by the same machinery words use
+  for (const loc of CONFIG.fight.fromLocations) {
+    const here = sentences.filter(s => s.location === loc);
+    assert.ok(here.length, `fight water "${loc}" has no sentences at all`);
+    for (const f of fish.filter(f => f.location === loc)) {
+      const segs = CONFIG.fight.segmentsByTier[f.tier] ?? 1;
+      const pool = buildReelPool(here, f.difficulty, CONFIG.reel.minPhrasePoolSize);
+      assert.ok(pool.length >= segs,
+        `"${f.id}" (${f.tier}, d${f.difficulty}) fights ${segs} segments but only ${pool.length} sentence(s) are reachable at ${loc}`);
+    }
+  }
 });
 
 test("fish.json is a non-empty array of well-formed entries", () => {
