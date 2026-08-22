@@ -184,3 +184,86 @@ prompts + Matt generates). Palette stays the locked ~16-color set.
   type today; that's a real data-shape addition.
 - Stream/Ocean fish rosters — pick the actual species per set and their rarity
   tiers (fish *are* separated by tier, decided; the specific lists are open).
+
+## EPIC: Graphics & Character Rig (parked — resume after Ocean ships)
+
+*Brainstormed August 2026, after A0-A4 shipped and the three locations (Pond/
+Stream/Ocean) had real shape. Parked deliberately: Matt wants Stream + Ocean
+(the rest of `BUILD_PLAN_ADVANCED.md`, A5-A8) finished first. Nothing here
+starts until that's done — this section exists so the plan isn't lost in the
+meantime.*
+
+**Why now, not earlier:** hats have been deferred since the boat-skin shop
+because `assets/kid.png` bakes hat+body+rod into one PNG (see the "Cosmetic
+hats" deferred item above). Once the game has three real locations, that same
+one-sprite-per-variant pattern would also block a rowboat/waders/bigger-boat
+split, so it's worth fixing once instead of working around it three more
+times.
+
+### Locked decisions (Matt, August 2026)
+
+1. **Layered + tinted rig, not full-sprite-per-variant.** Split the character
+   into separate transparent PNGs — `body-<character>.png`, `hat-<style>.png`,
+   `rod-<style>.png` — composited as independently positioned layers, the same
+   way `#boat`/`#kid` already work in `style.css`. A kid's **favorite color**
+   is a tint applied at runtime to one neutral "accent" region per item (hat
+   band, boat trim, rod wrap), reusing the `--fish-color` / `color-mix()` /
+   `hue-rotate()` trick already used for fish tiers (`style.css:186-203,
+   463-478`) — **not** a new PNG per color. This keeps the art count fixed
+   regardless of how many colors or characters get added later.
+2. **Character picker = a few specific family avatars, not a generic
+   roster.** 2-4 base body sprites styled after Matt's actual kids (Kate
+   included), picked once at profile setup alongside a favorite color — lives
+   on the existing per-kid Firestore profile (M4), not a new switchable-anytime
+   system.
+
+### Scope, by category
+
+- **Backgrounds + foreground depth, all 3 locations.** Pond has `background.png`
+  + a CSS-only foreground (`.reeds`, `style.css:165-177` — no PNG). Stream
+  (`background-stream.png`) and Ocean (`background-ocean.png`, prompt already
+  drafted in `ART.md`) still need their PNGs generated, **plus** a foreground
+  layer each for depth — extend the CSS-shape pattern (cheap, always-safe,
+  easy to recolor) rather than commissioning full-width foreground PNGs that
+  risk drifting over the boat/fish/line on resize.
+- **Vessels — one rig per location.**
+  - Pond: small rowboat (likely a re-crop of the existing `boat.png`).
+  - Stream: **waders**, no boat — a distinct standing-pose body layer, kid
+    repositioned lower/centered in the scene (no `#boat` div for this
+    location).
+  - Ocean: a visibly bigger boat silhouette (more freeboard, rod holders).
+  - Favorite-color tint applies to whichever rig is currently active.
+- **Hats & rods as real swappable shop items.** Splits out of the layered-rig
+  work above; adds HATS and RODS sections to the shop mirroring BOATS. Closes
+  the "Cosmetic hats" deferred item and the rod-icon gap `ART.md` already
+  flagged (rods have no `file` field the way boats do today).
+- **Fish — shape families, not just color.** Today: 3 shared silhouettes
+  (common/uncommon share one, rare, legendary) tinted by species `color`
+  (`style.css:186-203`). Add 2-3 more shape families (round panfish / slender
+  predator / flat-bodied) so species read as genuinely different fish, species
+  → shape *and* color. Muskie Quixote keeps its bespoke sprite as-is.
+  `.cfish` (the collection-grid silhouette, `style.css:459-478`) needs a
+  matching shape update so uncaught fish still read correctly.
+- **Level navigation — already done, no new work.** `renderLocations()` /
+  `switchLocation()` (A0, `app.js:1063-1094`) already let a kid move freely
+  between any unlocked location; the Pond never re-locks, so remedial practice
+  is already free, and the 🧪 dev shortcut already covers testing.
+
+### Nice-to-haves noticed along the way
+
+- Animate the vessel swap (rowboat → waders → bigger boat) into the existing
+  rank-up ceremony (A0) for a visible "look how far I've come" beat.
+- Location-flavored junk items (a starfish in the Ocean instead of a boot) —
+  same `config.junk` pattern, just new tagged entries + tiny sprites.
+- Real shape variety compounds nicely with two already-parked backlog items:
+  **Home aquarium** and **Family trophy wall** — no extra work, just a better
+  payoff once it lands.
+
+### Sequencing note
+
+Foreground layers + the Ocean background are cheap enough to bundle into the
+A6 Ocean art request when that milestone starts (background prompt already
+drafted in `ART.md`). The rig/hat/rod/character/color work is a real code
+change (new layered rendering + shop sections + profile-setup UI), not just
+art — scope it as its own milestone(s) once A5-A8 close, since it touches all
+three locations at once rather than landing as one vertical slice.
