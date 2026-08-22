@@ -61,6 +61,15 @@ export const CONFIG = {
   // in content tagged for any other location.
   capitals: { fromLocations: ["stream", "ocean"] },
 
+  // Punctuation (A5 / AD6): a new earned unlock track, one tier later than
+  // capitals — sentences (and their `. , ! ?`) start at the Ocean, while the
+  // Stream's phrases stay punctuation-free. Like a space, a punctuation mark
+  // is a real key the kid must press to advance, but it's forgiving — a
+  // mismatch never touches tension (see handlePunct in app.js). The data test
+  // enforces that no punctuation mark appears in content tagged for any other
+  // location.
+  punctuation: { chars: ".,!?", fromLocations: ["ocean"] },
+
   // Fly-cast rhythm + WPM (A4), a Stream+ layer. Both are cozy and self-paced:
   // an even casting cadence earns a "nice cast" line (never a penalty), and a
   // per-species personal-best WPM shows on the Stream catch card only. minKeys =
