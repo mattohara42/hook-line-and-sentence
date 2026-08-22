@@ -7,7 +7,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { CONFIG } from "../config.js";
+import { CONFIG, isDevHost } from "../config.js";
 import { wordCount, buildReelPool } from "../logic.js";
 
 const load = p => JSON.parse(readFileSync(new URL(p, import.meta.url), "utf8"));
@@ -228,6 +228,19 @@ test("shop items have unique ids; boats each reference a sprite file", () => {
   }
   assert.ok(CONFIG.shop.boats.some(b => b.cost === 0), "need a free default boat");
   for (const b of CONFIG.shop.boats) assert.ok(b.file, `boat "${b.id}" missing sprite file`);
+});
+
+test("the 🧪 dev shortcut can never be on in production", () => {
+  // the real site and anything unfamiliar must fail closed
+  for (const host of ["fishtyping.netlify.app", "wordsperminute.app", "example.com",
+                      "", "localhost.evil.com", "notlocalhost", "deploy-preview-x--fishtyping.netlify.app"])
+    assert.equal(isDevHost(host), false, `dev shortcuts must be off on "${host}"`);
+  // …and stay available where we actually playtest
+  for (const host of ["localhost", "127.0.0.1", "[::1]", "matts-mac.local",
+                      "deploy-preview-30--fishtyping.netlify.app"])
+    assert.equal(isDevHost(host), true, `dev shortcuts should be on for "${host}"`);
+  // importing config.js outside a browser (these tests) must not switch them on
+  assert.equal(CONFIG.dev.testShortcuts, false, "dev shortcuts leaked into a non-browser build");
 });
 
 test("junk config is well-formed", () => {
