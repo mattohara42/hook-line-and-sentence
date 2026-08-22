@@ -57,12 +57,33 @@ Ideas captured during design/build. Nothing here expands the current milestone.
     class of accepted gap as the look-ahead limitation in `SPEC.md`.
 
 ## Release hygiene
-- **Remove the 🧪 test shortcut before a public release** — the "unlock all spots"
-  tackle-box button is a build/playtest affordance gated by `CONFIG.dev.testShortcuts`.
-  Flip that flag to `false` (or delete the `dev` block in `config.js` + the dev-tools
-  block in `app.js` + `.toggle-btn.dev` in `style.css`).
+- **✅ The 🧪 test shortcut can no longer ship on (fixed 2026-08-22).** It used to
+  be a hand-flipped `true`, and it was live on the production site for a while
+  because a flag is easy to forget. `CONFIG.dev.testShortcuts` is now *derived*
+  from the hostname (`isDevHost()`): localhost, `.local` machines and Netlify
+  deploy previews get it, production and anything unfamiliar fail closed. A data
+  test pins both directions.
+- **Decide the Firebase blast-radius question before sharing the URL.** See the
+  ⚠️ block at the top of `firestore.rules`: `request.auth != null` authorises
+  *any* Google account, not just family, and the database is shared with Family
+  Hub. Document shape/size is now capped, but rules cannot cap document *count*.
+  Options, best first: a separate Firebase project for this game · App Check ·
+  a uid allowlist · or ship the public build with no Firebase at all (the game
+  is fully playable on localStorage, and then you collect no data about other
+  people's children).
+- **No analytics, no crash reporting, no third-party scripts.** Worth keeping
+  that way — it's most of what makes this safe to hand to another family.
 
 ## Word pool
+- **✅ Advanced content now grows with the letter ladder (fixed 2026-08-22).**
+  Every phrase and sentence used to be home-row-only, so a Marlin-rank kid with
+  all 26 letters unlocked reeled *"Dad has a flask."* forever — progressing
+  bought you *less* variety, not more. Phrases 25 → 67, sentences 17 → 44,
+  spread across all eight unlock stages. Difficulty now differentiates too: each
+  fish tier draws its own band (d1 commons … d4 legendary) instead of everything
+  widening down to d2. Fight lengths land at 2–5 / 3–9 / 16–22 / 21–27 words by
+  tier. *Still thin next to 2,851 words — the advanced tiers will always want
+  more, and they're hand-curated by design (AD1).*
 - Stage 1 (home row) is intentionally small (37 words) — keep stage 1 short (few fish to first unlock). Revisit supplements list if kids exhaust it.
 - Difficulty scoring is length-based + rare-letter bump; could later weight by bigram awkwardness.
 - **✅ Junk-word cleanup (done 2026-07-23).** The "sie" bug turned out not to be

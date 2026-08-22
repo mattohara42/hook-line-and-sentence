@@ -20,7 +20,9 @@ now shipping post-v1 features (see `BACKLOG.md`). Hosted on Netlify — pushes t
 | `BACKLOG.md` | Ideas parked to protect milestone scope, plus shipped post-v1 features |
 | `ART.md` | Art pipeline — Claude writes Gemini prompts, Matt generates the PNGs |
 | `config.js` | Every tuning knob, one file |
-| `data/words.json` | 3,014 words tagged by letters/difficulty (generated) |
+| `data/words.json` | 2,851 words tagged by letters/difficulty (generated, minus `data/blocklist.json`) |
+| `data/phrases.json` | Stream content — multi-word phrases (hand-curated) |
+| `data/sentences.json` | Ocean content — punctuated sentences (hand-curated) |
 | `data/fish.json` | The roster — say hi to Muskie Quixote |
 | `prototype/` | Playable design artifacts: feel test + visual mockup |
 | `tools/generate-words.mjs` | Regenerates `data/words.json` |

@@ -212,6 +212,26 @@ export const CONFIG = {
   // When `testShortcuts` is on, the tackle box shows a clearly-labelled 🧪 button
   // that grants every rod (unlocking every fishing spot) and jumps to the
   // furthest one, so a playtest reaches the advanced tiers without grinding.
-  // Flip `testShortcuts` to false — or delete this block — before a public release.
-  dev: { testShortcuts: true, testCoins: 200 },
+  //
+  // This is *derived from where the game is running*, not a flag anyone has to
+  // remember to flip — the button was live on the production site for a while
+  // precisely because a flag is easy to forget. Local dev and Netlify deploy
+  // previews get it; the real site never does, and it fails closed anywhere
+  // unfamiliar. To play with shortcuts on production for a moment, use DevTools
+  // rather than shipping a `true`.
+  dev: { testShortcuts: isDevHost(currentHostname()), testCoins: 200 },
 };
+
+// Split in two so the decision is a pure, testable function of the hostname and
+// only the lookup touches globals (there is no `location` in Node, where the
+// data tests import this file — an unknown host is treated as production).
+export function currentHostname() {
+  return typeof location === "undefined" ? "" : (location.hostname || "");
+}
+export function isDevHost(hostname) {
+  return hostname === "localhost"
+      || hostname === "127.0.0.1"
+      || hostname === "[::1]"
+      || hostname.endsWith(".local")            // a machine on the LAN, e.g. matts-mac.local
+      || /^deploy-preview-\d+--/.test(hostname); // Netlify PR previews, never production
+}

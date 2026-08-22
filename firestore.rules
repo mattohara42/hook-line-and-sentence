@@ -14,19 +14,50 @@
 // kids, and writes must stamp the caller's own uid. No sign-in → no access,
 // which is why the game falls back to localStorage when signed out.
 
+// ⚠️  KNOWN LIMIT — worth reading before sharing the game's URL with anyone.
+//     `request.auth != null` is *authentication, not authorisation for your
+//     family*: any Google account on earth can sign in and create documents
+//     here. Nobody can read or touch YOUR docs — ownership is enforced below —
+//     but a stranger can create their own, and this database is shared with
+//     Family Hub. The shape checks below cap how big any one document can get.
+//     They cannot cap how MANY get created: Firestore rules can't count
+//     documents. If the game ever goes properly public, the real fixes, in
+//     order of how much they help:
+//       1. Give Typing Fishing its OWN Firebase project, so abuse can never
+//          reach Family Hub. (Best blast-radius fix.)
+//       2. Turn on Firebase App Check, so only the real app can call the API.
+//       3. Or keep sync family-only: add `&& request.auth.uid in ['uid1', …]`
+//          to create.
+//     Simplest of all: ship the public build with no Firebase config at all.
+//     The game is fully playable on localStorage, so strangers lose nothing but
+//     cross-device sync — and you collect no data about other people's children.
+
 match /typingFishing/{profileId} {
-  allow read:   if request.auth != null
-                && resource.data.ownerUid == request.auth.uid;
+  function incoming() { return request.resource.data; }
+  function isMine()   { return request.auth != null && incoming().ownerUid == request.auth.uid; }
+  function wasMine()  { return request.auth != null && resource.data.ownerUid == request.auth.uid; }
 
-  allow create: if request.auth != null
-                && request.resource.data.ownerUid == request.auth.uid;
+  // a map a buggy or hostile client could otherwise grow without limit
+  function boundedMap(m, max) { return m is map && m.keys().size() <= max; }
 
-  allow update: if request.auth != null
-                && resource.data.ownerUid == request.auth.uid
-                && request.resource.data.ownerUid == request.auth.uid;
+  // Deliberately generous: this is an abuse ceiling, not a schema. It must not
+  // start rejecting honest saves the next time a profile field is added.
+  // Today's real values: ~18 top-level keys, 30 fish, 10 badges, 26 letters.
+  function sane() {
+    return incoming().keys().size() <= 32
+        && incoming().ownerUid is string
+        && (!('name'   in incoming()) || (incoming().name   is string && incoming().name.size()   <= 40))
+        && (!('avatar' in incoming()) || (incoming().avatar is string && incoming().avatar.size() <= 16))
+        && (!('badges' in incoming()) || (incoming().badges is list   && incoming().badges.size() <= 64))
+        && boundedMap(incoming().get('collection', {}), 200)
+        && boundedMap(incoming().get('records',    {}), 200)
+        && boundedMap(incoming().get('stats', {}).get('letters', {}), 64);
+  }
 
-  allow delete: if request.auth != null
-                && resource.data.ownerUid == request.auth.uid;
+  allow read:   if wasMine();
+  allow create: if isMine() && sane();
+  allow update: if wasMine() && isMine() && sane();
+  allow delete: if wasMine();
 }
 
 // ── For reference only — the shape your full ruleset should have after step 3.
@@ -38,13 +69,9 @@ match /typingFishing/{profileId} {
 //
 //     // … your existing Family Hub match blocks stay here, untouched …
 //
-//     match /typingFishing/{profileId} {
-//       allow read:   if request.auth != null && resource.data.ownerUid == request.auth.uid;
-//       allow create: if request.auth != null && request.resource.data.ownerUid == request.auth.uid;
-//       allow update: if request.auth != null
-//                     && resource.data.ownerUid == request.auth.uid
-//                     && request.resource.data.ownerUid == request.auth.uid;
-//       allow delete: if request.auth != null && resource.data.ownerUid == request.auth.uid;
-//     }
+//     match /typingFishing/{profileId} { … paste the block above, verbatim … }
 //   }
 // }
+//
+// (This used to repeat the rules inline, which promptly went stale the first
+// time they changed. Copy the real block above — there's only one of it now.)
