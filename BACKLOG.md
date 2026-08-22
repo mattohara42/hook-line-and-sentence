@@ -17,6 +17,23 @@ Ideas captured during design/build. Nothing here expands the current milestone.
 - More ponds/locations; weather; real day/night tied to clock.
 - Sound design pass beyond ambient loop.
 
+## Playtest before anything else (A7/A8, 2026-08-22)
+- **The fight beats are guesses.** `CONFIG.fight.clauseRunMs` (550) and
+  `segmentRunMs` (900) were picked by feel, not by watching a kid. They're the
+  kind of number that only reveals itself as "too long" with a real six-year-old
+  typing. Both are in `config.js`; set either to `0` to keep the drama and drop
+  the pause entirely.
+- **Keystrokes typed *during* a run are dropped.** Input is locked for the beat,
+  so a fast typist loses the couple of characters they type into it. It's
+  harmless — dropped keys never count as errors and never touch tension, so the
+  catch is never at risk — but it may read as "the game ate my typing". Watch for
+  it; if it bites, the fix is either shorter beats or buffering keystrokes
+  through the lock rather than ignoring them. Noticed while writing the A8 test,
+  which desynced on exactly this before the harness was taught to wait out runs.
+- **Is a 3-sentence legendary fight too long?** `segmentsByTier` gives the
+  legendary three sentences. It felt right in testing, but testing was a robot
+  that types perfectly and never gets bored.
+
 ## Finger guide
 - **✅ Punctuation finger guidance (found during A5, fixed 2026-08-22).** The
   guide keyboard was only `qwertyuiop` / `asdfghjkl;` / `zxcvbnm`, so when a

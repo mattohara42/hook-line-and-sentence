@@ -123,6 +123,14 @@ test("no blocklisted non-word slips into a sentence (same guard as the word pool
   assert.equal(offenders(sentences, bad, s => s.text), "", "blocklisted word in sentence");
 });
 
+test("the prestige fish exists, is legendary, and lives at a fight water (A8)", () => {
+  const p = fish.find(f => f.id === CONFIG.prestige.fishId);
+  assert.ok(p, `prestige.fishId "${CONFIG.prestige.fishId}" matches no fish in fish.json`);
+  assert.equal(p.tier, "legendary", `the capstone fish "${p.id}" should be legendary`);
+  assert.ok(CONFIG.fight.fromLocations.includes(p.location),
+    `the capstone "${p.id}" lives at "${p.location}", which isn't a fight water — it should be the hardest catch in the game`);
+});
+
 test("every fight water has enough sentences to fill its longest fight without repeats (A7)", () => {
   // mirrors app.js's buildPhrasePool: content for this spot, widened to the
   // fish's difficulty by the same machinery words use

@@ -108,6 +108,20 @@ export function rankForState(tiers, locations) {
   return rank;
 }
 
+// The rank a profile actually wears (A8). Normally the furthest location it has
+// unlocked, but the prestige rank outranks all of them — it isn't a place you
+// travel to, it's the legendary you landed, so it can't be derived from rods.
+export function rankForProfile(tiers, locations, prestigeCfg, hasPrestige) {
+  return hasPrestige && prestigeCfg?.rank ? prestigeCfg.rank : rankForState(tiers, locations);
+}
+
+// Does landing this fish earn the prestige rank *right now* (A8)? Only the
+// prestige species, and only the first time — a second Muskie is a great day,
+// not a second ceremony.
+export function earnsPrestige(prestigeCfg, fishId, alreadyHad) {
+  return !!prestigeCfg?.fishId && !alreadyHad && fishId === prestigeCfg.fishId;
+}
+
 // Words (or phrases) matched to a fish's difficulty, mixing in easier ones only
 // when the pool is too thin to fill minSize (e.g. stage 1's lone hard word).
 // Content-agnostic: works on any entry with a numeric `d`, so the phrase reel

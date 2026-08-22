@@ -56,6 +56,19 @@ export const CONFIG = {
     { rank: "marlin",   location: "ocean",  locationName: "the Ocean",  label: "Marlin Hunter",   badge: "🗡️" },
   ],
 
+  // A8: the prestige capstone. Muskie is the one rank you don't buy your way
+  // into — it's earned by landing the Ocean's legendary, so it has no location
+  // and isn't in the tiers table above. Held by *having caught* the fish rather
+  // than a stored flag, so it can never desync from the collection and old saves
+  // that already landed it are credited the moment they load.
+  prestige: {
+    rank: "muskie",
+    fishId: "muskie",          // must match an id in data/fish.json (a data test checks)
+    label: "Muskie Master",
+    badge: "🏆",
+    celebrateMs: 4200,         // held longer than a rank-up — this is the finish line
+  },
+
   // Capitals (Shift) enter at the Stream (A2 / AD6): only phrases at graduated
   // spots carry capital letters — the Pond stays lowercase-only (a v1 promise,
   // and Shift is harmless there). The data test enforces that no capital appears
