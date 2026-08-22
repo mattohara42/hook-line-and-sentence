@@ -4,11 +4,12 @@ Companion to `SPEC.md`, `BUILD_PLAN.md` (v1), and the **Advanced Progression**
 epic in `BACKLOG.md`. This breaks the epic into sized, ordered, verifiable
 milestones — same rules as v1: **one milestone at a time, each ends playable.**
 
-**Status:** A4 done (2026-07-23) — **Phase 1 (the Stream) ships**; A5 (Ocean)
-is next. The only art still outstanding for Phase 1 is the Stream background PNG
-(request in `ART.md`); the code lights up when it lands. **Prerequisite:** close v1 (M4b
-Firestore live-verified) first — this epic adds new save fields, so it wants a
-stable sync base and a clean migration story. (Met — v1 complete.)
+**Status:** A5 done (2026-08-22) — **Phase 2 (the Ocean) is underway**; A6
+(fish set + biome scene + deep-sea rod gate) is next. The only art still
+outstanding for Phase 1 is the Stream background PNG (request in `ART.md`);
+the code lights up when it lands. **Prerequisite:** close v1 (M4b Firestore
+live-verified) first — this epic adds new save fields, so it wants a stable
+sync base and a clean migration story. (Met — v1 complete.)
 
 ## Guardrails (inherited, non-negotiable)
 
@@ -118,12 +119,30 @@ capitals, and chases their own best time.
 
 ## Phase 2 — Ocean / Marlin + Muskie (sport fishing) · *vertical slice*
 
-### A5 — Sentence content + punctuation
-- `data/sentences.json`: curated, kid-appropriate sentences that teach `. , ! ?`.
-- `config.js`: punctuation unlock track (Ocean-entry requirement).
-- `app.js`: reel handles punctuation tokens + mid-sentence capitals; detect
-  clause boundaries (for A7's runs).
+### ✅ A5 — Sentence content + punctuation (done 2026-08-22)
+- `data/sentences.json`: 17 curated home-row sentences (same `a s d f g h j k l`
+  vocabulary as `phrases.json`, so they're typeable the moment a kid could
+  reach the Ocean) tagged `location:"ocean"`, teaching `. , ! ?` and
+  mid-sentence capitals.
+- `config.js`: `CONFIG.punctuation` — `. , ! ?` gated to `fromLocations:
+  ["ocean"]`, one tier later than capitals (AD6), enforced by a data test.
+- `app.js`: a punctuation mark is a real typed key, like the spacebar, but
+  **forgiving** — `handlePunct()` advances only on an exact match and never
+  touches tension on a miss (mirrors `handleSpace`). A shared `finishReelUnit()`
+  handles "the content is fully typed" from either a letter *or* a
+  sentence-final mark, since a sentence can end in punctuation. Clause-boundary
+  detection for A7 needs no extra work — `tokenize()`'s existing `punct`
+  tokens (A1) already mark every boundary; A7 consumes them directly.
+- **Bug fix along the way:** `PHRASE_POOL`/`SENTENCE_POOL` were declared but
+  never actually `fetch`ed in the app's init `Promise.all` — a leftover gap
+  since A1. The Stream had been silently reeling words only (no phrases, no
+  capitals, no WPM) at runtime despite A1-A4 shipping. Fixed here, so both
+  the Stream and the Ocean's new content now actually reel.
 - **Done when:** the Ocean reels a full sentence with punctuation, correctly.
+  *(Verified: 51 unit tests (data + logic) + a real-browser Playwright run —
+  a full sentence catch with a personal-best WPM, a wrong key while a
+  punctuation mark was due confirmed not to raise tension, and a mid-sentence
+  comma confirmed not to land the catch early.)*
 
 ### A6 — Ocean fish set + biome scene + deep-sea rod gate
 - `data/fish.json`: `location:"ocean"` sport fish (marlin, tuna, mahi…), with

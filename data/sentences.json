@@ -1,0 +1,19 @@
+[
+  {"text":"Dad has a flask.","letters":"adfhkls","d":1,"theme":"home-row","location":"ocean"},
+  {"text":"Ask a lad.","letters":"adkls","d":1,"theme":"home-row","location":"ocean"},
+  {"text":"Hal has a flag.","letters":"afghls","d":1,"theme":"home-row","location":"ocean"},
+  {"text":"Dad had a glass flask.","letters":"adfghkls","d":1,"theme":"home-row","location":"ocean"},
+  {"text":"A glad lad asks Hal.","letters":"adghkls","d":2,"theme":"home-row","location":"ocean"},
+  {"text":"Dad has a flag, Hal has a flask.","letters":"adfghkls","d":2,"theme":"home-row","location":"ocean"},
+  {"text":"Ask Hal, ask Dad.","letters":"adhkls","d":2,"theme":"home-row","location":"ocean"},
+  {"text":"A sad lad had a flask, add a dash.","letters":"adfhkls","d":2,"theme":"home-row","location":"ocean"},
+  {"text":"Flags flash!","letters":"afghls","d":1,"theme":"home-row","location":"ocean"},
+  {"text":"Add a dash!","letters":"adhs","d":1,"theme":"home-row","location":"ocean"},
+  {"text":"Hal has a flask!","letters":"afhkls","d":1,"theme":"home-row","location":"ocean"},
+  {"text":"Dad, ask Hal!","letters":"adhkls","d":2,"theme":"home-row","location":"ocean"},
+  {"text":"A glad lass has a salad!","letters":"adghls","d":2,"theme":"home-row","location":"ocean"},
+  {"text":"Hal has a flask?","letters":"afhkls","d":1,"theme":"home-row","location":"ocean"},
+  {"text":"Dad had a salad?","letters":"adhls","d":1,"theme":"home-row","location":"ocean"},
+  {"text":"A sad lass asks Dad?","letters":"adkls","d":2,"theme":"home-row","location":"ocean"},
+  {"text":"Hal, has Dad a flag?","letters":"adfghls","d":2,"theme":"home-row","location":"ocean"}
+]

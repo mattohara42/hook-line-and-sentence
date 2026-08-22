@@ -1,14 +1,17 @@
 // app.js — Typing Fishing core loop (cast → wait → reel → catch).
 // All tuning values come from config.js. Words come from data/words.json,
-// filtered to the unlocked letter set.
+// filtered to the unlocked letter set; Stream phrases (data/phrases.json) and
+// Ocean sentences (data/sentences.json) are the same idea, gated by location.
 import { CONFIG } from "./config.js";
 import * as logic from "./logic.js";   // pure game math (unit-tested in tests/logic.test.mjs)
 
 let FULL_POOL = [];              // every entry from data/words.json
 let WORDS = [];                  // entries typeable with the unlocked letters
 let FISH = [];                   // full roster from data/fish.json
-let PHRASE_POOL = [];            // every entry from data/phrases.json (A1; may be empty)
+let PHRASE_POOL = [];            // every entry from data/phrases.json (A1; Stream)
 let PHRASES = [];                // phrases typeable with the unlocked letters
+let SENTENCE_POOL = [];          // every entry from data/sentences.json (A5; Ocean)
+let SENTENCES = [];              // sentences typeable with the unlocked letters
 let unlockedLetters = new Set();
 
 async function loadJson(path) {
@@ -194,9 +197,11 @@ function recomputeUnlocks() {
   const n = unlockedStageCount(totalCatches());
   unlockedLetters = logic.lettersForStages(CONFIG.unlock.stages, n);
   WORDS = FULL_POOL.filter(e => [...e.letters].every(l => unlockedLetters.has(l)));
-  // phrases gate on the same unlocked-letter set as words, so a Stream kid only
-  // reels phrases they can actually type (the seed is home-row, so all typeable)
+  // phrases/sentences gate on the same unlocked-letter set as words, so a kid
+  // only reels content they can actually type (both seeds are home-row, so
+  // everything typeable today, same as A1's phrases)
   PHRASES = PHRASE_POOL.filter(e => [...e.letters].every(l => unlockedLetters.has(l)));
+  SENTENCES = SENTENCE_POOL.filter(e => [...e.letters].every(l => unlockedLetters.has(l)));
   renderKeyLocks();
 }
 
@@ -352,10 +357,14 @@ const TIER_ORDER = ["legendary", "rare", "uncommon", "common"];   // rarity, har
 function rollWeight(tier)           { return logic.rollWeight(CONFIG.size, tier); }
 function pickTier()                 { return logic.pickTier(CONFIG.bite.tierOddsByRod[equippedRod().rodLevel]); }
 function buildReelPool(difficulty)  { return logic.buildReelPool(WORDS, difficulty, CONFIG.reel.minReelPoolSize); }
-// phrases for the current spot, matched to the fish's difficulty (same widening
-// machinery as words). Empty unless typeable phrases are tagged for save.location.
+// phrase/sentence content for the current spot, matched to the fish's
+// difficulty (same widening machinery as words). Phrases and sentences share
+// one tag schema (AD1), so they merge into a single content pool here; only
+// the entries tagged for save.location survive (Stream phrases at "stream",
+// A5 sentences at "ocean" — never both at once). Empty unless something
+// typeable is tagged for this spot.
 function buildPhrasePool(difficulty) {
-  const here = PHRASES.filter(p => p.location === save.location);
+  const here = [...PHRASES, ...SENTENCES].filter(p => p.location === save.location);
   return logic.buildReelPool(here, difficulty, CONFIG.reel.minPhrasePoolSize);
 }
 
@@ -727,6 +736,28 @@ function handleSpace() {
   }
 }
 
+// Forgiving punctuation (A5): same spirit as the spacebar — a real key the
+// kid must press (it's genuinely part of the sentence), but a wrong key while
+// a mark is due is a silent no-op, and a correct mark never touches tension.
+// Unlike a space, a mark can be the very last character of a sentence, so it
+// has to be able to finish the catch too.
+function handlePunct(key) {
+  if (phase === "reel" && reelMode === "phrase" && target[typed] === key) {
+    typed++;
+    tickReelWpm();                // a mark is a typed character too (WPM)
+    renderWord();
+    if (typed === target.length) finishReelUnit();
+  }
+}
+
+// Shared tail of "the current reel content is fully typed" — reached either
+// by a letter (the common case) or by a sentence-final punctuation mark (A5).
+function finishReelUnit() {
+  save.stats.wordsTyped++;
+  if (phase === "cast") startWait();
+  else if (phase === "reel") reelComplete();
+}
+
 function land(success) {
   phase = "done"; inputLocked = true;
   stopSwim();
@@ -856,10 +887,13 @@ document.addEventListener("keydown", (e) => {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (e.key.length !== 1) return;
   if (e.key === " ") { e.preventDefault(); handleSpace(); return; }   // forgiving spacebar (A1)
+  if (CONFIG.punctuation.chars.includes(e.key)) { handlePunct(e.key); return; }  // forgiving punctuation (A5)
   if (!/[a-z]/i.test(e.key)) return;                                  // a single letter, either case
 
   const expected = target[typed];
-  if (expected === " ") return;    // a letter where a space is due → forgiving no-op
+  // a letter pressed while a space/punctuation mark is due → forgiving no-op
+  // (mirrors handleSpace/handlePunct's own no-op when the wrong key shows up)
+  if (!/[a-z]/i.test(expected ?? "")) return;
   // Case matters only for a capital target (A2): a capital must be typed with
   // Shift (exact match). A lowercase target accepts either case, so the Pond —
   // lowercase-only forever — behaves exactly as before (a stray Shift is harmless).
@@ -872,11 +906,7 @@ document.addEventListener("keydown", (e) => {
     typed++;
     if (phase === "reel") { ({ tension } = logic.applyTension(tension, true, CONFIG.reel)); renderTension(); }
     renderWord();
-    if (typed === target.length) {
-      save.stats.wordsTyped++;
-      if (phase === "cast") startWait();
-      else if (phase === "reel") reelComplete();
-    }
+    if (typed === target.length) finishReelUnit();
   } else {
     recordKey(expected, false);
     sfxWrong();
@@ -1501,7 +1531,13 @@ function activateProfile(id) {
 }
 
 try {
-  [FULL_POOL, FISH] = await Promise.all([loadJson("data/words.json"), loadJson("data/fish.json")]);
+  // NB: PHRASE_POOL/SENTENCE_POOL were declared back in A1 but never actually
+  // fetched here — the Stream silently never reeled phrases (or capitals, or
+  // WPM) at runtime despite A1-A4 shipping. Fixed alongside A5's sentences.
+  [FULL_POOL, FISH, PHRASE_POOL, SENTENCE_POOL] = await Promise.all([
+    loadJson("data/words.json"), loadJson("data/fish.json"),
+    loadJson("data/phrases.json"), loadJson("data/sentences.json"),
+  ]);
   migrateLegacySave();
   showProfilePicker();
   syncInit();                        // fire-and-forget: wires sign-in + pulls when ready,

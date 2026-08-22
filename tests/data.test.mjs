@@ -8,11 +8,13 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { CONFIG } from "../config.js";
+import { wordCount } from "../logic.js";
 
 const load = p => JSON.parse(readFileSync(new URL(p, import.meta.url), "utf8"));
 const words = load("../data/words.json");
 const fish  = load("../data/fish.json");
-const phrases = load("../data/phrases.json");   // A1: Stream phrase content
+const phrases = load("../data/phrases.json");     // A1: Stream phrase content
+const sentences = load("../data/sentences.json"); // A5: Ocean sentence content
 const blocklist = new Set(load("../data/blocklist.json"));
 const TIERS = new Set(Object.keys(CONFIG.size.weightRangeByTier)); // source of truth
 
@@ -75,6 +77,50 @@ test("no duplicate phrases", () => {
 test("no blocklisted non-word slips into a phrase (same guard as the word pool)", () => {
   const bad = p => p.text.toLowerCase().split(" ").some(w => blocklist.has(w));
   assert.equal(offenders(phrases, bad, p => p.text), "", "blocklisted word in phrase");
+});
+
+test("sentences.json is a non-empty array of well-formed entries (A5)", () => {
+  assert.ok(Array.isArray(sentences) && sentences.length > 0);
+  // words (optionally comma-suffixed) joined by single spaces, ending in . ! or ?
+  // — rules out leading/trailing/double spaces and any other stray character
+  const shapeOk = text => /^([A-Za-z]+,? )*[A-Za-z]+[.!?]$/.test(text);
+  assert.equal(offenders(sentences, s => !shapeOk(s.text), s => s.text), "",
+    "sentence.text must be words joined by single spaces, ending in . ! or ?");
+  assert.equal(offenders(sentences, s => wordCount(s.text) < 2, s => s.text), "", "sentence must have 2+ words");
+  assert.equal(offenders(sentences, s => !Number.isInteger(s.d) || s.d < 1 || s.d > 4, s => s.text), "", "difficulty d not in 1..4");
+  assert.equal(offenders(sentences, s => !s.theme, s => s.text), "", "missing theme");
+  assert.equal(offenders(sentences, s => !s.location, s => s.text), "", "missing location");
+});
+
+test("sentence.letters is the sorted unique lowercase base letters of the text (punctuation stripped)", () => {
+  const wrong = s => s.letters !== [...new Set(s.text.toLowerCase().replace(/[^a-z]/g, ""))].sort().join("");
+  assert.equal(offenders(sentences, wrong, s => `${s.text}→${s.letters}`), "", "letters ≠ dedup-sorted(lowercase letters)");
+});
+
+test("capitals appear only in content tagged for a caps location, phrases and sentences alike (A2/A5)", () => {
+  const capsOk = new Set(CONFIG.capitals.fromLocations);
+  const bad = p => /[A-Z]/.test(p.text) && !capsOk.has(p.location);
+  assert.equal(offenders(sentences, bad, s => `${s.text}@${s.location}`), "", "capital in a non-caps location");
+});
+
+test("punctuation appears only in content tagged for a punctuation location (A5)", () => {
+  const punctOk = new Set(CONFIG.punctuation.fromLocations);
+  const chars = [...CONFIG.punctuation.chars];
+  const hasPunct = t => chars.some(ch => t.includes(ch));
+  const bad = p => hasPunct(p.text) && !punctOk.has(p.location);
+  assert.equal(offenders(sentences, bad, s => `${s.text}@${s.location}`), "", "punctuation in a non-punctuation location (sentences)");
+  assert.equal(offenders(phrases, bad, p => `${p.text}@${p.location}`), "", "punctuation in a non-punctuation location (phrases)");
+});
+
+test("no duplicate sentences", () => {
+  const list = sentences.map(s => s.text);
+  const dupes = [...new Set(list.filter((t, i) => list.indexOf(t) !== i))];
+  assert.deepEqual(dupes.slice(0, 5), [], "duplicate sentence(s)");
+});
+
+test("no blocklisted non-word slips into a sentence (same guard as the word pool)", () => {
+  const bad = s => s.text.toLowerCase().replace(/[.,!?]/g, "").split(" ").some(w => blocklist.has(w));
+  assert.equal(offenders(sentences, bad, s => s.text), "", "blocklisted word in sentence");
 });
 
 test("fish.json is a non-empty array of well-formed entries", () => {
