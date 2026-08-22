@@ -87,13 +87,15 @@ subject. Re-exporting cleanly from Gemini is better when you can get it.
 it over the pond scene). Nothing outstanding. Stream **fish need no art** — they
 reuse the shared per-tier sprites tinted by each species' `color`.
 
-### A6 — the Ocean biome (Marlin tier)
+### A6 — the Ocean biome (Marlin tier) — *code landed 2026-08-22, art pending*
 
 Phase 2's serial art dependency. Two real requests here — the **scene** and the
 **one legendary that gets its own sprite (Muskie Quixote)**. Everything else the
-Ocean adds reuses existing art: the ~8–10 ocean sport fish (marlin, tuna,
-mahi…) share the per-tier sprites tinted by `color`, exactly like the Stream, so
-they need **no new art**.
+Ocean adds reuses existing art: the 10 ocean sport fish (Marlin Brando, Tuna
+Turner, Red Herring…) share the per-tier sprites tinted by `color`, exactly like
+the Stream, so they need **no new art**. Same for **Koi Story**, the new Pond
+legendary A6 added when Muskie Quixote moved out to the Ocean — it tints the
+shared `fish-legendary.png` gold (`#ffd36e`) against Muskie's lavender.
 
 ```
 ART NEEDED: the Ocean fishing scene (Marlin tier background)
@@ -111,9 +113,12 @@ Save as:  assets/background-ocean.png
 Size:     match assets/background.png's aspect (~1152×466 / roughly 2.47:1),
           waterline at ~55% height so the existing boat/bobber/fish positions sit
           right; pixelated-friendly, opaque full-bleed (a scene, not a sprite).
-Wired in: not yet — A6 adds `#scene.loc-ocean` mirroring the `.loc-stream` rule
-          in style.css (layers this over the pond background). Drop the PNG now;
-          it lights up when A6's one-line CSS rule lands.
+Wired in: ✅ YES — `#scene.loc-ocean` in style.css layers this over the pond
+          background, exactly like `.loc-stream`. The rule is already live, so
+          **the moment this PNG lands in assets/ the Ocean scene appears with no
+          code change.** Until then the Ocean shows the pond art (and the server
+          logs a harmless 404 for this filename — that's the expected fallback,
+          not a bug).
 ```
 
 ```
@@ -132,10 +137,16 @@ Save as:  assets/fish-muskie.png
 Size:     ~128×86 (landscape ~3:2, matching the other fish sprites' proportions
           but higher-res since it's the hero), transparent background, tight crop
           to the sprite. Pixelated-friendly.
-Wired in: not yet — A6/A8 point the Ocean's legendary tier at this instead of the
-          shared fish-legendary.png (a `#fish.tier-legendary.loc-ocean` override,
-          or a per-species sprite hook). It's the one Ocean fish worth distinct
-          art; the rest tint the shared sprite.
+Wired in: not yet — and deliberately so, unlike the background above. The scene
+          rule can ship early because it *layers* (a missing PNG just shows the
+          pond art underneath). A fish sprite **replaces** `background-image`, so
+          wiring it before the file exists would render the Ocean's legendary
+          invisible. So this one waits for the PNG, then gets a one-line rule:
+          `#scene.loc-ocean #fish.tier-legendary { background-image: url(...) }`
+          — note the selector hangs off `#scene`, which carries the `loc-*` class
+          (`#fish` itself never does). Tell Claude when it lands and it's a
+          one-liner. It's the one Ocean fish worth distinct art; the rest tint
+          the shared sprite.
 ```
 
 **Optional / not yet wired — deep-sea + fly rod shop icons.** The advanced plan

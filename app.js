@@ -212,6 +212,10 @@ function recomputeLocations() {
   save.location ??= CONFIG.tiers[0].location;
   save.unlockedLocations = logic.locationsForRods(CONFIG.tiers, CONFIG.shop.rods, save.upgrades.owned.rod);
   save.rank = logic.rankForState(CONFIG.tiers, save.unlockedLocations);
+  // the gate is the owned rods, so a `location` the rods don't justify (an
+  // edited/rolled-back save, or a spot a config change retired) falls back home
+  // rather than quietly fishing a locked spot
+  if (!save.unlockedLocations.includes(save.location)) save.location = CONFIG.tiers[0].location;
 }
 // A4: widen records[fishId] from a bare weight to { weight, wpm }. Pre-A4 saves
 // stored just the number; convert in place once on load. Idempotent.
@@ -887,7 +891,9 @@ document.addEventListener("keydown", (e) => {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (e.key.length !== 1) return;
   if (e.key === " ") { e.preventDefault(); handleSpace(); return; }   // forgiving spacebar (A1)
-  if (CONFIG.punctuation.chars.includes(e.key)) { handlePunct(e.key); return; }  // forgiving punctuation (A5)
+  // forgiving punctuation (A5). preventDefault like the spacebar: "?" is
+  // Firefox's quick-find-links shortcut, and these are game keys here.
+  if (CONFIG.punctuation.chars.includes(e.key)) { e.preventDefault(); handlePunct(e.key); return; }
   if (!/[a-z]/i.test(e.key)) return;                                  // a single letter, either case
 
   const expected = target[typed];

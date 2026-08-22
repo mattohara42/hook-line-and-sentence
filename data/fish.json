@@ -8,7 +8,7 @@
   {"id": "trout",      "name": "Sir Trout-a-Lot",   "species": "Brook Trout",       "tier": "uncommon",  "difficulty": 2, "coins": 3,  "color": "#c96a83", "location": "pond",   "blurb": "Knighted for services to swimming upstream."},
   {"id": "pike",       "name": "The Duke of Pike",  "species": "Northern Pike",     "tier": "rare",      "difficulty": 3, "coins": 8,  "color": "#4a7a96", "location": "pond",   "blurb": "Old money. Older teeth."},
   {"id": "walleye",    "name": "Walter the Legend", "species": "Walleye",           "tier": "rare",      "difficulty": 3, "coins": 8,  "color": "#f0c060", "location": "pond",   "blurb": "Every pond has a Walter. This one's ours."},
-  {"id": "muskie",     "name": "Muskie Quixote",    "species": "Muskellunge",       "tier": "legendary", "difficulty": 4, "coins": 20, "color": "#d4c5f0", "location": "pond",   "blurb": "Tilting at bobbers since forever. The fish of ten thousand casts."},
+  {"id": "koi",        "name": "Koi Story",         "species": "Golden Koi",        "tier": "legendary", "difficulty": 4, "coins": 20, "color": "#ffd36e", "location": "pond",   "blurb": "To the far bank — and beyond!"},
 
   {"id": "dace",       "name": "Dace to Meet You",  "species": "Common Dace",       "tier": "common",    "difficulty": 1, "coins": 1,  "color": "#a9c2cf", "location": "stream", "blurb": "Darts off before the handshake. Every time."},
   {"id": "chub",       "name": "Chub-by Cheeks",    "species": "Creek Chub",        "tier": "common",    "difficulty": 1, "coins": 1,  "color": "#b7a07a", "location": "stream", "blurb": "Hangs out under the same rock. It's a whole thing."},
@@ -18,5 +18,17 @@
   {"id": "browntrout", "name": "Brown-ie Points",   "species": "Brown Trout",       "tier": "uncommon",  "difficulty": 2, "coins": 3,  "color": "#a9773f", "location": "stream", "blurb": "Earns them constantly. Cashes them never."},
   {"id": "grayling",   "name": "Grayling Skies",    "species": "Arctic Grayling",   "tier": "uncommon",  "difficulty": 2, "coins": 3,  "color": "#7f9bc4", "location": "stream", "blurb": "That big sail fin? Purely for the drama."},
   {"id": "steelhead",  "name": "Steel-headstrong",  "species": "Steelhead",         "tier": "rare",      "difficulty": 3, "coins": 8,  "color": "#8fa6b8", "location": "stream", "blurb": "Swam to the ocean and back just to prove a point."},
-  {"id": "salmon",     "name": "Salmon Chanted Evening", "species": "Chinook Salmon","tier": "rare",     "difficulty": 3, "coins": 8,  "color": "#e08a6a", "location": "stream", "blurb": "Upstream, uphill, against the odds. Very inspirational."}
+  {"id": "salmon",     "name": "Salmon Chanted Evening", "species": "Chinook Salmon","tier": "rare",     "difficulty": 3, "coins": 8,  "color": "#e08a6a", "location": "stream", "blurb": "Upstream, uphill, against the odds. Very inspirational."},
+
+  {"id": "herring",    "name": "Red Herring",       "species": "Atlantic Herring",  "tier": "common",    "difficulty": 1, "coins": 1,  "color": "#c96a5a", "location": "ocean",  "blurb": "Leads every investigation absolutely nowhere."},
+  {"id": "mackerel",   "name": "Holy Mackerel",     "species": "Atlantic Mackerel", "tier": "common",    "difficulty": 1, "coins": 1,  "color": "#5b8fa8", "location": "ocean",  "blurb": "Genuinely astonished to be here. Every single time."},
+  {"id": "anchovy",    "name": "Anchovy Chance",    "species": "European Anchovy",  "tier": "common",    "difficulty": 1, "coins": 1,  "color": "#8a99a6", "location": "ocean",  "blurb": "Divides pizzas. Unites nobody."},
+  {"id": "sardine",    "name": "Sardine Packed",    "species": "Pacific Sardine",   "tier": "common",    "difficulty": 1, "coins": 1,  "color": "#adc0c4", "location": "ocean",  "blurb": "Personal space is a dry-land concept."},
+  {"id": "mahi",       "name": "Mahi Mahi Mia",     "species": "Mahi-Mahi",         "tier": "uncommon",  "difficulty": 2, "coins": 3,  "color": "#3fbfa0", "location": "ocean",  "blurb": "Here we go again."},
+  {"id": "cod",        "name": "Oh My Cod",         "species": "Atlantic Cod",      "tier": "uncommon",  "difficulty": 2, "coins": 3,  "color": "#9aa36f", "location": "ocean",  "blurb": "The pun that started it all."},
+  {"id": "snapper",    "name": "Snappy Comeback",   "species": "Red Snapper",       "tier": "uncommon",  "difficulty": 2, "coins": 3,  "color": "#c04a4a", "location": "ocean",  "blurb": "Always has one. Never on time."},
+  {"id": "marlin",     "name": "Marlin Brando",     "species": "Blue Marlin",       "tier": "rare",      "difficulty": 3, "coins": 8,  "color": "#3a5fa8", "location": "ocean",  "blurb": "Coulda been a contender. Is one, actually."},
+  {"id": "tuna",       "name": "Tuna Turner",       "species": "Bluefin Tuna",      "tier": "rare",      "difficulty": 3, "coins": 8,  "color": "#42607a", "location": "ocean",  "blurb": "Simply the best. Better than all the rest."},
+  {"id": "swordfish",  "name": "En Garde",          "species": "Swordfish",         "tier": "rare",      "difficulty": 3, "coins": 8,  "color": "#7a7f99", "location": "ocean",  "blurb": "Fences with the bobber. Usually wins."},
+  {"id": "muskie",     "name": "Muskie Quixote",    "species": "Muskellunge",       "tier": "legendary", "difficulty": 4, "coins": 20, "color": "#d4c5f0", "location": "ocean",  "blurb": "A freshwater fish, impossibly far out to sea. Nobody can explain it. Least of all him."}
 ]

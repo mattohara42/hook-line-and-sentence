@@ -72,6 +72,15 @@ h1 {
   background-size: cover, cover;
   background-repeat: no-repeat, no-repeat;
 }
+/* A6: the Ocean biome, same self-resolving layering as the Stream above — the
+   pond art shows through until assets/background-ocean.png lands (prompt in
+   ART.md), then covers it with zero code change. */
+#scene.loc-ocean {
+  background-image: url("assets/background-ocean.png"), url("assets/background.png");
+  background-position: center center, center center;
+  background-size: cover, cover;
+  background-repeat: no-repeat, no-repeat;
+}
 #scene.shake { animation: shake 0.3s; }
 @keyframes shake {
   20% { transform: translate(-5px, 2px); } 40% { transform: translate(4px, -2px); }

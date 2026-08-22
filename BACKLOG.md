@@ -17,6 +17,22 @@ Ideas captured during design/build. Nothing here expands the current milestone.
 - More ponds/locations; weather; real day/night tied to clock.
 - Sound design pass beyond ambient loop.
 
+## Finger guide
+- **Punctuation has no finger guidance (found during A5, 2026-08-22).** The
+  guide keyboard is only `qwertyuiop` / `asdfghjkl;` / `zxcvbnm`, so when a
+  sentence's next character is `.` `,` `!` or `?`, `updateGuide()` finds no
+  `LETTER_FINGER` entry and returns early — the hands go **blank** mid-sentence.
+  Gameplay is fine (the marks type correctly); it's the teaching aid that's
+  missing, which matters in a tutor. A2 set the precedent of adding new keys to
+  the guide (it added the two Shift keys for capitals), so this is the same job
+  for punctuation. Not folded into A5 because it isn't a one-liner: the natural
+  fix extends the bottom row to `zxcvbnm,./` (10 keys), which pushes the row
+  past the guide's current `S(430)` width and shifts the right Shift key, so the
+  guide has to grow and be re-checked at small window sizes. `!` is the awkward
+  one — it's Shift+1, on a number row the guide doesn't render at all; either add
+  the row (10 keys a beginner never uses, dimmed as locked at the Pond) or accept
+  `!` staying unguided like the documented look-ahead limitation in `SPEC.md`.
+
 ## Release hygiene
 - **Remove the 🧪 test shortcut before a public release** — the "unlock all spots"
   tackle-box button is a build/playtest affordance gated by `CONFIG.dev.testShortcuts`.

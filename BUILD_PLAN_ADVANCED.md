@@ -4,12 +4,14 @@ Companion to `SPEC.md`, `BUILD_PLAN.md` (v1), and the **Advanced Progression**
 epic in `BACKLOG.md`. This breaks the epic into sized, ordered, verifiable
 milestones — same rules as v1: **one milestone at a time, each ends playable.**
 
-**Status:** A5 done (2026-08-22) — **Phase 2 (the Ocean) is underway**; A6
-(fish set + biome scene + deep-sea rod gate) is next. The only art still
-outstanding for Phase 1 is the Stream background PNG (request in `ART.md`);
-the code lights up when it lands. **Prerequisite:** close v1 (M4b Firestore
-live-verified) first — this epic adds new save fields, so it wants a stable
-sync base and a clean migration story. (Met — v1 complete.)
+**Status:** A6 done (2026-08-22) — **Phase 2 (the Ocean) is playable end to
+end**; A7 (sport-fish "fight" mechanic) is next. All three biomes now have
+their own fish, content and gate. The only outstanding art is the two Ocean
+PNGs (background + the Muskie hero sprite) and the Stream background —
+requests in `ART.md`; the scenes self-resolve when they land.
+**Prerequisite:** close v1 (M4b Firestore live-verified) first — this epic
+adds new save fields, so it wants a stable sync base and a clean migration
+story. (Met — v1 complete.)
 
 ## Guardrails (inherited, non-negotiable)
 
@@ -144,12 +146,37 @@ capitals, and chases their own best time.
   punctuation mark was due confirmed not to raise tension, and a mid-sentence
   comma confirmed not to land the catch early.)*
 
-### A6 — Ocean fish set + biome scene + deep-sea rod gate
-- `data/fish.json`: `location:"ocean"` sport fish (marlin, tuna, mahi…), with
-  **Muskie Quixote** as the ocean legendary.
-- `config.js`: deep-sea rod (`unlocksLocation:"ocean"`).
-- `ART.md`: Ocean scene + ocean-fish sprites.
+### ✅ A6 — Ocean fish set + biome scene + deep-sea rod gate (done 2026-08-22)
+- `data/fish.json`: **10 `location:"ocean"` sport fish** across common/uncommon/
+  rare (Red Herring, Holy Mackerel, Mahi Mahi Mia, Marlin Brando, Tuna Turner,
+  En Garde…), with **Muskie Quixote moved from the Pond** to be the ocean
+  legendary, per the locked plan. They reuse the shared per-tier sprites tinted
+  by `color`, so **no per-fish art**.
+- **New Pond legendary — `Koi Story`.** Moving Muskie out left the Pond with no
+  legendary at all, which both broke the "home water has a fish for every
+  rollable tier" data test and quietly made the Pond *worse* (a legendary roll
+  would degrade to rare forever) — against the "the Pond never changes"
+  guardrail. A new gold koi keeps the Pond whole. *Assumption recorded: existing
+  saves that caught Muskie keep the catch, but it now files under the Ocean in
+  the journal — no data loss, just a nicer-than-expected souvenir.*
+- `config.js`: the **deep-sea rod** ("The Deep Endeavor", 150 coins,
+  `unlocksLocation:"ocean"`) + a `rodLevel: 4` entry in `bite.tierOddsByRod`
+  (the best odds in the game). Ocean fish keep flat coin values, matching how
+  the Stream priced against the Pond.
+- `logic.js`: **`locationsForRods` is now cumulative.** Saving straight for the
+  deep-sea rod used to unlock the Ocean while leaving the Stream shut — dropping
+  a kid into punctuated sentences without the spacebar/capitals the Stream
+  teaches, and showing a Stream journal group they couldn't fish. Tiers are an
+  ordered curriculum, so a later unlock now opens everything up to it.
+- `style.css`: `#scene.loc-ocean`, mirroring `.loc-stream`'s self-resolving
+  layering — the Ocean shows pond art until `background-ocean.png` lands.
+- `tests/`: three new data guards (every rod's `rodLevel` has tier odds — a
+  missing one crashed `pickTier` at bite; every non-home spot has a rod that
+  opens it; every tier has fish) + cumulative-unlock logic tests.
 - **Done when:** the deep-sea rod gates the Ocean; ocean fish + scene present.
+  *(Verified: 55 unit tests + a real-browser Playwright run — rod unbuyable at 0
+  coins, rank-up ceremony on purchase, rank→marlin, all three spots in the
+  switcher, ocean fish actually served, sentences reeling, journal grouped.)*
 
 ### A7 — Sport-fish "fight" mechanic
 - `app.js`: sentence reeled in clauses; the fish "runs" (a beat) between
