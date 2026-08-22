@@ -172,6 +172,29 @@ export function isEvenCadence(intervals, minKeys, maxCv) {
   return Math.sqrt(variance) / mean <= maxCv;
 }
 
+// Pick n entries for a multi-segment fight (A7), preferring not to repeat: a
+// legendary that takes three sentences shouldn't reel the same one three times.
+// Falls back to repeats only when the pool is genuinely smaller than n, and
+// even then spreads them out by cycling rather than re-rolling. rnd() defaults
+// to Math.random; pass a stub to make a fight deterministic in tests.
+export function pickDistinct(items, n, rnd = Math.random) {
+  if (!items.length || n <= 0) return [];
+  const bag = [...items], out = [];
+  while (out.length < n) {
+    if (!bag.length) bag.push(...items);            // pool exhausted — refill and keep going
+    out.push(...bag.splice(Math.floor(rnd() * bag.length), 1));
+  }
+  return out;
+}
+
+// How many segments (sentences) a fish takes to land at a fight location (A7).
+// Unknown tiers — and every non-fight water — land in a single segment, so the
+// Pond and the Stream are untouched by the Ocean's fight pacing.
+export function segmentsForTier(fightCfg, location, tier) {
+  if (!fightCfg?.fromLocations?.includes(location)) return 1;
+  return Math.max(1, fightCfg.segmentsByTier?.[tier] ?? 1);
+}
+
 // The tier to actually serve when a rolled tier has no fish at the current spot
 // (A3): step down the rarity order (hardest→easiest) to the first present tier,
 // then up if still none. e.g. the Stream has no legendary yet, so a legendary

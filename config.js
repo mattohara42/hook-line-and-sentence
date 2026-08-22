@@ -78,6 +78,22 @@ export const CONFIG = {
   // (stddev/mean); higher = more forgiving.
   flyCast: { minKeys: 2, maxCadenceCv: 0.5 },
 
+  // A7: the sport-fish "fight" — the Ocean's landing rhythm. A catch is reeled
+  // in *segments* (one sentence each), and the fish "runs" between them, and
+  // again at each mid-sentence clause break. A run is pure theatre: it darts
+  // the fish back on screen and beats for a moment, but **no progress is ever
+  // lost and tension is never touched** — slow + careful still always lands.
+  // Bigger fish take more segments, which is what makes a marlin feel like a
+  // fight and a sardine feel like a snack. Set the *RunMs values to 0 to keep
+  // the drama but drop the pause entirely.
+  fight: {
+    fromLocations: ["ocean"],
+    segmentsByTier: { common: 1, uncommon: 1, rare: 2, legendary: 3 },
+    clauseRunMs: 550,    // beat at a comma — close to the established word beat
+    segmentRunMs: 900,   // longer beat between whole sentences
+    runSurgePx: 90,      // how far the fish darts back (design-space px, visual only)
+  },
+
   shop: {
     // `unlocksLocation` graduates the profile to a new fishing spot on purchase
     // (A0): bamboo opens the Stream, deep-sea opens the Ocean (A6). Carbon sits

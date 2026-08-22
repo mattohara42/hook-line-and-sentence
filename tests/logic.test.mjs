@@ -8,7 +8,7 @@ import {
   unlockedStageCount, lettersForStages, pickTier, weightClass, rollWeight, buildReelPool,
   applyTension, catchReward, isPersonalBest, countsTowardTiming, overallAccuracy,
   locationsForRods, rankForState, tokenize, wordCount, tierWithFallback,
-  computeWpm, isPersonalBestWpm, isEvenCadence,
+  computeWpm, isPersonalBestWpm, isEvenCadence, pickDistinct, segmentsForTier,
 } from "../logic.js";
 
 const TIER_ORDER = ["legendary", "rare", "uncommon", "common"];   // hardest → easiest
@@ -258,6 +258,47 @@ test("tierWithFallback degrades a rolled tier to what the spot actually has (A3)
   assert.equal(tierWithFallback(new Set(["rare"]), "common", TIER_ORDER), "rare");
   // nothing present → hand back the desired tier (caller handles the empty pick)
   assert.equal(tierWithFallback(new Set(), "uncommon", TIER_ORDER), "uncommon");
+});
+
+test("pickDistinct fills a fight without repeating while the pool allows (A7)", () => {
+  const pool = ["a", "b", "c", "d"];
+  const seq = [0, 0, 0, 0];                    // always take the first of what's left
+  let i = 0;
+  const rnd = () => seq[i++ % seq.length];
+  assert.deepEqual(pickDistinct(pool, 3, rnd), ["a", "b", "c"]);   // no repeats
+  assert.equal(pickDistinct(pool, 1, rnd).length, 1);
+  assert.deepEqual(pickDistinct(pool, 0, rnd), []);
+  assert.deepEqual(pickDistinct([], 3, rnd), []);                  // empty pool never throws
+});
+
+test("pickDistinct repeats only once the pool is genuinely exhausted (A7)", () => {
+  const rnd = () => 0;
+  // a 2-entry pool asked for 5 must still return 5, cycling rather than stalling
+  const got = pickDistinct(["a", "b"], 5, rnd);
+  assert.equal(got.length, 5);
+  assert.deepEqual([...new Set(got)].sort(), ["a", "b"]);
+  // the first pass uses each entry before any repeat appears
+  assert.deepEqual([...new Set(got.slice(0, 2))].sort(), ["a", "b"]);
+});
+
+test("segmentsForTier scales the fight by tier, and only at fight waters (A7)", () => {
+  const cfg = { fromLocations: ["ocean"], segmentsByTier: { common: 1, rare: 2, legendary: 3 } };
+  assert.equal(segmentsForTier(cfg, "ocean", "legendary"), 3);
+  assert.equal(segmentsForTier(cfg, "ocean", "rare"), 2);
+  assert.equal(segmentsForTier(cfg, "ocean", "common"), 1);
+  // the Pond and the Stream never fight — one segment whatever the tier
+  assert.equal(segmentsForTier(cfg, "stream", "legendary"), 1);
+  assert.equal(segmentsForTier(cfg, "pond", "legendary"), 1);
+  // unknown tier, missing config, and a bad count all defend to a single segment
+  assert.equal(segmentsForTier(cfg, "ocean", "mythic"), 1);
+  assert.equal(segmentsForTier(undefined, "ocean", "rare"), 1);
+  assert.equal(segmentsForTier({ fromLocations: ["ocean"], segmentsByTier: { rare: 0 } }, "ocean", "rare"), 1);
+});
+
+test("a fight's segments never exceed the sentence pool's real content (A7 sanity)", () => {
+  // guards the config against asking for more sentences than the Ocean has
+  const most = Math.max(...Object.values(CONFIG.fight.segmentsByTier));
+  assert.ok(most >= 1 && most <= 5, `segmentsByTier tops out at ${most} — that's a long fight for a kid`);
 });
 
 test("buildReelPool works on phrase entries too (content-agnostic on .d)", () => {

@@ -255,6 +255,16 @@ const PUNS = {
     "Nice and even — textbook fly cast",
     "That's the rhythm! The trout are impressed",
   ],
+  // A7: the fish makes a run mid-fight (Ocean). Drama, never a scolding — the
+  // kid hasn't done anything wrong, and nothing is lost while these show.
+  fishRun: [
+    "It's running! Hold steady…",
+    "Whoa — it's taking line!",
+    "It dove deep! Easy does it",
+    "Still fighting! You've got this",
+    "That's a strong one — stay with it",
+    "It's not giving up yet!",
+  ],
   bite: [
     "Fish on! Holy mackerel!",
     "Oh my cod — reel it in!",
@@ -297,6 +307,8 @@ let fish = null;           // roster entry currently on the line
 let junk = null;           // junk item on the line instead of a fish (comedy), or null
 let reelPool = [];         // words matched to the hooked fish's difficulty
 let reelMode = "words";    // "words" (Pond) | "phrase" (Stream, A1) — set at each bite
+let reelSegments = [];     // A7: the sentences this catch is fought over (1 outside the Ocean)
+let segIndex = 0;          // which of those we're currently reeling
 let wordsToLand = 0;
 let wordsLeft = 0;
 let inputLocked = false;
@@ -668,8 +680,15 @@ function bite() {
   reelMode = phrasePool.length ? "phrase" : "words";
   reelChars = 0; reelActiveMs = 0; reelLastKeyMs = 0;   // A4: fresh WPM window per catch
   if (reelMode === "phrase") {
-    target = pick(phrasePool).text; typed = 0; lastKeyTime = 0;
-    wordsToLand = logic.wordCount(target);
+    // A7: at a fight location a bigger fish takes more segments — one sentence
+    // each — so a marlin is a fight and a sardine is a snack. Everywhere else
+    // this is 1, leaving the Stream's single-phrase catch exactly as it was.
+    const segs = logic.segmentsForTier(CONFIG.fight, save.location, tier);
+    reelSegments = logic.pickDistinct(phrasePool, segs);
+    segIndex = 0;
+    target = reelSegments[0].text; typed = 0; lastKeyTime = 0;
+    // the whole fight's worth of words, so the reel meter tracks the full landing
+    wordsToLand = reelSegments.reduce((n, s) => n + logic.wordCount(s.text), 0);
   } else {
     reelPool = buildReelPool(junk ? 1 : fish.difficulty);
     wordsToLand = CONFIG.reel.wordsToLandByTier[tier];
@@ -723,8 +742,37 @@ function wordComplete() {
 // wordComplete's 450ms beat; a phrase pulls its final word straight to the boat
 // (its beats already happened at each typed space).
 function reelComplete() {
-  if (reelMode === "phrase") { pullFishOneWord(); if (wordsLeft <= 0) land(true); }
-  else wordComplete();
+  if (reelMode !== "phrase") return wordComplete();
+  pullFishOneWord();
+  // A7: a fight runs across several sentences — land only once the last one is
+  // in. (wordsToLand spans every segment, so these two agree; the || keeps a
+  // short-count from ever hanging the catch mid-fight.)
+  if (wordsLeft <= 0 || segIndex + 1 >= reelSegments.length) return land(true);
+  segIndex++;
+  fishRun(CONFIG.fight.segmentRunMs, () => {
+    target = reelSegments[segIndex].text; typed = 0; lastKeyTime = 0;
+  });
+}
+
+// A7: the fish makes a run. Pure theatre — it darts back on screen and the reel
+// beats for a moment, but `wordsLeft` is untouched, so **no progress is lost**
+// and tension never moves. The swim RAF already eases fishX toward fishTX, so
+// nudging the target outward and restoring it afterwards is the whole animation.
+function fishRun(ms, then) {
+  inputLocked = true;
+  updateGuide(null);                      // hands rest through the beat, like the word pause
+  fishTX += CONFIG.fight.runSurgePx;      // dart away…
+  if (REDUCE_MOTION) drawFish(fishTX, fishTY);
+  shakeScene();
+  sfxBite();
+  setStatus(pick(PUNS.fishRun));
+  later(() => {
+    setFishTarget();                      // …and back to where the kid actually reeled it to
+    if (REDUCE_MOTION) drawFish(fishTX, fishTY);
+    then?.();
+    inputLocked = false;
+    renderWord();                         // repaints the word and restores the finger guide
+  }, ms);
 }
 
 // Forgiving spacebar (A1): it only ever advances between the words of a phrase,
@@ -750,9 +798,16 @@ function handlePunct(key) {
     typed++;
     tickReelWpm();                // a mark is a typed character too (WPM)
     renderWord();
+    // the sentence's last character lands (or advances) the catch; a
+    // mid-sentence mark is a clause break, and at a fight water the fish
+    // uses it to make a run (A7)
     if (typed === target.length) finishReelUnit();
+    else if (fightWater()) fishRun(CONFIG.fight.clauseRunMs);
   }
 }
+// A7: fight pacing is a property of the water, not the fish — the Stream's
+// phrases carry no punctuation anyway, so it never sees a clause run.
+function fightWater() { return CONFIG.fight.fromLocations.includes(save.location); }
 
 // Shared tail of "the current reel content is fully typed" — reached either
 // by a letter (the common case) or by a sentence-final punctuation mark (A5).
