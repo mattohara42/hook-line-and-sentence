@@ -4,11 +4,13 @@ Companion to `SPEC.md`, `BUILD_PLAN.md` (v1), and the **Advanced Progression**
 epic in `BACKLOG.md`. This breaks the epic into sized, ordered, verifiable
 milestones — same rules as v1: **one milestone at a time, each ends playable.**
 
-**Status:** A7 done (2026-08-22) — **only A8 (the Muskie prestige capstone)
-remains in this epic.** All three biomes have their own fish, content, gate and
-pacing. The only outstanding art is the two Ocean PNGs (background + the Muskie
-hero sprite) and the Stream background — requests in `ART.md`; the scenes
-self-resolve when they land.
+**Status: ✅ COMPLETE (2026-08-22) — A0 through A8 all shipped.** Minnow →
+Mackerel → Marlin → Muskie is playable end to end: single home-row words at the
+Pond, phrases and capitals at the Stream, punctuated sentences fought in clauses
+at the Ocean, and the Muskie capstone to close it. Outstanding work is **art
+only** — three PNGs (Stream background, Ocean background, Muskie hero sprite),
+requests in `ART.md`; the scenes self-resolve when they land — plus a real kid
+playtest of the A7 fight beats (see `BACKLOG.md`).
 **Prerequisite:** close v1 (M4b Firestore live-verified) first — this epic
 adds new save fields, so it wants a stable sync base and a clean migration
 story. (Met — v1 complete.)
@@ -208,11 +210,42 @@ capitals, and chases their own best time.
   escapes. A separate regression confirmed the **Pond and Stream see no runs at
   all**, still land catches, and throw no errors.)*
 
-### A8 — Muskie prestige capstone
-- `logic.js`/`app.js`: landing **Muskie Quixote** awards the **Muskie** rank +
-  a bigger-than-usual capstone celebration; a journal badge.
+### ✅ A8 — Muskie prestige capstone (done 2026-08-22)
+- `config.js`: `CONFIG.prestige` — rank, fish id, label, badge, hold time. It is
+  deliberately **not** in `CONFIG.tiers` (a logic test enforces this): everything
+  in that table is unlocked by buying a rod, and the capstone must not be
+  purchasable.
+- `logic.js`: `rankForProfile()` (prestige outranks any location-derived rank)
+  and `earnsPrestige()` (the right fish, first time only — a second Muskie is a
+  great day, not a second ceremony). Both tested, including the defensive cases
+  where the config is missing.
+- **Prestige is derived, not stored.** It's held by *having caught the fish*
+  (`collection[prestige.fishId] > 0`) rather than a save flag, so it can never
+  desync from the collection, needs no migration, and credits a save that landed
+  the legendary before A8 existed the moment it loads — the same way badges
+  already backfill.
+- `app.js`: the capstone ceremony — the rank-up banner held longer, gold-framed
+  and glowing, with rolling confetti and the rare-catch chime, plus a
+  `Muskie Master` journal badge ("The Deep End" is *any* legendary; this is
+  *the* one). It queues **after** any letter-unlock banner so two celebrations
+  never collide, and the recast waits for both.
+- **Also surfaced the rank at all.** `save.rank` had been written since A0 and
+  **read by nothing** — "You made Mackerel!" was a one-off toast with no lasting
+  record anywhere. The journal now shows the current rank under the badge count,
+  for every tier, not just Muskie.
 - **Done when:** catching the legendary awards the Muskie rank with its own
-  ceremony.
+  ceremony. *(Verified: 64 unit tests + a 21-check real-browser run that landed
+  Muskie Quixote (45 lb LUNKER), saw the gold capstone banner, confirmed the
+  rank flips to `muskie` **without a reload**, the badge and collection record,
+  the journal reading "🏆 Muskie Master", prestige surviving a reload, and a
+  second Muskie **not** re-firing the ceremony. A Pond regression confirmed the
+  restructured `land()` still lands catches, keeps recasting, and never grants
+  prestige by accident.)*
+
+**→ The Ocean ships, and with it the whole Advanced Progression epic: A0–A8
+complete.** A kid can go Minnow → Mackerel → Marlin → Muskie, from single home-row
+words to punctuated sentences fought in clauses. The only outstanding work is
+art (three PNGs, see `ART.md`) and a real kid playtest of the fight beats.
 
 **→ Ocean ships:** Marlin kids fight full sentences; Muskie is the endgame.
 

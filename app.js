@@ -211,7 +211,7 @@ function recomputeUnlocks() {
 function recomputeLocations() {
   save.location ??= CONFIG.tiers[0].location;
   save.unlockedLocations = logic.locationsForRods(CONFIG.tiers, CONFIG.shop.rods, save.upgrades.owned.rod);
-  save.rank = logic.rankForState(CONFIG.tiers, save.unlockedLocations);
+  save.rank = logic.rankForProfile(CONFIG.tiers, save.unlockedLocations, CONFIG.prestige, hasPrestige());
   // the gate is the owned rods, so a `location` the rods don't justify (an
   // edited/rolled-back save, or a spot a config change retired) falls back home
   // rather than quietly fishing a locked spot
@@ -839,9 +839,16 @@ function land(success) {
     burst(150, 240, 14);
     const stagesBefore = unlockedStageCount(totalCatches());
     const firstCatch = !save.collection[fish.id];
+    // A8: asked *before* the collection is credited, since prestige is derived
+    // from it — a second Muskie is a great day, not a second ceremony
+    const prestigeNow = logic.earnsPrestige(CONFIG.prestige, fish.id, hasPrestige());
     const amount = logic.catchReward(fish.coins, firstCatch, CONFIG.economy.firstCatchBonus);
     save.coins += amount;
     save.collection[fish.id] = (save.collection[fish.id] ?? 0) + 1;
+    // the collection just changed, so the derived rank may have too (A8) —
+    // refresh it now so persistSave below stores the Muskie rank, rather than
+    // it only appearing after the next reload
+    if (prestigeNow) recomputeLocations();
     // weight roll + personal-best tracking (flavor only, no coin/difficulty effect)
     save.records ??= {};                        // back-compat for pre-records saves
     const { weight, cls } = rollWeight(fish.tier);
@@ -875,13 +882,21 @@ function land(success) {
     setStatus((firstCatch ? "NEW! " : "") + pun + sizeNote + wpmNote + weightBestNote);
     if (collectionOpen) renderCollection();
     const stagesAfter = unlockedStageCount(totalCatches());
+    let delay = CONFIG.reel.recastDelayMs;
     if (stagesAfter > stagesBefore) {
       const fresh = CONFIG.unlock.stages.slice(stagesBefore, stagesAfter).flatMap(s => [...s.letters]);
       recomputeUnlocks();
       showUnlock(fresh);
-      later(startCast, CONFIG.unlock.celebrateMs);
-      return;
+      delay = CONFIG.unlock.celebrateMs;
     }
+    // A8: the capstone queues *after* any letter banner, so the two celebrations
+    // never land on top of each other — and the recast waits for both
+    if (prestigeNow) {
+      later(showPrestige, delay);
+      delay += CONFIG.prestige.celebrateMs;
+    }
+    later(startCast, delay);
+    return;
   } else {
     save.stats.escapes = (save.stats.escapes ?? 0) + 1;
     persistSave();                              // flush accumulated stats on escape
@@ -894,15 +909,29 @@ function land(success) {
 }
 
 // shared celebration banner over the pond (letter unlocks + A0 rank-ups)
-function showBanner(title, big) {
+function showBanner(title, big, ms = CONFIG.unlock.celebrateMs) {
   const banner = $("unlock-banner");
   banner.querySelector(".banner-title").textContent = title;
   banner.querySelector(".letters").textContent = big;
   banner.classList.add("show");
   burst(360, 150, 16);
   sfxUnlock();
-  setTimeout(() => banner.classList.remove("show"), CONFIG.unlock.celebrateMs);
+  setTimeout(() => banner.classList.remove("show"), ms);
   return banner;
+}
+
+// A8: the Muskie capstone — the biggest moment in the game. Same banner as a
+// rank-up, but held longer, gold-trimmed, and with confetti that keeps coming.
+// Fires once, on the first Muskie Quixote ever landed.
+function showPrestige() {
+  const p = CONFIG.prestige;
+  const banner = showBanner("MASTER ANGLER!", `${p.badge} ${p.rank.toUpperCase()}`, p.celebrateMs);
+  banner.classList.add("prestige");
+  setTimeout(() => banner.classList.remove("prestige"), p.celebrateMs);
+  sfxRareCatch();
+  // rolling confetti across the scene, rather than the single burst a rank-up gets
+  for (let i = 0; i < 6; i++) later(() => burst(140 + i * 90, 110 + (i % 3) * 55, 14), i * 280);
+  later(() => showBadgeToast({ name: `${p.label} — you landed Muskie Quixote` }), p.celebrateMs - 1100);
 }
 
 // the "new letter!" moment: banner over the pond, fresh keys pulse on the guide
@@ -1459,6 +1488,17 @@ $("progress-close").addEventListener("click", () => toggleProgress(false));
 // ---- Fishing journal: punny milestone badges (collection/accuracy, never speed) ----
 const fishTierOf = id => FISH.find(f => f.id === id)?.tier;
 function hasLegendary() { return Object.keys(save.collection).some(id => fishTierOf(id) === "legendary"); }
+// A8: the prestige rank is *held by having caught the fish*, not by a saved
+// flag — so it can never drift from the collection, and a save that landed the
+// legendary before A8 existed is credited the moment it loads.
+function hasPrestige() { return (save?.collection?.[CONFIG.prestige.fishId] ?? 0) > 0; }
+// the rank a kid wears, for display. Ranks were stored but never shown anywhere
+// before A8; the journal surfaces this one for every tier, not just Muskie.
+function rankLabel() {
+  if (hasPrestige()) return `${CONFIG.prestige.badge} ${CONFIG.prestige.label}`;
+  const t = CONFIG.tiers.find(t => t.rank === save.rank) ?? CONFIG.tiers[0];
+  return `${t.badge} ${t.label}`;
+}
 function hasLunker() {
   return Object.entries(save.records || {}).some(([id, r]) => {
     const tier = fishTierOf(id); if (!tier) return false;
@@ -1487,6 +1527,9 @@ const BADGES = [
     check: () => { const a = overallAccuracy(); return a.keys >= CONFIG.badges.accuracyMinKeys && a.pct * 100 >= CONFIG.badges.accuracyPct; } },
   { id: "alphabet",    name: "Alphabet Angler",   desc: "Unlock every letter in the game.",
     check: () => unlockedStageCount(totalCatches()) >= CONFIG.unlock.stages.length },
+  // A8: the capstone. "The Deep End" is any legendary; this one is *the* one.
+  { id: "muskie",      name: "Muskie Master",     desc: "Land the legendary Muskie Quixote.",
+    check: () => hasPrestige() },
 ];
 
 // mark any freshly-satisfied badges as earned; returns the newly-earned ones.
@@ -1516,7 +1559,11 @@ function renderJournal() {
   evaluateBadges();          // backfill retroactively earned badges (old saves / pre-journal progress)
   persistSave();
   const earned = BADGES.filter(b => save.badges.includes(b.id)).length;
-  $("journal-summary").innerHTML = `<b>${earned}</b> / ${BADGES.length} badges earned`;
+  // A8 also surfaces the kid's rank here — it was stored from A0 onward but
+  // never actually shown anywhere, which made "you made Marlin!" a one-off toast
+  // with no lasting record. Now every rank has a home, Muskie included.
+  $("journal-summary").innerHTML =
+    `<b>${earned}</b> / ${BADGES.length} badges earned<div class="jrank">${rankLabel()}</div>`;
   const grid = $("journal-grid"); grid.innerHTML = "";
   for (const b of BADGES) {
     const got = save.badges.includes(b.id);

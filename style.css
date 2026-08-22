@@ -286,6 +286,20 @@ h1 {
 @keyframes bannerpop { 0% { transform: translate(-50%, -50%) scale(0.6); } 70% { transform: translate(-50%, -50%) scale(1.08); } }
 #unlock-banner .banner-title { font-family: var(--display); font-size: 12px; color: var(--ink); letter-spacing: 0.08em; }
 #unlock-banner .letters { font-family: var(--display); font-size: 34px; color: var(--gold); letter-spacing: 0.3em; margin-top: 4px; text-shadow: 0 0 14px rgba(240,192,96,0.6); }
+/* A8: the Muskie capstone wears the same banner, turned up — a gold frame and a
+   slow glow, so the finish line doesn't look like just another letter unlock */
+#unlock-banner.prestige {
+  border-color: var(--gold); border-width: 2px; padding: 20px 34px;
+  background: rgba(12,26,38,0.9);
+  animation: prestigeGlow 1.4s ease-in-out infinite alternate;
+}
+#unlock-banner.prestige .letters { font-size: 42px; }
+@keyframes prestigeGlow {
+  from { box-shadow: 0 0 18px rgba(240,192,96,0.35); }
+  to   { box-shadow: 0 0 46px rgba(240,192,96,0.85); }
+}
+/* the rank line under the journal's badge count */
+.jrank { margin-top: 6px; font-family: var(--display); font-size: 13px; color: var(--gold); }
 
 /* tension = the bottom edge of the pond itself */
 #meter { position: absolute; left: 0; right: 0; bottom: 0; height: 8px; background: rgba(0,0,0,0.4); }
@@ -562,6 +576,6 @@ h1 {
 @media (prefers-reduced-motion: reduce) {
   .wave, #rig, .cloud, #glitter, #tint, .reed, #bobber, #meter-fill.danger { animation: none !important; }
   .finger, #line, #fish { transition: none; }
-  #scene.shake, #word.shakeword, #word.pop, #unlock-banner.show, .key.fresh, #fish.hooked, #word .cur.space { animation: none; }
+  #scene.shake, #word.shakeword, #word.pop, #unlock-banner.show, #unlock-banner.prestige, .key.fresh, #fish.hooked, #word .cur.space { animation: none; }
   .ripple, .p, .coinfloat { display: none; }
 }

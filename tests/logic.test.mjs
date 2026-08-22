@@ -9,6 +9,7 @@ import {
   applyTension, catchReward, isPersonalBest, countsTowardTiming, overallAccuracy,
   locationsForRods, rankForState, tokenize, wordCount, tierWithFallback,
   computeWpm, isPersonalBestWpm, isEvenCadence, pickDistinct, segmentsForTier,
+  rankForProfile, earnsPrestige,
 } from "../logic.js";
 
 const TIER_ORDER = ["legendary", "rare", "uncommon", "common"];   // hardest → easiest
@@ -258,6 +259,34 @@ test("tierWithFallback degrades a rolled tier to what the spot actually has (A3)
   assert.equal(tierWithFallback(new Set(["rare"]), "common", TIER_ORDER), "rare");
   // nothing present → hand back the desired tier (caller handles the empty pick)
   assert.equal(tierWithFallback(new Set(), "uncommon", TIER_ORDER), "uncommon");
+});
+
+const prestige = { rank: "muskie", fishId: "muskie", label: "Muskie Master" };
+
+test("rankForProfile: prestige outranks any location-derived rank (A8)", () => {
+  // without it, rank is exactly what the locations say
+  assert.equal(rankForProfile(tiers, ["pond"], prestige, false), "minnow");
+  assert.equal(rankForProfile(tiers, ["pond", "stream", "ocean"], prestige, false), "marlin");
+  // with it, prestige wins from anywhere — it isn't a place you travel to
+  assert.equal(rankForProfile(tiers, ["pond", "stream", "ocean"], prestige, true), "muskie");
+  assert.equal(rankForProfile(tiers, ["pond"], prestige, true), "muskie");
+  // a missing/!rank prestige config must never blank out a real rank
+  assert.equal(rankForProfile(tiers, ["pond", "stream"], undefined, true), "mackerel");
+  assert.equal(rankForProfile(tiers, ["pond", "stream"], {}, true), "mackerel");
+});
+
+test("earnsPrestige fires once, for the right fish only (A8)", () => {
+  assert.equal(earnsPrestige(prestige, "muskie", false), true);    // the moment
+  assert.equal(earnsPrestige(prestige, "muskie", true), false);    // already had it — no encore
+  assert.equal(earnsPrestige(prestige, "tuna", false), false);     // wrong fish
+  assert.equal(earnsPrestige(prestige, "koi", false), false);      // a legendary, but not THE one
+  assert.equal(earnsPrestige(undefined, "muskie", false), false);  // no config → never throws
+  assert.equal(earnsPrestige({}, "muskie", false), false);
+});
+
+test("the prestige rank is not one of the location tiers (A8 — it can't be bought)", () => {
+  assert.ok(!CONFIG.tiers.some(t => t.rank === CONFIG.prestige.rank),
+    "prestige rank must stay out of CONFIG.tiers, or a rod could grant it");
 });
 
 test("pickDistinct fills a fight without repeating while the pool allows (A7)", () => {
