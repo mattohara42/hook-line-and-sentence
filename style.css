@@ -387,6 +387,11 @@ h1 {
 /* A2: the two Shift keys sit quietly like the ghost anchor until a capital lights them */
 .key.shift-key { opacity: 0.35; }
 .key.shift-key.target { opacity: 1; }
+/* A5-guide: same for the ghost keys — the ";" anchor and the `,` `.` `/`
+   punctuation keys stay quiet at the Pond and come up to full when a sentence
+   actually calls for one. Needs its own rule because .key.target sets colour,
+   not opacity, so the 0.35 above would otherwise win. */
+.key.ghost-key.target { opacity: 1; }
 .finger {
   position: absolute;
   border: 1.5px solid rgba(242,237,227,0.28); background: rgba(242,237,227,0.05);

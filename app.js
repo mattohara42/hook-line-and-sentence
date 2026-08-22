@@ -931,32 +931,38 @@ const GUIDE_SCALE = 1.3;   // one knob: grows the whole keyboard/guide uniformly
 const S  = (n) => Math.round(n * GUIDE_SCALE);
 const KEY_SZ   = S(38);    // key box (matches the old .key size, now scaled)
 const FINGER_W = S(18);
+// A5-guide: the bottom row carries the real `,` `.` `/` keys so the Ocean's
+// punctuation has somewhere to light up. They're rendered as quiet ghost keys
+// (like the ";" anchor) since they're outside the letter curriculum.
 const KB = { pitch: S(42), rows: [
   { keys: "qwertyuiop", off: S(0)  },
   { keys: "asdfghjkl;", off: S(12) },
-  { keys: "zxcvbnm",    off: S(34) },
+  { keys: "zxcvbnm,./", off: S(34) },
 ]};
+const GHOST_KEYS = new Set([";", ",", ".", "/"]);   // rendered, but not letters to learn
 // Standard touch-typing zones. lp = left pinky ... rp = right pinky.
 const FINGER_HOMES = { lp:"a", lr:"s", lm:"d", li:"f", ri:"j", rm:"k", rr:"l", rp:";" };
 const FINGER_LEN   = { lp:50, lr:68, lm:78, li:70, ri:70, rm:78, rr:68, rp:50 };
 const LETTER_FINGER = {};
 [["lp","qaz"],["lr","wsx"],["lm","edc"],["li","rfvtgb"],
- ["ri","yhnujm"],["rm","ik"],["rr","ol"],["rp","p;"]]
+ ["ri","yhnujm"],["rm","ik,"],["rr","ol."],["rp","p;/"]]
   .forEach(([f, ls]) => [...ls].forEach(l => LETTER_FINGER[l] = f));
+// Punctuation typed as Shift + another key → the key actually pressed (A5).
+// "!" is Shift+1 on the number row, which the guide deliberately doesn't
+// render (10 keys a beginner never uses); it resolves to a key with no finger
+// mapping, so updateGuide falls through and simply shows no reach for it.
+const SHIFTED_PUNCT = { "?": "/", "!": "1" };
 
 const guide = $("guide");
 const keyPos = {}, fingerEls = {};
 let guideOn = true;
-
-guide.style.width  = S(430) + "px";   // was fixed in CSS; palms gone, so sized here
-guide.style.height = S(166) + "px";
 
 KB.rows.forEach((row, r) => {
   [...row.keys].forEach((ch, i) => {
     const x = row.off + i * KB.pitch, y = r * KB.pitch;
     keyPos[ch] = { x: x + KEY_SZ / 2, y: y + KEY_SZ / 2 };
     const k = document.createElement("div");
-    k.className = "key" + (ch === ";" ? " ghost-key" : "");
+    k.className = "key" + (GHOST_KEYS.has(ch) ? " ghost-key" : "");
     k.textContent = ch;
     k.style.left = x + "px"; k.style.top = y + "px";
     k.style.width = k.style.height = KEY_SZ + "px";
@@ -969,8 +975,10 @@ KB.rows.forEach((row, r) => {
 // A2: two Shift keys flanking the bottom row. Capitals are typed with the
 // OPPOSITE hand's pinky on Shift, so the guide can animate that reach.
 const SHIFT_KEYS = [
-  { id: "lshift", x: 0,                            w: KB.rows[2].off },
-  { id: "rshift", x: KB.rows[2].off + 7 * KB.pitch, w: S(64) },
+  { id: "lshift", x: 0, w: KB.rows[2].off },
+  // sits just past the end of the bottom row — derived, not a hardcoded key
+  // count, so adding `,./` (A5-guide) moved it automatically
+  { id: "rshift", x: KB.rows[2].off + KB.rows[2].keys.length * KB.pitch, w: S(64) },
 ];
 SHIFT_KEYS.forEach(({ id, x, w }) => {
   const y = 2 * KB.pitch;
@@ -998,8 +1006,50 @@ Object.entries(FINGER_HOMES).forEach(([f, home]) => {
   fingerEls[f] = { el: fin, home };
 });
 
-// dim keys the player hasn't unlocked yet (the ";" anchor + Shift keys aren't
-// letters, so they're never "locked")
+// Size the guide from what actually got laid out, rather than the constants it
+// used to carry. #guide-panel is overflow:hidden, so a row that outgrows a
+// hardcoded width silently loses its rightmost keys — which is exactly what
+// adding `,./` + the shifted right Shift would have done (A5-guide).
+{
+  const keys = [...guide.querySelectorAll(".key")];
+  const right  = Math.max(...keys.map(k => parseFloat(k.style.left) + parseFloat(k.style.width)));
+  const bottom = Math.max(...keys.map(k => parseFloat(k.style.top)  + KEY_SZ));
+  guide.style.width  = right + "px";
+  // fingers hang below their key (top = key centre − S(12), then FINGER_LEN),
+  // so the panel has to clear the longest one, not just the last key row
+  const fingerDrop = Math.max(...Object.entries(FINGER_HOMES)
+    .map(([f, home]) => keyPos[home].y - S(12) + S(FINGER_LEN[f])));
+  guide.style.height = Math.max(bottom, fingerDrop) + "px";
+  guide.style.transformOrigin = "top left";
+}
+
+// Shrink the guide to fit a narrow window instead of letting the panel crop it.
+// The panel is overflow:hidden, so without this the rightmost key — the right
+// Shift, the very key a capital tells you to press — just disappears below
+// ~700px. Mirrors fitScene above. The panel is sized explicitly because a CSS
+// transform doesn't change layout size, so it would otherwise still reserve
+// (and crop at) the guide's natural width.
+const guidePanel = $("guide-panel");
+const PANEL_MARGIN = 20;   // matches #guide-panel's max-width: calc(100vw - 20px)
+function fitGuide() {
+  // padding + border come from the stylesheet, not a constant here — the panel
+  // is border-box, so forgetting its 1px border silently crops a key
+  const cs = getComputedStyle(guidePanel);
+  const px = (...v) => v.reduce((a, p) => a + parseFloat(cs[p]), 0);
+  const chromeX = px("paddingLeft", "paddingRight", "borderLeftWidth", "borderRightWidth");
+  const chromeY = px("paddingTop", "paddingBottom", "borderTopWidth", "borderBottomWidth");
+  const natW = parseFloat(guide.style.width), natH = parseFloat(guide.style.height);
+  const scale = Math.min(1, (window.innerWidth - PANEL_MARGIN - chromeX) / natW);
+  guide.style.transform = scale < 1 ? `scale(${scale})` : "";
+  guidePanel.style.width  = natW * scale + chromeX + "px";
+  guidePanel.style.height = natH * scale + chromeY + "px";
+}
+window.addEventListener("resize", fitGuide);
+fitGuide();
+
+// dim keys the player hasn't unlocked yet. The ghost keys (";" anchor, `,` `.`
+// `/`) and the Shift keys aren't letters in the unlock ladder, so they're never
+// "locked" — they just sit quiet until something calls for them.
 function renderKeyLocks() {
   guide.querySelectorAll(".key").forEach(k => {
     const ch = k.dataset.ch;
@@ -1018,16 +1068,29 @@ function reachFinger(finger, posId) {
   fin.classList.add("active");
 }
 
+// Which physical key a target character is typed on, and whether it needs
+// Shift. Three cases share one path: a plain letter or `,` `.` (press the key),
+// a capital (Shift + the lowercase key, A2), and shifted punctuation like `?`
+// (Shift + `/`, A5). Anything with no key on the rendered board — `!`, which
+// lives on the number row — comes back unmapped and simply isn't guided.
+function keyForTarget(ch) {
+  if (SHIFTED_PUNCT[ch]) return { key: SHIFTED_PUNCT[ch], shift: true };
+  const lower = ch.toLowerCase();
+  return { key: lower, shift: lower !== ch };
+}
+
 function updateGuide(letter) {
   guide.querySelectorAll(".key.target").forEach(k => k.classList.remove("target"));
   Object.values(fingerEls).forEach(({ el }) => { el.style.transform = ""; el.classList.remove("active"); });
   if (!guideOn || !letter) return;
-  const base = letter.toLowerCase();          // the letter's key/finger is case-independent
-  if (!LETTER_FINGER[base]) return;
-  reachFinger(LETTER_FINGER[base], base);
-  // A2: a capital also needs Shift — the opposite hand's pinky reaches for it
-  if (letter !== base) {
-    const leftHand = LETTER_FINGER[base][0] === "l";
+  const { key, shift } = keyForTarget(letter);
+  const finger = LETTER_FINGER[key];
+  if (!finger) return;                        // not on the rendered board (e.g. "!")
+  reachFinger(finger, key);
+  // A2: a shifted character also needs Shift — the OPPOSITE hand's pinky reaches
+  // for it, so the same hand isn't asked to do two things at once
+  if (shift) {
+    const leftHand = finger[0] === "l";
     reachFinger(leftHand ? "rp" : "lp", leftHand ? "rshift" : "lshift");
   }
 }

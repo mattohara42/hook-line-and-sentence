@@ -18,20 +18,26 @@ Ideas captured during design/build. Nothing here expands the current milestone.
 - Sound design pass beyond ambient loop.
 
 ## Finger guide
-- **Punctuation has no finger guidance (found during A5, 2026-08-22).** The
-  guide keyboard is only `qwertyuiop` / `asdfghjkl;` / `zxcvbnm`, so when a
-  sentence's next character is `.` `,` `!` or `?`, `updateGuide()` finds no
-  `LETTER_FINGER` entry and returns early — the hands go **blank** mid-sentence.
-  Gameplay is fine (the marks type correctly); it's the teaching aid that's
-  missing, which matters in a tutor. A2 set the precedent of adding new keys to
-  the guide (it added the two Shift keys for capitals), so this is the same job
-  for punctuation. Not folded into A5 because it isn't a one-liner: the natural
-  fix extends the bottom row to `zxcvbnm,./` (10 keys), which pushes the row
-  past the guide's current `S(430)` width and shifts the right Shift key, so the
-  guide has to grow and be re-checked at small window sizes. `!` is the awkward
-  one — it's Shift+1, on a number row the guide doesn't render at all; either add
-  the row (10 keys a beginner never uses, dimmed as locked at the Pond) or accept
-  `!` staying unguided like the documented look-ahead limitation in `SPEC.md`.
+- **✅ Punctuation finger guidance (found during A5, fixed 2026-08-22).** The
+  guide keyboard was only `qwertyuiop` / `asdfghjkl;` / `zxcvbnm`, so when a
+  sentence's next character was `.` `,` `!` or `?`, `updateGuide()` found no
+  `LETTER_FINGER` entry and returned early — the hands went **blank**
+  mid-sentence. Gameplay was fine; the teaching aid wasn't, which matters in a
+  tutor. Fixed by extending the bottom row to the real `zxcvbnm,./` with proper
+  finger zones (`,`→right middle, `.`→right ring, `/`→right pinky), rendering
+  the three as quiet **ghost keys** like the `;` anchor so the Pond stays calm,
+  and routing capitals *and* shifted punctuation through one `keyForTarget()`
+  path so `?` lights `/` + the opposite hand's Shift exactly like a capital does.
+  The guide is now also **sized from its actual laid-out keys and scaled to fit
+  narrow windows** — it used to carry a hardcoded width that would silently crop
+  the rightmost key (the right Shift, the very key a capital points at) below
+  ~580px; it now fits at any width down to 420px.
+  - **Still unguided: `!`** — it's Shift+1, on a number row the guide doesn't
+    render (10 keys a beginner never uses, and numbers aren't in the unlock
+    ladder at all). It types correctly, it just gets no finger animation, and
+    `updateGuide` leaves no stale highlight. `SHIFTED_PUNCT` already maps it to
+    `"1"`, so it lights up for free the day a number row is ever added. Same
+    class of accepted gap as the look-ahead limitation in `SPEC.md`.
 
 ## Release hygiene
 - **Remove the 🧪 test shortcut before a public release** — the "unlock all spots"
