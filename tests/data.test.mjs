@@ -167,6 +167,30 @@ test("tier odds per rod sum to 1 and cover only known tiers", () => {
   }
 });
 
+test("every rod's rodLevel has tier odds (a missing entry crashes pickTier at bite)", () => {
+  for (const rod of CONFIG.shop.rods)
+    assert.ok(CONFIG.bite.tierOddsByRod[rod.rodLevel],
+      `rod "${rod.id}" is rodLevel ${rod.rodLevel} but bite.tierOddsByRod has no such entry`);
+});
+
+test("every location-unlocking rod points at a real location, and every non-home spot is reachable (A0/A6)", () => {
+  const locs = new Set(CONFIG.tiers.map(t => t.location));
+  for (const rod of CONFIG.shop.rods)
+    if (rod.unlocksLocation)
+      assert.ok(locs.has(rod.unlocksLocation), `rod "${rod.id}" unlocks unknown location "${rod.unlocksLocation}"`);
+  // every tier past the always-open home water needs a rod that opens it,
+  // or a kid could never legitimately fish there
+  const unlockable = new Set(CONFIG.shop.rods.map(r => r.unlocksLocation).filter(Boolean));
+  for (const t of CONFIG.tiers.slice(1))
+    assert.ok(unlockable.has(t.location), `location "${t.location}" has no rod that unlocks it`);
+});
+
+test("every location with fish can serve content, and every content location has fish", () => {
+  const fishLocs = new Set(fish.map(f => f.location));
+  for (const t of CONFIG.tiers)
+    assert.ok(fishLocs.has(t.location), `location "${t.location}" has no fish of its own`);
+});
+
 test("unlock stages start at 0 catches and never decrease", () => {
   const reqs = CONFIG.unlock.stages.map(s => s.catchesRequired);
   assert.equal(reqs[0], 0, "first stage must need 0 catches");

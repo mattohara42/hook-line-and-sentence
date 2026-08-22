@@ -24,6 +24,7 @@ export const CONFIG = {
       1: { common: 0.80, uncommon: 0.17, rare: 0.03,  legendary: 0.00  },
       2: { common: 0.62, uncommon: 0.28, rare: 0.09,  legendary: 0.01  },
       3: { common: 0.45, uncommon: 0.35, rare: 0.17,  legendary: 0.03  },
+      4: { common: 0.34, uncommon: 0.36, rare: 0.24,  legendary: 0.06  },
     },
   },
 
@@ -79,12 +80,15 @@ export const CONFIG = {
 
   shop: {
     // `unlocksLocation` graduates the profile to a new fishing spot on purchase
-    // (A0). Ocean's dedicated deep-sea rod arrives in A6; carbon stays a pure
-    // luck upgrade until then. ponytail: only the Stream gate exists for A0.
+    // (A0): bamboo opens the Stream, deep-sea opens the Ocean (A6). Carbon sits
+    // between them as a pure luck upgrade — the deep-sea rod is both the Ocean
+    // gate and the best odds in the game. Every rodLevel here needs a matching
+    // bite.tierOddsByRod entry (a data test enforces it).
     rods: [
-      { id: "stick",  name: "Trusty Stick",     cost: 0,  rodLevel: 1 },
-      { id: "bamboo", name: "Bamboo Beauty",    cost: 25, rodLevel: 2, unlocksLocation: "stream" },
-      { id: "carbon", name: "The Carp Whisperer", cost: 80, rodLevel: 3 },
+      { id: "stick",   name: "Trusty Stick",       cost: 0,   rodLevel: 1 },
+      { id: "bamboo",  name: "Bamboo Beauty",      cost: 25,  rodLevel: 2, unlocksLocation: "stream" },
+      { id: "carbon",  name: "The Carp Whisperer", cost: 80,  rodLevel: 3 },
+      { id: "deepsea", name: "The Deep Endeavor",  cost: 150, rodLevel: 4, unlocksLocation: "ocean" },
     ],
     baits: [
       { id: "worm",    name: "Garden Worm",   cost: 0,  biteSpeedMult: 1.0 },

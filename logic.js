@@ -82,12 +82,20 @@ export function overallAccuracy(letters) {
 }
 
 // Which locations a profile has unlocked, derived from the rods it owns (like
-// letters derive from catches). tiers[0].location is the always-open home spot;
-// each owned rod with `unlocksLocation` adds that spot. Order-preserving, deduped.
+// letters derive from catches). tiers[0].location is the always-open home spot.
+// Tiers are an ordered curriculum, so this is *cumulative*: owning a rod that
+// opens a later spot opens every spot up to it, even if the kid skipped that
+// tier's own rod. Without this, saving straight for the deep-sea rod (A6) would
+// unlock the Ocean while leaving the Stream shut — dropping the kid into
+// punctuated sentences without the spacebar/capitals the Stream teaches, and
+// showing them a Stream group in the journal they couldn't fish. Returns tier
+// order (never rod order), so it's stable however the shop is arranged.
 export function locationsForRods(tiers, rods, ownedRodIds) {
-  const fromRods = rods.filter(r => r.unlocksLocation && ownedRodIds.includes(r.id))
-                       .map(r => r.unlocksLocation);
-  return [...new Set([tiers[0].location, ...fromRods])];
+  const opened = new Set(rods.filter(r => r.unlocksLocation && ownedRodIds.includes(r.id))
+                             .map(r => r.unlocksLocation));
+  let furthest = 0;
+  tiers.forEach((t, i) => { if (opened.has(t.location)) furthest = i; });
+  return tiers.slice(0, furthest + 1).map(t => t.location);
 }
 
 // The earned rank: the furthest tier whose location the profile has unlocked.

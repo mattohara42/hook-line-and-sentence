@@ -156,18 +156,32 @@ const tiers = [
   { rank: "mackerel", location: "stream" },
   { rank: "marlin",   location: "ocean"  },
 ];
+// mirrors the real CONFIG.shop.rods shape (A6): bamboo gates the Stream,
+// deepsea gates the Ocean, and carbon is a luck-only upgrade in between
 const rods = [
   { id: "stick"  },                              // no unlocksLocation
-  { id: "bamboo", unlocksLocation: "stream" },
-  { id: "carbon", unlocksLocation: "ocean"  },
+  { id: "bamboo",  unlocksLocation: "stream" },
+  { id: "carbon"  },                             // luck upgrade, opens nothing
+  { id: "deepsea", unlocksLocation: "ocean"  },
 ];
 
 test("locationsForRods: pond is always open; rods add their locations", () => {
   assert.deepEqual(locationsForRods(tiers, rods, ["stick"]), ["pond"]);
   assert.deepEqual(locationsForRods(tiers, rods, ["stick", "bamboo"]), ["pond", "stream"]);
-  // owning a rod twice / owning a locationless rod doesn't duplicate or add
-  assert.deepEqual(locationsForRods(tiers, rods, ["stick", "carbon", "bamboo"]).sort(),
-                   ["ocean", "pond", "stream"]);
+  // a locationless rod adds nothing; owning every rod opens everything
+  assert.deepEqual(locationsForRods(tiers, rods, ["stick", "carbon"]), ["pond"]);
+  assert.deepEqual(locationsForRods(tiers, rods, ["stick", "bamboo", "carbon", "deepsea"]),
+                   ["pond", "stream", "ocean"]);
+});
+
+test("locationsForRods is cumulative — a skipped tier still opens (A6)", () => {
+  // saving straight for the deep-sea rod must not leave the Stream shut behind
+  // it: the Ocean's sentences build on the phrases/capitals the Stream teaches
+  assert.deepEqual(locationsForRods(tiers, rods, ["stick", "deepsea"]),
+                   ["pond", "stream", "ocean"]);
+  // always tier order, never rod order or insertion order
+  assert.deepEqual(locationsForRods(tiers, rods, ["deepsea", "bamboo", "stick"]),
+                   ["pond", "stream", "ocean"]);
 });
 
 test("rankForState: furthest unlocked location, never below the home rank", () => {
