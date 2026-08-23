@@ -8,9 +8,10 @@ milestones — same rules as v1: **one milestone at a time, each ends playable.*
 Mackerel → Marlin → Muskie is playable end to end: single home-row words at the
 Pond, phrases and capitals at the Stream, punctuated sentences fought in clauses
 at the Ocean, and the Muskie capstone to close it. Outstanding work is **art
-only** — three PNGs (Stream background, Ocean background, Muskie hero sprite),
-requests in `ART.md`; the scenes self-resolve when they land — plus a real kid
-playtest of the A7 fight beats (see `BACKLOG.md`).
+only** — two PNGs pending (Ocean background, Muskie hero sprite; the Stream
+background already landed), requests in `ART.md`; the scenes self-resolve
+when they land — plus a real kid playtest of the A7 fight beats (see
+`BACKLOG.md`).
 **Prerequisite:** close v1 (M4b Firestore live-verified) first — this epic
 adds new save fields, so it wants a stable sync base and a clean migration
 story. (Met — v1 complete.)
@@ -260,10 +261,12 @@ art (three PNGs, see `ART.md`) and a real kid playtest of the fight beats.
 
 ## Art dependency (the long pole — flag to Matt early, see `ART.md`)
 
-Stream background · Ocean background · ~8–10 stream fish · ~8–10 ocean fish ·
-Muskie Quixote hero sprite · fly-rod + deep-sea-rod shop icons. All within the
-locked ~16-color palette. This is the slowest, most serial dependency
-(Gemini-generated, Matt-in-the-loop) — start it the moment Phase 1 is greenlit.
+~~Stream background~~ (landed) · Ocean background · Muskie Quixote hero
+sprite — the stream/ocean fish sets need no new art (shared per-tier sprites
+tinted by species `color`), and fly-rod + deep-sea-rod shop icons remain
+optional/unwired (see `ART.md`). All within the locked ~16-color palette.
+This is the slowest, most serial dependency (Gemini-generated, Matt-in-the-
+loop).
 
 ## Decisions (locked — Matt, July 2026)
 
