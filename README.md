@@ -12,6 +12,7 @@ now shipping post-v1 features (see `BACKLOG.md`). Hosted on Netlify — pushes t
 
 | File | What it is |
 |------|-----------|
+| `HANDOFF.md` | Session-to-session notes — read this first when resuming work |
 | `SPEC.md` | Design source of truth — all decisions and v1 scope |
 | `BUILD_PLAN.md` | v1 milestone order (M1–M10, all done) with done-criteria |
 | `BUILD_PLAN_ADVANCED.md` | Post-v1 Advanced Progression epic — tiers (Minnow→Muskie), phrases/sentences, WPM-as-goal; phased A0–A8 |
