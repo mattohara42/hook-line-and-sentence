@@ -149,6 +149,35 @@ Wired in: not yet — and deliberately so, unlike the background above. The scen
           the shared sprite.
 ```
 
+### Family easter egg — a dino-nugget junk item
+
+Not tied to any milestone — just a fun extra for the junk-catch pool
+(`CONFIG.junk.items`, `app.js:679`), which already has `an old boot` /
+`a rusty can` / `a clump of pond weed`. A dinosaur-shaped chicken nugget
+(one of Frankie's favorite things) fits the same "so, not a fish" joke.
+
+```
+ART NEEDED: a junk-catch item — dinosaur chicken nugget
+Prompt:   Pixel art of a single dinosaur-shaped chicken nugget (like a kids'
+          frozen dino nugget, T-rex silhouette), cozy retro game asset,
+          chunky clean pixels, warm dawn lake palette (teal water accents,
+          gold highlights), lightly golden-breaded texture, maybe a tiny
+          drip of ketchup for scale/humor. Single centered subject,
+          transparent background, no text, no UI, no watermark, no baked-in
+          shadow.
+Save as:  assets/junk-nugget.png
+Size:     ~64×64, transparent background, tight crop, matching
+          junk-boot.png / junk-can.png / junk-weed.png in scale and style.
+Wired in: not yet — deliberately so, same reasoning as the Muskie sprite
+          above. `el.fish.style.backgroundImage` (app.js:714) *replaces*
+          the fish sprite for whichever junk item gets rolled, so adding
+          this to `CONFIG.junk.items` before the PNG exists would show a
+          broken image on that roll. Once the file lands, it's a one-line
+          config.js addition: `{ id: "nugget", name: "a dinosaur chicken
+          nugget", file: "junk-nugget" }`. Tell Claude when it's in and
+          it's wired immediately.
+```
+
 **Optional / not yet wired — deep-sea + fly rod shop icons.** The advanced plan
 lists rod icons, but the shop doesn't render rod art today (rods have no `file`
 field the way boats do). If we want them, they'd be small transparent sprites
