@@ -123,9 +123,13 @@ adding Typing Fishing to a Firebase project you already use for something else.
    `authDomain`, `projectId`, `storageBucket`, `messagingSenderId`, `appId`).
    Leave `firebase.collection` as `"typingFishing"` unless you want a different
    name.
-6. **Security rules** — Firestore → *Rules*. Because the database is new, paste
-   the **complete reference ruleset** from the bottom of `firestore.rules`
-   (the `rules_version = '2'; …` block) and *Publish*.
+6. **Security rules** — Firestore → *Rules*. Because the database is new,
+   there's no existing ruleset to merge into, so wrap the
+   `match /typingFishing/{profileId} { … }` block from `firestore.rules`
+   in the standard skeleton (the commented-out template at the bottom of that
+   file shows the shape) — `rules_version = '2'; service cloud.firestore {
+   match /databases/{database}/documents { …paste the block here… } }` — and
+   *Publish*.
 7. **Authorized domains** — Authentication → *Settings* → *Authorized domains* →
    add the domain you'll deploy to (e.g. `yourgame.netlify.app`). `localhost` is
    already allowed for local dev.
