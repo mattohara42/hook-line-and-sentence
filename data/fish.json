@@ -19,6 +19,7 @@
   {"id": "grayling",   "name": "Grayling Skies",    "species": "Arctic Grayling",   "tier": "uncommon",  "difficulty": 2, "coins": 3,  "color": "#7f9bc4", "location": "stream", "blurb": "That big sail fin? Purely for the drama."},
   {"id": "steelhead",  "name": "Steel-headstrong",  "species": "Steelhead",         "tier": "rare",      "difficulty": 3, "coins": 8,  "color": "#8fa6b8", "location": "stream", "blurb": "Swam to the ocean and back just to prove a point."},
   {"id": "salmon",     "name": "Salmon Chanted Evening", "species": "Chinook Salmon","tier": "rare",     "difficulty": 3, "coins": 8,  "color": "#e08a6a", "location": "stream", "blurb": "Upstream, uphill, against the odds. Very inspirational."},
+  {"id": "catfish",    "name": "Muddy Waters",      "species": "Channel Catfish",   "tier": "rare",      "difficulty": 3, "coins": 8,  "color": "#6b5842", "location": "stream", "blurb": "Lives at the bottom. Plays lead guitar down there, probably."},
 
   {"id": "herring",    "name": "Red Herring",       "species": "Atlantic Herring",  "tier": "common",    "difficulty": 1, "coins": 1,  "color": "#c96a5a", "location": "ocean",  "blurb": "Leads every investigation absolutely nowhere."},
   {"id": "mackerel",   "name": "Holy Mackerel",     "species": "Atlantic Mackerel", "tier": "common",    "difficulty": 1, "coins": 1,  "color": "#5b8fa8", "location": "ocean",  "blurb": "Genuinely astonished to be here. Every single time."},
@@ -30,5 +31,7 @@
   {"id": "marlin",     "name": "Marlin Brando",     "species": "Blue Marlin",       "tier": "rare",      "difficulty": 3, "coins": 8,  "color": "#3a5fa8", "location": "ocean",  "blurb": "Coulda been a contender. Is one, actually."},
   {"id": "tuna",       "name": "Tuna Turner",       "species": "Bluefin Tuna",      "tier": "rare",      "difficulty": 3, "coins": 8,  "color": "#42607a", "location": "ocean",  "blurb": "Simply the best. Better than all the rest."},
   {"id": "swordfish",  "name": "En Garde",          "species": "Swordfish",         "tier": "rare",      "difficulty": 3, "coins": 8,  "color": "#7a7f99", "location": "ocean",  "blurb": "Fences with the bobber. Usually wins."},
+  {"id": "unicornfish","name": "Una Corn",          "species": "Unicornfish",       "tier": "uncommon",  "difficulty": 2, "coins": 3,  "color": "#e6a8d7", "location": "ocean",  "blurb": "One horn, big hair, bigger ballad energy."},
+  {"id": "grouper",    "name": "Major Grouper",     "species": "Grouper",           "tier": "uncommon",  "difficulty": 2, "coins": 3,  "color": "#5a8f6b", "location": "ocean",  "blurb": "Bench-presses its own body weight. Never skips fin day."},
   {"id": "muskie",     "name": "Muskie Quixote",    "species": "Muskellunge",       "tier": "legendary", "difficulty": 4, "coins": 20, "color": "#d4c5f0", "location": "ocean",  "blurb": "A freshwater fish, impossibly far out to sea. Nobody can explain it. Least of all him."}
 ]
