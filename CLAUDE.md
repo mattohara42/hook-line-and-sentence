@@ -40,6 +40,10 @@ not truncation). Pass that exact string to the GitHub tools; no lookup needed.
 
 ## Workflow
 
+- Read `HANDOFF.md` first — it's the short-lived "where we left off" note
+  from the last session (open threads, what's waiting on Matt). Update it at
+  the end of every session; it's not a design doc, so don't let it drift
+  into duplicating `SPEC.md`/`BUILD_PLAN*.md`/`BACKLOG.md`.
 - Start each session by stating which milestone from `BUILD_PLAN.md` is
   active and its "done when" criterion.
 - Mid-build ideas go to `BACKLOG.md`, never into the current milestone.
