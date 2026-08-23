@@ -247,6 +247,9 @@ const PUNS = {
     "Waiting… just for the halibut",
     "Any second now. I'm not squidding",
     "Patience… good things come to those with bait",
+    "Vibing to some classic rock down there…",
+    "Twisting the wait away, Rubik's-cube style",
+    "Chill like Bluey on a lazy Sunday…",
   ],
   // A4: even fly-cast cadence (Stream+). Praise only — never shown as a miss.
   niceCast: [
@@ -254,6 +257,9 @@ const PUNS = {
     "Ooh, buttery. That fly landed like a feather",
     "Nice and even — textbook fly cast",
     "That's the rhythm! The trout are impressed",
+    "Smooth cast! Steady as a weightlifter's rep",
+    "Nice and even — classic-rock steady beat",
+    "That's the rhythm! Totally Bluey-and-Bingo calm",
   ],
   // A7: the fish makes a run mid-fight (Ocean). Drama, never a scolding — the
   // kid hasn't done anything wrong, and nothing is lost while these show.
@@ -270,17 +276,26 @@ const PUNS = {
     "Oh my cod — reel it in!",
     "A bite! Hook, line, and sinker!",
     "Fish on! Don't trout yourself now",
+    "Fish on! Somebody grab the ketchup",
+    "A bite! Cue the classic hip hop beat",
+    "Fish on! Pink and sparkly incoming",
   ],
   catchCommon: [
     "Caught it! Reel-y nice work",
     "Landed! That was off the scale",
     "Caught — and it wasn't even a fluke",
     "Got it! You're quite the catch-er",
+    "Caught it! Comic-book-cover worthy",
+    "Landed! Rubik's-cube fast",
+    "Got it! Totally 80s-power-ballad worthy",
   ],
   catchRare: [
     "✨ RARE! Holy carp! ✨",
     "✨ RARE! You're o-fish-ally amazing ✨",
     "✨ RARE! Simply fin-tastic ✨",
+    "✨ RARE! Hyrule-legendary rare ✨",
+    "✨ RARE! Simpsons-couch-gag rare ✨",
+    "✨ RARE! Unicorn-sparkle rare ✨",
   ],
   escape: [
     "It got away… cod it be worse?",
