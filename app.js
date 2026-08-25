@@ -194,7 +194,13 @@ function equippedBait() { return CONFIG.shop.baits.find(b => b.id === save.upgra
 function totalCatches() { return Object.values(save.collection).reduce((a, b) => a + b, 0); }
 function unlockedStageCount(total) { return logic.unlockedStageCount(CONFIG.unlock.stages, total); }
 function recomputeUnlocks() {
-  const n = unlockedStageCount(totalCatches());
+  // The 🧪 shortcut unlocks the whole keyboard as well as the spots: the letter
+  // stages are earned by catch count alone, so a fresh test profile standing in
+  // the Ocean still only had the home row — which filters out every sentence
+  // and silently drops the reel back to single words. Dev hosts only; a synced
+  // save carrying the flag is ignored in production.
+  const allKeys = CONFIG.dev?.testShortcuts && save?.devAllKeys;
+  const n = allKeys ? CONFIG.unlock.stages.length : unlockedStageCount(totalCatches());
   unlockedLetters = logic.lettersForStages(CONFIG.unlock.stages, n);
   WORDS = FULL_POOL.filter(e => [...e.letters].every(l => unlockedLetters.has(l)));
   // phrases/sentences gate on the same unlocked-letter set as words, so a kid
@@ -1235,12 +1241,18 @@ function setupDevTools() {
   const btn = document.createElement("button");
   btn.className = "toggle-btn nav dev";
   btn.id = "dev-unlock-btn";
-  btn.textContent = "🧪 Test: unlock all spots";
+  btn.textContent = "🧪 Test: unlock all spots + keys";
   btn.addEventListener("click", () => { unlockAllSpotsForTest(); toggleControls(false); });
   controlsTray.appendChild(btn);
 }
 function unlockAllSpotsForTest() {
   if (!save) return;
+  // every letter, so the Stream's phrases and the Ocean's sentences are
+  // actually typeable — capitals and punctuation still ride on the content
+  // tagging (CONFIG.capitals/punctuation.fromLocations), so the Stream stays
+  // letters-and-spacebar and only the Ocean serves punctuation
+  save.devAllKeys = true;
+  recomputeUnlocks();
   for (const r of CONFIG.shop.rods)
     if (!save.upgrades.owned.rod.includes(r.id)) save.upgrades.owned.rod.push(r.id);
   save.upgrades.rod = CONFIG.shop.rods.reduce((a, b) => (b.rodLevel > a.rodLevel ? b : a)).id;  // best odds for testing
@@ -1255,7 +1267,7 @@ function unlockAllSpotsForTest() {
   applyScene();
   if (shopOpen) renderShop();
   const here = CONFIG.tiers.find(t => t.location === save.location);
-  setStatus(`🧪 Test: all spots unlocked — now fishing ${here.locationName}.`);
+  setStatus(`🧪 Test: all spots + all letters unlocked — now fishing ${here.locationName}.`);
 }
 setupDevTools();
 
