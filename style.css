@@ -63,13 +63,22 @@ h1 {
   background: url("assets/background.png") center center / cover no-repeat;
   image-rendering: pixelated;
 }
-/* A3: the Stream biome. The stream art layers OVER the pond art, so before
-   assets/background-stream.png exists the pond scene shows through unchanged;
-   once Matt drops the PNG it covers the pond layer with zero code change. */
+/* A3: the Stream biome, layered over the pond art (so a missing PNG degrades to
+   the pond scene rather than a blank canvas).
+
+   Framed, not `cover`: Gemini painted the stream as a forest pool seen from
+   above, with its water in a low diagonal band instead of the flat waterline at
+   55% the prompt asked for. Under `cover` the boat floated a hundred px above
+   the water, and dropping the boat to meet it buried the whole rig behind the
+   finger-guide panel. So the art is scaled up and offset instead, seating the
+   near bank on y=198 where the pond's waterline (and every position tuned
+   against it) already sits. 1714px = 1.246x native, the smallest scale whose
+   water still reaches the bottom of the 360px canvas. ART.md has the request
+   out for a proper side-view stream; when it lands this goes back to `cover`. */
 #scene.loc-stream {
   background-image: url("assets/background-stream.png"), url("assets/background.png");
-  background-position: center center, center center;
-  background-size: cover, cover;
+  background-position: -520px -368px, center center;
+  background-size: 1714px auto, cover;
   background-repeat: no-repeat, no-repeat;
 }
 /* A6: the Ocean biome, same self-resolving layering as the Stream above — the
@@ -90,30 +99,11 @@ h1 {
   60% { transform: translate(-3px, 1px); } 80% { transform: translate(2px, -1px); }
 }
 
-/* #water is now just the container for the animated wave/glitter overlays
-   that ride on top of the painted water; its top matches the background's
-   horizon line (measured ~55% down the image) */
-#water {
-  position: absolute; left: 0; right: 0; top: 55%; bottom: 0;
-}
-.wave { position: absolute; left: 0; width: 200%; height: 42px; opacity: 0.5; }
-.wave svg { width: 100%; height: 100%; display: block; }
-#wave1 { top: -6px;  animation: waveSlide 14s linear infinite; }
-#wave2 { top: 26px;  animation: waveSlide 22s linear infinite reverse; opacity: 0.35; }
-#wave3 { top: 64px;  animation: waveSlide 34s linear infinite; opacity: 0.22; }
-#wave4 { top: 106px; animation: waveSlide 48s linear infinite reverse; opacity: 0.15; }
-@keyframes waveSlide { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-
-#glitter {
-  position: absolute; left: 58%; top: 0; width: 90px; height: 60%;
-  background: repeating-linear-gradient(180deg,
-    rgba(240,192,96,0.35) 0 3px, transparent 3px 11px);
-  filter: blur(1px);
-  animation: glitterShift 3.5s ease-in-out infinite alternate;
-  mask-image: linear-gradient(180deg, rgba(0,0,0,0.8), transparent);
-  -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0.8), transparent);
-}
-@keyframes glitterShift { from { transform: translateX(-6px); opacity: 0.7; } to { transform: translateX(6px); opacity: 1; } }
+/* The water used to carry an animated SVG wave stack and a glitter strip, both
+   sized to the pond's flat painted waterline. The stream and ocean paintings
+   have their own surf, and the overlay just banded them with dark horizontal
+   stripes at the wrong height — so it's gone, and the painted water is the
+   water. Ambient ripples and fish shadows still play on top (from app.js). */
 
 .fish-shadow {
   position: absolute; height: 12px; border-radius: 50%;
@@ -585,7 +575,7 @@ h1 {
 .shop-btn.equipped { color: var(--abyss); background: var(--moss); border-color: var(--moss); }
 
 @media (prefers-reduced-motion: reduce) {
-  .wave, #rig, .cloud, #glitter, #tint, .reed, #bobber, #meter-fill.danger { animation: none !important; }
+  #rig, .cloud, #tint, .reed, #bobber, #meter-fill.danger { animation: none !important; }
   .finger, #line, #fish { transition: none; }
   #scene.shake, #word.shakeword, #word.pop, #unlock-banner.show, #unlock-banner.prestige, .key.fresh, #fish.hooked, #word .cur.space { animation: none; }
   .ripple, .p, .coinfloat { display: none; }
