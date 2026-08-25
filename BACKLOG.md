@@ -245,13 +245,13 @@ prompts + Matt generates). Palette stays the locked ~16-color set.
 - Stream/Ocean fish rosters — pick the actual species per set and their rarity
   tiers (fish *are* separated by tier, decided; the specific lists are open).
 
-## EPIC: Graphics & Character Rig (parked — resume after Ocean ships)
+## EPIC: Graphics & Character Rig (scoped — see `BUILD_PLAN_GRAPHICS.md`)
 
 *Brainstormed August 2026, after A0-A4 shipped and the three locations (Pond/
-Stream/Ocean) had real shape. Parked deliberately: Matt wants Stream + Ocean
-(the rest of `BUILD_PLAN_ADVANCED.md`, A5-A8) finished first. Nothing here
-starts until that's done — this section exists so the plan isn't lost in the
-meantime.*
+Stream/Ocean) had real shape. Parked until the Ocean shipped; that condition is
+met (A0-A8 all landed 2026-08-22), and the epic was broken into milestones
+G1-G6 on 2026-08-25. **`BUILD_PLAN_GRAPHICS.md` is the plan of record** — this
+section stays as the brainstorm it came from.*
 
 **Why now, not earlier:** hats have been deferred since the boat-skin shop
 because `assets/kid.png` bakes hat+body+rod into one PNG (see the "Cosmetic
@@ -291,7 +291,10 @@ times.
   - Stream: **waders**, no boat — a distinct standing-pose body layer, kid
     repositioned lower/centered in the scene (no `#boat` div for this
     location).
-  - Ocean: a visibly bigger boat silhouette (more freeboard, rod holders).
+  - Ocean: a **Boston Whaler** (Matt, August 2026) — center console, high
+    freeboard, rod holders. Named specifically because it changes the prompt:
+    a Whaler is a particular hull with a distinctive sheer line, not just a
+    bigger rowboat.
   - Favorite-color tint applies to whichever rig is currently active.
 - **Hats & rods as real swappable shop items.** Splits out of the layered-rig
   work above; adds HATS and RODS sections to the shop mirroring BOATS. Closes

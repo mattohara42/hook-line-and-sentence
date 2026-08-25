@@ -5,10 +5,11 @@ it is the source of truth for all design decisions. `BUILD_PLAN.md` defines
 milestone order for the v1 core (M1–M10, all done); `BUILD_PLAN_ADVANCED.md`
 was the plan for the post-v1 **Advanced Progression epic** (tiers, phrases,
 sentences, WPM-as-goal) — **A0–A8 all shipped 2026-08-22, epic complete.**
-Remaining Advanced Progression work is art-only (two PNGs pending — Ocean
-background, Muskie hero sprite; Stream background already landed — see
-`ART.md`) plus a real kid playtest of the A7 fight beats (see `BACKLOG.md`). The next scoped epic is **Graphics &
-Character Rig** (parked in `BACKLOG.md`, not yet broken into milestones).
+All Advanced Progression art has landed. The next epic is **Graphics &
+Character Rig** — `BUILD_PLAN_GRAPHICS.md` defines its milestones (G1-G6,
+none started); one art request is open in `ART.md` (a re-shot Stream
+background, which G2 needs). A real kid playtest of the A7 fight beats is
+still outstanding (see `BACKLOG.md`).
 Work on exactly one milestone at a time. `ART.md` is the art pipeline: Claude
 writes Gemini prompts + filenames, Matt generates the PNGs.
 
