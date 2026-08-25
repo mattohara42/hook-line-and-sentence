@@ -69,8 +69,11 @@ with the subject floating in an oversized canvas. Tells: a corner pixel reads
 alpha 255, and the file is far bigger than a tight sprite (`boat.png` is
 1152×466; the bad batch came in at 1408×768). Salvage it with Pillow — no
 ImageMagick on this Mac — by border **flood-fill** on `chroma<=26 and
-min(rgb)>=132` → alpha 0, then crop to the alpha bbox so CSS `contain` seats it
-like the original. Flood-fill (not a global color key) protects gray *inside* a
+min(rgb)>=120` → alpha 0, then crop to the alpha bbox so CSS `contain` seats it
+like the original. The `>=120` floor matters: the checkerboard's dark squares
+aren't one flat value (the muskie batch ran 130–140), and a tighter floor leaves
+stray gray pixels pinned to the borders that silently block the crop. Count
+`alpha==0` as fillable too, so a re-run on a half-salvaged file still floods. Flood-fill (not a global color key) protects gray *inside* a
 subject. Re-exporting cleanly from Gemini is better when you can get it.
 
 ## Prompt template Claude should reuse
@@ -87,67 +90,31 @@ subject. Re-exporting cleanly from Gemini is better when you can get it.
 it over the pond scene). Nothing outstanding. Stream **fish need no art** — they
 reuse the shared per-tier sprites tinted by each species' `color`.
 
-### A6 — the Ocean biome (Marlin tier) — *code landed 2026-08-22, art pending*
+### ✅ A6/A8 — the Ocean biome + the Muskie hero sprite (landed 2026-08-25)
 
-Phase 2's serial art dependency. Two real requests here — the **scene** and the
-**one legendary that gets its own sprite (Muskie Quixote)**. Everything else the
-Ocean adds reuses existing art: the 10 ocean sport fish (Marlin Brando, Tuna
-Turner, Red Herring…) share the per-tier sprites tinted by `color`, exactly like
-the Stream, so they need **no new art**. Same for **Koi Story**, the new Pond
-legendary A6 added when Muskie Quixote moved out to the Ocean — it tints the
-shared `fish-legendary.png` gold (`#ffd36e`) against Muskie's lavender.
+Both PNGs are in and wired. Two things worth knowing for the next scene and the
+next sprite:
 
-```
-ART NEEDED: the Ocean fishing scene (Marlin tier background)
-Prompt:   Pixel art side-view of a cozy open-ocean horizon for a fishing game,
-          chunky clean pixels, same warm dawn/dusk mood as the pond and stream
-          but deeper and bluer — teal shallows fading to deep indigo-blue open
-          water, gentle rolling swells, a low far shoreline of muted purple
-          hills, a couple of tiny distant sailboat silhouettes on the horizon,
-          warm sky with soft gold light and a few soft clouds. Calm water in the
-          middle where a boat/kid sits at the waterline (waterline ~55% down,
-          matching the pond scene). No text, no UI, no characters, no boat in the
-          foreground, no fish, no watermark, no baked-in shadow. Landscape scene,
-          fills the frame.
-Save as:  assets/background-ocean.png
-Size:     match assets/background.png's aspect (~1152×466 / roughly 2.47:1),
-          waterline at ~55% height so the existing boat/bobber/fish positions sit
-          right; pixelated-friendly, opaque full-bleed (a scene, not a sprite).
-Wired in: ✅ YES — `#scene.loc-ocean` in style.css layers this over the pond
-          background, exactly like `.loc-stream`. The rule is already live, so
-          **the moment this PNG lands in assets/ the Ocean scene appears with no
-          code change.** Until then the Ocean shows the pond art (and the server
-          logs a harmless 404 for this filename — that's the expected fallback,
-          not a bug).
-```
+**`assets/background-ocean.png`** came back 1408×768 (1.83:1) rather than the
+~2.4:1 the spec asked for, so `cover` crops its top and bottom instead of its
+sides, and its horizon (51.3% down the source) would have landed at y≈185 in the
+720×360 scene. The pond's waterline lands at y≈198, which is what the boat,
+bobber and fish coordinates assume. Fixed in the `.loc-ocean` rule with
+`background-position: center 11%` rather than a reroll — the shipped stream
+background lands at y≈210 and reads fine, so **±13px of waterline drift is
+inside tolerance**. Reach for a `background-position` nudge before asking Matt
+to regenerate.
 
-```
-ART NEEDED: Muskie Quixote — the Ocean legendary hero fish (A6/A8)
-Prompt:   Pixel art of a single legendary muskie (muskellunge) fish for a cozy
-          fishing game, chunky clean pixels, warm dawn lake palette (teal water
-          accents, gold highlights) — a long, sleek, slightly comic predator fish
-          with a big toothy grin, mottled olive-green and bronze body with dark
-          vertical tiger-stripe bars, large flowing fins and tail, one bright
-          determined eye. A touch of quixotic grandeur — noble, adventurous,
-          lovable-underdog energy — but still a clean readable silhouette that
-          reads at small size. Side profile facing right, single centered
-          subject, transparent background, no text, no UI, no watermark, no baked
-          -in shadow. Landscape framing.
-Save as:  assets/fish-muskie.png
-Size:     ~128×86 (landscape ~3:2, matching the other fish sprites' proportions
-          but higher-res since it's the hero), transparent background, tight crop
-          to the sprite. Pixelated-friendly.
-Wired in: not yet — and deliberately so, unlike the background above. The scene
-          rule can ship early because it *layers* (a missing PNG just shows the
-          pond art underneath). A fish sprite **replaces** `background-image`, so
-          wiring it before the file exists would render the Ocean's legendary
-          invisible. So this one waits for the PNG, then gets a one-line rule:
-          `#scene.loc-ocean #fish.tier-legendary { background-image: url(...) }`
-          — note the selector hangs off `#scene`, which carries the `loc-*` class
-          (`#fish` itself never does). Tell Claude when it lands and it's a
-          one-liner. It's the one Ocean fish worth distinct art; the rest tint
-          the shared sprite.
-```
+**`assets/fish-muskie.png`** arrived as the fake-transparency case above (RGB,
+1264×848, checkerboard baked in as opaque gray) and was salvaged to RGBA
+1128×391, tight-cropped, sparkles intact. Two deviations from the prompt, both
+kept: it's **lavender** (matching `muskie.color` `#d4c5f0`) rather than the
+olive-and-bronze the prompt described, and it **faces left** like every other
+fish sprite — the prompt's "facing right" was wrong, since `lineToFish()` aims
+at the mouth on the sprite's left edge. It's also long (2.9:1 against the shared
+sprites' 1.5:1), so its rule widens `#fish` to 96px or the hero would render
+*shorter* than a common fish.
+
 
 ### Family easter egg — a dino-nugget junk item
 

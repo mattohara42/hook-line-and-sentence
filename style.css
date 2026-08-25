@@ -77,7 +77,10 @@ h1 {
    ART.md), then covers it with zero code change. */
 #scene.loc-ocean {
   background-image: url("assets/background-ocean.png"), url("assets/background.png");
-  background-position: center center, center center;
+  /* the ocean art came back 1.83:1 (not the ~2.4:1 the other scenes are), so
+     `cover` crops its top and bottom; `center 11%` pulls the horizon down onto
+     y=198 where the pond's waterline sits and the boat coords assume. */
+  background-position: center 11%, center center;
   background-size: cover, cover;
   background-repeat: no-repeat, no-repeat;
 }
@@ -209,6 +212,14 @@ h1 {
 #fish.tier-legendary {
   background-image: url("assets/fish-legendary.png");
   filter: drop-shadow(0 0 12px rgba(240,192,96,0.9));
+}
+/* A8: Muskie Quixote is the one Ocean fish with its own art — the Pond's
+   legendary (Koi Story) keeps the shared sprite above. The muskie is a long
+   2.9:1 predator against the shared sprites' 1.5:1, so the box widens to keep
+   it reading big; `contain` still seats its mouth at left+6 for lineToFish(). */
+#scene.loc-ocean #fish.tier-legendary {
+  background-image: url("assets/fish-muskie.png");
+  width: 96px;
 }
 #fish.landing { animation: fishArc 0.7s ease forwards; }
 @keyframes fishArc {
