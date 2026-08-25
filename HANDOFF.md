@@ -69,10 +69,11 @@ Nothing is scoped or started. In rough order of what seems to matter most:
    says exactly what one-line change makes it live.
 2. Get a real kid playtest of the A7 fight beats; adjust the two timing
    knobs in `config.js` if they read as too long.
-3. If Matt wants to keep building, scope **Graphics & Character Rig**
-   (`BACKLOG.md`) into real milestones the way `BUILD_PLAN_ADVANCED.md` did
-   for Advanced Progression — it touches all three locations at once, so it
-   isn't a single-session slice.
+3. Start **Graphics & Character Rig** — now scoped into G1-G6 in
+   `BUILD_PLAN_GRAPHICS.md`. G1 (split `kid.png` into body/hat/rod layers) is
+   the unblocker and needs three PNGs; G2 (rowboat / waders / Boston Whaler)
+   is the visible payoff but waits on the re-shot Stream background. Three
+   open questions for Matt sit at the bottom of that file — none block G1.
 
 ## Housekeeping
 
