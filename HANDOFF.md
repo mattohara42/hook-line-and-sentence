@@ -51,9 +51,9 @@ it doesn't get re-proposed from scratch.
 ## Open threads / waiting on Matt
 
 - **Art pending** — exact Gemini prompts are in `ART.md`:
-  - `assets/background-ocean.png` (Ocean biome scene)
-  - `assets/fish-muskie.png` (the legendary's hero sprite)
-  - `assets/junk-nugget.png` (new this session — Frankie's dino nugget)
+  - `assets/junk-nugget.png` (Frankie's dino nugget) — the last one outstanding
+  - ✅ `assets/background-ocean.png` + `assets/fish-muskie.png` landed and were
+    wired 2026-08-25; the muskie needed the ART.md flood-fill salvage first.
 - **A7 fight-beats real kid playtest** still hasn't happened — the
   `clauseRunMs`/`segmentRunMs` timings in `config.js` were picked by feel,
   not by watching a six-year-old type. See `BACKLOG.md` → "Playtest before
