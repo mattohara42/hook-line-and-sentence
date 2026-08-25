@@ -135,7 +135,7 @@ export const CONFIG = {
     ],
   },
 
-  // Junk catches — comedy fake catches (boot/can/weed) that roll in place of a
+  // Junk catches — comedy fake catches (boot/can/weed/nugget) that roll in place of a
   // fish on a small fraction of bites. No coins, no collection entry, just a
   // groan pun. `file` is assets/<file>.png; `{it}` in PUNS.junk gets `name`.
   junk: {
@@ -144,6 +144,7 @@ export const CONFIG = {
       { id: "boot", name: "an old boot",   file: "junk-boot" },
       { id: "can",  name: "a rusty can",   file: "junk-can"  },
       { id: "weed", name: "a clump of pond weed", file: "junk-weed" },
+      { id: "nugget", name: "a dinosaur chicken nugget", file: "junk-nugget" },
     ],
   },
 

@@ -310,6 +310,7 @@ const PUNS = {
     "You caught {it}?! Talk about a re-boot",
     "{it}. Well, it's the sole of the lake…",
     "Only {it} — not every cast's a jackpot. Cast again!",
+    "{it}! Dino-mite catch… for a lunchbox. Not so much a lake.",
   ],
 };
 
