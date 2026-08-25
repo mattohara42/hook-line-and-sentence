@@ -94,11 +94,47 @@ subject. Re-exporting cleanly from Gemini is better when you can get it.
 
 ## Open art requests
 
-### ✅ A3 — the Stream biome (landed)
+### ⚠️ The Stream scene, re-shot — the one open request
 
-`assets/background-stream.png` exists and is wired (`#scene.loc-stream` layers
-it over the pond scene). Nothing outstanding. Stream **fish need no art** — they
-reuse the shared per-tier sprites tinted by each species' `color`.
+`assets/background-stream.png` is in and wired, but it came back as a forest
+pool seen from **above**, with its water in a low diagonal band, rather than the
+side view with a flat waterline at ~55% the prompt asked for. Under `cover` the
+boat floated ~100px above the water; dropping the boat to meet the water buried
+the whole rig behind the finger-guide panel. The scene is currently held
+together by scaling the art up 1.246x and offsetting it (`#scene.loc-stream` in
+style.css) so the near bank lands on y=198 — playable and pretty, but it costs
+the sky and runs the art chunkier than the other two biomes.
+
+The ocean prompt produced exactly the right composition, so this one borrows its
+framing language. When this PNG lands, `.loc-stream` goes back to plain `cover`
+and the offset comment comes out.
+
+```
+ART NEEDED: the Stream fishing scene, re-shot as a side view
+Prompt:   Pixel art SIDE VIEW of a cozy forest stream for a fishing game, seen
+          straight on from the opposite bank — eye level at the water, NOT from
+          above, the way you'd see a lake from a boat sitting in it. Chunky
+          clean pixels, warm dawn palette but cooler and greener than the pond:
+          teal-to-emerald water filling the whole bottom half of the frame in
+          flat horizontal bands, a far bank of mossy rocks and ferns meeting the
+          water in a straight horizontal line across the middle, pines and muted
+          purple hills behind it, warm sky with soft gold light above. The water
+          must be OPEN and unobstructed from the left edge to the right edge —
+          no sandbars, no rocks breaking the surface, no near bank in the
+          foreground. No text, no UI, no characters, no boat, no fish, no
+          watermark, no baked-in shadow. Landscape scene, fills the frame.
+Save as:  assets/background-stream.png  (replaces the current one)
+Size:     ~1400x600 (roughly 2.4:1, matching background.png and
+          background-ocean.png). THE ONE THING THAT MATTERS: the waterline —
+          where the far bank meets the water — must be a flat horizontal line at
+          55% of the image height, with open water everywhere below it. That's
+          the line the boat, bobber and fish coordinates are all built on.
+Wired in: ✅ YES — `#scene.loc-stream` already points at this filename. Tell
+          Claude when it lands and the framing workaround comes out with it.
+```
+
+Stream **fish need no art** — they reuse the shared per-tier sprites tinted by
+each species' `color`.
 
 ### ✅ A6/A8 — the Ocean biome + the Muskie hero sprite (landed 2026-08-25)
 

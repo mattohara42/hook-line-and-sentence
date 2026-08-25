@@ -368,7 +368,7 @@ function later(fn, delay) {
 const $ = id => document.getElementById(id);
 const el = { scene: $("scene"), word: $("word"), status: $("status"), fill: $("meter-fill"),
              caught: $("caught"), escaped: $("escaped"), coins: $("coins"), dist: $("dist"),
-             line: $("line"), fish: $("fish"), water: $("water"), bobber: $("bobber") };
+             line: $("line"), fish: $("fish"), bobber: $("bobber") };
 
 // scale the fixed 720x360 design-space canvas to cover the viewport (M9);
 // every pixel position in the game logic stays in that untouched coordinate
@@ -529,10 +529,10 @@ setInterval(() => {
   const s = document.createElement("div");
   s.className = "fish-shadow";
   s.style.width = rand(30, 70) + "px";
-  s.style.top = rand(60, 150) + "px";
-  s.style.left = "-90px";
+  s.style.top = rand(258, 348) + "px";   // the water band in scene coords — these
+  s.style.left = "-90px";                // used to be relative to the #water div
   s.style.animationDuration = rand(16, 30) + "s";
-  el.water.appendChild(s);
+  el.scene.appendChild(s);
   setTimeout(() => s.remove(), 31000);
 }, JUICE.shadowEveryMs);
 

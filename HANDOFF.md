@@ -50,11 +50,12 @@ it doesn't get re-proposed from scratch.
 
 ## Open threads / waiting on Matt
 
-- **Art pending — none.** As of 2026-08-25 every `ART NEEDED` block in
-  `ART.md` is delivered and wired: the Ocean scene, the Muskie hero sprite and
-  Frankie's dino nugget all landed that day. Two of the three needed the
-  flood-fill salvage first (Gemini keeps baking the transparency checkerboard
-  in) — `ART.md` now documents both the light and dark variants.
+- **Art pending — one: the Stream scene, re-shot.** Everything else landed
+  2026-08-25 (Ocean scene, Muskie hero sprite, Frankie's dino nugget). The
+  stream background is a top-down forest pool rather than the side view the
+  prompt asked for, so the boat has no flat waterline to sit on; style.css
+  currently scales and offsets the art to fake one. `ART.md` has the re-shot
+  prompt and says what comes out when it lands.
 - **A7 fight-beats real kid playtest** still hasn't happened — the
   `clauseRunMs`/`segmentRunMs` timings in `config.js` were picked by feel,
   not by watching a six-year-old type. See `BACKLOG.md` → "Playtest before
