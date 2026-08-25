@@ -50,10 +50,11 @@ it doesn't get re-proposed from scratch.
 
 ## Open threads / waiting on Matt
 
-- **Art pending** — exact Gemini prompts are in `ART.md`:
-  - `assets/junk-nugget.png` (Frankie's dino nugget) — the last one outstanding
-  - ✅ `assets/background-ocean.png` + `assets/fish-muskie.png` landed and were
-    wired 2026-08-25; the muskie needed the ART.md flood-fill salvage first.
+- **Art pending — none.** As of 2026-08-25 every `ART NEEDED` block in
+  `ART.md` is delivered and wired: the Ocean scene, the Muskie hero sprite and
+  Frankie's dino nugget all landed that day. Two of the three needed the
+  flood-fill salvage first (Gemini keeps baking the transparency checkerboard
+  in) — `ART.md` now documents both the light and dark variants.
 - **A7 fight-beats real kid playtest** still hasn't happened — the
   `clauseRunMs`/`segmentRunMs` timings in `config.js` were picked by feel,
   not by watching a six-year-old type. See `BACKLOG.md` → "Playtest before

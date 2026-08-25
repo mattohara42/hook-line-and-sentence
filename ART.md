@@ -70,10 +70,20 @@ alpha 255, and the file is far bigger than a tight sprite (`boat.png` is
 1152×466; the bad batch came in at 1408×768). Salvage it with Pillow — no
 ImageMagick on this Mac — by border **flood-fill** on `chroma<=26 and
 min(rgb)>=120` → alpha 0, then crop to the alpha bbox so CSS `contain` seats it
-like the original. The `>=120` floor matters: the checkerboard's dark squares
-aren't one flat value (the muskie batch ran 130–140), and a tighter floor leaves
-stray gray pixels pinned to the borders that silently block the crop. Count
-`alpha==0` as fillable too, so a re-run on a half-salvaged file still floods. Flood-fill (not a global color key) protects gray *inside* a
+like the original. Count `alpha==0` as fillable too, so a re-run on a
+half-salvaged file still floods.
+
+**The brightness gate is per-batch, so read the corner pixels first.** Gemini
+draws the checkerboard light *or* dark: the muskie batch was gray-on-gray
+(138/204, dark squares drifting 130–140, so a `>=132` floor left stray pixels
+pinned to the borders that silently blocked the crop), while the nugget batch
+was black-on-gray (0/145) with mid-gray anti-aliasing at every square boundary.
+Chasing that with brightness bands is a losing game — **when the subject has no
+neutral colors of its own, drop the brightness test entirely and fill on
+`chroma<=26` alone.** The border flood-fill is what protects the art. The one
+case that needs the brightness gate back is a sprite with a *pure black or gray
+outline*: with no hue at its edge, a chroma-only fill eats the outline and leaks
+inside. Check the subject's edge color before choosing. Flood-fill (not a global color key) protects gray *inside* a
 subject. Re-exporting cleanly from Gemini is better when you can get it.
 
 ## Prompt template Claude should reuse
@@ -116,34 +126,17 @@ sprites' 1.5:1), so its rule widens `#fish` to 96px or the hero would render
 *shorter* than a common fish.
 
 
-### Family easter egg — a dino-nugget junk item
+### ✅ Family easter egg — the dino-nugget junk item (landed 2026-08-25)
 
-Not tied to any milestone — just a fun extra for the junk-catch pool
-(`CONFIG.junk.items`, `app.js:679`), which already has `an old boot` /
-`a rusty can` / `a clump of pond weed`. A dinosaur-shaped chicken nugget
-(one of Frankie's favorite things) fits the same "so, not a fish" joke.
+`assets/junk-nugget.png` is in and wired: `CONFIG.junk.items` gained
+`{ id: "nugget", name: "a dinosaur chicken nugget", file: "junk-nugget" }`, so
+it rolls alongside the boot/can/weed, and `PUNS.junk` gained a dino-mite line.
 
-```
-ART NEEDED: a junk-catch item — dinosaur chicken nugget
-Prompt:   Pixel art of a single dinosaur-shaped chicken nugget (like a kids'
-          frozen dino nugget, T-rex silhouette), cozy retro game asset,
-          chunky clean pixels, warm dawn lake palette (teal water accents,
-          gold highlights), lightly golden-breaded texture, maybe a tiny
-          drip of ketchup for scale/humor. Single centered subject,
-          transparent background, no text, no UI, no watermark, no baked-in
-          shadow.
-Save as:  assets/junk-nugget.png
-Size:     ~64×64, transparent background, tight crop, matching
-          junk-boot.png / junk-can.png / junk-weed.png in scale and style.
-Wired in: not yet — deliberately so, same reasoning as the Muskie sprite
-          above. `el.fish.style.backgroundImage` (app.js:714) *replaces*
-          the fish sprite for whichever junk item gets rolled, so adding
-          this to `CONFIG.junk.items` before the PNG exists would show a
-          broken image on that roll. Once the file lands, it's a one-line
-          config.js addition: `{ id: "nugget", name: "a dinosaur chicken
-          nugget", file: "junk-nugget" }`. Tell Claude when it's in and
-          it's wired immediately.
-```
+Arrived as the fake-transparency case above in its **black-checkerboard**
+variant (RGB 1024×1024, squares at 0 and 145). Salvaged on `chroma<=26` with no
+brightness gate — safe here because the nugget is all tan, brown, teal and
+ketchup-red, with no neutral pixel of its own. Final: RGBA 696×574, which sits
+right next to `junk-boot.png` in the 62×41 `#fish` box.
 
 **Optional / not yet wired — deep-sea + fly rod shop icons.** The advanced plan
 lists rod icons, but the shop doesn't render rod art today (rods have no `file`
