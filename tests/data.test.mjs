@@ -249,3 +249,14 @@ test("junk config is well-formed", () => {
   assert.equal(ids.length, new Set(ids).size, "duplicate junk id");
   for (const j of CONFIG.junk.items) assert.ok(j.id && j.name && j.file, `junk "${j.id}" missing a field`);
 });
+
+// The Stream's phrases and the Ocean's sentences are filtered by the kid's
+// unlocked letters, so content using a letter no stage ever grants is content
+// nobody can reel — it silently drops the reel back to single words. (That's
+// the shape of the bug the 🧪 shortcut had: full spots, home-row keys.)
+test("every phrase and sentence is typeable once all letter stages are unlocked", () => {
+  const all = new Set(CONFIG.unlock.stages.flatMap(s => [...s.letters]));
+  const untypeable = e => [...e.letters].some(l => !all.has(l));
+  assert.equal(offenders(phrases, untypeable, p => p.text), "", "phrase needs a letter no stage grants");
+  assert.equal(offenders(sentences, untypeable, s => s.text), "", "sentence needs a letter no stage grants");
+});
