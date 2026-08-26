@@ -245,13 +245,15 @@ prompts + Matt generates). Palette stays the locked ~16-color set.
 - Stream/Ocean fish rosters — pick the actual species per set and their rarity
   tiers (fish *are* separated by tier, decided; the specific lists are open).
 
-## EPIC: Graphics & Character Rig (scoped — see `BUILD_PLAN_GRAPHICS.md`)
+## EPIC: Graphics & Character Rig (superseded — see `BUILD_PLAN_VISUAL.md`)
 
 *Brainstormed August 2026, after A0-A4 shipped and the three locations (Pond/
 Stream/Ocean) had real shape. Parked until the Ocean shipped; that condition is
 met (A0-A8 all landed 2026-08-22), and the epic was broken into milestones
-G1-G6 on 2026-08-25. **`BUILD_PLAN_GRAPHICS.md` is the plan of record** — this
-section stays as the brainstorm it came from.*
+G1-G6 on 2026-08-25. G1 shipped and then failed the eye test, so the epic was
+re-planned the same day: **`BUILD_PLAN_VISUAL.md` is the plan of record** and
+`BUILD_PLAN_GRAPHICS.md` is marked superseded. This section stays as the
+brainstorm both came from.*
 
 **Why now, not earlier:** hats have been deferred since the boat-skin shop
 because `assets/kid.png` bakes hat+body+rod into one PNG (see the "Cosmetic

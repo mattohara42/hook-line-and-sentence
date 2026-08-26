@@ -6,11 +6,11 @@ milestone order for the v1 core (M1–M10, all done); `BUILD_PLAN_ADVANCED.md`
 was the plan for the post-v1 **Advanced Progression epic** (tiers, phrases,
 sentences, WPM-as-goal) — **A0–A8 all shipped 2026-08-22, epic complete.**
 All Advanced Progression art has landed. The current epic is the **Visual
-Rework** — `BUILD_PLAN_VISUAL.md` (V1-V5, none started), which supersedes
+Rework** — `BUILD_PLAN_VISUAL.md` (V1 done, V2 next), which supersedes
 `BUILD_PLAN_GRAPHICS.md` after G1's layered angler didn't hold up in play.
-One art request is open in `ART.md` (a re-shot Stream background, which V3
-needs). A real kid playtest of the A7 fight beats is still outstanding
-(see `BACKLOG.md`).
+Two art requests are open in `ART.md`: V2's four reference-drawn angler pieces,
+and a re-shot Stream background that V3 needs. A real kid playtest of the A7
+fight beats is still outstanding (see `BACKLOG.md`).
 Work on exactly one milestone at a time. `ART.md` is the art pipeline: Claude
 writes Gemini prompts + filenames, Matt generates the PNGs.
 
@@ -29,6 +29,10 @@ not truncation). Pass that exact string to the GitHub tools; no lookup needed.
   writes.
 - Rendering is DOM/CSS (validated by `prototype/visual-mockup.html`). Do not
   introduce canvas or Phaser without discussing first.
+- **The scene has three planes** (V1): background art, the mid plane (rig,
+  fish), and `#surface` — the water painted *in front* of the mid plane. New
+  scene elements have to pick a side of the surface. Nothing may land in the
+  bottom-center finger-guide panel; it covers the lower third.
 
 ## Design decisions already made (don't relitigate)
 
@@ -49,6 +53,11 @@ not truncation). Pass that exact string to the GitHub tools; no lookup needed.
 - Start each session by stating which milestone from `BUILD_PLAN.md` is
   active and its "done when" criterion.
 - Mid-build ideas go to `BACKLOG.md`, never into the current milestone.
+- **`git fetch` before branching.** The local clone runs many commits behind
+  `origin/main`; branch from `origin/main`, not local `main`.
+- **Art that doesn't fit is a reroll, not an offset tweak.** Sprite pieces are
+  generated from a reference image and returned on the same canvas so they
+  register by construction (see `ART.md`).
 - Local dev: `python3 -m http.server 8080`. Firestore/OAuth work (M4+) needs
   HTTPS — deploy previews on Netlify or ngrok.
 - Surface code smells as separate issues; don't refactor unrelated code.
