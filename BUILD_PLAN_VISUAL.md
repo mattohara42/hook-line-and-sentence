@@ -68,14 +68,41 @@ crisp to read as underwater, since at the swim band the tint is only ~20%
 opaque. Ripples, splashes and coin floats were lifted in front of the surface —
 they happen *on* the water, not under it.
 
-### V2 — One drawn angler per pose (reverses G1's split)
-- `ART.md`: the angler drawn **complete** — body, hands, rod and hat in one
-  sprite — one per pose. The rod is in the hand because it was drawn there.
-- `config.js`: `CONFIG.rig.layers` collapses to the angler plus the vessel.
-  `CONFIG.rig.lineOrigin` **stays** — a config-driven line origin is the part of
-  G1 that earned its keep, and V3 needs it per pose.
-- **Done when:** the angler reads correctly at game scale with no per-piece
-  offset tuning, in a screenshot taken at 1x rather than 4x.
+### V2 — Layers that register by construction (Matt: keep the gear)
+
+Gear stays swappable (Matt, 2026-08-25), so the angler can't simply be baked.
+What changes instead is **how the pieces are generated**. G1's mistake wasn't
+layering — it was drawing each piece in isolation and then trying to tune the
+offsets until they fit. They never will.
+
+Three rules, and the jank goes away:
+
+1. **Every piece is drawn from the body sprite as an image reference.** Matt
+   gives Gemini `body-<pose>.png` and asks for the hat (or rod) *for that
+   character*, at that scale and angle.
+2. **Every piece comes back on the same canvas, in place.** Not a tight-cropped
+   hat — a transparent canvas the same size as the body, with the hat already
+   sitting where it goes. Then all layers share one box and the offsets are
+   literally zero. Registration becomes the generator's job, not a tuning
+   session at 4x zoom.
+3. **The grip is a sandwich, not an alignment problem.** The body is drawn with
+   an *open* curled hand; the rod paints over it; a small `hand-<pose>.png` of
+   just the fingers and thumb paints over the rod's grip. Any rod then looks
+   held, because fingers close over whatever is underneath. This is the piece
+   that makes swappable rods possible at all.
+
+Layer order becomes: **vessel → body → rod → fingers → hat**.
+
+- `ART.md`: for the Pond pose — `body-kid-boat.png` (open hand, bare head),
+  `hand-kid-boat.png` (fingers only), plus `hat-straw.png` and `rod-basic.png`
+  regenerated against that body. Same canvas, every one.
+- `config.js`: `CONFIG.rig.layers` keeps its shape but every layer shares one
+  box; `lineOrigin` stays, and V3 sets it per pose.
+- A **local composite check before wiring**: stack the PNGs with Pillow and look
+  at the result at game scale. If a piece is off, that's a reroll, not an offset
+  tweak — offsets are how G1 got into trouble.
+- **Done when:** the rod looks held and the hat looks worn at **1x**, with all
+  layers at the same offsets, and swapping in a second hat needs no new numbers.
 
 ### V3 — Vessels, with the kid actually inside them
 - Rowboat (Pond), waders (Stream), Boston Whaler with the stern fighting chair
@@ -96,18 +123,21 @@ they happen *on* the water, not under it.
 - **Done when:** a bluegill and a pike read differently at a glance, and landing
   one has a visible moment.
 
-### V5 — Customization, priced by what V2 costs
-Baking the angler makes hats and rods expensive: they multiply against poses and
-characters. Three ways to go, to be picked before any art is ordered:
+### V5 — The gear shop
+**Decided (Matt, 2026-08-25): the gear stays**, generated the reference-drawn
+way V2 sets up. HATS and RODS sections in the shop, mirroring BOATS — the
+`renderShopList` code already generalizes, so this is mostly content.
 
-- **(a) Drop cosmetic hats/rods.** They've been deferred since the boat shop and
-  boats already give coins somewhere to go. Art = characters × poses.
-- **(b) Reference-drawn hats.** Keep hats swappable, but generate each one *from
-  the body sprite as an image reference* — hand Gemini the angler PNG and ask
-  for a hat drawn to fit that head at that scale. Registration becomes the
-  generator's problem instead of a tuning problem. **Recommended.**
-- **(c) A sprite per combination.** Correct, and it explodes. Only viable if the
-  roster stays tiny.
+Art cost, now that pieces register by construction: **one PNG per gear item per
+pose**, since a hat drawn for the seated pose won't sit right on the standing
+one. Three poses means a hat is three files. Start each new item at the Pond
+pose and add the other two when it's proven.
+
+- `config.js`: `shop.hats`, and `file` on `shop.rods` the way boats already have.
+- `app.js`: the two new shop sections; equipping re-runs `renderRig()`, which is
+  exactly what G1's layer machinery was built for.
+- **Done when:** buying and equipping a hat changes the angler everywhere and
+  persists, and the rod you bought is the rod in your hand.
 
 ## Carried over from the graphics plan (still good)
 
@@ -124,16 +154,15 @@ characters. Three ways to go, to be picked before any art is ordered:
 | Milestone | PNGs |
 |---|---|
 | V1 | **none** — CSS |
-| V2 | one complete angler per pose (3 for the current character) |
+| V2 | per pose: body (open hand), fingers overlay, plus hat + rod regenerated against that body — all on the body's canvas |
 | V3 | rowboat, Whaler + chair, and a near-side layer for each vessel; re-shot Stream background (already requested in `ART.md`) |
 | V4 | 2–3 fish shape families |
 | V5 | depends on the option chosen |
 
 ## Open questions
 
-1. **Is a hat/rod shop still a goal**, or was it mainly a way to spend coins?
-   Boats already cover that. The answer picks V5's option and decides whether
-   V2's sprites bake the hat in.
+1. ~~Is a hat/rod shop still a goal?~~ **Answered 2026-08-25: yes, keep the
+   gear** — generated the reference-drawn, same-canvas way described in V2.
 2. **Keep the current angler's look** (teal shirt, straw hat, brown hair) as the
    reference for the redrawn poses, or restyle now while nothing is baked?
 3. **One surface treatment or three?** The Pond, Stream and Ocean could share a
