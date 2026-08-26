@@ -50,9 +50,13 @@ it doesn't get re-proposed from scratch.
 
 ## Open threads / waiting on Matt
 
-- **G1 is done** (2026-08-25) — the angler is body + hat + rod layers, art
-  landed and offsets tuned. **G2 is next**: rowboat / waders / Boston Whaler
-  with the fighting chair, which needs the re-shot Stream background first.
+- **The graphics epic was re-planned on 2026-08-25.** G1 shipped (the angler
+  as body/hat/rod layers) and then failed the play test: the hat reads janky,
+  the rod isn't in the hand, the boat floats, the fish doesn't look underwater.
+  `BUILD_PLAN_VISUAL.md` (V1-V5) supersedes `BUILD_PLAN_GRAPHICS.md`. **V1 is
+  next and needs no art** — a water surface painted in front of the boat and
+  fish; it's already prototyped in the browser. V2 reverses G1's split and
+  redraws the angler complete, one sprite per pose.
 - **Art pending — the Stream scene, re-shot.** Everything else landed
   2026-08-25 (Ocean scene, Muskie hero sprite, Frankie's dino nugget). The
   stream background is a top-down forest pool rather than the side view the
