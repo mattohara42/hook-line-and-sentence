@@ -4,9 +4,11 @@ A cozy pixel-art fishing game that teaches kids to type. Casting, reeling,
 and catching all happen through the keyboard — practice that never feels
 like practice.
 
-**Status:** built and playable. The core game (milestones M1–M10) is done;
-now shipping post-v1 features (see `BACKLOG.md`). Hosted on Netlify — pushes to
-`main` are promoted to production manually.
+**Status:** built and playable. The core game (M1–M10) and the Advanced
+Progression epic (A0–A8) are both done — four ranks, three fishing spots, words
+→ phrases → punctuated sentences. Current work is the **Visual Rework**
+(`BUILD_PLAN_VISUAL.md`): depth, a redrawn angler, and swappable gear. Hosted on
+Netlify — pushes to `main` are promoted to production manually.
 
 ## Start here
 
@@ -15,7 +17,9 @@ now shipping post-v1 features (see `BACKLOG.md`). Hosted on Netlify — pushes t
 | `HANDOFF.md` | Session-to-session notes — read this first when resuming work |
 | `SPEC.md` | Design source of truth — all decisions and v1 scope |
 | `BUILD_PLAN.md` | v1 milestone order (M1–M10, all done) with done-criteria |
-| `BUILD_PLAN_ADVANCED.md` | Post-v1 Advanced Progression epic — tiers (Minnow→Muskie), phrases/sentences, WPM-as-goal; phased A0–A8 |
+| `BUILD_PLAN_ADVANCED.md` | Post-v1 Advanced Progression epic — tiers (Minnow→Muskie), phrases/sentences, WPM-as-goal; phased A0–A8 (done) |
+| `BUILD_PLAN_VISUAL.md` | **Current epic** — the visual rework, V1–V5: water depth, a redrawn angler, vessels per spot, fish shapes, the gear shop |
+| `BUILD_PLAN_GRAPHICS.md` | Superseded by the above; kept for the reasoning trail |
 | `CLAUDE.md` | Instructions for Claude Code sessions |
 | `FIRESTORE.md` | Profile/save data schema + cloud-saves setup (self-hosting) |
 | `BACKLOG.md` | Ideas parked to protect milestone scope, plus shipped post-v1 features |
@@ -27,6 +31,18 @@ now shipping post-v1 features (see `BACKLOG.md`). Hosted on Netlify — pushes t
 | `data/fish.json` | The roster — say hi to Muskie Quixote |
 | `prototype/` | Playable design artifacts: feel test + visual mockup |
 | `tools/generate-words.mjs` | Regenerates `data/words.json` |
+
+## How it plays
+
+Type the word on screen to cast. A fish bites, and reeling it in is
+word-at-a-time typing with a beat between words. **Tension only reacts to
+mistakes, never to speed** — a slow, careful typist always lands the fish. A
+ghost-hands keyboard under the scene shows which finger to use, and new letters
+unlock as catches add up, starting from the home row.
+
+Four ranks open three spots: the Pond (single words, lowercase only), the
+Stream (multi-word phrases, spacebar and capitals), and the Ocean (full
+sentences with punctuation). Catch the legendary and you're a Muskie.
 
 ## Play the prototypes
 

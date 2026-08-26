@@ -6,98 +6,104 @@ snapshot, not a design doc — `SPEC.md`, `BUILD_PLAN*.md`, `BACKLOG.md`, and
 each session. This file just says *where things were left* and *what's
 waiting on a human*.
 
-## Where things stand (as of 2026-08-23)
+## Where things stand (as of 2026-08-25)
 
-v1 core (M1–M10) and the Advanced Progression epic (A0–A8) are both done —
-Minnow → Mackerel → Marlin → Muskie is fully playable. There is **no active
-milestone right now.** The last few sessions have been a pre-release
-hardening pass followed by a light, fun pass adding family-specific easter
-eggs. `BUILD_PLAN_ADVANCED.md` names **Graphics & Character Rig** as the next
-epic, but it's still parked in `BACKLOG.md`, not yet broken into milestones —
-don't start it without scoping it into real milestones first.
+v1 core (M1–M10) and Advanced Progression (A0–A8) are done and playable:
+Minnow → Mackerel → Marlin → Muskie, three biomes, all their art landed.
 
-## Last session's changes (PRs #32–#34, all squash-merged to `main`)
+The active epic is the **Visual Rework** — `BUILD_PLAN_VISUAL.md`, V1–V5.
+**V1 is done. V2 is next and is waiting on art** (four Gemini prompts in
+`ART.md`). This epic replaced the Graphics & Character Rig plan mid-session,
+which is the main thing to understand before touching the visuals; see below.
 
-- **#32 — docs sync.** Fixed three stale doc references left over from the
-  pre-release pass (`#31`): `CLAUDE.md`/`BUILD_PLAN_ADVANCED.md` still said
-  "first buildable milestone is A0" and listed three pending art PNGs
-  (Stream background had already landed); `FIRESTORE.md` told a new-project
-  reader to paste "the complete reference ruleset from the bottom of
-  `firestore.rules`," a block that pre-release pass #31 intentionally removed.
-- **#33 — pun-pool easter eggs.** Added family-favorite flavor lines to
-  `app.js`'s `PUNS` pools (`wait`/`niceCast`/`bite`/`catchCommon`/
-  `catchRare`) — Kate (Bluey, unicorns, 80s pop), Frankie (Zelda, weights,
-  Rubik's cube), Jack (Simpsons, classic rock, hip hop). Left `cast` (must
-  keep the literal instruction) and `escape`/`junk` (deliberately gentle
-  tone) alone.
-- **#34 — three new fish + a queued art request.** `data/fish.json` gained
-  Una Corn (Unicornfish/ocean/uncommon, Kate), Major Grouper (ocean/
-  uncommon, Frankie), Muddy Waters (Channel Catfish/stream/rare, Jack) — all
-  reuse the shared per-tier sprites tinted by `color`, so no art dependency.
-  Also queued a dino-chicken-nugget junk item as a real `ART NEEDED` block in
-  `ART.md` for Frankie — **deliberately not wired into `config.js` yet**
-  (same reasoning as the Muskie sprite: it's a straight sprite replace, so
-  wiring it before the PNG exists would show a broken image on that roll).
+## The arc of this session, in one paragraph
 
-**Discussed and declined:** LLM-driven dynamic content generation (tier
-2/tier 3 phrases/sentences personalized live to a kid's favorite characters,
-or parameterized by arbitrary player input). Matt didn't want to go down
-that road — this is a static, no-build-step, offline-capable app with no
-backend, and it would also relitigate the locked "sentences are hand-curated,
-not generated" call in `BUILD_PLAN_ADVANCED.md`. He went with static,
-hand-picked easter eggs instead (the three PRs above). Worth remembering so
-it doesn't get re-proposed from scratch.
+The three outstanding art PNGs landed and got wired (Ocean scene, Muskie hero
+sprite, dino nugget). That exposed a scene-composition problem — the SVG wave
+overlay was banding the new backgrounds, and the Stream's boat floated ~100px
+above its water — which was fixed by deleting the overlay and reframing the
+Stream art. Then the Graphics & Character Rig epic was scoped (G1–G6) and G1
+shipped: the angler split into body/hat/rod layers. **Matt played it and G1
+failed the eye test** — janky hat, rod not in the hand, boat floating, fish not
+underwater. That prompted a full re-plan (`BUILD_PLAN_VISUAL.md`), whose V1
+shipped the same session: a water surface painted *in front of* the boat and
+fish. V2 keeps the gear shop but changes how art is generated so pieces
+register by construction.
+
+## Last session's changes (PRs #36–#47, all squash-merged to `main`)
+
+**Art landed and wired**
+- **#36 — Ocean scene + Muskie hero sprite.** `background-ocean.png` needed
+  `background-position: center 11%` (it came back 1.83:1, not ~2.4:1, so
+  `cover` cropped its horizon 13px high). `fish-muskie.png` got its own rule;
+  `fish-legendary.png` stayed put because Koi Story now uses it.
+- **#37 — Frankie's dino nugget.** Wired into `CONFIG.junk.items` with a new
+  pun line.
+- **#38 — the SVG wave overlay is gone.** It was pinned at the pond's
+  waterline and banded the other two biomes with dark stripes. The Stream's
+  boat-floating problem was fixed by **reframing the art** (scaled 1.246x,
+  offset so its bank lands on y=198), after moving the furniture down was
+  tried and abandoned — the whole rig ended up behind the finger-guide panel.
+- **#39 — 🧪 dev shortcut unlocks the keyboard too.** Letter stages are earned
+  by catch count, so a fresh test profile in the Ocean had only the home row,
+  which filtered out every sentence and silently dropped the reel to single
+  words.
+
+**Planning**
+- **#40 — Graphics & Character Rig scoped** into G1–G6.
+- **#41 — Matt's answers:** three poses (rowboat / waders / fighting chair),
+  and the angler is assigned from **age + sex** rather than picked from a
+  roster.
+- **#45 — the re-plan.** `BUILD_PLAN_VISUAL.md` supersedes
+  `BUILD_PLAN_GRAPHICS.md`, which is marked superseded but kept for the trail.
+- **#47 — V2's approach**, after Matt confirmed he wants the gear shop.
+
+**Built**
+- **#42/#43 — G1.** The angler became `CONFIG.rig.layers` + `renderRig()`, and
+  the three PNGs landed. `#line`'s hand-solved `275px`/`9.8deg` was replaced by
+  `CONFIG.rig.lineOrigin` + a computed aim — **that part survives the re-plan.**
+- **#44 — audio defaults to off** and the **day/night tint is gone**.
+- **#46 — V1.** `#surface` paints the water in front of the rig and fish; the
+  fish carries a `.submerged` treatment until it's landed; the boat rocks on a
+  waterline pivot with a contact shadow.
 
 ## Open threads / waiting on Matt
 
-- **The graphics epic was re-planned on 2026-08-25.** G1 shipped (the angler
-  as body/hat/rod layers) and then failed the play test: the hat reads janky,
-  the rod isn't in the hand, the boat floats, the fish doesn't look underwater.
-  `BUILD_PLAN_VISUAL.md` (V1-V5) supersedes `BUILD_PLAN_GRAPHICS.md`. **V1 is
-  done** (2026-08-25): the water surface is painted in front of the boat and
-  fish, the hull is cut by the waterline, the fish is submerged until it's
-  landed, and the boat rocks instead of sliding. **V2 is next** — reverse G1's
-  split and redraw the angler complete, one sprite per pose (the rod should be
-  in the hand because it was drawn there). V2 needs an answer to the hat/rod
-  shop question at the bottom of the visual plan before art is ordered.
-- **Art pending — the Stream scene, re-shot.** Everything else landed
-  2026-08-25 (Ocean scene, Muskie hero sprite, Frankie's dino nugget). The
-  stream background is a top-down forest pool rather than the side view the
-  prompt asked for, so the boat has no flat waterline to sit on; style.css
-  currently scales and offsets the art to fake one. `ART.md` has the re-shot
-  prompt and says what comes out when it lands.
-- **A7 fight-beats real kid playtest** still hasn't happened — the
-  `clauseRunMs`/`segmentRunMs` timings in `config.js` were picked by feel,
-  not by watching a six-year-old type. See `BACKLOG.md` → "Playtest before
-  anything else."
+- **V2 art — four prompts in `ART.md`, and the order matters.**
+  `body-kid-boat.png` (open C-curl hand) is generated first, then
+  `hand-kid-boat.png`, `hat-straw.png` and `rod-basic.png` are each generated
+  **from it as an attached reference image**, returned on the **same canvas**.
+  Watch for Gemini tight-cropping the subject — that's the reroll case.
+- **The Stream scene, re-shot** (prompt in `ART.md`). The current art is a
+  top-down forest pool; V3's standing angler in waders needs a bank to stand
+  on, and `.loc-stream`'s framing workaround comes out when it lands.
+- **A7 fight-beats playtest with a real kid** still hasn't happened —
+  `clauseRunMs`/`segmentRunMs` in `config.js` were picked by feel.
+
+## Rules of thumb this session earned
+
+- **Fetch before branching.** The local clone was 12 commits behind
+  `origin/main` at session start, which produced a set of art prompts for work
+  that had already been requested upstream.
+- **A piece that doesn't fit is a reroll, not an offset tweak.** Tuning
+  offsets at 4x zoom is how G1 shipped something that looked wrong at 1x.
+- **Gemini fakes transparency in a new way every batch** — gray/gray,
+  black/gray, blue/black so far. `ART.md`'s salvage detects the pair per file
+  rather than assuming.
+- **Nothing may land in the bottom-center finger-guide panel.** It covers the
+  lower third of the scene and it's the best part of the game.
 
 ## Likely next steps
 
-Nothing is scoped or started. In rough order of what seems to matter most:
-
-1. Wire in each art asset as it lands — every request in `ART.md` already
-   says exactly what one-line change makes it live.
-2. Get a real kid playtest of the A7 fight beats; adjust the two timing
-   knobs in `config.js` if they read as too long.
-3. Start **Graphics & Character Rig** — scoped into G1-G6 in
-   `BUILD_PLAN_GRAPHICS.md`. G1 (split `kid.png` into body/hat/rod layers) is
-   the unblocker and needs three PNGs; G2 (rowboat / waders / Boston Whaler
-   with a fighting chair) is the visible payoff but waits on the re-shot
-   Stream background. Matt answered the first three open questions on
-   2026-08-25 (three poses, angler assigned from age + sex, kid seated in the
-   fighting chair); what's left at the bottom of that file is G3 art-volume
-   detail — how many age buckets, and the wording of the sex question.
+1. Generate the four V2 PNGs; Claude composites them locally and checks the
+   stack at game scale *before* wiring.
+2. Then V3 (vessels: rowboat / waders / Whaler with fighting chair), which
+   wants the re-shot Stream background first.
+3. The kid playtest of the A7 fight beats, whenever a kid is available.
 
 ## Housekeeping
 
-- Full test suite: 65/65 passing (`node --test`).
+- Full test suite: 67/67 passing (`npm test` — Node's built-in runner).
 - Every PR this session was opened ready-for-review and squash-merged
-  immediately (Matt's standing preference, `CLAUDE.md`). Because of that,
-  each new PR's branch was reset to `origin/main` before committing the next
-  batch of work, rather than stacking commits on already-squashed history.
-
----
-*Update this file at the end of each session: replace "Last session's
-changes" with the new one, fold anything still open into "Open threads," and
-keep "Where things stand" current. Completed work doesn't need to be
-preserved here — git history and the PR descriptions already have it.*
+  immediately, per `CLAUDE.md`.
+- Netlify deploys are **manual** — merging to `main` does not go live.
