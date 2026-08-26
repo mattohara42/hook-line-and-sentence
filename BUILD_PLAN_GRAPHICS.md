@@ -1,5 +1,15 @@
 # Typing Fishing — Graphics & Character Rig Build Plan
 
+> **⚠️ Superseded 2026-08-25 by `BUILD_PLAN_VISUAL.md`.** Matt played the G1
+> build and the layered angler didn't hold up — a separately generated hat and
+> rod can't register against a separately generated body, and the flat sprite
+> plane left the boat floating and the fish sitting on top of the water rather
+> than under it. The visual rework plan replaces G1–G6; the decisions below
+> (per-location vessels, three poses, angler assigned from age + sex, favorite
+> color as a runtime tint) all carry over and are restated there. Kept for the
+> reasoning trail.
+
+
 Companion to `SPEC.md`, `BUILD_PLAN.md` (v1, M1–M10) and
 `BUILD_PLAN_ADVANCED.md` (Advanced Progression, A0–A8). This breaks the
 **Graphics & Character Rig** epic — brainstormed August 2026 and parked in
