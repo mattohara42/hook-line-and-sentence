@@ -271,11 +271,13 @@ times.
    `hue-rotate()` trick already used for fish tiers (`style.css:186-203,
    463-478`) — **not** a new PNG per color. This keeps the art count fixed
    regardless of how many colors or characters get added later.
-2. **Character picker = a few specific family avatars, not a generic
-   roster.** 2-4 base body sprites styled after Matt's actual kids (Kate
-   included), picked once at profile setup alongside a favorite color — lives
-   on the existing per-kid Firestore profile (M4), not a new switchable-anytime
-   system.
+2. **The angler is assigned from age + sex, not picked from a roster.**
+   *(Revised 2026-08-25 — supersedes the original "family avatars styled after
+   Matt's kids" call.)* The kid answers two short questions at profile setup
+   and gets the matching sprite set plus a favorite color, on the existing
+   per-kid Firestore profile (M4). Each set needs three poses — rowboat,
+   waders, fighting chair — so roster size costs art in threes. See
+   `BUILD_PLAN_GRAPHICS.md` (AD2/AD5).
 
 ### Scope, by category
 
@@ -292,9 +294,9 @@ times.
     repositioned lower/centered in the scene (no `#boat` div for this
     location).
   - Ocean: a **Boston Whaler** (Matt, August 2026) — center console, high
-    freeboard, rod holders. Named specifically because it changes the prompt:
-    a Whaler is a particular hull with a distinctive sheer line, not just a
-    bigger rowboat.
+    freeboard, rod holders, and a **fighting chair in the stern** the kid sits
+    in. Named specifically because it changes the prompt: a Whaler is a
+    particular hull with a distinctive sheer line, not just a bigger rowboat.
   - Favorite-color tint applies to whichever rig is currently active.
 - **Hats & rods as real swappable shop items.** Splits out of the layered-rig
   work above; adds HATS and RODS sections to the shop mirroring BOATS. Closes
