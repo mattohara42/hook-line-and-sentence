@@ -188,6 +188,94 @@ poses, G3's age/sex sets): draw the head at the **same anchor point** within the
 canvas for a given pose. If every body in a pose puts its head in the same
 place, one hat PNG fits all of them and G4 never needs per-character hat sizes.
 
+### V2 — the angler and its gear, drawn to register (4 PNGs, Pond pose)
+
+**This replaces the G1 approach below, which didn't work.** G1 asked for a hat
+and a rod as isolated sprites and then tried to line them up with offsets. At 4x
+zoom it looked close; at game scale the hat sat on the hair like a sticker and
+the fist closed on empty air with the rod crossing it. No offset fixes that.
+
+**The new rule: every piece is generated FROM the body sprite, and comes back on
+the same canvas, already in position.** In Gemini, attach the reference image
+and ask for the piece for *that* character. Then all four layers share one box,
+every offset is zero, and registration is the generator's job rather than mine.
+
+The grip is solved by a sandwich rather than by alignment: the body has an
+**open** curled hand, the rod paints over it, and a small **fingers** sprite
+paints over the rod's grip. Fingers close over whatever is underneath, so any
+rod looks held — which is what makes a rod shop possible at all.
+
+Layer order: **vessel → body → rod → fingers → hat**.
+
+Do these in order; #1 is the reference for the other three.
+
+```
+ART NEEDED: the Pond angler's body, open hand (V2 #1 — the reference)
+Prompt:   Pixel art of a young child sitting side-on facing right in a fishing
+          pose, cozy retro game asset, chunky clean pixels, warm dawn lake
+          palette — teal-green long-sleeved shirt, warm tan skin, short brown
+          hair, dark shoes, knees drawn up as if seated in a small boat. Bare
+          head, no hat, no rod. The near arm reaches forward and the hand is
+          held OPEN in a loose C-curl, palm facing the viewer, fingers apart —
+          as if about to take hold of a rod, NOT clenched. Single centered
+          subject, transparent background, no text, no watermark, no shadow.
+Save as:  assets/body-kid-boat.png
+Size:     roughly 2:3 portrait, transparent, tight crop. Whatever canvas this
+          comes back on IS the canvas — the next three are drawn onto it.
+```
+
+```
+ART NEEDED: the fingers that close over a rod grip (V2 #2)
+Prompt:   [ATTACH assets/body-kid-boat.png AS A REFERENCE IMAGE]
+          Using this character as reference: draw ONLY the fingers and thumb of
+          this child's near hand, curled closed as if gripping a fishing rod —
+          the same skin tone, the same chunky pixel scale, the same lighting.
+          Output them on a transparent canvas THE SAME SIZE as the reference
+          image, positioned exactly where that hand is, so the fingers overlay
+          the reference hand perfectly. Nothing else in the image — no arm, no
+          body, no rod, no background.
+Save as:  assets/hand-kid-boat.png
+Size:     same canvas as body-kid-boat.png, aligned. This is the top half of the
+          grip: it paints over the rod so the hand looks closed around it.
+```
+
+```
+ART NEEDED: the straw hat, drawn onto this character (V2 #3)
+Prompt:   [ATTACH assets/body-kid-boat.png AS A REFERENCE IMAGE]
+          Using this character as reference: draw a child's straw sun hat sized
+          and angled to fit THIS head — wide floppy brim, straw-tan weave, a
+          darker brown band around the crown, same chunky pixel scale and
+          lighting as the reference. Output the hat alone on a transparent
+          canvas THE SAME SIZE as the reference image, positioned exactly where
+          it would sit on that head, so it lands correctly when layered over the
+          reference. Nothing else in the image — no head, no face, no body.
+Save as:  assets/hat-straw.png   (replaces the current one)
+Size:     same canvas as body-kid-boat.png, aligned.
+```
+
+```
+ART NEEDED: the basic rod, drawn into this character's hand (V2 #4)
+Prompt:   [ATTACH assets/body-kid-boat.png AS A REFERENCE IMAGE]
+          Using this character as reference: draw a simple wooden fishing rod —
+          a tapered brown pole with a darker grip wrap at the thick end — angled
+          up and to the right the way this child would hold it, with the GRIP END
+          sitting inside that open hand and the thin tip extending up past the
+          head to the upper right. Same chunky pixel scale and lighting as the
+          reference. Output the rod alone on a transparent canvas THE SAME SIZE
+          as the reference image, positioned exactly where it would be when held,
+          so it lands correctly when layered over the reference. Nothing else in
+          the image — no hand, no body, no line, no hook.
+Save as:  assets/rod-basic.png   (replaces the current one)
+Size:     same canvas as body-kid-boat.png, aligned.
+```
+
+**When all four land**, Claude composites them locally before wiring anything and
+looks at the stack at game scale. If a piece is out of place that's a **reroll,
+not an offset tweak** — nudging offsets is exactly how G1 ended up janky. The
+same four prompts then repeat for the Stream (waders, standing) and Ocean
+(fighting chair) poses in V3, and each new shop hat or rod is one more
+reference-drawn PNG per pose.
+
 ### ⚠️ The Stream scene, re-shot — the one open request
 
 `assets/background-stream.png` is in and wired, but it came back as a forest
