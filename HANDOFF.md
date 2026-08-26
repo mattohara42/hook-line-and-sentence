@@ -69,11 +69,14 @@ Nothing is scoped or started. In rough order of what seems to matter most:
    says exactly what one-line change makes it live.
 2. Get a real kid playtest of the A7 fight beats; adjust the two timing
    knobs in `config.js` if they read as too long.
-3. Start **Graphics & Character Rig** — now scoped into G1-G6 in
+3. Start **Graphics & Character Rig** — scoped into G1-G6 in
    `BUILD_PLAN_GRAPHICS.md`. G1 (split `kid.png` into body/hat/rod layers) is
-   the unblocker and needs three PNGs; G2 (rowboat / waders / Boston Whaler)
-   is the visible payoff but waits on the re-shot Stream background. Three
-   open questions for Matt sit at the bottom of that file — none block G1.
+   the unblocker and needs three PNGs; G2 (rowboat / waders / Boston Whaler
+   with a fighting chair) is the visible payoff but waits on the re-shot
+   Stream background. Matt answered the first three open questions on
+   2026-08-25 (three poses, angler assigned from age + sex, kid seated in the
+   fighting chair); what's left at the bottom of that file is G3 art-volume
+   detail — how many age buckets, and the wording of the sex question.
 
 ## Housekeeping
 
