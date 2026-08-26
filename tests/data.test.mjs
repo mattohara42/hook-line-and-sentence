@@ -260,3 +260,15 @@ test("every phrase and sentence is typeable once all letter stages are unlocked"
   assert.equal(offenders(phrases, untypeable, p => p.text), "", "phrase needs a letter no stage grants");
   assert.equal(offenders(sentences, untypeable, s => s.text), "", "sentence needs a letter no stage grants");
 });
+
+// G1: the angler's layer stack. It's data now, so a fat-fingered edit here is a
+// kid rendered wrong (or not at all) rather than a syntax error.
+test("CONFIG.rig.layers is a well-formed paint stack", () => {
+  const layers = CONFIG.rig.layers;
+  assert.ok(Array.isArray(layers) && layers.length > 0);
+  assert.equal(layers[0].id, "body", "body paints first — hat and rod sit on top of it");
+  assert.equal(new Set(layers.map(l => l.id)).size, layers.length, "duplicate layer id");
+  assert.equal(offenders(layers, l => !/^[a-z0-9-]+$/.test(l.file ?? "")), "", "bad layer filename");
+  assert.equal(offenders(layers, l => !(l.w > 0 && l.h > 0)), "", "layer with no size");
+  assert.equal(offenders(layers, l => ![l.x, l.y].every(Number.isFinite)), "", "layer with no offset");
+});

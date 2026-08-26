@@ -94,6 +94,82 @@ subject. Re-exporting cleanly from Gemini is better when you can get it.
 
 ## Open art requests
 
+### G1 — the angler, taken apart (3 PNGs, they land together)
+
+`assets/kid.png` bakes hat + body + rod into one sprite, which is why hats have
+been deferred since the boat shop and why every biome shows the same angler.
+G1 splits it into three layers (`BUILD_PLAN_GRAPHICS.md`). The code is already
+wired: `CONFIG.rig.layers` stacks a body, a hat and a rod inside `#rig`, and a
+missing PNG renders as nothing (a `background-image` 404 is silent), so the
+scene looks exactly as it does today until these arrive.
+
+**Drop all three at once.** The body layer currently points at the old
+all-in-one `kid.png`; if `hat-straw.png` lands alone the kid wears two hats.
+When they're in, tell Claude — the layer offsets in `config.js` get tuned
+against the real art (they're first guesses right now).
+
+**Style reference for all three:** open `assets/kid.png`. Same chunky pixel
+scale, same palette (straw tan hat with a darker band, teal-green shirt, warm
+skin, brown wooden rod), same side-on view facing **right**. The angler renders
+about 64x63 px on screen, so keep the detail readable at that size.
+
+```
+ART NEEDED: the angler's body, with no hat and no rod (G1)
+Prompt:   Pixel art of a young child sitting side-on facing right in a fishing
+          pose, cozy retro game asset, chunky clean pixels, warm dawn lake
+          palette — teal-green long-sleeved shirt, warm tan skin, short brown
+          hair, dark shoes, knees drawn up as if seated in a small boat. BOTH
+          HANDS CLOSED IN A GRIP in front of the chest as if holding a fishing
+          rod, but NO ROD DRAWN and NO HAT — bare head, hair visible, the hands
+          gripping empty air. Single centered subject, transparent background,
+          no text, no UI, no watermark, no baked-in shadow.
+Save as:  assets/body-kid.png
+Size:     ~64x63 proportions (roughly square), transparent, tight crop. The
+          head must sit at the TOP of the sprite with a little clearance, so a
+          separate hat layer can be placed over it.
+Wired in: ✅ CONFIG.rig.layers — change the body layer's `file` from "kid" to
+          "body-kid" and it's live.
+```
+
+```
+ART NEEDED: the straw hat, as its own layer (G1)
+Prompt:   Pixel art of a child's straw sun hat, cozy retro game asset, chunky
+          clean pixels, side view facing right, wide floppy brim, straw-tan
+          weave with a darker brown band around the crown, matching the hat in
+          assets/kid.png. Hat alone — no head, no face, nothing under it.
+          Single centered subject, transparent background, no text, no UI, no
+          watermark, no baked-in shadow.
+Save as:  assets/hat-straw.png
+Size:     about 40x26 proportions (wider than tall), transparent, tight crop to
+          the brim. Scale it to sit on a head roughly 26 px wide at the game's
+          64x63 angler size.
+Wired in: ✅ CONFIG.rig.layers, the hat layer. First of the swappable shop hats
+          (G4).
+```
+
+```
+ART NEEDED: the fishing rod, as its own layer (G1)
+Prompt:   Pixel art of a simple wooden fishing rod, cozy retro game asset,
+          chunky clean pixels, a slightly tapered brown branch-like pole with a
+          darker grip wrap at the thick end, drawn on a DIAGONAL running from
+          the lower-left (the grip) up to the upper-right (the thin tip),
+          matching the rod in assets/kid.png. Rod alone — no hands, no line, no
+          hook, no fish. Transparent background, no text, no UI, no watermark,
+          no baked-in shadow.
+Save as:  assets/rod-basic.png
+Size:     ~52x52, transparent, tight crop, with the grip end at the very
+          bottom-left corner and the tip at the very top-right corner of the
+          canvas — the line is aimed at that tip, so a consistent diagonal
+          matters more than the exact length.
+Wired in: ✅ CONFIG.rig.layers, the rod layer. First of the swappable shop rods
+          (G4), which also closes the rod-icon gap noted below.
+```
+
+**One instruction for every future body sprite** (G2's waders and fighting-chair
+poses, G3's age/sex sets): draw the head at the **same anchor point** within the
+canvas for a given pose. If every body in a pose puts its head in the same
+place, one hat PNG fits all of them and G4 never needs per-character hat sizes.
+
 ### ⚠️ The Stream scene, re-shot — the one open request
 
 `assets/background-stream.png` is in and wired, but it came back as a forest

@@ -50,7 +50,12 @@ it doesn't get re-proposed from scratch.
 
 ## Open threads / waiting on Matt
 
-- **Art pending — one: the Stream scene, re-shot.** Everything else landed
+- **G1 is code-complete and waiting on art** — three PNGs (`body-kid.png`,
+  `hat-straw.png`, `rod-basic.png`), prompts in `ART.md`. They must land
+  together or the angler wears two hats, since the body layer still points at
+  the old all-in-one `kid.png`. When they arrive: repoint the body layer and
+  tune the offsets in `CONFIG.rig.layers`.
+- **Art pending — also: the Stream scene, re-shot.** Everything else landed
   2026-08-25 (Ocean scene, Muskie hero sprite, Frankie's dino nugget). The
   stream background is a top-down forest pool rather than the side view the
   prompt asked for, so the boat has no flat waterline to sit on; style.css
