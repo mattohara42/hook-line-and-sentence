@@ -1295,6 +1295,23 @@ function switchLocation(loc) {
   setStatus("Now fishing " + CONFIG.tiers.find(t => t.location === loc).locationName + ".");
 }
 
+// G1: draw the angler as layers from CONFIG.rig.layers, inserted before #line
+// so the line stays on top. Called once at boot; G4's hat/rod shop re-runs it
+// on equip, which is the whole point of the split.
+function renderRig() {
+  const rig = $("rig"), line = $("line");
+  rig.querySelectorAll(".rig-layer").forEach(n => n.remove());
+  for (const L of CONFIG.rig.layers) {
+    const d = document.createElement("div");
+    d.className = "rig-layer";
+    d.style.left = L.x + "px"; d.style.top = L.y + "px";
+    d.style.width = L.w + "px"; d.style.height = L.h + "px";
+    d.style.backgroundImage = `url("assets/${L.file}.png")`;
+    rig.insertBefore(d, line);
+  }
+}
+renderRig();
+
 // A3: swap the biome scene by location. Sets a loc-<location> class on #scene;
 // CSS layers the stream background over the pond one, so this stays visually
 // safe until assets/background-stream.png exists, then the stream scene appears.

@@ -54,9 +54,22 @@ Different fisherpeople, with hats and rods.
 
 ## Milestones
 
-### G1 — Split the angler into layers
+### 🟡 G1 — Split the angler into layers (code landed 2026-08-25; art pending)
 The unblocker. No new behavior, no new options — just the same kid, drawn from
 parts.
+
+**Where it stands:** the layer machinery is in and the scene is unchanged —
+`CONFIG.rig.layers` stacks body/hat/rod inside `#rig`, `renderRig()` builds
+them, and the body still points at the old all-in-one `kid.png` while the hat
+and rod layers resolve to files that don't exist yet (a missing background
+image paints nothing). The three prompts are in `ART.md` and must land
+**together**, or the kid wears two hats. When they do: point the body layer at
+`body-kid`, tune the three offsets against the real art, done.
+
+**Deviation from this plan, deliberate:** it listed a `resolveRigLayers(save,
+CONFIG)` helper in `logic.js`. Skipped — with no hats or rods to own yet it
+would resolve nothing but defaults. It arrives in G4 with the shop that needs
+it; a data test guards the layer stack's shape in the meantime.
 - `ART.md`: `body-kid.png` (bare-headed, no rod), `hat-straw.png`,
   `rod-basic.png` — the existing `kid.png` look, taken apart.
 - `style.css`: `#kid` becomes `#body` + `#hat` + `#rod` layers inside `#rig`.

@@ -107,6 +107,25 @@ export const CONFIG = {
     runSurgePx: 90,      // how far the fish darts back (design-space px, visual only)
   },
 
+  // G1: the angler is drawn as stacked layers inside #rig, not one baked sprite
+  // — which is what unblocks swappable hats/rods (G4) and per-location poses
+  // (G2). Array order is paint order (body first, rod on top); x/y are design
+  // px relative to #rig, and `file` is assets/<file>.png. A missing PNG paints
+  // nothing (the console logs a harmless 404, same as the biome backgrounds did
+  // before they landed), so the stack degrades quietly to whatever art exists.
+  //
+  // The body still points at the old all-in-one kid.png (hat and rod baked in),
+  // so the hat/rod layers resolve to nothing today and the scene looks
+  // unchanged. When ART.md's three G1 PNGs land together, point body at
+  // "body-kid" and tune these offsets against the real art — they're guesses.
+  rig: {
+    layers: [
+      { id: "body", file: "kid",       x: 34, y: -30, w: 64, h: 63 },
+      { id: "hat",  file: "hat-straw", x: 36, y: -30, w: 40, h: 26 },
+      { id: "rod",  file: "rod-basic", x: 58, y: -34, w: 52, h: 52 },
+    ],
+  },
+
   shop: {
     // `unlocksLocation` graduates the profile to a new fishing spot on purchase
     // (A0): bamboo opens the Stream, deep-sea opens the Ocean (A6). Carbon sits

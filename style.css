@@ -124,9 +124,13 @@ h1 {
   background: url("assets/boat.png") center / contain no-repeat;
   image-rendering: pixelated;
 }
-#kid {
-  position: absolute; left: 34px; top: -30px; width: 64px; height: 63px;
-  background: url("assets/kid.png") center / contain no-repeat;
+/* G1: the angler is a stack of these — body, hat, rod — built by renderRig()
+   from CONFIG.rig.layers, which owns the geometry so one config edit swaps a
+   hat. Paint order is DOM order, and they're inserted before #line so the
+   fishing line always draws on top. */
+.rig-layer {
+  position: absolute;
+  background: center / contain no-repeat;
   image-rendering: pixelated;
 }
 /* line runs from the kid sprite's rod tip (rig-relative ~97,-25) to the
