@@ -738,6 +738,7 @@ function bite() {
     el.fish.style.setProperty("--fish-color", fish.color);
   }
   el.fish.style.opacity = 1;
+  el.fish.classList.add("submerged");   // V1: seen through the water until it's landed
   setFishTarget();
   fishX = fishTX + 30; fishY = fishTY + 56;   // emerge deep & right of the panel, then rise up-and-in
   el.dist.textContent = wordsLeft + " words";
@@ -861,6 +862,7 @@ function land(success) {
   updateGuide(null);
   if (success && junk) {
     // comedy catch: no coins, no collection — just a groan
+    el.fish.classList.remove("submerged");   // breaks the surface, snaps into focus
     el.fish.classList.add("landing");
     burst(150, 240, 14);
     save.jokesEndured = (save.jokesEndured ?? 0) + 1;
@@ -871,6 +873,7 @@ function land(success) {
     return;
   }
   if (success) {
+    el.fish.classList.remove("submerged");   // breaks the surface, snaps into focus
     el.fish.classList.add("landing");
     burst(150, 240, 14);
     const stagesBefore = unlockedStageCount(totalCatches());

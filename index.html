@@ -12,6 +12,9 @@
   <h1>TYPING FISHING</h1>
 
   <div id="scene-viewport"><div id="scene-frame"><div id="scene">
+    <!-- V1: the hull's shadow on the water, behind the boat and under the
+         surface, so it stays put while the boat rocks over it -->
+    <div id="hull-shadow"></div>
     <div id="rig">
       <div id="boat"></div>
       <!-- the angler's layers (body/hat/rod) are built here from CONFIG.rig -->
@@ -19,6 +22,10 @@
     </div>
     <div id="bobber"></div>
     <div id="fish"></div>
+    <!-- V1: the water surface, painted IN FRONT of the boat and the fish. This
+         is what makes the hull sit *in* the water and the fish read as under
+         it; the landing is the fish rising up through this layer. -->
+    <div id="surface"></div>
     <div class="reeds" id="reeds-left">
       <div class="reed" style="height:34px; animation-duration:4.2s;"></div>
       <div class="reed" style="height:48px; animation-duration:5.1s; animation-delay:-1.6s;"></div>

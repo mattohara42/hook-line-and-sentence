@@ -113,8 +113,20 @@ h1 {
 @keyframes shadowDrift { from { transform: translateX(0); } to { transform: translateX(820px); } }
 
 /* boat rig bobs as one unit — sits at the waterline (#water starts at top: 55%) */
-#rig { position: absolute; left: 20px; top: 168px; animation: bob 4.5s ease-in-out infinite; }
-@keyframes bob { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(4px) rotate(0.8deg); } }
+/* V1: the boat ROCKS rather than slides. The pivot is the hull's centre at the
+   waterline (rig-relative 59,30), so it tips the way a hull tips instead of
+   translating the whole rig up and down over a static water plane. The heave is
+   deliberately small — the sitting-in-water read comes from #surface cutting
+   the hull, not from movement. */
+#rig {
+  position: absolute; left: 20px; top: 168px;
+  transform-origin: 59px 30px;
+  animation: bob 5.2s ease-in-out infinite;
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(-0.9deg); }
+  50%      { transform: translateY(2px) rotate(0.9deg); }
+}
 /* boat/kid are now real sprites (M9 art pass); sizes/positions in design-space
    px, tuned so the boat sits on the waterline and the kid rides in it. The
    kid sprite has the rod baked in, so #line originates at the sprite's rod tip
@@ -157,9 +169,46 @@ h1 {
 @keyframes bobberBob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
 @keyframes plunge { to { transform: translateY(14px); opacity: 0; } }
 
+/* ============ V1: WATER DEPTH ============
+   The scene used to be one flat plane — every sprite painted on top of the
+   backdrop, nothing ever in front of anything. That's why the boat floated and
+   the fish never looked submerged. #surface is the front plane: translucent
+   water from the waterline down, painted over the rig and the fish. The 55%
+   matches where every biome's art puts its waterline (design y=198). */
+#surface {
+  position: absolute; left: 0; right: 0; top: 55%; bottom: 0;
+  z-index: 3; pointer-events: none;
+  /* Not an even wash: the read comes from the first 30px. A bright lip on the
+     line, a darker band just under it, then it opens back up before deepening
+     with distance — the way a real surface catches light at the waterline and
+     shades whatever is sitting in it. An even gradient just fogs the scene. */
+  background: linear-gradient(180deg,
+    rgba(120, 190, 200, 0.30) 0px,
+    rgba(30, 80, 98, 0.34) 6px,
+    rgba(24, 64, 84, 0.18) 26px,
+    rgba(18, 52, 70, 0.34) 60%,
+    rgba(12, 40, 58, 0.62) 100%);
+}
+/* contact: without a shadow the hull has nothing to sit on. It lives outside
+   #rig so it stays flat on the water while the boat rocks, and behind #surface
+   so it dims like anything else underwater. */
+#hull-shadow {
+  position: absolute; left: 30px; top: 212px; width: 110px; height: 10px;
+  z-index: 2; pointer-events: none;
+  background: radial-gradient(ellipse at center,
+    rgba(8, 28, 40, 0.45) 0%, rgba(8, 28, 40, 0) 70%);
+  animation: wake 5.2s ease-in-out infinite;
+}
+/* the shadow stretches and eases as the hull rocks over it */
+@keyframes wake {
+  0%, 100% { transform: scaleX(1) translateX(0); opacity: 0.9; }
+  50%      { transform: scaleX(1.06) translateX(2px); opacity: 1; }
+}
+
 /* expanding ripple rings on the water */
+/* z-index 4: these happen ON the surface, so they sit in front of #surface */
 .ripple {
-  position: absolute; width: 8px; height: 8px;
+  position: absolute; z-index: 4; width: 8px; height: 8px;
   border: 1.5px solid rgba(207,232,221,0.45); border-radius: 50%;
   transform: translate(-50%, -50%); pointer-events: none;
   animation: rippleGrow 1.6s ease-out forwards;
@@ -197,6 +246,20 @@ h1 {
   opacity: 0;
   transition: opacity 0.3s ease;
 }
+/* V1: while it's below the waterline the fish is seen THROUGH water — softer,
+   bluer, less contrasty. Removed when it's landed, so breaking the surface is
+   the moment the fish snaps into focus. Written out per tier rather than
+   composed from custom properties, because `filter` doesn't cascade: naming the
+   glow again is duller to read and impossible to get subtly wrong. */
+#fish.submerged { filter: saturate(0.7) brightness(0.82) contrast(0.92) blur(0.4px); }
+#fish.tier-rare.submerged {
+  filter: saturate(0.7) brightness(0.82) contrast(0.92) blur(0.4px)
+          drop-shadow(0 0 8px rgba(240,192,96,0.45));
+}
+#fish.tier-legendary.submerged {
+  filter: saturate(0.7) brightness(0.82) contrast(0.92) blur(0.4px)
+          drop-shadow(0 0 12px rgba(240,192,96,0.6));
+}
 /* uncommon shares the common sprite but hue-shifted so it reads as a
    different fish (no dedicated uncommon art) */
 #fish.tier-uncommon { filter: hue-rotate(150deg) saturate(1.2); }
@@ -233,7 +296,7 @@ h1 {
 
 /* particles & floaters */
 .p {
-  position: absolute; width: 7px; height: 7px; border-radius: 50%;
+  position: absolute; z-index: 4; width: 7px; height: 7px; border-radius: 50%;
   background: var(--foam); pointer-events: none;
   animation: splash 0.65s ease-out forwards;
 }
@@ -241,7 +304,7 @@ h1 {
   to { transform: translate(var(--dx), var(--dy)) scale(0.1); opacity: 0; }
 }
 .coinfloat {
-  position: absolute; font-family: var(--display); font-size: 15px; color: var(--gold);
+  position: absolute; z-index: 4; font-family: var(--display); font-size: 15px; color: var(--gold);
   text-shadow: 0 2px 6px rgba(0,0,0,0.6); pointer-events: none;
   animation: rise 1.1s ease-out forwards;
 }
@@ -570,7 +633,7 @@ h1 {
 .shop-btn.equipped { color: var(--abyss); background: var(--moss); border-color: var(--moss); }
 
 @media (prefers-reduced-motion: reduce) {
-  #rig, .cloud, .reed, #bobber, #meter-fill.danger { animation: none !important; }
+  #rig, .cloud, .reed, #bobber, #meter-fill.danger, #hull-shadow { animation: none !important; }
   .finger, #line, #fish { transition: none; }
   #scene.shake, #word.shakeword, #word.pop, #unlock-banner.show, #unlock-banner.prestige, .key.fresh, #fish.hooked, #word .cur.space { animation: none; }
   .ripple, .p, .coinfloat { display: none; }
