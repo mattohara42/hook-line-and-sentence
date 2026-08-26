@@ -595,7 +595,10 @@ function setStatus(t) { el.status.textContent = t; }
 // fish's mouth so it stays attached (shortening/re-angling as the fish nears).
 // All coords are design-space px on the 720x360 canvas. ----
 const REDUCE_MOTION = matchMedia("(prefers-reduced-motion: reduce)").matches;
-const LINE_ORIGIN = { x: 117, y: 143 };   // the kid sprite's rod tip, in scene coords
+// the rod tip in scene coords: #rig's own position plus the rig-relative tip
+// (offsetLeft/Top read #rig's CSS placement rather than repeating it here)
+const LINE_ORIGIN = { x: $("rig").offsetLeft + CONFIG.rig.lineOrigin.x,
+                      y: $("rig").offsetTop + CONFIG.rig.lineOrigin.y };
 let swimRAF = null, swimStart = 0;
 let fishX = 0, fishY = 0, fishTX = 0, fishTY = 0;   // current + target fish position
 
@@ -609,12 +612,21 @@ function setFishTarget() {
   fishTY = 232 - progress * 16;                    // 232 -> 216 (near the surface)
 }
 
-// aim the line from the rod tip to the fish's mouth (left edge; the art faces left)
-function lineToFish(fishLeft, fishTop) {
-  const dx = (fishLeft + 6) - LINE_ORIGIN.x;
-  const dy = (fishTop + 20) - LINE_ORIGIN.y;
+// aim the line from the rod tip at the bobber, for the cast and the wait
+function lineToBobber() {
+  const b = $("bobber");
+  aimLine(b.offsetLeft + b.offsetWidth / 2, b.offsetTop + b.offsetHeight / 2);
+}
+// point #line from the rod tip at a scene coordinate, sizing it to reach
+function aimLine(x, y) {
+  const dx = x - LINE_ORIGIN.x, dy = y - LINE_ORIGIN.y;
   el.line.style.width = Math.hypot(dx, dy) + "px";
   el.line.style.transform = `rotate(${Math.atan2(dy, dx) * 180 / Math.PI}deg)`;
+}
+
+// aim the line from the rod tip to the fish's mouth (left edge; the art faces left)
+function lineToFish(fishLeft, fishTop) {
+  aimLine(fishLeft + 6, fishTop + 20);
 }
 function drawFish(x, y) {
   el.fish.style.left = x + "px";
@@ -651,8 +663,7 @@ function startCast() {
   tension = 0; renderTension();
   el.dist.textContent = "—";
   el.line.style.transition = "";     // restore the CSS ease for the next cast
-  el.line.style.transform = "";      // back to the CSS rotate aimed at the bobber
-  el.line.style.width = "0px";
+  el.line.style.width = "0px";       // the next cast re-aims it at the bobber
   bobberOut(false);
   el.fish.style.opacity = 0;
   el.fish.className = "";
@@ -668,7 +679,7 @@ function startWait() {
   phase = "wait"; inputLocked = true;
   el.word.textContent = "";
   updateGuide(null);
-  el.line.style.width = "275px";   // reaches the bobber at #line's origin/angle
+  lineToBobber();
   burst(400, 195, 5);
   sfxSplash();
   bobberIn();
@@ -1300,6 +1311,8 @@ function switchLocation(loc) {
 // on equip, which is the whole point of the split.
 function renderRig() {
   const rig = $("rig"), line = $("line");
+  line.style.left = CONFIG.rig.lineOrigin.x + "px";
+  line.style.top = CONFIG.rig.lineOrigin.y + "px";
   rig.querySelectorAll(".rig-layer").forEach(n => n.remove());
   for (const L of CONFIG.rig.layers) {
     const d = document.createElement("div");

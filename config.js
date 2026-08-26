@@ -114,16 +114,19 @@ export const CONFIG = {
   // nothing (the console logs a harmless 404, same as the biome backgrounds did
   // before they landed), so the stack degrades quietly to whatever art exists.
   //
-  // The body still points at the old all-in-one kid.png (hat and rod baked in),
-  // so the hat/rod layers resolve to nothing today and the scene looks
-  // unchanged. When ART.md's three G1 PNGs land together, point body at
-  // "body-kid" and tune these offsets against the real art — they're guesses.
+  // Offsets were tuned against the real art in the browser, side by side with
+  // the old kid.png, so the composite reads at the same size and sits in the
+  // boat the same way.
   rig: {
     layers: [
-      { id: "body", file: "kid",       x: 34, y: -30, w: 64, h: 63 },
-      { id: "hat",  file: "hat-straw", x: 36, y: -30, w: 40, h: 26 },
-      { id: "rod",  file: "rod-basic", x: 58, y: -34, w: 52, h: 52 },
+      { id: "body", file: "body-kid",  x: 43, y: -18, w: 33, h: 50 },
+      { id: "hat",  file: "hat-straw", x: 39, y: -25, w: 40, h: 22 },
+      { id: "rod",  file: "rod-basic", x: 58, y: -28, w: 46, h: 46 },
     ],
+    // where the line leaves the rod: the rod sprite runs corner to corner, so
+    // its tip is the top-right of that layer's box (x+w, y). Rig-relative;
+    // app.js adds #rig's own offset to get scene coords.
+    lineOrigin: { x: 104, y: -28 },
   },
 
   shop: {
