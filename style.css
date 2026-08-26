@@ -313,16 +313,6 @@ h1 {
 #meter-fill.danger { animation: meterpulse 0.45s ease-in-out infinite alternate; }
 @keyframes meterpulse { from { filter: brightness(1); } to { filter: brightness(1.6); } }
 
-#tint {
-  position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(180deg, #16213f 0%, #0d1b33 100%);
-  mix-blend-mode: multiply; opacity: 0;
-  animation: nightcycle 90s ease-in-out infinite;
-}
-@keyframes nightcycle {
-  0%, 34% { opacity: 0; } 50%, 72% { opacity: 0.55; } 88%, 100% { opacity: 0; }
-}
-
 /* ============ OVERLAY CHROME (floats above the full-screen pond) ============ */
 #hud {
   position: fixed; top: 12px; right: 14px; z-index: 5;
@@ -580,7 +570,7 @@ h1 {
 .shop-btn.equipped { color: var(--abyss); background: var(--moss); border-color: var(--moss); }
 
 @media (prefers-reduced-motion: reduce) {
-  #rig, .cloud, #tint, .reed, #bobber, #meter-fill.danger { animation: none !important; }
+  #rig, .cloud, .reed, #bobber, #meter-fill.danger { animation: none !important; }
   .finger, #line, #fish { transition: none; }
   #scene.shake, #word.shakeword, #word.pop, #unlock-banner.show, #unlock-banner.prestige, .key.fresh, #fish.hooked, #word .cur.space { animation: none; }
   .ripple, .p, .coinfloat { display: none; }
