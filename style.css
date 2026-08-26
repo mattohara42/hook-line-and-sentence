@@ -133,13 +133,14 @@ h1 {
   background: center / contain no-repeat;
   image-rendering: pixelated;
 }
-/* line runs from the kid sprite's rod tip (rig-relative ~97,-25) to the
-   bobber center (design 388,190); solved so a 275px line at this angle lands
-   on the bobber */
+/* The line hangs off the rod tip. Position comes from CONFIG.rig.lineOrigin
+   (renderRig sets it) and the length/angle are computed per cast, so moving or
+   resizing the rod layer moves the line with it — no more solved-by-hand
+   275px-at-9.8deg pair that only worked for one rod in one boat. */
 #line {
-  position: absolute; left: 97px; top: -25px; height: 2px; width: 0;
+  position: absolute; height: 2px; width: 0;
   background: rgba(242,237,227,0.7);
-  transform-origin: left center; transform: rotate(9.8deg);
+  transform-origin: left center;
   transition: width 0.4s ease;
 }
 

@@ -64,27 +64,34 @@ once the file exists).
 ## Gotcha: Gemini fakes transparency
 
 Gemini often ignores "transparent background" and instead **paints the
-transparency checkerboard as opaque pixels** (alpha 255, neutral gray/white),
-with the subject floating in an oversized canvas. Tells: a corner pixel reads
+transparency checkerboard as opaque pixels** (alpha 255), with the subject
+floating in an oversized canvas. Expect it on nearly every sprite. Tells: a corner pixel reads
 alpha 255, and the file is far bigger than a tight sprite (`boat.png` is
 1152×466; the bad batch came in at 1408×768). Salvage it with Pillow — no
-ImageMagick on this Mac — by border **flood-fill** on `chroma<=26 and
-min(rgb)>=120` → alpha 0, then crop to the alpha bbox so CSS `contain` seats it
-like the original. Count `alpha==0` as fillable too, so a re-run on a
-half-salvaged file still floods.
+ImageMagick on this Mac.
 
-**The brightness gate is per-batch, so read the corner pixels first.** Gemini
-draws the checkerboard light *or* dark: the muskie batch was gray-on-gray
-(138/204, dark squares drifting 130–140, so a `>=132` floor left stray pixels
-pinned to the borders that silently blocked the crop), while the nugget batch
-was black-on-gray (0/145) with mid-gray anti-aliasing at every square boundary.
-Chasing that with brightness bands is a losing game — **when the subject has no
-neutral colors of its own, drop the brightness test entirely and fill on
-`chroma<=26` alone.** The border flood-fill is what protects the art. The one
-case that needs the brightness gate back is a sprite with a *pure black or gray
-outline*: with no hue at its edge, a chroma-only fill eats the outline and leaks
-inside. Check the subject's edge color before choosing. Flood-fill (not a global color key) protects gray *inside* a
-subject. Re-exporting cleanly from Gemini is better when you can get it.
+**Don't hardcode the checkerboard color — detect it.** Every generation picks a
+different pair: gray-on-gray (138/204, and 88/203 on the G1 body), black-on-gray
+(0/145), gray-on-gray-again (158/223), and the rod came back **blue-on-black**
+(0,1,22 / 60,79,243). Brightness bands and "neutral pixels" rules both broke on
+that spread. What works:
+
+1. Take the two most common **border** colors — that's the checkerboard pair.
+2. A pixel is background if it sits within ~60 RGB of the **line between those
+   two colors**. That covers both squares plus the anti-aliasing along every
+   square boundary, and nothing else.
+3. **Flood-fill from the edges**, never key globally, so a matching color inside
+   the subject is safe. Count `alpha==0` as fillable so a re-run still floods.
+4. Crop to the alpha bbox, so CSS `contain` seats the sprite like the original.
+
+Why the line rather than a tolerance around each color: it's what protects a
+**black outline**. The G1 body sprite is outlined in pure black on a 88/203 gray
+checkerboard — a chroma-only or "dark pixels are background" rule eats that
+outline and leaks into the sprite, while black sits far off the 88↔203 line and
+survives untouched.
+
+The working script lives in the scratchpad, not the repo — it's ~40 lines and
+gets rewritten per batch as Gemini finds new ways to fake transparency.
 
 ## Prompt template Claude should reuse
 
@@ -93,6 +100,17 @@ subject. Re-exporting cleanly from Gemini is better when you can get it.
 > centered subject, transparent background, no text, no shadow. <extra detail>.
 
 ## Open art requests
+
+### ✅ G1 — the angler, taken apart (landed 2026-08-25)
+
+All three PNGs are in, salvaged and wired: `body-kid.png` (RGBA 560×864),
+`hat-straw.png` (1131×617) and `rod-basic.png` (800×800). Offsets in
+`CONFIG.rig.layers` were tuned in the browser against the old `kid.png` side by
+side, so the composite reads at the same size and sits in the boat the same way.
+The rod arrived on a **blue** checkerboard — see the gotcha above, which now
+detects the pair per file instead of assuming gray.
+
+The original request, kept for the pattern the next sprite set follows:
 
 ### G1 — the angler, taken apart (3 PNGs, they land together)
 

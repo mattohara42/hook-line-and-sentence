@@ -54,17 +54,19 @@ Different fisherpeople, with hats and rods.
 
 ## Milestones
 
-### 🟡 G1 — Split the angler into layers (code landed 2026-08-25; art pending)
+### ✅ G1 — Split the angler into layers (done 2026-08-25)
 The unblocker. No new behavior, no new options — just the same kid, drawn from
 parts.
 
-**Where it stands:** the layer machinery is in and the scene is unchanged —
-`CONFIG.rig.layers` stacks body/hat/rod inside `#rig`, `renderRig()` builds
-them, and the body still points at the old all-in-one `kid.png` while the hat
-and rod layers resolve to files that don't exist yet (a missing background
-image paints nothing). The three prompts are in `ART.md` and must land
-**together**, or the kid wears two hats. When they do: point the body layer at
-`body-kid`, tune the three offsets against the real art, done.
+**Where it stands:** done. `CONFIG.rig.layers` stacks body/hat/rod inside
+`#rig`, `renderRig()` builds them, and all three PNGs landed and were tuned in
+the browser against the old `kid.png`. `assets/kid.png` is now unreferenced —
+kept as the reference the next poses are drawn to match.
+
+The line moved with the rod: `#line`'s hand-solved `275px` at `9.8deg` (which
+only ever worked for one rod in one boat) is gone. `CONFIG.rig.lineOrigin` puts
+the line at the rod layer's tip, and length/angle are computed per cast, so G2
+can move the rod anywhere without re-solving trigonometry.
 
 **Deviation from this plan, deliberate:** it listed a `resolveRigLayers(save,
 CONFIG)` helper in `logic.js`. Skipped — with no hats or rods to own yet it
