@@ -46,7 +46,7 @@ The boat immediately reads as floating in water rather than on it. That's V1.
 
 ## Milestones
 
-### V1 — Depth and contact (no new art)
+### ✅ V1 — Depth and contact (done 2026-08-25, no new art)
 - `style.css`: a `#surface` layer from the waterline down, painted in front of
   the mid plane, with a subtle bright lip on the line itself.
 - Contact shadow and a small wake under the hull.
@@ -55,7 +55,18 @@ The boat immediately reads as floating in water rather than on it. That's V1.
 - The bob becomes a **rock**: a small rotation with a little heave, so the boat
   pivots in the water instead of sliding over it.
 - **Done when:** at the Pond and the Ocean, the boat reads as sitting in the
-  water and the fish reads as under it — with zero new PNGs.
+  water and the fish reads as under it — with zero new PNGs. *(Done. Verified
+  at 1x and at 5x zoom in all three biomes, plus a full catch through the
+  landing.)*
+
+**What shipped, and one thing learned:** an even wash of blue over the lower
+half just fogs the scene — the depth read comes from the first 30px below the
+line. The gradient is a bright lip, a darker band right under it, then it opens
+back up before deepening with distance. The fish also needed an explicit
+`.submerged` treatment (desaturate/dim/soften); the overlay alone left it too
+crisp to read as underwater, since at the swim band the tint is only ~20%
+opaque. Ripples, splashes and coin floats were lifted in front of the surface —
+they happen *on* the water, not under it.
 
 ### V2 — One drawn angler per pose (reverses G1's split)
 - `ART.md`: the angler drawn **complete** — body, hands, rod and hat in one

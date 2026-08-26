@@ -54,9 +54,12 @@ it doesn't get re-proposed from scratch.
   as body/hat/rod layers) and then failed the play test: the hat reads janky,
   the rod isn't in the hand, the boat floats, the fish doesn't look underwater.
   `BUILD_PLAN_VISUAL.md` (V1-V5) supersedes `BUILD_PLAN_GRAPHICS.md`. **V1 is
-  next and needs no art** — a water surface painted in front of the boat and
-  fish; it's already prototyped in the browser. V2 reverses G1's split and
-  redraws the angler complete, one sprite per pose.
+  done** (2026-08-25): the water surface is painted in front of the boat and
+  fish, the hull is cut by the waterline, the fish is submerged until it's
+  landed, and the boat rocks instead of sliding. **V2 is next** — reverse G1's
+  split and redraw the angler complete, one sprite per pose (the rod should be
+  in the hand because it was drawn there). V2 needs an answer to the hat/rod
+  shop question at the bottom of the visual plan before art is ordered.
 - **Art pending — the Stream scene, re-shot.** Everything else landed
   2026-08-25 (Ocean scene, Muskie hero sprite, Frankie's dino nugget). The
   stream background is a top-down forest pool rather than the side view the
