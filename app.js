@@ -413,7 +413,10 @@ function buildPhrasePool(difficulty) {
 // Volumes/timing are CFG knobs; note pitches are sound-design content, kept
 // here next to PUNS rather than in config.js.
 let actx = null, masterGain = null, sfxGain = null, musicGain = null, ambientNodes = null;
-let soundOn = localStorage.getItem("tf:soundOn") !== "off";   // on by default
+// Off by default (Matt, 2026-08-25): the generated ambience/SFX need tuning
+// before they're worth hearing, and a kid shouldn't have to mute the game to
+// like it. The tackle-box toggle still turns it on and that choice sticks.
+let soundOn = localStorage.getItem("tf:soundOn") === "on";
 
 function ensureAudio() {
   if (actx) return;
