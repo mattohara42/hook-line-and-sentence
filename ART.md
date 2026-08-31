@@ -43,9 +43,10 @@ once the file exists).
 ## How art is wired into the game
 
 - Almost everything is a CSS `background: url("assets/…png")`. No sprite atlas,
-  no build step — one PNG per thing. (**`image-rendering: pixelated` is on its
-  way out** — it belonged to the pixel era and R2 removes it; painterly art must
-  not be nearest-neighbour scaled.)
+  no build step — one PNG per thing. (**`image-rendering: pixelated` is gone**
+  as of R2 — it belonged to the pixel era, and painterly art must not be
+  nearest-neighbour scaled. The old pixel assets still on screen are smooth-
+  scaled until R3 replaces them, which is very slightly softer and fine.)
 - **Fish currently share one sprite per tier**, not per species:
   `fish-common.png`, `fish-rare.png`, `fish-legendary.png`, tinted per species
   from `data/fish.json`'s `color` via the `--fish-color` CSS var. **The refresh
@@ -63,7 +64,24 @@ once the file exists).
   skies, glowing light sources rather than flat discs, gentle rounded
   proportions, clean readable silhouette (it renders small).
 - **Palette:** muted and warm, never saturated or neon. Muted teal-green water
-  with a darker depth band; warm slightly-desaturated wood and earth.
+  with a darker depth band; warm slightly-desaturated wood and earth. **R2 put
+  real numbers behind this** — `:root` in `style.css` is the reference, and new
+  art should land inside it:
+
+  | | | |
+  |---|---|---|
+  | sky, high | `#b7cfd8` | pale blue at the top of the band stack |
+  | sky, low | `#f2ddbe` | cream/amber warming toward the horizon |
+  | light source | `#f7e6bd` | the glow's core — never a hard-edged disc |
+  | water | `#7aa89b` → `#4f7d76` → `#375c58` | surface, mid, depth band |
+  | foam | `#e6eee4` | |
+  | wood / earth | `#7a6350`, `#4b3d33` | warm, desaturated |
+  | outlines & shadow | `#33291f` (umber) | the darkest tone in the game — **not black** |
+  | accents | `#dcab63` gold, `#d4886a` ember, `#93ac78` moss | |
+
+  A generated background whose sky is more saturated than `#b7cfd8`/`#f2ddbe`,
+  or whose darks go past `#33291f`, is a reroll — it will fight every UI panel
+  painted over it.
 - **Outlines:** thin (~1–1.5px at sprite scale) and **warm brown — never
   black.** No pure black anywhere, in linework or shadow.
 - **Framing:** single subject, **transparent background** for anything that

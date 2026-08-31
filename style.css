@@ -1,24 +1,71 @@
 /* style.css — Hook, Line and Sentence.
-   LOCKED PALETTE (M7.5): every UI color below or derived from it via
-   color-mix/alpha. Fish accent colors live in data/fish.json and were
-   chosen against this palette — new art must stick to these hues. */
+   R2 PALETTE (Art & Animation Refresh). This replaces the locked M7.5 "dusk
+   pond" scheme, which was a saturated cool dusk — right for pixel art, wrong
+   for the warm painterly storybook `ART_DIRECTION.md` now calls for. Every UI
+   colour is below or derived from it.
+
+   Two rules from ART_DIRECTION.md that this file has to keep obeying:
+     - muted and warm, never saturated or neon;
+     - NO PURE BLACK anywhere. Shadows and outlines are warm dark browns, which
+       is why --umber replaced the old near-black --abyss and why every
+       rgba(var(--shadow-rgb),x) in here is now rgba(var(--shadow-rgb),x).
+
+   The ghost-hands keyboard is the one deliberate exception (CLAUDE.md): it is
+   off limits, so its colours are frozen below as --kb-* at their pre-refresh
+   values and it references nothing else. Changing the palette must never drag
+   the keyboard with it. */
 
 :root {
-  /* Dusk pond palette — locked, everything derives from these */
-  --dusk-peach: #f5b78a;
-  --ember:      #e8846b;
-  --rose-dusk:  #c96a83;
-  --plum:       #6b4a72;
-  --deep-plum:  #452b52;
-  --water-teal: #3f7d8c;
-  --water-mid:  #2c5a6e;
-  --water-deep: #1c3a4d;
-  --abyss:      #122736;
-  --foam:       #cfe8dd;
-  --gold:       #f0c060;
-  --moss:       #8fbf88;
-  --ink:        #f2ede3;
-  --dim:        #9db4b8;
+  /* Sky and light. REFERENCE VALUES — nothing consumes these yet: the sky and
+     the sun are painted into the background art, not drawn in CSS. They are
+     here because R3's three background paintings have to match this palette,
+     and a prompt is easier to write against a number than a description. */
+  --sky-high:   #b7cfd8;
+  --sky-low:    #f2ddbe;
+  --glow:       #f7e6bd;
+
+  /* warm accents */
+  --amber:      #e3b477;
+  --gold:       #dcab63;
+  --ember:      #d4886a;
+  --rose:       #c08d88;
+  --moss:       #93ac78;
+
+  /* water: muted teal-green, with a darker band for depth */
+  --water-teal: #7aa89b;
+  --water-mid:  #4f7d76;
+  --water-deep: #375c58;
+  --foam:       #e6eee4;
+
+  /* warm darks — these replace every near-black blue the old scheme used.
+     --umber is the deepest tone in the game and stands in for the old
+     --abyss (#122736); it is a warm brown, not a black. */
+  --bark:       #7a6350;
+  --bark-deep:  #4b3d33;
+  --umber:      #33291f;
+
+  /* channel triples, for the translucent panels and shadows that need an alpha.
+     Same colours as above — CSS can't take an alpha off a hex token without
+     color-mix, and these are read often enough that one place to retune them
+     is worth the pair. */
+  --umber-rgb:  51,41,31;
+  --shadow-rgb: 47,38,32;
+  --gold-rgb:   220,171,99;
+  --ink-rgb:    250,242,228;
+
+  /* type */
+  --ink:        #f5ece0;
+  --dim:        #b9a894;
+
+  /* ---- frozen: the ghost-hands keyboard, exempt from the refresh ---- */
+  --kb-dim:     #9db4b8;
+  --kb-gold:    #f0c060;
+  --kb-gold-rgb: 240,192,96;
+  --kb-ink:     242,237,227;
+  --kb-panel:   8,18,26;
+  --kb-key:     18,39,54;
+  --kb-line:    157,180,184;
+
   --display: "Silkscreen", ui-monospace, monospace;
   --mono: ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace;
 }
@@ -26,14 +73,14 @@
 html, body { height: 100%; }
 body {
   font-family: var(--mono);
-  background: var(--abyss);
+  background: var(--umber);
   color: var(--ink);
   overflow: hidden;
 }
 h1 {
   position: fixed; top: 10px; left: 14px; z-index: 5;
   font-family: var(--display); font-size: 10px; letter-spacing: 0.1em; color: var(--dim);
-  background: rgba(8,18,26,0.45); padding: 5px 9px; border-radius: 6px;
+  background: rgba(var(--umber-rgb),0.45); padding: 5px 9px; border-radius: 6px;
   pointer-events: none;
 }
 /* The title is top-left and #hud is top-right, so a long title runs into the
@@ -58,7 +105,7 @@ h1 {
    cover" style); #scene-viewport crops whatever spills past the real edges.
    Internal game code never has to know the viewport size. */
 #scene-viewport {
-  position: fixed; inset: 0; z-index: 1; overflow: hidden; background: var(--abyss);
+  position: fixed; inset: 0; z-index: 1; overflow: hidden; background: var(--umber);
 }
 /* anchored bottom-left, not centered: cropping should only ever eat into
    the decorative right edge (far reeds) or top edge (sky), never the boat
@@ -75,7 +122,6 @@ h1 {
   /* painted sky/hills/sun/water base art (M9 art pass); pixelated keeps it
      crisp under the cover-scale transform */
   background: url("assets/background.png") center center / cover no-repeat;
-  image-rendering: pixelated;
 }
 /* A3: the Stream biome, layered over the pond art (so a missing PNG degrades to
    the pond scene rather than a blank canvas).
@@ -121,7 +167,7 @@ h1 {
 
 .fish-shadow {
   position: absolute; height: 12px; border-radius: 50%;
-  background: rgba(10,25,35,0.5); filter: blur(3px);
+  background: rgba(var(--umber-rgb),0.5); filter: blur(3px);
   animation: shadowDrift linear forwards;
 }
 @keyframes shadowDrift { from { transform: translateX(0); } to { transform: translateX(820px); } }
@@ -148,7 +194,6 @@ h1 {
 #boat {
   position: absolute; left: 0; top: 8px; width: 118px; height: 48px;
   background: url("assets/boat.png") center / contain no-repeat;
-  image-rendering: pixelated;
 }
 /* G1: the angler is a stack of these — body, hat, rod — built by renderRig()
    from CONFIG.rig.layers, which owns the geometry so one config edit swaps a
@@ -157,7 +202,6 @@ h1 {
 .rig-layer {
   position: absolute;
   background: center / contain no-repeat;
-  image-rendering: pixelated;
 }
 /* R1: the line is an SVG path in scene design space (720x360), redrawn every
    frame by app.js from the rod tip's live position to whatever it's attached to
@@ -169,7 +213,7 @@ h1 {
   position: absolute; left: 0; top: 0; width: 720px; height: 360px;
   pointer-events: none; overflow: visible;
 }
-#line-path { fill: none; stroke: rgba(242,237,227,0.72); }
+#line-path { fill: none; stroke: rgba(245,236,224,0.72); }
 /* R1: the lure/hook on the end of the line while it's in the air. The bobber
    takes over once it lands, so this is only ever visible mid-cast. */
 #lure {
@@ -211,11 +255,11 @@ h1 {
      with distance — the way a real surface catches light at the waterline and
      shades whatever is sitting in it. An even gradient just fogs the scene. */
   background: linear-gradient(180deg,
-    rgba(120, 190, 200, 0.30) 0px,
-    rgba(30, 80, 98, 0.34) 6px,
-    rgba(24, 64, 84, 0.18) 26px,
-    rgba(18, 52, 70, 0.34) 60%,
-    rgba(12, 40, 58, 0.62) 100%);
+    rgba(168, 206, 190, 0.30) 0px,
+    rgba(58, 92, 84, 0.34) 6px,
+    rgba(48, 80, 74, 0.18) 26px,
+    rgba(42, 70, 64, 0.34) 60%,
+    rgba(36, 58, 52, 0.62) 100%);
 }
 /* contact: without a shadow the hull has nothing to sit on. It lives outside
    #rig so it stays flat on the water while the boat rocks, and behind #surface
@@ -224,7 +268,7 @@ h1 {
   position: absolute; left: 30px; top: 212px; width: 110px; height: 10px;
   z-index: 2; pointer-events: none;
   background: radial-gradient(ellipse at center,
-    rgba(8, 28, 40, 0.45) 0%, rgba(8, 28, 40, 0) 70%);
+    rgba(45, 62, 56, 0.45) 0%, rgba(45, 62, 56, 0) 70%);
   animation: wake 5.2s ease-in-out infinite;
 }
 /* the shadow stretches and eases as the hull rocks over it */
@@ -237,7 +281,7 @@ h1 {
 /* z-index 4: these happen ON the surface, so they sit in front of #surface */
 .ripple {
   position: absolute; z-index: 4; width: 8px; height: 8px;
-  border: 1.5px solid rgba(207,232,221,0.45); border-radius: 50%;
+  border: 1.5px solid rgba(230,238,228,0.45); border-radius: 50%;
   transform: translate(-50%, -50%); pointer-events: none;
   animation: rippleGrow 1.6s ease-out forwards;
 }
@@ -270,7 +314,6 @@ h1 {
 #fish {
   position: absolute; top: 244px; width: 62px; height: 41px;
   background: url("assets/fish-common.png") center / contain no-repeat;
-  image-rendering: pixelated;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -282,22 +325,22 @@ h1 {
 #fish.submerged { filter: saturate(0.7) brightness(0.82) contrast(0.92) blur(0.4px); }
 #fish.tier-rare.submerged {
   filter: saturate(0.7) brightness(0.82) contrast(0.92) blur(0.4px)
-          drop-shadow(0 0 8px rgba(240,192,96,0.45));
+          drop-shadow(0 0 8px rgba(var(--gold-rgb),0.45));
 }
 #fish.tier-legendary.submerged {
   filter: saturate(0.7) brightness(0.82) contrast(0.92) blur(0.4px)
-          drop-shadow(0 0 12px rgba(240,192,96,0.6));
+          drop-shadow(0 0 12px rgba(var(--gold-rgb),0.6));
 }
 /* uncommon shares the common sprite but hue-shifted so it reads as a
    different fish (no dedicated uncommon art) */
 #fish.tier-uncommon { filter: hue-rotate(150deg) saturate(1.2); }
 #fish.tier-rare {
   background-image: url("assets/fish-rare.png");
-  filter: drop-shadow(0 0 8px rgba(240,192,96,0.7));
+  filter: drop-shadow(0 0 8px rgba(var(--gold-rgb),0.7));
 }
 #fish.tier-legendary {
   background-image: url("assets/fish-legendary.png");
-  filter: drop-shadow(0 0 12px rgba(240,192,96,0.9));
+  filter: drop-shadow(0 0 12px rgba(var(--gold-rgb),0.9));
 }
 /* A8: Muskie Quixote is the one Ocean fish with its own art — the Pond's
    legendary (Koi Story) keeps the shared sprite above. The muskie is a long
@@ -333,7 +376,7 @@ h1 {
 }
 .coinfloat {
   position: absolute; z-index: 4; font-family: var(--display); font-size: 15px; color: var(--gold);
-  text-shadow: 0 2px 6px rgba(0,0,0,0.6); pointer-events: none;
+  text-shadow: 0 2px 6px rgba(var(--shadow-rgb),0.6); pointer-events: none;
   animation: rise 1.1s ease-out forwards;
 }
 @keyframes rise { to { transform: translateY(-52px); opacity: 0; } }
@@ -349,14 +392,14 @@ h1 {
   position: fixed; top: 34px; left: 14px; max-width: 440px;
   z-index: 4; text-align: left; pointer-events: none;
   font-family: var(--display); font-size: 12px; color: var(--ink);
-  text-shadow: 0 2px 8px rgba(20,30,40,0.8); letter-spacing: 0.06em;
+  text-shadow: 0 2px 8px rgba(var(--umber-rgb),0.8); letter-spacing: 0.06em;
 }
 #word {
   position: fixed; left: 50%; bottom: 250px; transform: translateX(-50%);
   z-index: 4;
   font-size: 36px; letter-spacing: 0.14em; min-width: 120px; min-height: 54px;
   padding: 4px 22px; border-radius: 27px; text-align: center;
-  background: rgba(12,26,38,0.5);
+  background: rgba(var(--umber-rgb),0.5);
   backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
 }
 #word .done { color: var(--moss); }
@@ -376,30 +419,30 @@ h1 {
   position: fixed; left: 50%; top: 40%; transform: translate(-50%, -50%);
   z-index: 6;
   text-align: center; padding: 14px 26px; border-radius: 12px;
-  background: rgba(12,26,38,0.78); border: 1px solid rgba(240,192,96,0.5);
+  background: rgba(var(--umber-rgb),0.78); border: 1px solid rgba(var(--gold-rgb),0.5);
   opacity: 0; pointer-events: none; transition: opacity 0.25s;
 }
 #unlock-banner.show { opacity: 1; animation: bannerpop 0.45s ease; }
 @keyframes bannerpop { 0% { transform: translate(-50%, -50%) scale(0.6); } 70% { transform: translate(-50%, -50%) scale(1.08); } }
 #unlock-banner .banner-title { font-family: var(--display); font-size: 12px; color: var(--ink); letter-spacing: 0.08em; }
-#unlock-banner .letters { font-family: var(--display); font-size: 34px; color: var(--gold); letter-spacing: 0.3em; margin-top: 4px; text-shadow: 0 0 14px rgba(240,192,96,0.6); }
+#unlock-banner .letters { font-family: var(--display); font-size: 34px; color: var(--gold); letter-spacing: 0.3em; margin-top: 4px; text-shadow: 0 0 14px rgba(var(--gold-rgb),0.6); }
 /* A8: the Muskie capstone wears the same banner, turned up — a gold frame and a
    slow glow, so the finish line doesn't look like just another letter unlock */
 #unlock-banner.prestige {
   border-color: var(--gold); border-width: 2px; padding: 20px 34px;
-  background: rgba(12,26,38,0.9);
+  background: rgba(var(--umber-rgb),0.9);
   animation: prestigeGlow 1.4s ease-in-out infinite alternate;
 }
 #unlock-banner.prestige .letters { font-size: 42px; }
 @keyframes prestigeGlow {
-  from { box-shadow: 0 0 18px rgba(240,192,96,0.35); }
-  to   { box-shadow: 0 0 46px rgba(240,192,96,0.85); }
+  from { box-shadow: 0 0 18px rgba(var(--gold-rgb),0.35); }
+  to   { box-shadow: 0 0 46px rgba(var(--gold-rgb),0.85); }
 }
 /* the rank line under the journal's badge count */
 .jrank { margin-top: 6px; font-family: var(--display); font-size: 13px; color: var(--gold); }
 
 /* tension = the bottom edge of the pond itself */
-#meter { position: absolute; left: 0; right: 0; bottom: 0; height: 8px; background: rgba(0,0,0,0.4); }
+#meter { position: absolute; left: 0; right: 0; bottom: 0; height: 8px; background: rgba(var(--shadow-rgb),0.4); }
 #meter-fill { height: 100%; width: 0%; background: var(--moss); transition: width 0.15s, background 0.15s; }
 #meter-fill.danger { animation: meterpulse 0.45s ease-in-out infinite alternate; }
 @keyframes meterpulse { from { filter: brightness(1); } to { filter: brightness(1.6); } }
@@ -411,7 +454,7 @@ h1 {
 }
 .chip {
   font-family: var(--display); font-size: 11px; color: var(--dim);
-  background: rgba(8,18,26,0.55); border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(var(--umber-rgb),0.55); border: 1px solid rgba(var(--ink-rgb),0.12);
   padding: 6px 12px; border-radius: 8px;
   backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
 }
@@ -422,12 +465,12 @@ h1 {
 #tacklebox {
   position: fixed; top: 46px; right: 14px; z-index: 6;
   width: 34px; height: 34px; padding: 0; font-size: 18px; line-height: 1;
-  background: rgba(8,18,26,0.55); border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(var(--umber-rgb),0.55); border: 1px solid rgba(var(--ink-rgb),0.15);
   border-radius: 8px; cursor: pointer;
   backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
   transition: transform 0.12s ease, background 0.12s ease;
 }
-#tacklebox:hover { background: rgba(8,18,26,0.75); }
+#tacklebox:hover { background: rgba(var(--umber-rgb),0.75); }
 #tacklebox[aria-expanded="true"] { background: var(--gold); transform: rotate(-4deg); }
 #tacklebox:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
@@ -436,7 +479,7 @@ h1 {
   position: fixed; top: 88px; right: 14px; z-index: 6;
   display: flex; flex-direction: column; align-items: stretch; gap: 6px;
   width: 180px; padding: 10px;
-  background: rgba(8,18,26,0.82); border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(var(--umber-rgb),0.82); border: 1px solid rgba(var(--ink-rgb),0.15);
   border-radius: 10px; font-size: 12px; color: var(--dim);
   backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
 }
@@ -448,43 +491,47 @@ h1 {
 }
 #who {
   font-family: var(--display); font-size: 11px; color: var(--gold);
-  padding: 2px 2px 6px; border-bottom: 1px solid rgba(255,255,255,0.12); margin-bottom: 2px;
+  padding: 2px 2px 6px; border-bottom: 1px solid rgba(var(--ink-rgb),0.12); margin-bottom: 2px;
 }
 #who:empty { display: none; }
 .toggle-btn {
   font-family: var(--display); font-size: 10px; color: var(--dim);
-  background: rgba(8,18,26,0.55); border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(var(--umber-rgb),0.55); border: 1px solid rgba(var(--ink-rgb),0.15);
   border-radius: 6px; padding: 6px 12px; cursor: pointer;
   backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
 }
-.toggle-btn.active { color: var(--abyss); background: var(--gold); border-color: var(--gold); }
+.toggle-btn.active { color: var(--umber); background: var(--gold); border-color: var(--gold); }
 .toggle-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 /* dev/test-only affordance (CONFIG.dev.testShortcuts) — dashed so it reads as
    "not a real player button"; the whole thing goes away when the flag is off */
-.toggle-btn.dev { border-style: dashed; border-color: rgba(240,192,96,0.55); color: var(--gold); }
+.toggle-btn.dev { border-style: dashed; border-color: rgba(var(--gold-rgb),0.55); color: var(--gold); }
 
 /* ============ FINGER GUIDE (semi-transparent overlay, pinned to the bottom) ============ */
+/* R2: the keyboard is EXEMPT from the palette refresh (CLAUDE.md — it is the
+   best part of the game and stays exactly as it is). Everything in this block
+   therefore uses the frozen --kb-* tokens and never the scene palette, so a
+   future palette change cannot reach it by accident. */
 #guide-panel {
   position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 5;
-  background: rgba(8,18,26,0.55); border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(var(--kb-panel),0.55); border: 1px solid rgba(255,255,255,0.1);
   border-radius: 14px; padding: 10px; max-width: calc(100vw - 20px); overflow: hidden;
   backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
 }
 #guide { position: relative; max-width: 100%; }   /* size set in JS (scales with GUIDE_SCALE) */
 .key {
   position: absolute;
-  border: 1px solid rgba(157,180,184,0.25); border-radius: 6px;
+  border: 1px solid rgba(var(--kb-line),0.25); border-radius: 6px;
   display: flex; align-items: center; justify-content: center;
-  color: var(--dim); background: rgba(18,39,54,0.6);
+  color: var(--kb-dim); background: rgba(var(--kb-key),0.6);
 }
 .key.ghost-key { opacity: 0.35; }
 .key.locked { opacity: 0.18; }
 .key.fresh {
-  border-color: var(--gold); color: var(--gold);
+  border-color: var(--kb-gold); color: var(--kb-gold);
   animation: freshpulse 0.7s ease-in-out infinite alternate;
 }
-@keyframes freshpulse { from { box-shadow: 0 0 4px rgba(240,192,96,0.3); } to { box-shadow: 0 0 16px rgba(240,192,96,0.85); } }
-.key.target { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 10px rgba(240,192,96,0.45); }
+@keyframes freshpulse { from { box-shadow: 0 0 4px rgba(var(--kb-gold-rgb),0.3); } to { box-shadow: 0 0 16px rgba(var(--kb-gold-rgb),0.85); } }
+.key.target { border-color: var(--kb-gold); color: var(--kb-gold); box-shadow: 0 0 10px rgba(var(--kb-gold-rgb),0.45); }
 /* A2: the two Shift keys sit quietly like the ghost anchor until a capital lights them */
 .key.shift-key { opacity: 0.35; }
 .key.shift-key.target { opacity: 1; }
@@ -495,23 +542,23 @@ h1 {
 .key.ghost-key.target { opacity: 1; }
 .finger {
   position: absolute;
-  border: 1.5px solid rgba(242,237,227,0.28); background: rgba(242,237,227,0.05);
+  border: 1.5px solid rgba(var(--kb-ink),0.28); background: rgba(var(--kb-ink),0.05);
   border-radius: 9px; pointer-events: none;
   transition: transform 0.18s ease, border-color 0.18s, background 0.18s;
 }
-.finger.active { border-color: var(--gold); background: rgba(240,192,96,0.16); }
+.finger.active { border-color: var(--kb-gold); background: rgba(var(--kb-gold-rgb),0.16); }
 
 /* ============ OVERLAY SCREENS (collection, shop) ============ */
 .overlay {
   position: fixed; inset: 0; z-index: 10;
-  background: rgba(8,18,26,0.75);
+  background: rgba(var(--umber-rgb),0.75);
   display: flex; align-items: center; justify-content: center;
 }
 .overlay[hidden] { display: none; }
 .overlay-panel {
-  background: var(--abyss); border: 1px solid rgba(240,192,96,0.35);
+  background: var(--umber); border: 1px solid rgba(var(--gold-rgb),0.35);
   border-radius: 14px; padding: 20px 24px; max-width: 680px; max-height: 90vh;
-  overflow-y: auto; box-shadow: 0 16px 50px rgba(0,0,0,0.6);
+  overflow-y: auto; box-shadow: 0 16px 50px rgba(var(--shadow-rgb),0.6);
   text-align: center;
 }
 .overlay-title { font-family: var(--display); font-size: 13px; color: var(--gold); letter-spacing: 0.12em; margin-bottom: 16px; }
@@ -523,10 +570,10 @@ h1 {
 #journal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
 .badge-card {
   padding: 12px 10px 14px; border-radius: 10px; text-align: center;
-  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(var(--ink-rgb),0.04); border: 1px solid rgba(var(--ink-rgb),0.1);
   opacity: 0.5;
 }
-.badge-card.earned { opacity: 1; border-color: rgba(240,192,96,0.5); background: rgba(240,192,96,0.08); }
+.badge-card.earned { opacity: 1; border-color: rgba(var(--gold-rgb),0.5); background: rgba(var(--gold-rgb),0.08); }
 .badge-medal { font-size: 26px; line-height: 1; margin-bottom: 6px; }
 .badge-name { font-family: var(--display); font-size: 11px; color: var(--ink); margin-bottom: 4px; }
 .badge-card.earned .badge-name { color: var(--gold); }
@@ -535,9 +582,9 @@ h1 {
 /* Badge-earned toast (non-modal, slides down under the HUD) */
 #badge-toast {
   position: fixed; left: 50%; top: 12px; transform: translate(-50%, -140%); z-index: 12;
-  background: var(--abyss); border: 1px solid var(--gold); border-radius: 10px;
+  background: var(--umber); border: 1px solid var(--gold); border-radius: 10px;
   padding: 8px 16px; font-size: 12px; color: var(--ink); white-space: nowrap;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.5); opacity: 0; pointer-events: none;
+  box-shadow: 0 8px 24px rgba(var(--shadow-rgb),0.5); opacity: 0; pointer-events: none;
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 #badge-toast.show { transform: translate(-50%, 0); opacity: 1; }
@@ -552,15 +599,15 @@ h1 {
 .pkey {
   width: 34px; height: 34px; border-radius: 6px;
   display: flex; align-items: center; justify-content: center;
-  font-family: var(--display); font-size: 12px; color: #fff; text-transform: uppercase;
-  border: 1px solid rgba(255,255,255,0.12);
+  font-family: var(--display); font-size: 12px; color: var(--ink); text-transform: uppercase;
+  border: 1px solid rgba(var(--ink-rgb),0.12);
 }
-.pkey.nodata { background: rgba(255,255,255,0.05); color: var(--dim); }
+.pkey.nodata { background: rgba(var(--ink-rgb),0.05); color: var(--dim); }
 #progress-legend { font-size: 10px; color: var(--dim); margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .pscale { display: inline-block; width: 120px; height: 10px; border-radius: 5px;
-  background: linear-gradient(90deg, hsl(0,55%,42%), hsl(60,55%,42%), hsl(120,55%,42%)); }
+  background: linear-gradient(90deg, hsl(6,42%,48%), hsl(42,46%,50%), hsl(112,30%,44%)); }
 .nudge-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-#nudge-shop { color: var(--abyss); background: var(--gold); border-color: var(--gold); }
+#nudge-shop { color: var(--umber); background: var(--gold); border-color: var(--gold); }
 #collection-grid {
   display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 16px;
 }
@@ -568,32 +615,40 @@ h1 {
 .cgroup {
   grid-column: 1 / -1; margin: 4px 0 -2px;
   font-family: var(--display); font-size: 13px; color: var(--gold);
-  border-bottom: 1px solid rgba(240,192,96,0.25); padding-bottom: 6px;
+  border-bottom: 1px solid rgba(var(--gold-rgb),0.25); padding-bottom: 6px;
 }
 .cgroup:first-child { margin-top: 0; }
 .cell {
   width: 116px; padding: 10px 6px 12px; border-radius: 10px;
-  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(var(--ink-rgb),0.04); border: 1px solid rgba(var(--ink-rgb),0.1);
+}
+/* R2: rare and legendary catches carry the same gold the scene gives them when
+   they're on the line, so the grid says rarity in the same language the water
+   does. Deliberately quiet — a warm rim, not a neon badge. */
+.cell.tier-rare { border-color: rgba(var(--gold-rgb),0.32); }
+.cell.tier-legendary {
+  border-color: rgba(var(--gold-rgb),0.55);
+  box-shadow: 0 0 14px rgba(var(--gold-rgb),0.14) inset;
 }
 /* same shape language as the in-scene #fish, kept in sync by hand since
    this one's built from JS-created markup with no child elements */
 .cfish {
   position: relative; width: 56px; height: 26px; margin: 10px auto 12px;
   background: linear-gradient(180deg,
-    color-mix(in srgb, var(--fish-color, #1a3140) 100%, white 22%) 0%,
-    var(--fish-color, #1a3140) 55%,
-    color-mix(in srgb, var(--fish-color, #1a3140) 100%, black 18%) 100%);
+    color-mix(in srgb, var(--fish-color, #6f8f86) 100%, var(--foam) 30%) 0%,
+    var(--fish-color, #6f8f86) 55%,
+    color-mix(in srgb, var(--fish-color, #6f8f86) 100%, var(--umber) 22%) 100%);
   border-radius: 50% 40% 40% 50% / 60% 60% 40% 40%;
 }
 .cfish::after {
   content: ""; position: absolute; right: -14px; top: 2px; width: 18px; height: 22px;
-  background: var(--fish-color, #1a3140); filter: brightness(0.92);
+  background: var(--fish-color, #6f8f86); filter: brightness(0.92);
   clip-path: polygon(0% 20%, 100% 0%, 62% 50%, 100% 100%, 0% 80%);
 }
 .cell:not(.unknown) .cfish::before {
   content: ""; position: absolute; left: 10px; top: 6px; width: 8px; height: 8px;
   border-radius: 50%;
-  background: radial-gradient(circle at 65% 35%, var(--abyss) 0 35%, var(--foam) 40% 100%);
+  background: radial-gradient(circle at 65% 35%, var(--umber) 0 35%, var(--foam) 40% 100%);
 }
 .cname { font-family: var(--display); font-size: 10px; color: var(--ink); min-height: 24px; }
 .cell.unknown .cname { color: var(--dim); }
@@ -604,10 +659,10 @@ h1 {
 .profile-cell {
   position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px;
   width: 128px; padding: 16px 8px; border-radius: 12px; cursor: pointer;
-  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(var(--ink-rgb),0.04); border: 1px solid rgba(var(--ink-rgb),0.12);
   font-family: var(--mono); color: var(--ink);
 }
-.profile-cell:hover { border-color: rgba(240,192,96,0.5); background: rgba(240,192,96,0.06); }
+.profile-cell:hover { border-color: rgba(var(--gold-rgb),0.5); background: rgba(var(--gold-rgb),0.06); }
 .profile-cell:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .pavatar { font-size: 34px; line-height: 1; }
 .pname { font-family: var(--display); font-size: 11px; }
@@ -624,8 +679,8 @@ h1 {
 #profile-new[hidden] { display: none; }   /* ID specificity beats [hidden]; restore it */
 #profile-name {
   font-family: var(--mono); font-size: 17px; text-align: center; padding: 9px 14px;
-  border-radius: 8px; border: 1px solid rgba(255,255,255,0.22);
-  background: rgba(0,0,0,0.28); color: var(--ink); width: 200px;
+  border-radius: 8px; border: 1px solid rgba(var(--ink-rgb),0.22);
+  background: rgba(var(--shadow-rgb),0.28); color: var(--ink); width: 200px;
 }
 #profile-name:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
 #avatar-row { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; max-width: 300px; }
@@ -633,11 +688,11 @@ h1 {
   font-size: 22px; padding: 4px 6px; border-radius: 8px; cursor: pointer;
   background: transparent; border: 1px solid transparent; line-height: 1;
 }
-.avatar-opt.sel { border-color: var(--gold); background: rgba(240,192,96,0.15); }
+.avatar-opt.sel { border-color: var(--gold); background: rgba(var(--gold-rgb),0.15); }
 .avatar-opt:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
 .profile-actions { display: flex; gap: 8px; }
 #sync-bar {
-  margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1);
+  margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(var(--ink-rgb),0.1);
   display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;
 }
 #sync-status { font-size: 11px; color: var(--dim); }
@@ -652,13 +707,13 @@ h1 {
 .shop-row {
   display: flex; align-items: center; gap: 12px;
   padding: 9px 12px; margin-bottom: 6px; border-radius: 8px;
-  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(var(--ink-rgb),0.04); border: 1px solid rgba(var(--ink-rgb),0.1);
 }
 .shop-name { font-family: var(--display); font-size: 11px; color: var(--ink); flex: 1; text-align: left; }
 .shop-hint { font-size: 11px; color: var(--dim); }
 .shop-btn { min-width: 104px; }
 .shop-btn:disabled { opacity: 0.4; cursor: default; }
-.shop-btn.equipped { color: var(--abyss); background: var(--moss); border-color: var(--moss); }
+.shop-btn.equipped { color: var(--umber); background: var(--moss); border-color: var(--moss); }
 
 @media (prefers-reduced-motion: reduce) {
   #rig, .cloud, .reed, #bobber, #meter-fill.danger, #hull-shadow { animation: none !important; }

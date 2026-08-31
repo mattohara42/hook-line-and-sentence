@@ -1509,7 +1509,11 @@ function renderCollection() {
     for (const f of FISH.filter(f => locOf(f) === loc)) {
       const count = save.collection[f.id] ?? 0;
       const cell = document.createElement("div");
-      cell.className = "cell" + (count ? "" : " unknown");
+      // R2: the tier rides on the cell so a caught rare/legendary glows here the
+      // way it does in the scene. It mattered more once the palette was muted —
+      // the loudest fish used to be legendary by sheer colour, and now nothing is
+      // loud, so rarity needs to be said rather than implied.
+      cell.className = "cell" + (count ? " tier-" + f.tier : " unknown");
       const shape = document.createElement("div");
       shape.className = "cfish";
       if (count) shape.style.setProperty("--fish-color", f.color);
@@ -1639,7 +1643,14 @@ $("nudge-close").addEventListener("click", () => toggleNudge(false));
 // ---- Parent progress view: per-key accuracy heatmap from stats.letters ----
 let progressOpen = false;
 const progressRoot = $("progress");
-const accColor = acc => `hsl(${Math.round(acc * 120)}, 55%, 42%)`;   // red → green
+// R2: same red→green meaning, muted into the warm palette (ART_DIRECTION.md —
+// nothing in the game is saturated any more, the heatmap included). Saturation
+// and lightness ease across the ramp so the middle doesn't go acid yellow.
+const accColor = acc => {
+  const h = Math.round(6 + acc * 106);                    // 6° red → 112° green
+  const s = Math.round(42 + Math.sin(acc * Math.PI) * 6); // gentle bulge mid-ramp
+  return `hsl(${h}, ${s}%, ${Math.round(48 - acc * 4)}%)`;
+};
 
 function renderProgress() {
   const L = save.stats.letters || {};

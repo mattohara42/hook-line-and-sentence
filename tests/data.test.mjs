@@ -306,3 +306,32 @@ test("CONFIG.anim's timings and curve numbers are sane", () => {
     "a whole word should pull at least as hard as one letter");
   assert.ok(a.tug.jitter >= 0 && a.tug.jitter < 1, "jitter is a fraction of the impulse");
 });
+
+// R2 (ART_DIRECTION.md): two rules that are easy to break by habit months from
+// now, and invisible in a diff. Both are cheap to check mechanically, so they
+// are checked rather than trusted.
+test("no pure black anywhere in the stylesheet", () => {
+  const css = readFileSync(new URL("../style.css", import.meta.url), "utf8");
+  const offences = [];
+  css.split("\n").forEach((line, i) => {
+    if (/^\s*(\/\*|\*)/.test(line)) return;                 // prose about the rule is fine
+    if (/#000\b|#000000\b|rgba?\(\s*0\s*,\s*0\s*,\s*0\s*[,)]|:\s*black\b|,\s*black\s/.test(line)) {
+      offences.push(`${i + 1}: ${line.trim()}`);
+    }
+  });
+  assert.equal(offences.join("\n"), "",
+    "ART_DIRECTION.md: shadows and outlines are warm dark browns, never pure black");
+});
+
+test("the ghost-hands keyboard stays exempt from the palette", () => {
+  const css = readFileSync(new URL("../style.css", import.meta.url), "utf8");
+  const start = css.indexOf("/* R2: the keyboard is EXEMPT");
+  const end = css.indexOf("/* ============ OVERLAY SCREENS");
+  assert.ok(start > 0 && end > start, "the keyboard block's markers moved — update this test");
+  const block = css.slice(start, end);
+  // it may reference its own frozen tokens and nothing else from the palette
+  const scenePalette = [...block.matchAll(/var\(--([a-z-]+)/g)].map(m => m[1])
+    .filter(name => !name.startsWith("kb-"));
+  assert.deepEqual([...new Set(scenePalette)], [],
+    "CLAUDE.md: the keyboard is off limits — it must use only the frozen --kb-* tokens");
+});
