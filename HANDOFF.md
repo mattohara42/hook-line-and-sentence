@@ -6,349 +6,139 @@ snapshot, not a design doc — `SPEC.md`, `BUILD_PLAN*.md`, `BACKLOG.md`, and
 each session. This file just says *where things were left* and *what's
 waiting on a human*.
 
-## Where things stand (as of 2026-08-31, second session)
+## Where things stand (as of 2026-08-31, end of second session)
 
 v1 core (M1–M10) and Advanced Progression (A0–A8) are done and playable:
-Minnow → Mackerel → Marlin → Muskie, three biomes, all their art landed.
-
-**The art direction and the animation were restarted this session.** Matt likes
-the engine — progression, the keyboard, the unlockables — and wants a fresh
-start on backgrounds, boats and characters. Two new docs he supplied are now in
-the repo and are the source of truth:
+Minnow → Mackerel → Marlin → Muskie, three biomes. **This session restarted
+the art direction and animation from scratch** — Matt likes the engine
+(progression, the keyboard, the unlockables) and wants a fresh visual layer.
+Two new docs he supplied are now the source of truth:
 
 - **`ART_DIRECTION.md`** — warm painterly storybook, Ghibli-anchored. Muted
   palette, banded skies, glow not discs, thin warm-brown outlines, **no pure
   black**. Replaces the pixel-art direction the game shipped v1 with.
 - **`ANIMATION.md`** — casting arc, sagging Bezier line, tension-driven curve,
-  per-keystroke rod tug. Closes the oldest visual gap in the game: the line used
-  to *appear* rather than travel. **Built in R1, below.**
+  per-keystroke rod tug. Closes the oldest visual gap in the game (the line
+  used to *appear* rather than travel).
 
 The active epic is the **Art & Animation Refresh** — `BUILD_PLAN_REFRESH.md`,
-**R1–R7. R1 and R2 both shipped this session; R3 is next**, and it is the first
-milestone that needs Matt to generate anything. It supersedes
-`BUILD_PLAN_VISUAL.md` (V2–V5) and `BUILD_PLAN_GRAPHICS.md`.
+R1–R7. **R1 and R2 shipped and are merged to `main` (PRs #56–#58, all
+squash-merged). R3 is next, and it is the first milestone that needs Matt to
+generate anything** — R1/R2 were deliberately code-only so nothing blocked on
+a generation. Working tree is clean; nothing is uncommitted or unpushed.
 
-**Three decisions Matt made when the direction was adopted** (all recorded at
-the bottom of `ART_DIRECTION.md`; don't relitigate):
+Three decisions Matt made when the direction was adopted (recorded at the
+bottom of `ART_DIRECTION.md`; don't relitigate):
 
 1. The restyle reaches **everything except the keyboard grid** — including the
    collection screen's CSS-drawn fish icons. The game is no longer pixel art.
 2. **One protagonist with three costumes.** The angler-assigned-from-age+sex
    decision is retired; the favorite-color accent tint survives.
 3. **One rig per species** for the fish — all **33** of them, not shape
-   families. That is ~99 generated pieces, so R6 ships in waves by biome with
-   the current tinted placeholder standing in for anything that hasn't landed.
+   families. ~99 generated pieces, so R6 ships in waves by biome with the
+   tinted placeholder standing in for anything that hasn't landed.
 
-**R1 and R2 needed no art at all**, deliberately — which is why they went
-first and why both are done. `ART.md`'s open-request queue is empty (the two
-previous requests were withdrawn with the old direction); **R3 fills it.**
+## This is an art session — start here
 
-## R1 shipped the same session (2026-08-31)
+**`ART.md` already has the R3 Pond prompts written and ready to hand to
+Matt** — three layers (far/water/foreground), full Gemini prompts, filenames,
+sizes, and the waterline constraint (55% down / design y=198, or every tuned
+scene coordinate moves). Pond only, on purpose: wired and judged before the
+Stream and Ocean are requested, so a miss costs one level's three prompts
+instead of nine.
 
-**The line and the cast move now.** This is the first code of the epic and the
-oldest visual gap in the game closed: `#line` was a rotated `<div>` — straight
-by construction, grown by a CSS width transition — so the line *appeared*
-rather than travelled. It is now an SVG quadratic Bezier redrawn every frame
-between two ends that both move.
+Sequence:
+1. Hand Matt the three Pond prompts from `ART.md`'s "R3 — the Pond, repainted
+   as three layers" section.
+2. When the PNGs land, **composite them locally first** (Pillow, at game
+   scale) before wiring — the established habit, and how G1's misregistration
+   got caught late last time.
+3. Wire `#scene`'s background to the three-layer stack, confirm the waterline
+   still reads at y=198, then mark R3's Pond half done in
+   `BUILD_PLAN_REFRESH.md` and write the Stream + Ocean prompts.
+4. `image-rendering: pixelated` is already off (R2) — the old pixel
+   `background.png` is currently smooth-scaled as a placeholder; it disappears
+   once `background-pond-far.png` lands.
 
-- **Cast:** the rod loads back (~190ms), swings, and the lure flies an arc
-  (~520ms) to the water, where it splashes and hands over to the bobber. The
-  splash, the bobber and the wait for a bite all hang off *the landing* now,
-  not off the moment the kid finished typing.
-- **Idle:** the line sags. **Reel:** the sag tightens with tension — visibly.
-- **Tug:** every correct letter flicks the rod tip; a whole word pulls harder.
-  A damped spring (`logic.stepTug`), so fast typing stacks into an irregular
-  judder rather than restarting an animation.
+**Two things a fresh session needs to know that aren't obvious from the code:**
 
-**Verified in a real browser, not just by unit test:** a full catch and a full
-escape at 1x, both again under `prefers-reduced-motion`, and a second cast after
-each to catch a one-shot bug. Two numbers were measured rather than eyeballed —
-at 84% tension the sag came back 7.3px against a hand-computed 7.3, and the rod
-tug peaks at 4.8° and settles to exactly 0. 78 tests green (was 70).
-
-Three things a future session should know:
-
-- **`CONFIG.anim` owns every timing and curve number**, and
-  `CONFIG.anim.cast.landing` is now the *single* source of where the lure lands.
-  It used to be hardcoded in three places that had already drifted apart (the
-  bobber's CSS at 388,190, the splash at 400,195, the ripple at 394,196).
-- **The rod tip is read from `#rig`'s live transform matrix every frame** —
-  through the boat's bob and the rod's own rotation. The old `LINE_ORIGIN`
-  resolved it once at load, which would have detached the line from a rod that
-  was visibly swinging. A data test now pins the rod's pivot to its grip corner
-  so a gear-shop rod (R7) can't silently break it.
-- **Reduced motion runs no animation loop at all.** The cast *completes*
-  instantly with the line in its final position — never a scene stuck mid-cast.
-
-## R2 shipped the same session (2026-08-31)
-
-**The palette moved.** The M7.5 lock is lifted and everything except the
-keyboard is warm and muted. Worth knowing:
-
-- **`:root` is a real palette now.** The old one defined fourteen tokens of
-  which six were referenced at all — the actual colours were literals scattered
-  through the file. Panels and shadows now route through `--umber-rgb`,
-  `--shadow-rgb`, `--gold-rgb`, `--ink-rgb`.
-- **The keyboard is provably untouched.** Its colours are frozen as `--kb-*`
-  and it references nothing else. Proved by diffing the computed styles of every
-  key state before and after (byte-identical), and a test now fails if anything
-  in that block reaches for a scene token. A second test fails on any pure black
-  in the stylesheet — both were confirmed to fail when deliberately violated.
-- **The 33 fish colours were re-passed** — hue kept, saturation compressed into
-  the muted band, lightness clamped to read against teal-green water. Koi went
-  from a fully saturated `#ffd36e` to `#dac493`. All 33 stay distinct.
-- **One unplanned addition:** rare and legendary cells in the collection now
-  carry the scene's gold rim. Muting the palette *removed* a read that used to
-  exist by accident — the legendary fish was special by being the loudest colour
-  on screen. The scene glows rare/legendary, so now the grid does too.
-- `image-rendering: pixelated` is gone. The old pixel art is smooth-scaled until
-  R3 replaces it: very slightly softer at 1x, checked side by side, fine.
-
-**It looks transitional right now, and that's expected** — warm chrome over the
-old saturated pixel sunset. The modal scrim goes muddy-orange where the old sky
-bleeds through it. That's the background, not the scrim; R3 fixes it by
-replacing the art, and tuning the scrim now would be tuning against a moving
-target.
-
-**`ART.md` now carries the palette's real hex values**, with a note that a
-background outside that range is a reroll. That's what R3's prompts are written
-against.
-
-## ⚠️ Pending from the 2026-08-31 branch audit
-
-A cross-repo audit of unmerged branches found **real unlanded work here** —
-this repo had more of it than any other.
-
-### PR #55 — pre-release pass — needs a decision
-
-https://github.com/mattohara42/hook-line-and-sentence/pull/55 (draft)
-
-Branch `claude/graphics-assets-plan-rza791`, from 2026-08-22, never had a PR.
-Confirmed still absent from `main`. It carries:
-
-- **`config.js` — dev shortcuts derived from the hostname, not a flag.** Adds
-  `currentHostname()` / `isDevHost()` and sets
-  `dev: { testShortcuts: isDevHost(currentHostname()), testCoins: 200 }`. Its
-  own rationale: the 🧪 button was live on the production site for a while
-  precisely because a manual flag is easy to forget. Fails closed on an
-  unknown host; split into a pure function so the Node data tests can import it.
-- **`firestore.rules` — hardening + a written-out threat note.** Ownership
-  helpers (`isMine`/`wasMine`), `boundedMap()` size caps, and a long comment
-  spelling out that `request.auth != null` is authentication, **not**
-  family-authorisation — any Google account can create documents, and this
-  database is shared with Family Hub. Lists real fixes in order: separate
-  Firebase project → App Check → uid allowlist → ship public with no Firebase
-  config at all.
-- **Content depth** in `data/phrases.json` (+44) and `data/sentences.json` (+29).
-- **`LICENSE`** (new) and a README pointer.
-
-**Blocker:** conflicts with `main` in `firestore.rules` and
-`tests/data.test.mjs` (`main`'s rules are 4132 bytes vs 4114 here). Needs a
-human call on which version of the rules wins — that's why it's a draft.
-
-Given the security content, this is the most valuable thing outstanding in the
-repo. Worth doing before the game's URL is shared any wider.
-
-### Branches to delete
-
-All stale or superseded; SHAs recorded so any deletion is reversible
-(`git push origin <sha>:refs/heads/<branch>`):
-
-```
-git push origin --delete claude/advanced-game-progression-ejj4yx     # was 49f2abb
-git push origin --delete claude/docs-dynamic-intent-generation-p14kbx # was a50a15c
-git push origin --delete claude/epic-continuation-81tdvp              # was 69f79ea
-git push origin --delete claude/gemini-game-asset-prompts-aeopww      # was c47e021
-git push origin --delete claude/next-steps-0v0xeg                     # was 98762e7
-git push origin --delete g1/layered-rig                               # was 5e855b5
-```
-
-Why each is safe:
-
-- **`advanced-game-progression`** — made `BUILD_PLAN_ADVANCED.md` discoverable
-  and describes A0 as "first buildable milestone". `main` now says A0–A8 all
-  shipped. Merging it would *regress* the docs.
-- **`docs-dynamic-intent-generation`** — added `HANDOFF.md`. It's here, and
-  `CLAUDE.md` already carries the identical "read HANDOFF first" instruction.
-- **`gemini-game-asset-prompts`** — A6 Ocean art prompts. `ART.md` on `main`
-  already marks A6/A8 landed (2026-08-25).
-- **`epic-continuation`** — the 🧪 unlock shortcut as a hardcoded
-  `testShortcuts: true`. **Superseded by PR #55's** hostname-derived version;
-  don't delete this one until #55 lands, or the shortcut is lost entirely.
-- **`g1/layered-rig`** — ⚠️ **your call.** This is your branch and real code
-  (the layered angler, 8 files). `CLAUDE.md` says V2 supersedes
-  `BUILD_PLAN_GRAPHICS.md` "after G1's layered angler didn't hold up in play",
-  so it reads as deliberately abandoned — but confirm before deleting. Note
-  #42/#43 already merged the parts that survived (`CONFIG.rig.lineOrigin` and
-  the computed aim).
-
-## The arc of the *previous* session, in one paragraph
-
-*(Kept because it explains why the visuals were in the state Matt reacted to.)*
-
-The three outstanding art PNGs landed and got wired (Ocean scene, Muskie hero
-sprite, dino nugget). That exposed a scene-composition problem — the SVG wave
-overlay was banding the new backgrounds, and the Stream's boat floated ~100px
-above its water — which was fixed by deleting the overlay and reframing the
-Stream art. Then the Graphics & Character Rig epic was scoped (G1–G6) and G1
-shipped: the angler split into body/hat/rod layers. **Matt played it and G1
-failed the eye test** — janky hat, rod not in the hand, boat floating, fish not
-underwater. That prompted a full re-plan (`BUILD_PLAN_VISUAL.md`), whose V1
-shipped the same session: a water surface painted *in front of* the boat and
-fish. V2 keeps the gear shop but changes how art is generated so pieces
-register by construction.
-
-## Last session's changes (PRs #36–#47, all squash-merged to `main`)
-
-**Art landed and wired**
-- **#36 — Ocean scene + Muskie hero sprite.** `background-ocean.png` needed
-  `background-position: center 11%` (it came back 1.83:1, not ~2.4:1, so
-  `cover` cropped its horizon 13px high). `fish-muskie.png` got its own rule;
-  `fish-legendary.png` stayed put because Koi Story now uses it.
-- **#37 — Frankie's dino nugget.** Wired into `CONFIG.junk.items` with a new
-  pun line.
-- **#38 — the SVG wave overlay is gone.** It was pinned at the pond's
-  waterline and banded the other two biomes with dark stripes. The Stream's
-  boat-floating problem was fixed by **reframing the art** (scaled 1.246x,
-  offset so its bank lands on y=198), after moving the furniture down was
-  tried and abandoned — the whole rig ended up behind the finger-guide panel.
-- **#39 — 🧪 dev shortcut unlocks the keyboard too.** Letter stages are earned
-  by catch count, so a fresh test profile in the Ocean had only the home row,
-  which filtered out every sentence and silently dropped the reel to single
-  words.
-
-**Planning**
-- **#40 — Graphics & Character Rig scoped** into G1–G6.
-- **#41 — Matt's answers:** three poses (rowboat / waders / fighting chair),
-  and the angler is assigned from **age + sex** rather than picked from a
-  roster.
-- **#45 — the re-plan.** `BUILD_PLAN_VISUAL.md` supersedes
-  `BUILD_PLAN_GRAPHICS.md`, which is marked superseded but kept for the trail.
-- **#47 — V2's approach**, after Matt confirmed he wants the gear shop.
-
-**Built**
-- **#42/#43 — G1.** The angler became `CONFIG.rig.layers` + `renderRig()`, and
-  the three PNGs landed. `#line`'s hand-solved `275px`/`9.8deg` was replaced by
-  `CONFIG.rig.lineOrigin` + a computed aim — **that part survives the re-plan.**
-- **#44 — audio defaults to off** and the **day/night tint is gone**.
-- **#46 — V1.** `#surface` paints the water in front of the rig and fish; the
-  fish carries a `.submerged` treatment until it's landed; the boat rocks on a
-  waterline pivot with a contact shadow.
-
-## Last session also shipped: Quick Cast (2026-08-31)
-
-A timed typing-speed test, added at Matt's request, **freely available at any
-progression**. Tackle box → ⏱️ Quick cast → 3-2-1 → 30 seconds of words →
-WPM, accuracy, and a personal best.
-
-Shape of it, and the two decisions worth not re-litigating:
-
-- **Outside the progression on purpose.** The button is never gated, and by
-  default the run draws from the whole 2851-word pool rather than the kid's
-  unlocked letters (`CONFIG.speedTest.useUnlockedLettersOnly`). Gating it would
-  make a kid's own scores incomparable as they unlock letters, which defeats the
-  point of a test.
-- **Sealed off from the fishing save.** It writes only `save.speedBest`. It does
-  not touch coins, catches, badges or `save.stats` — "Hooked on Typing" counts
-  words reeled from real fish, and a timed run must not farm it; and folding
-  rushed keystrokes into the Grown-ups heatmap would misreport which keys a kid
-  actually struggles with.
-
-Pure bits are in `logic.js` (`speedTestPool`, `typingAccuracy`, reusing
-`computeWpm`/`isPersonalBestWpm`), tested — 70 green. The finger guide follows
-the test's current letter and is handed back to the game on close.
-
-Verified in a real browser, not just by unit test: a full run, the maths checked
-against hand-computed expectations (1 word + 5 deliberate misses → "1 words ·
-50% accurate · 10 keys", 2 wpm), GO AGAIN, and a worse second run correctly
-*not* overwriting the stored best. Two bugs were found that way and fixed —
-the word queue could run dry and strand the run with a blank word, and the
-finger guide sat on the fishing word's letter until the first keypress.
-
-`SPEC.md`'s "no timers or WPM" non-goal was rewritten rather than quietly
-contradicted: it was always about the fishing loop, and now says so.
+- **`CONFIG.anim` (R1) and the new `:root` palette (R2) are both real,
+  load-bearing config** — not leftover scaffolding. Read `ANIMATION.md`'s
+  history section and the top of `style.css` before touching either.
+- **The keyboard is frozen and tested.** Its colours are `--kb-*` tokens and a
+  test (`tests/data.test.mjs`) fails if that block ever references a scene
+  token. Never point it at a scene token even if the values look equivalent —
+  see `CLAUDE.md`.
 
 ## Open threads / waiting on Matt
 
-- **PR #55 and the branch deletions** — see the audit section above. #55 is the
-  one with real substance (Firestore rules hardening + the dev-flag fix).
-- **The rename is complete** (2026-08-31), end to end, nothing outstanding.
-  Landed: the codebase and docs (#50), the Firebase authorized domain, the
-  Netlify project rename, a published production deploy with sign-in verified,
-  the GitHub repo rename, the About-panel Website link, and the re-lettered
-  social preview (#53) — now uploaded at Settings → General → Social preview.
-  The game is at **https://hook-line-and-sentence.netlify.app** and the repo is
-  `mattohara42/hook-line-and-sentence`; old repo URLs redirect, so existing
-  clones keep working. Two lasting consequences worth remembering: the freed
-  `fishtyping` subdomain is **not** redirected and is claimable by anyone, so
-  any old bookmark is dead; and social cards cache hard, so Slack/iMessage may
-  serve the old image for a while even though the repo page is correct.
-- **Three rename steps a web session cannot do, so don't burn time trying**
-  (learned 2026-08-31). **Netlify deploys**: `api.netlify.com` and
-  `netlify-mcp.netlify.app` are both refused by the sandbox egress policy (403
-  on CONNECT), so the MCP deploy path dies with a bare `Failed to deploy site:
-  403 Forbidden`. Renaming the *project* works fine, because that goes over the
-  MCP server rather than a direct upload — "Netlify works" and "Netlify deploys
-  work" are different claims here. **GitHub repo rename**: no `gh` CLI, and the
-  GitHub MCP server has no repo-edit operation — that also rules out setting the
-  About-panel description, topics and Website link, and direct `api.github.com`
-  calls come back `403: GitHub access is not enabled for this session` even
-  though the host resolves. **Social preview upload**: not in the repo tree at
-  all. All three are console steps. **Add to this list: deleting a remote
-  branch.** A web session's git credentials are read-only — `git push` returns
-  HTTP 403 on `git-receive-pack` — so branch deletions are a local or console
-  step too, even though merging a PR through the GitHub MCP server works fine.
-- ~~V2 art — four prompts in `ART.md`~~ and ~~the re-shot Stream scene~~ —
-  **both withdrawn 2026-08-31** with the pixel direction. Nothing to generate
-  right now. The next art request is R3's Pond background layers, and it won't
-  be written until R1 and R2 (both code-only) are done. The *method* from those
-  requests survives as `ART.md`'s standing same-canvas rule.
-- **R1's prototype is waiting on Matt's eye test** —
-  `prototype/line-animation.html` (serve the repo, then open
-  `/prototype/line-animation.html`). `ANIMATION.md` flags its own central
-  assumption: a Bezier line with a tension-driven control point rather than a
-  physics rope. The prototype imports the *real* `logic.js` and `CONFIG.anim`,
-  so it is the shipped behaviour in isolation, with a tension slider and a tug
-  button. The wiring shipped alongside it rather than waiting — if the eye test
-  fails, the curve is `logic.lineControlPoint`/`lineSagPx` and the feel is all
-  in `CONFIG.anim`, so it swaps out without touching the game loop.
+- **R1's prototype still wants Matt's eye test.** `ANIMATION.md` flags its own
+  central assumption — a Bezier line with a tension-driven control point,
+  rather than a physics rope — and asks for it to be looked at before it's
+  treated as final. `prototype/line-animation.html` (serve the repo, open
+  `/prototype/line-animation.html`; cast it, then drag the tension slider) is
+  that review. The wiring shipped alongside it rather than waiting on the
+  review — if it fails the eye test, the curve is
+  `logic.lineControlPoint`/`lineSagPx` and the feel is all in `CONFIG.anim`, so
+  it swaps out without touching the game loop.
+- **PR #55 — pre-release pass — still needs a decision.**
+  https://github.com/mattohara42/hook-line-and-sentence/pull/55 (draft, from
+  2026-08-22, still unmerged). Carries Firestore rules hardening (ownership
+  checks + a written threat note — the current rules only check
+  `request.auth != null`, which is authentication, not family-authorisation,
+  and this database is shared with Family Hub), hostname-derived dev shortcuts
+  in `config.js`, +44/+29 phrases/sentences, and a LICENSE. **Blocked** on a
+  human call: it conflicts with `main` in `firestore.rules` and
+  `tests/data.test.mjs` (two different rule sets, 4132 vs 4114 bytes). Given
+  the security content this is the single most valuable thing outstanding in
+  the repo — worth doing before the game's URL is shared any wider.
+- **Branches to delete** (stale/superseded, SHAs recorded so reversible):
+  `claude/advanced-game-progression-ejj4yx` (49f2abb),
+  `claude/docs-dynamic-intent-generation-p14kbx` (a50a15c),
+  `claude/epic-continuation-81tdvp` (69f79ea, but keep until #55 lands or the
+  🧪 dev-unlock shortcut it carries is lost entirely),
+  `claude/gemini-game-asset-prompts-aeopww` (c47e021),
+  `claude/next-steps-0v0xeg` (98762e7), and **`g1/layered-rig`** (5e855b5) —
+  ⚠️ that one's Matt's own branch, confirm before deleting (the parts that
+  survived — `CONFIG.rig.lineOrigin` + the computed aim — already merged via
+  #42/#43). A **web session's git credentials are read-only**, so branch
+  deletion is a local/console step, not something to attempt here.
 - **A7 fight-beats playtest with a real kid** still hasn't happened —
-  `clauseRunMs`/`segmentRunMs` in `config.js` were picked by feel.
+  `clauseRunMs`/`segmentRunMs` in `config.js` were picked by feel, not tested
+  against an actual kid's reading speed.
 
-## Rules of thumb this session earned
+## Rules of thumb worth carrying forward
 
-- **Fetch before branching.** The local clone was 12 commits behind
-  `origin/main` at session start, which produced a set of art prompts for work
-  that had already been requested upstream.
-- **A piece that doesn't fit is a reroll, not an offset tweak.** Tuning
-  offsets at 4x zoom is how G1 shipped something that looked wrong at 1x.
-- **Gemini fakes transparency in a new way every batch** — gray/gray,
-  black/gray, blue/black so far. `ART.md`'s salvage detects the pair per file
-  rather than assuming.
-- **Nothing may land in the bottom-center finger-guide panel.** It covers the
-  lower third of the scene and it's the best part of the game.
-- **A branch being "ahead" of `main` doesn't mean it holds unmerged work.**
-  Squash-merging rewrites the SHA, so the old ref reads as ahead forever. The
-  test that actually settles it is whether merging changes anything:
-  `git merge-tree --write-tree origin/main origin/<branch>` and compare the
-  result to `git rev-parse origin/main^{tree}`.
-
-## Likely next steps
-
-1. **R3 — three painted backgrounds, and it needs Matt.** This is the first
-   art of the epic: Pond first, three layers (far / water / foreground), wired
-   and judged *before* the other two levels are generated, so a palette or
-   framing miss costs one level's prompts instead of nine. The waterline has to
-   land at design y=198 or every tuned coordinate moves. Prompts go in `ART.md`.
-2. **Matt's eye test on the cast** (R1) — in the game or the prototype. Still
-   the one open item behind us.
-3. The kid playtest of the A7 fight beats, whenever a kid is available.
+- **`git fetch origin main` before branching.** More than one session this
+  project has produced work against a stale local `main`.
+- **A piece that doesn't fit is a reroll, not an offset tweak** — for rig
+  pieces (G1's lesson) and now for background layers too (the waterline
+  constraint above is the same principle).
+- **Gemini fakes transparency a new way every batch** — `ART.md`'s salvage
+  script detects the checkerboard pair per file rather than assuming one.
+- **Nothing may land in the bottom-center finger-guide panel** — it covers the
+  lower third and it's the best part of the game.
+- **Verify claims in a real browser, not just unit tests**, for anything
+  visual or motion-related — screenshot it, or diff computed styles, rather
+  than trusting the diff reads correctly. This is how the R1 tension curve and
+  the R2 keyboard-untouched claim both got proven rather than asserted.
 
 ## Housekeeping
 
 - Full test suite: 80/80 passing (`npm test` — Node's built-in runner).
-- Every PR this session was opened ready-for-review and squash-merged
-  immediately, per `CLAUDE.md`. (PR #55 is the exception — it's a draft
-  because it conflicts and needs a decision, not because the convention
-  changed.)
+- Every PR this session (#56, #57, #58) was opened ready-for-review and
+  squash-merged immediately, per `CLAUDE.md`. All three GitHub PR subscriptions
+  closed out cleanly on merge — nothing left watching.
+- `origin/main` and this session's working tree are identical; nothing
+  uncommitted, nothing unpushed.
 - Netlify deploys are **manual** — merging to `main` does not go live.
+
+## Superseded plans, kept for the trail
+
+`BUILD_PLAN_VISUAL.md` (V2–V5) and `BUILD_PLAN_GRAPHICS.md` (G2–G6) both
+planned art in the old pixel style and are superseded by
+`BUILD_PLAN_REFRESH.md`. V1's three-plane scene (`#surface` in front of the mid
+plane) survives untouched — it's the one part of the old visual work that
+worked. G1's same-canvas, reference-drawn generation rule also survives, now a
+standing rule near the top of `ART.md`. Full PR-by-PR history from earlier
+sessions lives in git log and in those two files' own text, not repeated here.
