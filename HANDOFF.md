@@ -6,7 +6,16 @@ snapshot, not a design doc — `SPEC.md`, `BUILD_PLAN*.md`, `BACKLOG.md`, and
 each session. This file just says *where things were left* and *what's
 waiting on a human*.
 
-## Where things stand (as of 2026-08-31, end of second session)
+## Where things stand (as of 2026-08-31, third session)
+
+**Third session was a short one and changed no game code.** It confirmed the
+state below still holds (80/80 green, tree clean, `origin/main` identical), and
+it closed out the oldest open thread in this file by actually diffing it: **PR
+#55 is fully superseded and should be closed unmerged** — see "Open threads"
+below. R3 is still the active milestone and still needs Matt to generate the
+three Pond PNGs; nothing about that changed.
+
+### The picture as of the end of the second session
 
 v1 core (M1–M10) and Advanced Progression (A0–A8) are done and playable:
 Minnow → Mackerel → Marlin → Muskie, three biomes. **This session restarted
@@ -81,24 +90,52 @@ Sequence:
   review — if it fails the eye test, the curve is
   `logic.lineControlPoint`/`lineSagPx` and the feel is all in `CONFIG.anim`, so
   it swaps out without touching the game loop.
-- **PR #55 — pre-release pass — still needs a decision.**
-  https://github.com/mattohara42/hook-line-and-sentence/pull/55 (draft, from
-  2026-08-22, still unmerged). Carries Firestore rules hardening (ownership
-  checks + a written threat note — the current rules only check
-  `request.auth != null`, which is authentication, not family-authorisation,
-  and this database is shared with Family Hub), hostname-derived dev shortcuts
-  in `config.js`, +44/+29 phrases/sentences, and a LICENSE. **Blocked** on a
-  human call: it conflicts with `main` in `firestore.rules` and
-  `tests/data.test.mjs` (two different rule sets, 4132 vs 4114 bytes). Given
-  the security content this is the single most valuable thing outstanding in
-  the repo — worth doing before the game's URL is shared any wider.
+- **✅ PR #55 — resolved 2026-08-31: it is fully superseded, and should be
+  closed unmerged.** The earlier note here (repeated over several sessions) said
+  it was blocked on a human call between "two different rule sets". That was
+  wrong, and it cost the thread a month. Checked file by file against
+  `origin/main`:
+  - `firestore.rules` — **the hardening is already on `main`.** The two files
+    differ by exactly two lines, both comments carrying the pre-rename game name
+    ("Typing Fishing" vs "Hook, Line and Sentence"). The ownership checks
+    (`wasMine()`/`isMine()`), the `sane()` shape caps and the ⚠️ threat note are
+    all live. The byte-count difference that read as two rule sets was the
+    rename, nothing else.
+  - `tests/data.test.mjs` — `main` is a strict **superset**: the same hostname
+    test (with the *correct* post-rename hostnames — the PR still asserts
+    against `fishtyping.netlify.app`), plus the R1/G1 tests the branch predates.
+  - `LICENSE`, `data/phrases.json` (67), `data/sentences.json` (44) — byte
+    identical to `main`. `config.js`'s `isDevHost()` dev-shortcut derivation is
+    on `main` too (`config.js:301,310`).
+
+  Every unique thing PR #55 contributed was carried onto `main` by later work.
+  Diffing `main → the PR branch` is **-3463 lines**: merging it now would
+  *delete* R1, R2, the whole refresh epic and the rename. **Close it, don't
+  merge it.** (Closing needs Matt — a web session's git credentials are
+  read-only.)
+
+  What is genuinely still open is the *design* question the rules only document,
+  not the rules themselves: `request.auth != null` authorises any Google account,
+  and the database is shared with Family Hub. That decision lives in
+  `BACKLOG.md`'s "Decide the Firebase blast-radius question before sharing the
+  URL", where it belongs — separate Firebase project · App Check · uid
+  allowlist · or ship public with no Firebase at all.
+- **The GitHub repo description is stale, and it now contradicts the epic.**
+  It still reads "Cozy **pixel-art** keyboard practice for kids". R2 took the
+  pixel direction off the game (`image-rendering: pixelated` is gone game-wide),
+  so the About panel now advertises a look the project has deliberately
+  abandoned. It is the first thing a stranger reads. Needs `gh repo edit` or the
+  GitHub settings UI — not something a web session can do (read-only creds).
 - **Branches to delete** (stale/superseded, SHAs recorded so reversible):
   `claude/advanced-game-progression-ejj4yx` (49f2abb),
   `claude/docs-dynamic-intent-generation-p14kbx` (a50a15c),
-  `claude/epic-continuation-81tdvp` (69f79ea, but keep until #55 lands or the
-  🧪 dev-unlock shortcut it carries is lost entirely),
+  `claude/epic-continuation-81tdvp` (69f79ea — **the hold on this one is now
+  lifted**: it was kept for the 🧪 dev-unlock shortcut, and that is on `main`
+  as `isDevHost()`),
   `claude/gemini-game-asset-prompts-aeopww` (c47e021),
-  `claude/next-steps-0v0xeg` (98762e7), and **`g1/layered-rig`** (5e855b5) —
+  `claude/next-steps-0v0xeg` (98762e7),
+  `claude/graphics-assets-plan-rza791` (a9e4e73 — PR #55's branch; close the PR
+  first), and **`g1/layered-rig`** (5e855b5) —
   ⚠️ that one's Matt's own branch, confirm before deleting (the parts that
   survived — `CONFIG.rig.lineOrigin` + the computed aim — already merged via
   #42/#43). A **web session's git credentials are read-only**, so branch
