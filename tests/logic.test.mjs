@@ -9,7 +9,7 @@ import {
   applyTension, catchReward, isPersonalBest, countsTowardTiming, overallAccuracy,
   locationsForRods, rankForState, tokenize, wordCount, tierWithFallback,
   computeWpm, isPersonalBestWpm, isEvenCadence, pickDistinct, segmentsForTier,
-  rankForProfile, earnsPrestige,
+  rankForProfile, earnsPrestige, speedTestPool, typingAccuracy,
 } from "../logic.js";
 
 const TIER_ORDER = ["legendary", "rare", "uncommon", "common"];   // hardest → easiest
@@ -344,4 +344,37 @@ test("overallAccuracy sums correct vs. error keystrokes across the letter map", 
   const acc = overallAccuracy({ a: { n: 9, errors: 1 }, s: { n: 10, errors: 0 } });
   assert.equal(acc.keys, 20);
   assert.equal(acc.pct, 19 / 20);
+});
+
+// ---- Quick Cast (the timed speed test) ----
+
+test("speedTestPool hands back the whole pool unless letter-gating is asked for", () => {
+  const entries = [
+    { w: "sad",  letters: "ads" },
+    { w: "quiz", letters: "iquz" },
+  ];
+  const homeRow = new Set("asdfjkl");
+  // the shipped default: every word, so a score means the same thing at any rank
+  assert.deepEqual(speedTestPool(entries, homeRow, false), entries);
+  // opt-in gating keeps a run inside the letters a kid has been taught
+  assert.deepEqual(speedTestPool(entries, homeRow, true), [entries[0]]);
+  // gating with nothing unlocked yields nothing (the caller falls back)
+  assert.deepEqual(speedTestPool(entries, new Set(), true), []);
+});
+
+test("typingAccuracy is a whole percent and never NaN", () => {
+  assert.equal(typingAccuracy(0, 0), 0);        // nothing pressed
+  assert.equal(typingAccuracy(90, 10), 90);
+  assert.equal(typingAccuracy(1, 0), 100);
+  assert.equal(typingAccuracy(0, 7), 0);        // all wrong
+  assert.equal(typingAccuracy(2, 1), 67);       // rounded, not truncated
+});
+
+test("a timed run scores WPM off the fixed duration, and a best must beat the old one", () => {
+  // 150 correct chars in 30s = 30 words in half a minute = 60 wpm
+  assert.equal(computeWpm(150, 30_000), 60);
+  assert.equal(computeWpm(0, 30_000), 0);       // typed nothing
+  assert.equal(isPersonalBestWpm(undefined, 60), true);   // no record yet
+  assert.equal(isPersonalBestWpm(60, 60), false);         // tying is not beating
+  assert.equal(isPersonalBestWpm(60, 61), true);
 });

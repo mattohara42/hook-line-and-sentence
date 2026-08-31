@@ -61,6 +61,7 @@
     <button class="toggle-btn nav" id="collection-btn">🎣 Collection</button>
     <button class="toggle-btn nav" id="shop-btn">🪝 Bait &amp; tackle</button>
     <button class="toggle-btn nav" id="journal-btn">📖 Journal</button>
+    <button class="toggle-btn nav" id="speed-btn">⏱️ Quick cast</button>
     <div class="ctrl-row"><span>✋ Fingers</span><button class="toggle-btn active" id="guide-toggle">ON</button></div>
     <div class="ctrl-row"><span>🔊 Sound</span><button class="toggle-btn active" id="sound-toggle">ON</button></div>
     <button class="toggle-btn nav" id="progress-btn">👓 Grown-ups</button>
@@ -128,6 +129,42 @@
       <div id="progress-kb"></div>
       <div id="progress-legend">less accurate <span class="pscale"></span> more accurate</div>
       <button class="toggle-btn" id="progress-close">CLOSE&nbsp;&nbsp;esc</button>
+    </div>
+  </div>
+
+  <div id="speedtest" class="overlay" hidden>
+    <div class="overlay-panel">
+      <div class="overlay-title">QUICK CAST</div>
+
+      <div id="st-intro">
+        <p class="nudge-text">Type as many words as you can before the clock runs
+          out. No fish, no tension, nothing to lose &mdash; this one is just you
+          and the keys.</p>
+        <div id="st-best"></div>
+        <div class="nudge-actions">
+          <button class="toggle-btn" id="st-start">START</button>
+          <button class="toggle-btn" id="st-close">CLOSE&nbsp;&nbsp;esc</button>
+        </div>
+      </div>
+
+      <div id="st-run" hidden>
+        <div id="st-clock" aria-live="off">0</div>
+        <div id="st-word"></div>
+        <div id="st-next"></div>
+        <div id="st-hint">type the word &mdash; it moves on by itself</div>
+      </div>
+
+      <div id="st-result" hidden aria-live="polite">
+        <div id="st-wpm"></div>
+        <div id="st-wpm-label">words per minute</div>
+        <div id="st-detail"></div>
+        <div id="st-pb" hidden>&#11088; NEW PERSONAL BEST</div>
+        <div class="nudge-actions">
+          <button class="toggle-btn" id="st-again">GO AGAIN</button>
+          <button class="toggle-btn" id="st-done">CLOSE&nbsp;&nbsp;esc</button>
+        </div>
+      </div>
+
     </div>
   </div>
 

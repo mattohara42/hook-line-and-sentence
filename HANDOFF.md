@@ -67,21 +67,52 @@ register by construction.
   fish carries a `.submerged` treatment until it's landed; the boat rocks on a
   waterline pivot with a contact shadow.
 
+## Last session also shipped: Quick Cast (2026-08-31)
+
+A timed typing-speed test, added at Matt's request, **freely available at any
+progression**. Tackle box → ⏱️ Quick cast → 3-2-1 → 30 seconds of words →
+WPM, accuracy, and a personal best.
+
+Shape of it, and the two decisions worth not re-litigating:
+
+- **Outside the progression on purpose.** The button is never gated, and by
+  default the run draws from the whole 2851-word pool rather than the kid's
+  unlocked letters (`CONFIG.speedTest.useUnlockedLettersOnly`). Gating it would
+  make a kid's own scores incomparable as they unlock letters, which defeats the
+  point of a test.
+- **Sealed off from the fishing save.** It writes only `save.speedBest`. It does
+  not touch coins, catches, badges or `save.stats` — "Hooked on Typing" counts
+  words reeled from real fish, and a timed run must not farm it; and folding
+  rushed keystrokes into the Grown-ups heatmap would misreport which keys a kid
+  actually struggles with.
+
+Pure bits are in `logic.js` (`speedTestPool`, `typingAccuracy`, reusing
+`computeWpm`/`isPersonalBestWpm`), tested — 70 green. The finger guide follows
+the test's current letter and is handed back to the game on close.
+
+Verified in a real browser, not just by unit test: a full run, the maths checked
+against hand-computed expectations (1 word + 5 deliberate misses → "1 words ·
+50% accurate · 10 keys", 2 wpm), GO AGAIN, and a worse second run correctly
+*not* overwriting the stored best. Two bugs were found that way and fixed —
+the word queue could run dry and strand the run with a blank word, and the
+finger guide sat on the fishing word's letter until the first keypress.
+
+`SPEC.md`'s "no timers or WPM" non-goal was rewritten rather than quietly
+contradicted: it was always about the fishing loop, and now says so.
+
 ## Open threads / waiting on Matt
 
-- **The rename is done** (2026-08-31), with exactly one manual step left. Landed:
-  the codebase and docs (#50), the Firebase authorized domain, the Netlify
-  project rename, a published production deploy with sign-in verified on the new
-  URL, the GitHub repo rename, the About-panel Website link, and the re-lettered
-  social preview PNG. The game is at
-  **https://hook-line-and-sentence.netlify.app** and the repo is
-  `mattohara42/hook-line-and-sentence` (old URLs redirect, so existing clones
-  keep working). Netlify does *not* redirect the freed `fishtyping` subdomain
-  and it is claimable by anyone, so any old bookmark is dead.
-  **The one step left: upload `assets/social-preview.png` at GitHub → Settings →
-  General → Social preview.** GitHub does not serve that image from the repo
-  tree, so committing it is only half the job and the link card keeps showing
-  the old one until someone uploads it.
+- **The rename is complete** (2026-08-31), end to end, nothing outstanding.
+  Landed: the codebase and docs (#50), the Firebase authorized domain, the
+  Netlify project rename, a published production deploy with sign-in verified,
+  the GitHub repo rename, the About-panel Website link, and the re-lettered
+  social preview (#53) — now uploaded at Settings → General → Social preview.
+  The game is at **https://hook-line-and-sentence.netlify.app** and the repo is
+  `mattohara42/hook-line-and-sentence`; old repo URLs redirect, so existing
+  clones keep working. Two lasting consequences worth remembering: the freed
+  `fishtyping` subdomain is **not** redirected and is claimable by anyone, so
+  any old bookmark is dead; and social cards cache hard, so Slack/iMessage may
+  serve the old image for a while even though the repo page is correct.
 - **Three rename steps a web session cannot do, so don't burn time trying**
   (learned 2026-08-31). **Netlify deploys**: `api.netlify.com` and
   `netlify-mcp.netlify.app` are both refused by the sandbox egress policy (403

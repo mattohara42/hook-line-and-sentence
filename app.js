@@ -58,6 +58,7 @@ function blankProfile(name, avatar) {
     badges: [],                                       // earned badge ids (journal)
     stats: { letters: {}, wordsTyped: 0, escapes: 0, sessionCount: 0, lastPlayed: now },
     jokesEndured: 0,                                  // reserved (backlog groan counter)
+    speedBest: null,                                  // Quick Cast: { wpm, accuracy, at } | null
   };
 }
 
@@ -1014,7 +1015,7 @@ function recordKey(expected, correct) {
 
 // ---- Input ----
 document.addEventListener("keydown", (e) => {
-  if (!save || pickerOpen || collectionOpen || shopOpen || nudgeOpen || progressOpen || journalOpen || inputLocked) return;
+  if (!save || pickerOpen || collectionOpen || shopOpen || nudgeOpen || progressOpen || journalOpen || speedOpen || inputLocked) return;
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (e.key.length !== 1) return;
   if (e.key === " ") { e.preventDefault(); handleSpace(); return; }   // forgiving spacebar (A1)
@@ -1651,6 +1652,165 @@ function toggleJournal(open) {
 $("journal-btn").addEventListener("click", () => toggleJournal(true));
 $("journal-close").addEventListener("click", () => toggleJournal(false));
 
+// ---- Quick Cast: a timed typing-speed test, deliberately outside the game ----
+// The one mode that ignores progression entirely: it is always in the tackle
+// box, and by default it draws from the whole word pool so a kid's scores stay
+// comparable to each other as they unlock letters (CONFIG.speedTest).
+//
+// It is also deliberately SEALED OFF from the fishing save. It never touches
+// save.stats, save.collection, coins or badges — "Hooked on Typing" counts
+// words reeled from real fish, and a timed run must not farm it. Under a clock
+// a kid mistypes more than they ever would while fishing, so folding those keys
+// into the Grown-ups heatmap would misreport which keys they actually struggle
+// with. Its only persisted state is save.speedBest.
+const stCfg = () => CONFIG.speedTest;
+let speedOpen = false;
+let stPhase = "idle";            // idle | ready | running | done
+let stQueue = [], stIndex = 0, stTyped = 0;
+let stCorrect = 0, stWrong = 0;
+let stEndsAt = 0, stTick = null;
+
+const speedRoot = $("speedtest");
+const stIntro = $("st-intro"), stRun = $("st-run"), stResult = $("st-result");
+
+function stShow(which) {
+  stIntro.hidden = which !== "intro";
+  stRun.hidden   = which !== "run";
+  stResult.hidden = which !== "result";
+}
+
+function stBestLine() {
+  const b = save?.speedBest;
+  $("st-best").textContent = b?.wpm
+    ? `Your best so far: ${b.wpm} wpm · ${b.accuracy}% accurate`
+    : "No score yet — set one!";
+}
+
+// A long queue up front so the run never pauses to think, topped up as it drains.
+// The top-up is not theoretical: a fast typist (or a test driver) really can
+// outrun a fixed queue, and running dry leaves an empty word on screen with
+// nothing to type and the clock still going.
+const ST_BATCH = 120, ST_REFILL_AT = 20;
+function stMoreWords(n) {
+  const pool = logic.speedTestPool(FULL_POOL, unlockedLetters, stCfg().useUnlockedLettersOnly);
+  const src = pool.length ? pool : FULL_POOL;      // gated to nothing → fall back, never strand the run
+  for (let i = 0; i < n; i++) stQueue.push(pick(src).w);
+}
+function stFillQueue() {
+  stQueue = []; stIndex = 0; stTyped = 0;
+  stMoreWords(ST_BATCH);
+}
+
+function stRenderWord() {
+  const w = stQueue[stIndex] ?? "";
+  const word = $("st-word");
+  word.innerHTML = "";
+  [...w].forEach((ch, i) => {
+    const span = document.createElement("span");
+    span.className = i < stTyped ? "done" : (i === stTyped ? "cur" : "todo");
+    span.textContent = ch;
+    word.appendChild(span);
+  });
+  $("st-next").textContent = stQueue.slice(stIndex + 1, stIndex + 1 + stCfg().upcoming).join("  ");
+  // Point the finger guide at THIS letter. Left alone it keeps pointing at the
+  // fishing word behind the overlay, which is the wrong key and reads as a
+  // broken hint; the guide is the game's main teaching aid, so a speed run
+  // should get it too.
+  updateGuide(stPhase === "running" ? (w[stTyped] ?? null) : null);
+}
+
+function stStop() {
+  clearInterval(stTick); stTick = null;
+}
+
+function stBegin() {
+  stFillQueue();
+  stCorrect = 0; stWrong = 0;
+  stPhase = "ready";
+  stShow("run");
+  stRenderWord();
+  let count = stCfg().countdownSec;
+  const clock = $("st-clock");
+  clock.textContent = count;
+  clock.classList.add("ready");
+  stStop();
+  stTick = setInterval(() => {
+    count--;
+    if (count > 0) { clock.textContent = count; return; }
+    clock.classList.remove("ready");
+    stStop();
+    stPhase = "running";
+    stEndsAt = Date.now() + stCfg().durationSec * 1000;
+    clock.textContent = stCfg().durationSec;
+    stRenderWord();   // the guide rests during the countdown; point it at the first letter now
+    stTick = setInterval(() => {
+      const left = Math.max(0, stEndsAt - Date.now());
+      clock.textContent = Math.ceil(left / 1000);
+      clock.classList.toggle("low", left <= 5000);
+      if (left <= 0) stFinish();
+    }, 100);
+  }, 1000);
+}
+
+function stFinish() {
+  stStop();
+  stPhase = "done";
+  $("st-clock").classList.remove("low");
+  const wpm = logic.computeWpm(stCorrect, stCfg().durationSec * 1000);
+  const acc = logic.typingAccuracy(stCorrect, stWrong);
+  const best = logic.isPersonalBestWpm(save.speedBest?.wpm, wpm);
+  if (best) {
+    save.speedBest = { wpm, accuracy: acc, at: Date.now() };
+    persistSave();
+  }
+  $("st-wpm").textContent = wpm;
+  $("st-detail").textContent =
+    `${stIndex} words · ${acc}% accurate · ${stCorrect + stWrong} keys`;
+  $("st-pb").hidden = !best;
+  stShow("result");
+  updateGuide(null);
+  (best ? sfxUnlock : sfxCatch)();
+  stBestLine();
+}
+
+function toggleSpeed(open) {
+  speedOpen = open ?? !speedOpen;
+  if (speedOpen) { stPhase = "idle"; stBestLine(); stShow("intro"); updateGuide(null); }
+  else { stStop(); stPhase = "idle"; renderWord(); }   // renderWord() hands the guide back to the game
+  speedRoot.hidden = !speedOpen;
+}
+
+// Its own key handler: the main one bails while an overlay is open (speedOpen
+// is in that guard), so nothing here can move the fishing game.
+document.addEventListener("keydown", (e) => {
+  if (!speedOpen || stPhase !== "running") return;
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key.length !== 1 || !/[a-z]/i.test(e.key)) return;
+  e.preventDefault();
+  const w = stQueue[stIndex] ?? "";
+  const expected = w[stTyped];
+  if (!expected) return;
+  if (e.key.toLowerCase() === expected.toLowerCase()) {
+    stCorrect++; stTyped++;
+    if (stTyped === w.length) {                             // words advance themselves
+      stIndex++; stTyped = 0;
+      if (stQueue.length - stIndex < ST_REFILL_AT) stMoreWords(ST_BATCH);
+    }
+    stRenderWord();
+  } else {
+    stWrong++;
+    sfxWrong();
+    const word = $("st-word");
+    word.classList.remove("shakeword"); void word.offsetWidth; word.classList.add("shakeword");
+  }
+});
+
+$("speed-btn").addEventListener("click", () => { toggleControls(false); toggleSpeed(true); });
+$("st-start").addEventListener("click", stBegin);
+$("st-again").addEventListener("click", stBegin);
+$("st-close").addEventListener("click", () => toggleSpeed(false));
+$("st-done").addEventListener("click", () => toggleSpeed(false));
+
 document.addEventListener("keydown", (e) => {
   if (e.key !== "Escape") return;
   if (collectionOpen) toggleCollection(false);
@@ -1658,6 +1818,7 @@ document.addEventListener("keydown", (e) => {
   if (nudgeOpen) toggleNudge(false);
   if (progressOpen) toggleProgress(false);
   if (journalOpen) toggleJournal(false);
+  if (speedOpen) toggleSpeed(false);
   if (!controlsTray.hidden) toggleControls(false);
 });
 

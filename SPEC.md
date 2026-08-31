@@ -59,7 +59,14 @@ This one structure powers everything:
 
 ## Non-Goals
 
-- No timers, countdowns, or WPM displays visible to kids in v1 — stats are tracked silently for parents/v2.
+- No timers, countdowns, or WPM displays **in the fishing loop** — stats are
+  tracked silently there. This was written as a flat v1 non-goal and still holds
+  where it matters: casting and reeling are accuracy-first, and a kid who types
+  slowly and carefully can always land the fish. Two post-v1 additions sit
+  outside it deliberately — A4's per-species WPM personal-best on a landed
+  Stream/Ocean catch, and **Quick Cast**, an opt-in timed speed test in the
+  tackle box. The point of the non-goal is that nobody is ever *raced while
+  fishing*; a kid who goes looking for a stopwatch may have one.
 - No monetization, accounts beyond family, or public release considerations.
 - No mobile/touch support — this is a keyboard game by definition. Desktop browser only.
 
