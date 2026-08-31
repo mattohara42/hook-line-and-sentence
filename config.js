@@ -140,6 +140,48 @@ export const CONFIG = {
     lineOrigin: { x: 104, y: -28 },
   },
 
+  // R1 (ANIMATION.md): the cast, the line and the reel now move. Every number
+  // the motion uses lives here — app.js owns no timings. Design-space px on the
+  // 720x360 canvas, ms for durations, degrees for the rod.
+  anim: {
+    rod: {
+      // The rod rotates about the grip — the bottom-left of the rod layer's box
+      // — so the tip swings while the hand stays put. Rig-relative, and it must
+      // stay the bottom-left corner of rig.layers.rod (a data test checks it).
+      pivot: { x: 58, y: 18 },
+      backswingDeg: -15,   // anticipation: tip lifts back over the angler
+      forwardDeg: 20,      // the swing that releases the lure (tip toward the water)
+    },
+    cast: {
+      // where the lure lands and the bobber then sits. The old build hardcoded
+      // this three times (bobber CSS, the splash at 400,195, the ripple at
+      // 394,196); now it is one point and those all derive from it.
+      landing: { x: 394, y: 196 },
+      apexPx: 46,          // how high above the straight chord the lure arcs
+      backswingMs: 190,    // anticipation (ease-in)
+      flightMs: 520,       // release → splash (ease-out)
+      recoverMs: 420,      // rod easing from the forward swing back to rest
+      splashParticles: 5,
+    },
+    line: {
+      // sag of the quadratic's control point: the visible dip is half this.
+      idleSagPx: 26,       // waiting on a bite — a lazy hanging line
+      slackSagPx: 30,      // reeling at zero tension
+      tautSagPx: 3,        // reeling at max tension — nearly straight
+      castSagPx: 12,       // in flight, while the lure is still travelling
+      widthPx: 1.6,
+    },
+    tug: {
+      // damped spring (logic.stepTug). Impulses stack, so fast typing reads as
+      // an irregular judder rather than a restarted animation.
+      stiffness: 190,
+      damping: 16,
+      keyImpulse: -36,     // one correct letter: a small backward flick
+      wordImpulse: -84,    // a whole word reeled in: a proper pull
+      jitter: 0.45,        // ±45% randomised, so no two tugs are identical
+    },
+  },
+
   shop: {
     // `unlocksLocation` graduates the profile to a new fishing spot on purchase
     // (A0): bamboo opens the Stream, deep-sea opens the Ocean (A6). Carbon sits

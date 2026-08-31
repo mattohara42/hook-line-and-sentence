@@ -379,7 +379,7 @@ function later(fn, delay) {
 const $ = id => document.getElementById(id);
 const el = { scene: $("scene"), word: $("word"), status: $("status"), fill: $("meter-fill"),
              caught: $("caught"), escaped: $("escaped"), coins: $("coins"), dist: $("dist"),
-             line: $("line"), fish: $("fish"), bobber: $("bobber") };
+             linePath: $("line-path"), lure: $("lure"), fish: $("fish"), bobber: $("bobber") };
 
 // scale the fixed 720x360 design-space canvas to cover the viewport (M9);
 // every pixel position in the game logic stays in that untouched coordinate
@@ -559,10 +559,14 @@ setInterval(() => {
 // bobber ripples while the line waits for a bite
 let bobberRippleTimer = null;
 function bobberIn() {
+  // R1: the bobber takes over exactly where the lure landed
+  el.bobber.style.left = (CONFIG.anim.cast.landing.x - el.bobber.offsetWidth / 2) + "px";
+  el.bobber.style.top = (CONFIG.anim.cast.landing.y - el.bobber.offsetHeight / 2) + "px";
   el.bobber.classList.remove("plunge");
   el.bobber.classList.add("on");
   ripple(394, 196); // splash-in ring, then the idle rhythm
-  bobberRippleTimer = setInterval(() => ripple(394, 196), JUICE.bobberRippleMs);
+  bobberRippleTimer = setInterval(
+    () => ripple(CONFIG.anim.cast.landing.x, CONFIG.anim.cast.landing.y), JUICE.bobberRippleMs);
 }
 function bobberOut(plunge) {
   clearInterval(bobberRippleTimer);
@@ -603,10 +607,6 @@ function setStatus(t) { el.status.textContent = t; }
 // fish's mouth so it stays attached (shortening/re-angling as the fish nears).
 // All coords are design-space px on the 720x360 canvas. ----
 const REDUCE_MOTION = matchMedia("(prefers-reduced-motion: reduce)").matches;
-// the rod tip in scene coords: #rig's own position plus the rig-relative tip
-// (offsetLeft/Top read #rig's CSS placement rather than repeating it here)
-const LINE_ORIGIN = { x: $("rig").offsetLeft + CONFIG.rig.lineOrigin.x,
-                      y: $("rig").offsetTop + CONFIG.rig.lineOrigin.y };
 let swimRAF = null, swimStart = 0;
 let fishX = 0, fishY = 0, fishTX = 0, fishTY = 0;   // current + target fish position
 
@@ -620,30 +620,149 @@ function setFishTarget() {
   fishTY = 232 - progress * 16;                    // 232 -> 216 (near the surface)
 }
 
-// aim the line from the rod tip at the bobber, for the cast and the wait
-function lineToBobber() {
-  const b = $("bobber");
-  aimLine(b.offsetLeft + b.offsetWidth / 2, b.offsetTop + b.offsetHeight / 2);
-}
-// point #line from the rod tip at a scene coordinate, sizing it to reach
-function aimLine(x, y) {
-  const dx = x - LINE_ORIGIN.x, dy = y - LINE_ORIGIN.y;
-  el.line.style.width = Math.hypot(dx, dy) + "px";
-  el.line.style.transform = `rotate(${Math.atan2(dy, dx) * 180 / Math.PI}deg)`;
+// ---- R1: the cast, the line and the reel actually move (ANIMATION.md) ----
+// The line used to be a rotated <div>: straight by construction, sized by a CSS
+// width transition, which is why it read as *appearing* rather than travelling.
+// It's now an SVG quadratic Bezier redrawn every frame between two ends that
+// both move — the rod tip (which swings with the cast, the tug and the boat's
+// bob) and whatever is on the other end (a lure in flight, the bobber, a fish).
+// The maths is in logic.js and the numbers are in CONFIG.anim; this is only the
+// DOM half.
+const A = CONFIG.anim;
+const RIG_ORIGIN = { x: 59, y: 30 };        // #rig's transform-origin, from style.css
+let rodAngle = 0, rodVel = 0;               // the tug spring, in degrees
+let castSwing = 0;                          // the cast's own rod angle, in degrees
+let lineMode = "off";                       // off | cast | wait | reel
+let lineEnd = { x: 0, y: 0 };               // what the far end is attached to
+let lureAt = { x: 0, y: 0 }, castFrom = { x: 0, y: 0 };
+let castPhase = null, castT0 = 0, castLanded = null;
+let lineRAF = null, lastFrame = 0;
+let rodLayerEl = null;                      // cached by renderRig(); re-cached on equip
+
+// The rod tip in scene coords, through everything that moves it: the rod's own
+// rotation about the grip, then #rig's live CSS transform (the boat's bob).
+// Reading the matrix each frame is the point — the old build resolved the rod
+// tip once at load, so any rod that moved would have left the line behind.
+function rodTip() {
+  const tip = logic.rotateAboutPivot(CONFIG.rig.lineOrigin, A.rod.pivot, castSwing + rodAngle);
+  const rig = $("rig");
+  const t = getComputedStyle(rig).transform;
+  const m = t && t !== "none" ? new DOMMatrix(t) : new DOMMatrix();
+  const dx = tip.x - RIG_ORIGIN.x, dy = tip.y - RIG_ORIGIN.y;
+  return {
+    x: rig.offsetLeft + RIG_ORIGIN.x + m.a * dx + m.c * dy + m.e,
+    y: rig.offsetTop  + RIG_ORIGIN.y + m.b * dx + m.d * dy + m.f,
+  };
 }
 
-// aim the line from the rod tip to the fish's mouth (left edge; the art faces left)
-function lineToFish(fishLeft, fishTop) {
-  aimLine(fishLeft + 6, fishTop + 20);
+// How much the line sags right now. Reeling is the interesting one: tension
+// pulls the curve straight, and tension only ever comes from mistakes.
+function currentSag() {
+  if (lineMode === "cast") return A.line.castSagPx;
+  if (lineMode === "reel") return logic.lineSagPx(tension, A.line.slackSagPx, A.line.tautSagPx);
+  return A.line.idleSagPx;
 }
+
+function drawLine() {
+  if (lineMode === "off") { el.linePath.removeAttribute("d"); return; }
+  const from = rodTip(), to = lineEnd;
+  const c = logic.lineControlPoint(from, to, currentSag());
+  el.linePath.setAttribute("d", `M ${from.x} ${from.y} Q ${c.x} ${c.y} ${to.x} ${to.y}`);
+  el.linePath.setAttribute("stroke-width", A.line.widthPx);
+  if (rodLayerEl) rodLayerEl.style.transform = `rotate(${castSwing + rodAngle}deg)`;
+}
+
+// Reduced motion runs no animation loop, so anything that changes the line's
+// shape between fish movements — a tug, a tension change — has to ask for its
+// own single redraw. The line still ends up in the right place; it just gets
+// there in one step instead of over frames.
+function lineChanged() { if (REDUCE_MOTION && lineMode !== "off") drawLine(); }
+
+// One correct keystroke's worth of pull on the rod tip. A damped spring, not a
+// tween: impulses from fast typing stack into an irregular judder, which is
+// what a fish on the end of a line actually does to a rod.
+function rodTug(impulse) {
+  if (REDUCE_MOTION) { lineChanged(); return; }
+  rodVel += impulse * (1 + (Math.random() * 2 - 1) * A.tug.jitter);
+  startLineLoop();
+}
+
+function startLineLoop() {
+  if (lineRAF || REDUCE_MOTION) return;
+  lastFrame = performance.now();
+  const step = (now) => {
+    const dt = now - lastFrame; lastFrame = now;
+    ({ angle: rodAngle, vel: rodVel } = logic.stepTug(rodAngle, rodVel, dt, A.tug));
+    if (castPhase) stepCast(now);
+    if (lineMode !== "off") drawLine();
+    // keep going while anything is still moving: the line is out, the rod is
+    // still settling, or a cast is mid-flight
+    if (lineMode === "off" && !castPhase && Math.abs(rodAngle) < 0.05 && Math.abs(rodVel) < 0.05) {
+      rodAngle = 0; rodVel = 0; drawLine(); lineRAF = null; return;
+    }
+    lineRAF = requestAnimationFrame(step);
+  };
+  lineRAF = requestAnimationFrame(step);
+}
+
+// The cast itself: anticipation (rod loads back), then a forward swing that
+// releases the lure onto an arc, then the splash where it lands.
+function stepCast(now) {
+  const t = now - castT0;
+  if (castPhase === "back") {
+    castSwing = A.rod.backswingDeg * logic.easeIn(t / A.cast.backswingMs);
+    lureAt = rodTip();
+    lineEnd = lureAt;
+    if (t >= A.cast.backswingMs) { castPhase = "flight"; castT0 = now; castFrom = rodTip(); }
+    return;
+  }
+  // flight: the rod snaps forward and eases back to rest while the lure travels
+  const k = Math.min(1, t / A.cast.flightMs);
+  castSwing = t < A.cast.recoverMs
+    ? A.rod.backswingDeg + (A.rod.forwardDeg - A.rod.backswingDeg)
+        * logic.easeOut(t / 90) * (1 - logic.easeIn(t / A.cast.recoverMs))
+    : 0;
+  lureAt = logic.castArcPoint(castFrom, A.cast.landing, A.cast.apexPx, logic.easeOut(k));
+  lineEnd = lureAt;
+  el.lure.style.left = (lureAt.x - 3.5) + "px";
+  el.lure.style.top = (lureAt.y - 3.5) + "px";
+  if (k >= 1) { castSwing = 0; castPhase = null; castLanded?.(); castLanded = null; }
+}
+
+// Throw the line out. `then` fires when the lure hits the water, so the splash,
+// the bobber and the wait for a bite all hang off the landing rather than off
+// the moment the kid finished typing the cast word.
+function castLine(then) {
+  lineMode = "cast";
+  castLanded = () => {
+    lineMode = "wait";
+    el.lure.classList.remove("on");
+    lineEnd = { ...A.cast.landing };
+    drawLine();
+    then();
+  };
+  if (REDUCE_MOTION) { castPhase = null; castSwing = 0; castLanded(); return; }
+  el.lure.classList.add("on");
+  castPhase = "back"; castT0 = performance.now();
+  startLineLoop();
+}
+
+function lineOff() {
+  lineMode = "off"; castPhase = null; castLanded = null; castSwing = 0;
+  el.lure.classList.remove("on");
+  drawLine();
+}
+
+// the fish's mouth (left edge; the art faces left) is where the line attaches
 function drawFish(x, y) {
   el.fish.style.left = x + "px";
   el.fish.style.top = y + "px";
-  lineToFish(x, y);
+  lineEnd = { x: x + 6, y: y + 20 };
+  if (REDUCE_MOTION) drawLine();
 }
 
 function startSwim() {
-  el.line.style.transition = "none";   // the RAF drives the line now — no easing lag
+  startLineLoop();                     // R1: the line follows the fish and the rod
   if (REDUCE_MOTION) { fishX = fishTX; fishY = fishTY; drawFish(fishTX, fishTY); return; }
   swimStart = performance.now();
   const step = (now) => {
@@ -670,8 +789,7 @@ function startCast() {
   castIntervals = []; castLastKeyMs = 0;   // A4: fresh fly-cast rhythm window
   tension = 0; renderTension();
   el.dist.textContent = "—";
-  el.line.style.transition = "";     // restore the CSS ease for the next cast
-  el.line.style.width = "0px";       // the next cast re-aims it at the bobber
+  lineOff();                         // line's in; the next cast throws it back out
   bobberOut(false);
   el.fish.style.opacity = 0;
   el.fish.className = "";
@@ -687,16 +805,20 @@ function startWait() {
   phase = "wait"; inputLocked = true;
   el.word.textContent = "";
   updateGuide(null);
-  lineToBobber();
-  burst(400, 195, 5);
-  sfxSplash();
-  bobberIn();
   // A4: on graduated (fly-fishing) waters, an even casting cadence earns a cozy
   // line — never a penalty, and the Pond casts exactly as before.
   const flyWater = save.location !== CONFIG.tiers[0].location;
   const niceCast = flyWater && logic.isEvenCadence(castIntervals, CONFIG.flyCast.minKeys, CONFIG.flyCast.maxCadenceCv);
   setStatus(niceCast ? pick(PUNS.niceCast) : pick(PUNS.wait));
-  later(bite, rand(...CONFIG.bite.delayMsRange) * equippedBait().biteSpeedMult);
+  // R1: the rod loads, swings, and the lure flies — the splash, the bobber and
+  // the wait for a bite all now hang off where and when the lure actually lands.
+  castLine(() => {
+    burst(A.cast.landing.x + 6, A.cast.landing.y - 1, A.cast.splashParticles);
+    ripple(A.cast.landing.x, A.cast.landing.y);
+    sfxSplash();
+    bobberIn();
+    later(bite, rand(...CONFIG.bite.delayMsRange) * equippedBait().biteSpeedMult);
+  });
 }
 
 function bite() {
@@ -744,6 +866,7 @@ function bite() {
   }
   el.fish.style.opacity = 1;
   el.fish.classList.add("submerged");   // V1: seen through the water until it's landed
+  lineMode = "reel";                    // R1: the curve now answers to tension
   setFishTarget();
   fishX = fishTX + 30; fishY = fishTY + 56;   // emerge deep & right of the panel, then rise up-and-in
   el.dist.textContent = wordsLeft + " words";
@@ -764,6 +887,7 @@ function pullFishOneWord() {
   wordsLeft--;
   el.dist.textContent = wordsLeft > 0 ? wordsLeft + " words" : "landing…";
   setFishTarget();
+  rodTug(A.tug.wordImpulse);           // R1: the rod bends to the pull
   if (REDUCE_MOTION) drawFish(fishTX, fishTY);
   burst(parseInt(el.fish.style.left) + 28, 258, 4);
   ripple(parseInt(el.fish.style.left) + 28, 262);
@@ -862,7 +986,7 @@ function finishReelUnit() {
 function land(success) {
   phase = "done"; inputLocked = true;
   stopSwim();
-  el.line.style.width = "0px";    // reel the line all the way in
+  lineOff();                      // reel the line all the way in
   el.word.textContent = "";
   updateGuide(null);
   if (success && junk) {
@@ -1038,7 +1162,10 @@ document.addEventListener("keydown", (e) => {
     recordKey(expected, true);
     tickReelWpm(); tickCastRhythm();   // A4: self-paced timing (each guards its own phase)
     typed++;
-    if (phase === "reel") { ({ tension } = logic.applyTension(tension, true, CONFIG.reel)); renderTension(); }
+    if (phase === "reel") {
+      ({ tension } = logic.applyTension(tension, true, CONFIG.reel)); renderTension();
+      rodTug(A.tug.keyImpulse);   // R1: every correct letter tugs the rod tip
+    }
     renderWord();
     if (typed === target.length) finishReelUnit();
   } else {
@@ -1049,6 +1176,7 @@ document.addEventListener("keydown", (e) => {
       const t = logic.applyTension(tension, false, CONFIG.reel);
       tension = t.tension;
       renderTension();
+      lineChanged();          // R1: more tension, tighter line
       if (t.escaped) land(false);
     }
   }
@@ -1317,21 +1445,27 @@ function switchLocation(loc) {
   setStatus("Now fishing " + CONFIG.tiers.find(t => t.location === loc).locationName + ".");
 }
 
-// G1: draw the angler as layers from CONFIG.rig.layers, inserted before #line
-// so the line stays on top. Called once at boot; G4's hat/rod shop re-runs it
-// on equip, which is the whole point of the split.
+// G1: draw the angler as layers from CONFIG.rig.layers. Called once at boot;
+// the hat/rod shop (R7) re-runs it on equip, which is the whole point of the
+// split. R1: the line is no longer a child of #rig — it's an SVG in scene space
+// — and the rod layer gets the pivot it rotates about, so the cast and the tug
+// swing the rod rather than the whole angler.
 function renderRig() {
-  const rig = $("rig"), line = $("line");
-  line.style.left = CONFIG.rig.lineOrigin.x + "px";
-  line.style.top = CONFIG.rig.lineOrigin.y + "px";
+  const rig = $("rig");
   rig.querySelectorAll(".rig-layer").forEach(n => n.remove());
   for (const L of CONFIG.rig.layers) {
     const d = document.createElement("div");
     d.className = "rig-layer";
+    d.dataset.id = L.id;
     d.style.left = L.x + "px"; d.style.top = L.y + "px";
     d.style.width = L.w + "px"; d.style.height = L.h + "px";
     d.style.backgroundImage = `url("assets/${L.file}.png")`;
-    rig.insertBefore(d, line);
+    if (L.id === "rod") {
+      // the grip, expressed inside the rod layer's own box
+      d.style.transformOrigin = `${A.rod.pivot.x - L.x}px ${A.rod.pivot.y - L.y}px`;
+      rodLayerEl = d;
+    }
+    rig.appendChild(d);
   }
 }
 renderRig();

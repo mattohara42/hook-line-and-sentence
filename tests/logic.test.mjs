@@ -10,6 +10,7 @@ import {
   locationsForRods, rankForState, tokenize, wordCount, tierWithFallback,
   computeWpm, isPersonalBestWpm, isEvenCadence, pickDistinct, segmentsForTier,
   rankForProfile, earnsPrestige, speedTestPool, typingAccuracy,
+  castArcPoint, lineSagPx, lineControlPoint, stepTug, rotateAboutPivot, easeIn, easeOut,
 } from "../logic.js";
 
 const TIER_ORDER = ["legendary", "rare", "uncommon", "common"];   // hardest → easiest
@@ -377,4 +378,76 @@ test("a timed run scores WPM off the fixed duration, and a best must beat the ol
   assert.equal(isPersonalBestWpm(undefined, 60), true);   // no record yet
   assert.equal(isPersonalBestWpm(60, 60), false);         // tying is not beating
   assert.equal(isPersonalBestWpm(60, 61), true);
+});
+
+// ---- R1: cast, line and reel motion (ANIMATION.md) ----
+
+test("the cast arc leaves the rod tip and hits the landing point, whatever the apex", () => {
+  const rod = { x: 124, y: 140 }, water = { x: 394, y: 196 };
+  for (const apex of [0, 34, 200]) {
+    assert.deepEqual(castArcPoint(rod, water, apex, 0), rod);       // starts on the rod tip
+    assert.deepEqual(castArcPoint(rod, water, apex, 1), water);     // ends where it lands
+  }
+  // and in between it arcs ABOVE the straight chord (smaller y is higher)
+  const chordMidY = (rod.y + water.y) / 2;
+  assert.equal(castArcPoint(rod, water, 40, 0.5).y, chordMidY - 40);
+  assert.ok(castArcPoint(rod, water, 40, 0.25).y < chordMidY);
+  // t is clamped, so a late frame can't fling the lure past the water
+  assert.deepEqual(castArcPoint(rod, water, 40, 1.4), water);
+});
+
+test("tension tightens the line and never slackens it", () => {
+  const slack = 26, taut = 3;
+  assert.equal(lineSagPx(0, slack, taut), slack);       // calm: full sag
+  assert.equal(lineSagPx(100, slack, taut), taut);      // maxed: nearly straight
+  assert.ok(lineSagPx(50, slack, taut) < slack);        // monotonic between
+  assert.ok(lineSagPx(50, slack, taut) > taut);
+  // out-of-range and missing values clamp rather than invert the curve
+  assert.equal(lineSagPx(140, slack, taut), taut);
+  assert.equal(lineSagPx(-20, slack, taut), slack);
+  assert.equal(lineSagPx(undefined, slack, taut), slack);
+});
+
+test("the line's control point hangs below the chord midpoint", () => {
+  const c = lineControlPoint({ x: 100, y: 100 }, { x: 300, y: 200 }, 20);
+  assert.deepEqual(c, { x: 200, y: 170 });   // midpoint (200,150) + 20 down
+});
+
+test("a tug decays back to rest and never runs away", () => {
+  const cfg = { stiffness: 190, damping: 16 };
+  let s = { angle: 0, vel: -46 };            // one keystroke's impulse
+  let peak = 0;
+  for (let i = 0; i < 400; i++) {            // ~6.6s at 60fps
+    s = stepTug(s.angle, s.vel, 16.7, cfg);
+    peak = Math.max(peak, Math.abs(s.angle));
+  }
+  assert.ok(peak < 12, `tug peaked at ${peak}deg — too wild for a rod tip`);
+  assert.ok(Math.abs(s.angle) < 0.05, `rod never settled (${s.angle}deg)`);
+  // a long stall between frames is clamped, not integrated in one lurch
+  const lurch = stepTug(0, -46, 5000, cfg);
+  assert.ok(Math.abs(lurch.angle) < 12);
+});
+
+test("rotating the rod tip about the grip keeps the line attached", () => {
+  const grip = { x: 58, y: 18 }, tip = { x: 104, y: -28 };
+  const still = rotateAboutPivot(tip, grip, 0);
+  assert.ok(Math.hypot(still.x - tip.x, still.y - tip.y) < 1e-9);   // no rotation, no move
+  const back = rotateAboutPivot(tip, grip, -20);                    // pulled back over the kid
+  assert.ok(back.y < tip.y, "a backswing lifts the rod tip");
+  assert.ok(back.x < tip.x, "…and brings it back toward the angler");
+  // rotation is rigid: the tip stays the same distance from the grip
+  const before = Math.hypot(tip.x - grip.x, tip.y - grip.y);
+  const after = Math.hypot(back.x - grip.x, back.y - grip.y);
+  assert.ok(Math.abs(before - after) < 1e-9);
+});
+
+test("the cast easings are clamped and end where they should", () => {
+  for (const f of [easeIn, easeOut]) {
+    assert.equal(f(0), 0);
+    assert.equal(f(1), 1);
+    assert.equal(f(-3), 0);   // clamped, so an early/late frame can't overshoot
+    assert.equal(f(9), 1);
+  }
+  assert.ok(easeIn(0.5) < 0.5);    // slow to load
+  assert.ok(easeOut(0.5) > 0.5);   // decays into the landing
 });

@@ -35,10 +35,20 @@ None of this requires a physics engine. A tuned Bezier curve for the line and si
 
 Assuming Bezier-curve line rendering with tension-driven control point movement is sufficient fidelity, rather than a physics-based rope. This should be prototyped once and reviewed before being treated as final.
 
-## Where the current build stands (2026-08-31)
+> **Prototyped 2026-08-31 (R1): `prototype/line-animation.html`.** It imports
+> the real `logic.js` maths and the real `CONFIG.anim` numbers, at game scale
+> with the game's own sprites, so what gets reviewed is what ships — cast it,
+> then drag the tension slider while it reels. **Still awaiting Matt's eye
+> test.** If the Bezier is judged not enough, the curve lives in
+> `logic.lineControlPoint`/`lineSagPx` and every number in `CONFIG.anim`, so
+> replacing it doesn't reach into the game loop.
 
-Read this before implementing — it is what the code does today, so the diff is
-smaller than the spec above makes it sound.
+## Where the build stood before R1 (2026-08-31, historical)
+
+*Written as the implementation map for R1, and kept because it explains why the
+code is shaped the way it is. **Every item below has since been done** — the
+line is an SVG path, the cast travels, the rod tip is read live. Read it for the
+reasoning, not as a to-do list.*
 
 - **The line is one rotated `<div>`.** `#line` in `style.css` is a 2px-tall box
   with `transform-origin: left center`; `aimLine(x, y)` in `app.js` sets its
@@ -53,7 +63,7 @@ smaller than the spec above makes it sound.
   to become a moving thing** with a start (rod tip) and an end (its landing
   point), tweened along the arc, with the bobber taking over where it lands.
 - **The rod tip is already addressable.** `CONFIG.rig.lineOrigin` plus `#rig`'s
-  own offset gives `LINE_ORIGIN` in scene coordinates, and the rod is its own
+  own offset gave `LINE_ORIGIN` in scene coordinates, and the rod is its own
   layer in `CONFIG.rig.layers`. So the anticipation pull-back and the per-key
   tug are a transform on that one layer, with `lineOrigin` recomputed from its
   live position rather than read once at load — that last part is the change

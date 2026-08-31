@@ -20,13 +20,12 @@ the repo and are the source of truth:
   palette, banded skies, glow not discs, thin warm-brown outlines, **no pure
   black**. Replaces the pixel-art direction the game shipped v1 with.
 - **`ANIMATION.md`** — casting arc, sagging Bezier line, tension-driven curve,
-  per-keystroke rod tug. Fixes the oldest visual gap in the game: the line
-  currently *appears* instead of travelling.
+  per-keystroke rod tug. Closes the oldest visual gap in the game: the line used
+  to *appear* rather than travel. **Built in R1, below.**
 
 The active epic is the **Art & Animation Refresh** — `BUILD_PLAN_REFRESH.md`,
-**R1–R7, and R1 is next**. It supersedes `BUILD_PLAN_VISUAL.md` (V2–V5) and
-`BUILD_PLAN_GRAPHICS.md`. This session was scoping only — **no game code
-changed**, so the build on `main` is exactly what it was.
+**R1–R7. R1 shipped; R2 is next.** It supersedes `BUILD_PLAN_VISUAL.md` (V2–V5)
+and `BUILD_PLAN_GRAPHICS.md`.
 
 **Three decisions Matt made when the direction was adopted** (all recorded at
 the bottom of `ART_DIRECTION.md`; don't relitigate):
@@ -42,6 +41,43 @@ the bottom of `ART_DIRECTION.md`; don't relitigate):
 **R1 and R2 need no art at all**, deliberately — so there is nothing for Matt
 to generate until R3, and `ART.md`'s open-request queue is empty (both previous
 requests were withdrawn with the old direction).
+
+## R1 shipped the same session (2026-08-31)
+
+**The line and the cast move now.** This is the first code of the epic and the
+oldest visual gap in the game closed: `#line` was a rotated `<div>` — straight
+by construction, grown by a CSS width transition — so the line *appeared*
+rather than travelled. It is now an SVG quadratic Bezier redrawn every frame
+between two ends that both move.
+
+- **Cast:** the rod loads back (~190ms), swings, and the lure flies an arc
+  (~520ms) to the water, where it splashes and hands over to the bobber. The
+  splash, the bobber and the wait for a bite all hang off *the landing* now,
+  not off the moment the kid finished typing.
+- **Idle:** the line sags. **Reel:** the sag tightens with tension — visibly.
+- **Tug:** every correct letter flicks the rod tip; a whole word pulls harder.
+  A damped spring (`logic.stepTug`), so fast typing stacks into an irregular
+  judder rather than restarting an animation.
+
+**Verified in a real browser, not just by unit test:** a full catch and a full
+escape at 1x, both again under `prefers-reduced-motion`, and a second cast after
+each to catch a one-shot bug. Two numbers were measured rather than eyeballed —
+at 84% tension the sag came back 7.3px against a hand-computed 7.3, and the rod
+tug peaks at 4.8° and settles to exactly 0. 78 tests green (was 70).
+
+Three things a future session should know:
+
+- **`CONFIG.anim` owns every timing and curve number**, and
+  `CONFIG.anim.cast.landing` is now the *single* source of where the lure lands.
+  It used to be hardcoded in three places that had already drifted apart (the
+  bobber's CSS at 388,190, the splash at 400,195, the ripple at 394,196).
+- **The rod tip is read from `#rig`'s live transform matrix every frame** —
+  through the boat's bob and the rod's own rotation. The old `LINE_ORIGIN`
+  resolved it once at load, which would have detached the line from a rod that
+  was visibly swinging. A data test now pins the rod's pivot to its grip corner
+  so a gear-shop rod (R7) can't silently break it.
+- **Reduced motion runs no animation loop at all.** The cast *completes*
+  instantly with the line in its final position — never a scene stuck mid-cast.
 
 ## ⚠️ Pending from the 2026-08-31 branch audit
 
@@ -232,10 +268,15 @@ contradicted: it was always about the fishing loop, and now says so.
   right now. The next art request is R3's Pond background layers, and it won't
   be written until R1 and R2 (both code-only) are done. The *method* from those
   requests survives as `ART.md`'s standing same-canvas rule.
-- **R1's prototype needs a review from Matt.** `ANIMATION.md` flags its own
-  central assumption — Bezier line with a tension-driven control point, rather
-  than a physics rope — and asks that it be prototyped once and looked at before
-  it's treated as final. That's the first thing that will want Matt's eyes.
+- **R1's prototype is waiting on Matt's eye test** —
+  `prototype/line-animation.html` (serve the repo, then open
+  `/prototype/line-animation.html`). `ANIMATION.md` flags its own central
+  assumption: a Bezier line with a tension-driven control point rather than a
+  physics rope. The prototype imports the *real* `logic.js` and `CONFIG.anim`,
+  so it is the shipped behaviour in isolation, with a tension slider and a tug
+  button. The wiring shipped alongside it rather than waiting — if the eye test
+  fails, the curve is `logic.lineControlPoint`/`lineSagPx` and the feel is all
+  in `CONFIG.anim`, so it swaps out without touching the game loop.
 - **A7 fight-beats playtest with a real kid** still hasn't happened —
   `clauseRunMs`/`segmentRunMs` in `config.js` were picked by feel.
 
@@ -259,23 +300,19 @@ contradicted: it was always about the fishing loop, and now says so.
 
 ## Likely next steps
 
-1. **R1 — the line and the cast actually move.** Prototype in `prototype/`
-   first (`ANIMATION.md` asks for exactly that), get Matt's look at it, then
-   wire it: `#line` becomes an SVG `<path>`, the lure travels an arc, the curve
-   reacts to tension. No art needed. Read `ANIMATION.md`'s "Where the current
-   build stands" section before starting — the diff is smaller than the spec
-   sounds, and it names the one trap (`LINE_ORIGIN` is computed once at load and
-   has to follow the rod tip once the rod moves).
-2. **R2 — palette and treatment pass.** Also code-only. Includes a re-pass on
-   `data/fish.json`'s 33 per-species `color` values, which were picked against
-   the old locked palette.
+1. **Matt looks at the cast** — in the game and/or the prototype — and says
+   whether the Bezier line is enough. That is R1's one open item.
+2. **R2 — palette and treatment pass.** Code-only. Lifts the locked M7.5
+   palette, drops `image-rendering: pixelated`, re-skins everything except the
+   keyboard grid. Includes a re-pass on `data/fish.json`'s 33 per-species
+   `color` values, which were picked against the old locked palette.
 3. **R3** opens the first art request of the epic: the Pond's three background
    layers, wired and judged before the other two levels are generated.
 4. The kid playtest of the A7 fight beats, whenever a kid is available.
 
 ## Housekeeping
 
-- Full test suite: 67/67 passing (`npm test` — Node's built-in runner).
+- Full test suite: 78/78 passing (`npm test` — Node's built-in runner).
 - Every PR this session was opened ready-for-review and squash-merged
   immediately, per `CLAUDE.md`. (PR #55 is the exception — it's a draft
   because it conflicts and needs a decision, not because the convention

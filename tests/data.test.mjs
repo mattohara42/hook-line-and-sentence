@@ -272,3 +272,37 @@ test("CONFIG.rig.layers is a well-formed paint stack", () => {
   assert.equal(offenders(layers, l => !(l.w > 0 && l.h > 0)), "", "layer with no size");
   assert.equal(offenders(layers, l => ![l.x, l.y].every(Number.isFinite)), "", "layer with no offset");
 });
+
+// R1 (ANIMATION.md): the rod rotates about the grip for the cast and the tug,
+// and the line leaves the tip. Both points are config, and both are only
+// meaningful relative to the rod layer's box — so a rod swapped in by the gear
+// shop (R7) with a different box, or a retuned layer, must move them together.
+// Getting this wrong doesn't throw: it detaches the line from a rod that is
+// visibly swinging, which is exactly the bug R1 exists to fix.
+test("the rod's pivot and the line's origin sit on the rod layer's box", () => {
+  const rod = CONFIG.rig.layers.find(l => l.id === "rod");
+  assert.ok(rod, "no rod layer to swing");
+  const pivot = CONFIG.anim.rod.pivot, tip = CONFIG.rig.lineOrigin;
+  // the grip is the bottom-left of the rod sprite (it runs corner to corner)
+  assert.deepEqual(pivot, { x: rod.x, y: rod.y + rod.h }, "pivot is not the rod's grip");
+  // …and the tip is the top-right of the same box
+  assert.deepEqual(tip, { x: rod.x + rod.w, y: rod.y }, "lineOrigin is not the rod's tip");
+});
+
+test("CONFIG.anim's timings and curve numbers are sane", () => {
+  const a = CONFIG.anim;
+  for (const [k, v] of Object.entries(a.cast)) {
+    if (typeof v === "number") assert.ok(v > 0, `anim.cast.${k} must be positive`);
+  }
+  assert.ok(a.cast.landing.x > 0 && a.cast.landing.y > 0, "the lure lands off-canvas");
+  assert.ok(a.cast.landing.y < 360 && a.cast.landing.x < 720, "the lure lands off-canvas");
+  assert.ok(a.rod.backswingDeg < 0, "the backswing loads the rod backwards");
+  assert.ok(a.rod.forwardDeg > 0, "the swing throws the rod forwards");
+  // tension tightens the line, so taut must be the smaller sag
+  assert.ok(a.line.tautSagPx < a.line.slackSagPx, "max tension has to pull the line straighter");
+  assert.ok(a.line.idleSagPx > 0 && a.line.widthPx > 0);
+  assert.ok(a.tug.stiffness > 0 && a.tug.damping > 0, "a tug with no spring never comes back");
+  assert.ok(a.tug.keyImpulse !== 0 && Math.abs(a.tug.wordImpulse) >= Math.abs(a.tug.keyImpulse),
+    "a whole word should pull at least as hard as one letter");
+  assert.ok(a.tug.jitter >= 0 && a.tug.jitter < 1, "jitter is a fraction of the impulse");
+});
