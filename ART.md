@@ -164,14 +164,90 @@ direction.
 
 ## Open art requests
 
-> **Nothing is open right now (2026-08-31).** The two requests that were open —
-> V2's four reference-drawn angler pieces and the re-shot Stream background —
-> were **withdrawn** with the pixel direction; both are marked below. The Art &
-> Animation Refresh (`BUILD_PLAN_REFRESH.md`) starts with two code-only
-> milestones, R1 and R2, so **Matt has no art to generate until R3**, which opens
-> with the Pond's three background layers. Don't generate anything against the
-> old prompts in this file; they are kept as a record of what's on screen, not as
-> a queue.
+### 🟡 R3 — the Pond, repainted as three layers (open, ready to generate)
+
+**First art request of the refresh.** R1 and R2 were code-only; this is what
+Matt has to generate to move the epic forward. **Pond only, for now** — per
+`BUILD_PLAN_REFRESH.md`, it's wired and judged before the Stream and Ocean are
+requested, so a palette or framing miss costs one level's three prompts, not
+nine.
+
+Three layers, matching `ART_DIRECTION.md`'s parallax split, each the **same
+canvas size** so they stack with zero offsets (the same-canvas discipline
+above, applied to backgrounds instead of rig pieces). Use the current
+`background.png`'s aspect ratio as the target: **1584×672 (2.36:1)**.
+
+**Design constraint that overrides anything else in the prompt:** the
+waterline — the line where sky/land ends and water begins — must land at
+**55% of the image's height** (design y=198 on the 720×360 canvas `#surface`
+and everything else assumes). Get this wrong and every tuned coordinate in the
+scene (the boat, the rig, the fish's swim band) moves with it, the way the
+Stream's mis-framed art forced a scale-and-offset workaround that R3 exists to
+delete. A generated image whose waterline lands anywhere else is a **reroll**,
+not something to crop or offset into place.
+
+```
+ART NEEDED: Pond background, layer 1 of 3 — far (sky, hills, treeline)
+Prompt:   Soft painterly illustration in the style of Studio Ghibli background
+          art, warm muted color palette, gentle diffused lighting, thin warm
+          brown outlines rather than black, cozy and inviting mood, no harsh
+          shadows, no neon or saturated colors. A calm forest pond at golden
+          hour: a banded sky (pale blue near the top warming to cream and
+          amber near the horizon), a soft glowing sun low over gentle tree-
+          covered hills, no hard-edged sun disc. Include a simple, complete
+          water fill below the horizon in muted teal-green (this layer must
+          look complete on its own if the water and foreground layers are
+          ever missing). No boat, no lily pads, no reeds — those are separate
+          layers. The horizon/waterline must sit at exactly 55% down from the
+          top of the canvas.
+Save as:  assets/background-pond-far.png
+Size:     1584×672 (2.36:1), opaque, no transparency needed
+Wired in: not yet — replaces assets/background.png as the base layer; #scene's
+          background-image (style.css)
+```
+
+```
+ART NEEDED: Pond background, layer 2 of 3 — water
+Prompt:   Soft painterly illustration in the style of Studio Ghibli background
+          art, warm muted color palette, gentle diffused lighting, thin warm
+          brown outlines rather than black, cozy and inviting mood, no harsh
+          shadows, no neon or saturated colors. Just the water surface of a
+          calm forest pond at golden hour: muted teal-green with a darker band
+          for depth further from shore, soft reflected light catching the
+          surface near the top. Transparent above the waterline. The painted
+          water must start at exactly 55% down from the top of the canvas and
+          fill everything below it — nothing above that line.
+Save as:  assets/background-pond-water.png
+Size:     1584×672, transparent above the waterline
+Wired in: not yet — a layer above background-pond-far.png; ART_DIRECTION.md
+          calls for this layer to "animate independently" (a slow drift), which
+          is a follow-up CSS/JS task once the art lands, not part of this request
+```
+
+```
+ART NEEDED: Pond background, layer 3 of 3 — foreground detail
+Prompt:   Soft painterly illustration in the style of Studio Ghibli background
+          art, warm muted color palette, gentle diffused lighting, thin warm
+          brown outlines rather than black, cozy and inviting mood, no harsh
+          shadows, no neon or saturated colors. Foreground detail only for a
+          calm forest pond: a few lily pads and reeds near the bottom edge, a
+          suggestion of a wooden dock edge or mossy rock at one side. Fully
+          transparent everywhere else — this paints over the water layer, so
+          only the foreground details themselves should have any pixels.
+          Nothing in the bottom-center third of the canvas (a UI panel covers
+          it in-game). Nothing above roughly 70% down from the top.
+Save as:  assets/background-pond-fore.png
+Size:     1584×672, transparent except the foreground details
+Wired in: not yet — the top layer, painted over water and the mid plane
+          (rig/fish), same as #surface already does; nothing may land where the
+          bottom-center finger-guide panel sits
+```
+
+**Once these three land:** composite them locally at game scale before wiring
+(the established local-check habit — see *the same-canvas rule* above), swap
+`#scene`'s background for the three-layer stack, confirm the waterline still
+reads at y=198, and only then does `BUILD_PLAN_REFRESH.md` mark R3's Pond half
+done and the Stream/Ocean prompts get written.
 
 ### ✅ G1 — the angler, taken apart (landed 2026-08-25)
 
