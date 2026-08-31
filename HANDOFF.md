@@ -69,30 +69,24 @@ register by construction.
 
 ## Open threads / waiting on Matt
 
-- **The rename is live except for the production deploy and the GitHub side**
-  (2026-08-31). Done: the repo-side rename (#50), the Firebase authorized
-  domain, and the **Netlify site rename** — the site is now
-  `hook-line-and-sentence` and serves at
+- **The rename is live** (2026-08-31). Repo (#50), Firebase authorized domain,
+  Netlify project rename, and a published production deploy are all done, and
+  Matt verified sign-in on the new URL. The game is at
   **https://hook-line-and-sentence.netlify.app**. Netlify does *not* redirect
   the freed `fishtyping` subdomain and it is claimable by anyone, so any old
-  bookmark is dead. What's left:
-  1. **Promote a production deploy.** Production is still pinned to the
-     pre-rename deploy `6a8e18a6…`, so the live site is *older than `main`* and
-     still says "Typing Fishing". Publish the build for `main` @ `8a92dc9` from
-     the Deploys tab, or run `netlify deploy --prod` locally.
-     **Claude cannot do this step from a web session** — `api.netlify.com` and
-     `netlify-mcp.netlify.app` are both refused by the sandbox egress policy
-     (403 on CONNECT), so the MCP deploy path fails with a bare
-     `Failed to deploy site: 403 Forbidden`. Renaming the project *does* work,
-     because that goes over the MCP server rather than a direct upload.
-  2. **Verify sign-in on the new URL.** The whole point of the Firebase step;
-     Claude has no network route to the site and cannot self-verify it.
-  3. **GitHub:** rename the repo to `hook-line-and-sentence`, and re-upload the
-     social preview (Settings → General → Social preview) once the re-lettered
-     PNG lands — the current card still says "TYPING FISHING". Old repo URLs
-     redirect, so existing clones keep working. No tooling for the repo rename
-     in a web session either (no `gh` CLI, and the GitHub MCP server has no
-     repo-edit operation).
+  bookmark is dead. **Only the GitHub side is left:** rename the repo to
+  `hook-line-and-sentence`, and re-upload the social preview (Settings →
+  General → Social preview) once the re-lettered PNG lands — the current card
+  still says "TYPING FISHING". Old repo URLs redirect, so existing clones keep
+  working.
+- **Two rename steps a web session cannot do, so don't burn time trying**
+  (learned 2026-08-31). **Netlify deploys**: `api.netlify.com` and
+  `netlify-mcp.netlify.app` are both refused by the sandbox egress policy (403
+  on CONNECT), so the MCP deploy path dies with a bare `Failed to deploy site:
+  403 Forbidden`. Renaming the *project* works fine, because that goes over the
+  MCP server rather than a direct upload — "Netlify works" and "Netlify deploys
+  work" are different claims here. **GitHub repo rename**: no `gh` CLI, and the
+  GitHub MCP server has no repo-edit operation. Both are console steps.
 - **V2 art — four prompts in `ART.md`, and the order matters.**
   `body-kid-boat.png` (open C-curl hand) is generated first, then
   `hand-kid-boat.png`, `hat-straw.png` and `rod-basic.png` are each generated
