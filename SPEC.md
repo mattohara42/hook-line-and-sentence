@@ -1,4 +1,4 @@
-# Typing Fishing Game — v1 Design Spec
+# Hook, Line and Sentence — v1 Design Spec
 
 *Working title: TBD (Cast & Keys? Reel Words? — naming parked for later)*
 

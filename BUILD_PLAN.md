@@ -1,11 +1,11 @@
-# Typing Fishing — v1 Build Plan
+# Hook, Line and Sentence — v1 Build Plan
 
 Companion to `SPEC.md`. Each milestone is sized for roughly one Claude Code session and ends in a playable/verifiable state. Build in order — each milestone depends on the previous.
 
 ## Repo setup (before first session)
 
 ```
-typing-fishing/
+hook-line-and-sentence/
 ├── SPEC.md                  ← the design spec (source of truth)
 ├── BUILD_PLAN.md            ← this file; check off milestones
 ├── prototype/
@@ -46,7 +46,7 @@ Profile picker on launch. Per-kid: unlocked letters, coins, collection, upgrades
   cross-device sync, ownerUid-scoped docs, firestore.rules. Offline fallback
   verified in-sandbox (Firebase unreachable → game plays on localStorage, no
   errors). **Live-verified 2026-07-23:** the Firebase console setup is done
-  (fishtyping.netlify.app added to Auth authorized domains, firestore.rules
+  (hook-line-and-sentence.netlify.app added to Auth authorized domains, firestore.rules
   merged into the shared ruleset) and the signed-in cross-device path is
   confirmed — **cloud saves work.** See the M4b verification checklist in
   `FIRESTORE.md`.

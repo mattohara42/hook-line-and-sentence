@@ -6,7 +6,7 @@ snapshot, not a design doc — `SPEC.md`, `BUILD_PLAN*.md`, `BACKLOG.md`, and
 each session. This file just says *where things were left* and *what's
 waiting on a human*.
 
-## Where things stand (as of 2026-08-25)
+## Where things stand (as of 2026-08-31)
 
 v1 core (M1–M10) and Advanced Progression (A0–A8) are done and playable:
 Minnow → Mackerel → Marlin → Muskie, three biomes, all their art landed.
@@ -69,6 +69,20 @@ register by construction.
 
 ## Open threads / waiting on Matt
 
+- **The rename needs three console steps only Matt can do, and the order
+  matters** (2026-08-31). The repo-side rename is done and merged; what's left:
+  1. **Firebase first.** Console → `familyhub-5fc43` → Auth → Settings →
+     Authorized domains → add `hook-line-and-sentence.netlify.app`. Google
+     sign-in is rejected from an unlisted domain, so this must land *before*
+     step 2 or cloud saves break the moment the URL moves.
+  2. **Netlify site rename** (`fishtyping` → `hook-line-and-sentence`), then a
+     manual `netlify deploy --prod`. Netlify does **not** redirect the freed
+     subdomain, and it becomes claimable by anyone — so any bookmark on the old
+     URL dies. Every doc in the repo already names the new one.
+  3. **GitHub:** rename the repo to `hook-line-and-sentence`, and re-upload the
+     social preview (Settings → General → Social preview) once the re-lettered
+     PNG lands — the current card still says "TYPING FISHING". Old repo URLs
+     redirect, so existing clones keep working.
 - **V2 art — four prompts in `ART.md`, and the order matters.**
   `body-kid-boat.png` (open C-curl hand) is generated first, then
   `hand-kid-boat.png`, `hat-straw.png` and `rod-basic.png` are each generated

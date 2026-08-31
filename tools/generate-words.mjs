@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// generate-words.mjs — builds data/words.json for the typing fishing game.
+// generate-words.mjs — builds data/words.json for Hook, Line and Sentence.
 // Usage: node generate-words.mjs <input-wordlist.txt> <output.json>
 // Input: one word per line, ordered by frequency (most common first).
 

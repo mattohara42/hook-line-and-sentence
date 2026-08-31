@@ -1,4 +1,4 @@
-# Typing Fishing — Visual Rework Plan
+# Hook, Line and Sentence — Visual Rework Plan
 
 Supersedes `BUILD_PLAN_GRAPHICS.md` (G1–G6). Written 2026-08-25 after Matt
 played the G1 build and called it: the hat looks janky, the rod isn't in the
