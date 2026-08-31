@@ -8,9 +8,8 @@ sentences, WPM-as-goal) — **A0–A8 all shipped 2026-08-22, epic complete.**
 All Advanced Progression art has landed. The current epic is the **Visual
 Rework** — `BUILD_PLAN_VISUAL.md` (V1 done, V2 next), which supersedes
 `BUILD_PLAN_GRAPHICS.md` after G1's layered angler didn't hold up in play.
-Three art requests are open in `ART.md`: V2's four reference-drawn angler
-pieces, a re-shot Stream background that V3 needs, and the social preview card
-re-lettered for the new name. A real kid playtest of the A7
+Two art requests are open in `ART.md`: V2's four reference-drawn angler
+pieces, and a re-shot Stream background that V3 needs. A real kid playtest of the A7
 fight beats is still outstanding (see `BACKLOG.md`).
 Work on exactly one milestone at a time. `ART.md` is the art pipeline: Claude
 writes Gemini prompts + filenames, Matt generates the PNGs.

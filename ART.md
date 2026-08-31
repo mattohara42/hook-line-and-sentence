@@ -276,41 +276,44 @@ same four prompts then repeat for the Stream (waders, standing) and Ocean
 (fighting chair) poses in V3, and each new shop hat or rod is one more
 reference-drawn PNG per pose.
 
-### ⚠️ The social preview card, re-lettered for the new name (open)
+### ✅ The social preview card, re-lettered (landed 2026-08-31)
 
-`assets/social-preview.png` (1280×640) is the GitHub link card, and it has
-**"TYPING FISHING"** painted into the art in the Silkscreen-style pixel face,
-with `cast, reel and catch by typing` underneath. The game was renamed to
-**Hook, Line and Sentence** on 2026-08-31, so the card now advertises a name
-that exists nowhere else in the project.
+The GitHub link card had **"TYPING FISHING"** painted into the art, so after the
+rename it advertised a name that existed nowhere else in the project. It is now
+`HOOK, LINE` / `AND SENTENCE` over the same scene.
 
-The scene itself (sunset sky, angler in the rowboat at left, hooked fish on the
-line, `a s d f g` key caps at lower right) is good and should be kept — this is
-a **re-letter, not a re-shoot**. The new name is 23 characters against the old
-14, so it wants two lines where the old one had one.
+**This one was not generated — it was re-lettered in Pillow, and that was the
+right call.** The scene was fine; only the text was wrong. Asking Gemini to
+re-shoot it means asking for 23 characters of exact title plus a 30-character
+subtitle, and spelling is the one thing image models reliably get wrong — the
+old card got away with 14 characters on one line. Compositing is exact by
+construction and re-runnable in seconds if the wording ever changes.
 
-When the PNG lands it also has to be uploaded by hand: GitHub's social preview
-lives in repo **Settings → General → Social preview**, not in the repo tree, so
-committing the file is only half the job.
+The recipe, should the name or tagline ever move again:
 
-```
-ART NEEDED: the social preview card, re-lettered
-File:     assets/social-preview.png  (replaces the existing one, same 1280x640)
-Prompt:   Pixel art wide banner for a cozy kids fishing game, 1280x640, sunset
-          lake scene: warm orange-to-peach sky, low sun at right, muted purple
-          hills, teal water across the bottom half, a kid in a straw hat fishing
-          from a wooden rowboat at the left, a fishing line running down-right
-          to a small green hooked fish. At lower right, five dark rounded key
-          caps reading a s d f g with the d key outlined in gold. Chunky clean
-          pixels. Large chunky pixel-font title text at lower left reading
-          "HOOK, LINE" on the first line and "AND SENTENCE" on the second,
-          cream white, with a smaller gold subtitle under it reading
-          "cast, reel and catch by typing". Both lines of the title left-aligned
-          and the same size as each other.
-Note:     match the existing assets/social-preview.png composition — this is the
-          same picture with new lettering. Keep the title clear of the boat and
-          the key caps.
-```
+1. **Repaint the text area per row.** The title sits on open water, which is a
+   smooth *vertical* gradient — so for each row take the median colour of the
+   non-text pixels in `x 250..600` and flood that row across the repair rect.
+   The seam is invisible; a single flat fill for the whole block is not.
+2. **Know what you must not paint over.** The safe rect is `x 60..600,
+   y 412..576`: the boat ends at y≈390, the key-cap panel starts at x≈790, and
+   the fishing line only enters that x-range below y≈445. Verify with a
+   bright-pixel scan before filling, not by eye.
+3. **Set the type in real Silkscreen** — the same face as the game's `<h1>`,
+   fetched from the Google Fonts CDN. Render it *small* and upscale
+   `Image.NEAREST` (4× for the title, 2× for the subtitle) so the glyphs stay
+   chunky instead of anti-aliased.
+4. **Mind the comma.** At the first spacing tried, line one's comma in
+   "HOOK," landed directly above the E of "SENTENCE" and read as **SÉNTENCE**.
+   That is a property of this wording, not of the tool — a Gemini reroll would
+   hit it too. A wider line gap (title lines at y=418 and y=492) fixes it.
+
+Title colour `#F2EDE4`, subtitle gold `#F0C060`, both sampled from the original
+card. The script is scratchpad-only, like the transparency salvage script above.
+
+**Still needs a human:** GitHub's social preview is *not* served from the repo
+tree, so committing the PNG is only half the job — upload it at
+**Settings → General → Social preview**.
 
 ### ⚠️ The Stream scene, re-shot — the one open request
 

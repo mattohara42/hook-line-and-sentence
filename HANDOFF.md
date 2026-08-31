@@ -69,24 +69,31 @@ register by construction.
 
 ## Open threads / waiting on Matt
 
-- **The rename is live** (2026-08-31). Repo (#50), Firebase authorized domain,
-  Netlify project rename, and a published production deploy are all done, and
-  Matt verified sign-in on the new URL. The game is at
-  **https://hook-line-and-sentence.netlify.app**. Netlify does *not* redirect
-  the freed `fishtyping` subdomain and it is claimable by anyone, so any old
-  bookmark is dead. **Only the GitHub side is left:** rename the repo to
-  `hook-line-and-sentence`, and re-upload the social preview (Settings →
-  General → Social preview) once the re-lettered PNG lands — the current card
-  still says "TYPING FISHING". Old repo URLs redirect, so existing clones keep
-  working.
-- **Two rename steps a web session cannot do, so don't burn time trying**
+- **The rename is done** (2026-08-31), with exactly one manual step left. Landed:
+  the codebase and docs (#50), the Firebase authorized domain, the Netlify
+  project rename, a published production deploy with sign-in verified on the new
+  URL, the GitHub repo rename, the About-panel Website link, and the re-lettered
+  social preview PNG. The game is at
+  **https://hook-line-and-sentence.netlify.app** and the repo is
+  `mattohara42/hook-line-and-sentence` (old URLs redirect, so existing clones
+  keep working). Netlify does *not* redirect the freed `fishtyping` subdomain
+  and it is claimable by anyone, so any old bookmark is dead.
+  **The one step left: upload `assets/social-preview.png` at GitHub → Settings →
+  General → Social preview.** GitHub does not serve that image from the repo
+  tree, so committing it is only half the job and the link card keeps showing
+  the old one until someone uploads it.
+- **Three rename steps a web session cannot do, so don't burn time trying**
   (learned 2026-08-31). **Netlify deploys**: `api.netlify.com` and
   `netlify-mcp.netlify.app` are both refused by the sandbox egress policy (403
   on CONNECT), so the MCP deploy path dies with a bare `Failed to deploy site:
   403 Forbidden`. Renaming the *project* works fine, because that goes over the
   MCP server rather than a direct upload — "Netlify works" and "Netlify deploys
   work" are different claims here. **GitHub repo rename**: no `gh` CLI, and the
-  GitHub MCP server has no repo-edit operation. Both are console steps.
+  GitHub MCP server has no repo-edit operation — that also rules out setting the
+  About-panel description, topics and Website link, and direct `api.github.com`
+  calls come back `403: GitHub access is not enabled for this session` even
+  though the host resolves. **Social preview upload**: not in the repo tree at
+  all. All three are console steps.
 - **V2 art — four prompts in `ART.md`, and the order matters.**
   `body-kid-boat.png` (open C-curl hand) is generated first, then
   `hand-kid-boat.png`, `hat-straw.png` and `rod-basic.png` are each generated
