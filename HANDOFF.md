@@ -16,6 +16,74 @@ The active epic is the **Visual Rework** — `BUILD_PLAN_VISUAL.md`, V1–V5.
 `ART.md`). This epic replaced the Graphics & Character Rig plan mid-session,
 which is the main thing to understand before touching the visuals; see below.
 
+## ⚠️ Pending from the 2026-08-31 branch audit
+
+A cross-repo audit of unmerged branches found **real unlanded work here** —
+this repo had more of it than any other.
+
+### PR #55 — pre-release pass — needs a decision
+
+https://github.com/mattohara42/hook-line-and-sentence/pull/55 (draft)
+
+Branch `claude/graphics-assets-plan-rza791`, from 2026-08-22, never had a PR.
+Confirmed still absent from `main`. It carries:
+
+- **`config.js` — dev shortcuts derived from the hostname, not a flag.** Adds
+  `currentHostname()` / `isDevHost()` and sets
+  `dev: { testShortcuts: isDevHost(currentHostname()), testCoins: 200 }`. Its
+  own rationale: the 🧪 button was live on the production site for a while
+  precisely because a manual flag is easy to forget. Fails closed on an
+  unknown host; split into a pure function so the Node data tests can import it.
+- **`firestore.rules` — hardening + a written-out threat note.** Ownership
+  helpers (`isMine`/`wasMine`), `boundedMap()` size caps, and a long comment
+  spelling out that `request.auth != null` is authentication, **not**
+  family-authorisation — any Google account can create documents, and this
+  database is shared with Family Hub. Lists real fixes in order: separate
+  Firebase project → App Check → uid allowlist → ship public with no Firebase
+  config at all.
+- **Content depth** in `data/phrases.json` (+44) and `data/sentences.json` (+29).
+- **`LICENSE`** (new) and a README pointer.
+
+**Blocker:** conflicts with `main` in `firestore.rules` and
+`tests/data.test.mjs` (`main`'s rules are 4132 bytes vs 4114 here). Needs a
+human call on which version of the rules wins — that's why it's a draft.
+
+Given the security content, this is the most valuable thing outstanding in the
+repo. Worth doing before the game's URL is shared any wider.
+
+### Branches to delete
+
+All stale or superseded; SHAs recorded so any deletion is reversible
+(`git push origin <sha>:refs/heads/<branch>`):
+
+```
+git push origin --delete claude/advanced-game-progression-ejj4yx     # was 49f2abb
+git push origin --delete claude/docs-dynamic-intent-generation-p14kbx # was a50a15c
+git push origin --delete claude/epic-continuation-81tdvp              # was 69f79ea
+git push origin --delete claude/gemini-game-asset-prompts-aeopww      # was c47e021
+git push origin --delete claude/next-steps-0v0xeg                     # was 98762e7
+git push origin --delete g1/layered-rig                               # was 5e855b5
+```
+
+Why each is safe:
+
+- **`advanced-game-progression`** — made `BUILD_PLAN_ADVANCED.md` discoverable
+  and describes A0 as "first buildable milestone". `main` now says A0–A8 all
+  shipped. Merging it would *regress* the docs.
+- **`docs-dynamic-intent-generation`** — added `HANDOFF.md`. It's here, and
+  `CLAUDE.md` already carries the identical "read HANDOFF first" instruction.
+- **`gemini-game-asset-prompts`** — A6 Ocean art prompts. `ART.md` on `main`
+  already marks A6/A8 landed (2026-08-25).
+- **`epic-continuation`** — the 🧪 unlock shortcut as a hardcoded
+  `testShortcuts: true`. **Superseded by PR #55's** hostname-derived version;
+  don't delete this one until #55 lands, or the shortcut is lost entirely.
+- **`g1/layered-rig`** — ⚠️ **your call.** This is your branch and real code
+  (the layered angler, 8 files). `CLAUDE.md` says V2 supersedes
+  `BUILD_PLAN_GRAPHICS.md` "after G1's layered angler didn't hold up in play",
+  so it reads as deliberately abandoned — but confirm before deleting. Note
+  #42/#43 already merged the parts that survived (`CONFIG.rig.lineOrigin` and
+  the computed aim).
+
 ## The arc of this session, in one paragraph
 
 The three outstanding art PNGs landed and got wired (Ocean scene, Muskie hero
@@ -102,6 +170,8 @@ contradicted: it was always about the fishing loop, and now says so.
 
 ## Open threads / waiting on Matt
 
+- **PR #55 and the branch deletions** — see the audit section above. #55 is the
+  one with real substance (Firestore rules hardening + the dev-flag fix).
 - **The rename is complete** (2026-08-31), end to end, nothing outstanding.
   Landed: the codebase and docs (#50), the Firebase authorized domain, the
   Netlify project rename, a published production deploy with sign-in verified,
@@ -124,7 +194,10 @@ contradicted: it was always about the fishing loop, and now says so.
   About-panel description, topics and Website link, and direct `api.github.com`
   calls come back `403: GitHub access is not enabled for this session` even
   though the host resolves. **Social preview upload**: not in the repo tree at
-  all. All three are console steps.
+  all. All three are console steps. **Add to this list: deleting a remote
+  branch.** A web session's git credentials are read-only — `git push` returns
+  HTTP 403 on `git-receive-pack` — so branch deletions are a local or console
+  step too, even though merging a PR through the GitHub MCP server works fine.
 - **V2 art — four prompts in `ART.md`, and the order matters.**
   `body-kid-boat.png` (open C-curl hand) is generated first, then
   `hand-kid-boat.png`, `hat-straw.png` and `rod-basic.png` are each generated
@@ -148,6 +221,11 @@ contradicted: it was always about the fishing loop, and now says so.
   rather than assuming.
 - **Nothing may land in the bottom-center finger-guide panel.** It covers the
   lower third of the scene and it's the best part of the game.
+- **A branch being "ahead" of `main` doesn't mean it holds unmerged work.**
+  Squash-merging rewrites the SHA, so the old ref reads as ahead forever. The
+  test that actually settles it is whether merging changes anything:
+  `git merge-tree --write-tree origin/main origin/<branch>` and compare the
+  result to `git rev-parse origin/main^{tree}`.
 
 ## Likely next steps
 
@@ -161,5 +239,7 @@ contradicted: it was always about the fishing loop, and now says so.
 
 - Full test suite: 67/67 passing (`npm test` — Node's built-in runner).
 - Every PR this session was opened ready-for-review and squash-merged
-  immediately, per `CLAUDE.md`.
+  immediately, per `CLAUDE.md`. (PR #55 is the exception — it's a draft
+  because it conflicts and needs a decision, not because the convention
+  changed.)
 - Netlify deploys are **manual** — merging to `main` does not go live.
