@@ -217,6 +217,9 @@ export const CONFIG = {
   // see FIRESTORE.md → "Cloud saves setup (self-hosting)".
   firebase: {
     sdkVersion: "10.14.1",        // gstatic CDN version; bump here if an import 404s
+    // Predates the rename to Hook, Line and Sentence; kept verbatim because it
+    // addresses live cloud saves. Renaming it would orphan them and needs a
+    // data migration, not an edit here.
     collection: "typingFishing",  // one doc per kid lives directly in this top-level collection
     config: {
       apiKey: "AIzaSyCq_WtqHd5WmJldlNptE8zchu2RmuAX_yE",

@@ -1,6 +1,6 @@
 # Art Pipeline
 
-How art gets made for Typing Fishing. It's a family project — a kid-drawn
+How art gets made for Hook, Line and Sentence. It's a family project — a kid-drawn
 sprite outranks a professional one (see `CLAUDE.md`). This doc is the workflow
 for the *generated* art that fills the gaps.
 
@@ -275,6 +275,42 @@ not an offset tweak** — nudging offsets is exactly how G1 ended up janky. The
 same four prompts then repeat for the Stream (waders, standing) and Ocean
 (fighting chair) poses in V3, and each new shop hat or rod is one more
 reference-drawn PNG per pose.
+
+### ⚠️ The social preview card, re-lettered for the new name (open)
+
+`assets/social-preview.png` (1280×640) is the GitHub link card, and it has
+**"TYPING FISHING"** painted into the art in the Silkscreen-style pixel face,
+with `cast, reel and catch by typing` underneath. The game was renamed to
+**Hook, Line and Sentence** on 2026-08-31, so the card now advertises a name
+that exists nowhere else in the project.
+
+The scene itself (sunset sky, angler in the rowboat at left, hooked fish on the
+line, `a s d f g` key caps at lower right) is good and should be kept — this is
+a **re-letter, not a re-shoot**. The new name is 23 characters against the old
+14, so it wants two lines where the old one had one.
+
+When the PNG lands it also has to be uploaded by hand: GitHub's social preview
+lives in repo **Settings → General → Social preview**, not in the repo tree, so
+committing the file is only half the job.
+
+```
+ART NEEDED: the social preview card, re-lettered
+File:     assets/social-preview.png  (replaces the existing one, same 1280x640)
+Prompt:   Pixel art wide banner for a cozy kids fishing game, 1280x640, sunset
+          lake scene: warm orange-to-peach sky, low sun at right, muted purple
+          hills, teal water across the bottom half, a kid in a straw hat fishing
+          from a wooden rowboat at the left, a fishing line running down-right
+          to a small green hooked fish. At lower right, five dark rounded key
+          caps reading a s d f g with the d key outlined in gold. Chunky clean
+          pixels. Large chunky pixel-font title text at lower left reading
+          "HOOK, LINE" on the first line and "AND SENTENCE" on the second,
+          cream white, with a smaller gold subtitle under it reading
+          "cast, reel and catch by typing". Both lines of the title left-aligned
+          and the same size as each other.
+Note:     match the existing assets/social-preview.png composition — this is the
+          same picture with new lettering. Keep the title clear of the boat and
+          the key caps.
+```
 
 ### ⚠️ The Stream scene, re-shot — the one open request
 

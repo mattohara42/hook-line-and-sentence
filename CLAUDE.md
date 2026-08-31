@@ -1,4 +1,4 @@
-# CLAUDE.md — Typing Fishing
+# CLAUDE.md — Hook, Line and Sentence
 
 Cozy pixel-art fishing game that teaches kids to type. Read `SPEC.md` first —
 it is the source of truth for all design decisions. `BUILD_PLAN.md` defines
@@ -8,15 +8,24 @@ sentences, WPM-as-goal) — **A0–A8 all shipped 2026-08-22, epic complete.**
 All Advanced Progression art has landed. The current epic is the **Visual
 Rework** — `BUILD_PLAN_VISUAL.md` (V1 done, V2 next), which supersedes
 `BUILD_PLAN_GRAPHICS.md` after G1's layered angler didn't hold up in play.
-Two art requests are open in `ART.md`: V2's four reference-drawn angler pieces,
-and a re-shot Stream background that V3 needs. A real kid playtest of the A7
+Three art requests are open in `ART.md`: V2's four reference-drawn angler
+pieces, a re-shot Stream background that V3 needs, and the social preview card
+re-lettered for the new name. A real kid playtest of the A7
 fight beats is still outstanding (see `BACKLOG.md`).
 Work on exactly one milestone at a time. `ART.md` is the art pipeline: Claude
 writes Gemini prompts + filenames, Matt generates the PNGs.
 
-**GitHub repo:** owner `mattohara42`, repo name `WordsPerM...` — the trailing
-`...` is literal (the name is masked this way in the agent environment; it's
-not truncation). Pass that exact string to the GitHub tools; no lookup needed.
+**GitHub repo:** owner `mattohara42`, repo name `hook-line-and-sentence`.
+Renamed from `WordsPerM...` on 2026-08-31, along with the game itself (it was
+"Typing Fishing") and the Netlify site. GitHub redirects the old URL, so an
+old clone's remote keeps working, but use the new name in new work.
+
+**Two old names survive on purpose, and are not to be "fixed":** the
+localStorage keys `tf:*` (`app.js`) and the Firestore collection
+`typingFishing` (`config.js`). Both address saved games on real devices and in
+the live Firebase project — renaming either orphans real kids' progress. They
+are storage paths, not display names. `LEGACY_KEY = "typing-fishing-save"` is
+older still and is load-bearing for the pre-profiles migration.
 
 ## Architecture rules
 

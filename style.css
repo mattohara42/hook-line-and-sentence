@@ -1,4 +1,4 @@
-/* style.css — Typing Fishing.
+/* style.css — Hook, Line and Sentence.
    LOCKED PALETTE (M7.5): every UI color below or derived from it via
    color-mix/alpha. Fish accent colors live in data/fish.json and were
    chosen against this palette — new art must stick to these hues. */
@@ -35,6 +35,20 @@ h1 {
   font-family: var(--display); font-size: 10px; letter-spacing: 0.1em; color: var(--dim);
   background: rgba(8,18,26,0.45); padding: 5px 9px; border-radius: 6px;
   pointer-events: none;
+}
+/* The title is top-left and #hud is top-right, so a long title runs into the
+   HUD on a narrow window. "HOOK, LINE AND SENTENCE" is ~1.5x the width of the
+   old "TYPING FISHING", which pushed that collision up from ~380px to ~500px —
+   so shrink the chip rather than let it overlap. */
+@media (max-width: 560px) {
+  h1 { font-size: 8px; letter-spacing: 0.04em; padding: 4px 7px; }
+}
+/* Below ~400px even the shrunk chip runs into the HUD (the old short title did
+   too, by a few px — this is the pre-existing overlap, now fixed rather than
+   inherited). The title is decorative: dim, pointer-events:none, and the game
+   is already on screen. Drop it and give the HUD the room. */
+@media (max-width: 400px) {
+  h1 { display: none; }
 }
 
 /* ============ THE POND (full-screen) ============ */

@@ -1,4 +1,4 @@
-# Typing Fishing 🎣
+# Hook, Line and Sentence 🎣
 
 A cozy pixel-art fishing game that teaches kids to type. Casting, reeling,
 and catching all happen through the keyboard — practice that never feels
@@ -9,6 +9,11 @@ Progression epic (A0–A8) are both done — four ranks, three fishing spots, wo
 → phrases → punctuated sentences. Current work is the **Visual Rework**
 (`BUILD_PLAN_VISUAL.md`): depth, a redrawn angler, and swappable gear. Hosted on
 Netlify — pushes to `main` are promoted to production manually.
+
+> **Renamed 2026-08-31.** This project was *Typing Fishing*, in a repo called
+> `WordsPerM...`, and lived at `fishtyping.netlify.app`. Everything moved to
+> **Hook, Line and Sentence** — a better fit now that the game grades up from
+> words to phrases to full punctuated sentences. Saved games are unaffected.
 
 ## Start here
 

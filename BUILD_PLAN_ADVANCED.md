@@ -1,4 +1,4 @@
-# Typing Fishing — Advanced Progression Build Plan
+# Hook, Line and Sentence — Advanced Progression Build Plan
 
 Companion to `SPEC.md`, `BUILD_PLAN.md` (v1), and the **Advanced Progression**
 epic in `BACKLOG.md`. This breaks the epic into sized, ordered, verifiable

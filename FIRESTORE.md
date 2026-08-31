@@ -1,4 +1,4 @@
-# Firestore Schema — Typing Fishing v1
+# Firestore Schema — Hook, Line and Sentence v1
 
 Design goal: **one document read per app launch, one write per catch.** Same
 Firestore + localStorage-fallback pattern as Family Hub.
@@ -98,7 +98,7 @@ parent Google sign-in. Without a valid config the game just plays offline; it
 never errors.
 
 This is a one-time setup, in two flavors: a brand-new Firebase project, or
-adding Typing Fishing to a Firebase project you already use for something else.
+adding Hook, Line and Sentence to a Firebase project you already use for something else.
 
 ### What the game needs from Firebase
 
@@ -174,23 +174,23 @@ plain-http or mismatched-subdomain preview.
 > This is the **reference install's** live-verify record. For your own project,
 > complete *Cloud saves setup* above first, then substitute your project and
 > deploy domain wherever the checklist names the reference install
-> (`familyhub-5fc43`, `fishtyping.netlify.app`). The walkthrough and
+> (`familyhub-5fc43`, `hook-line-and-sentence.netlify.app`). The walkthrough and
 > failure-signature table apply to any project unchanged.
 
 The sync code (`app.js`) is complete; M4b is "done" once the signed-in
 cross-device path is verified live. Sign-in popups need HTTPS, so test on the
-production URL **`https://fishtyping.netlify.app`** — not a `deploy-preview-*`
+production URL **`https://hook-line-and-sentence.netlify.app`** — not a `deploy-preview-*`
 URL (different subdomain won't match the authorized domain).
 
 ### One-time setup (Firebase console, `familyhub-5fc43` project — shared with Family Hub)
 
 - [ ] **Authorize the domain.** Auth → Settings → Authorized domains → add
-  `fishtyping.netlify.app`. (Sign-in popup is rejected without it.)
+  `hook-line-and-sentence.netlify.app`. (Sign-in popup is rejected without it.)
 - [ ] **Merge the rules.** Firestore Database → Rules → paste *only* the
   `match /typingFishing/{profileId} { … }` block from `firestore.rules`
   *inside* the existing `match /databases/{database}/documents { … }` block —
   **do not** overwrite the Family Hub rules — then Publish.
-- [ ] **Confirm HTTPS deploy** at `https://fishtyping.netlify.app`.
+- [ ] **Confirm HTTPS deploy** at `https://hook-line-and-sentence.netlify.app`.
 
 ### Walkthrough (on the profile picker, watch the sync bar)
 

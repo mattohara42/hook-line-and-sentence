@@ -1,4 +1,4 @@
-// Firestore security rules for Typing Fishing (M4b).
+// Firestore security rules for Hook, Line and Sentence (M4b).
 //
 // ⚠️  DO NOT paste this whole file over your Family Hub rules — it would delete
 //     them and break Family Hub. This database is shared. Instead:
@@ -23,7 +23,7 @@
 //     They cannot cap how MANY get created: Firestore rules can't count
 //     documents. If the game ever goes properly public, the real fixes, in
 //     order of how much they help:
-//       1. Give Typing Fishing its OWN Firebase project, so abuse can never
+//       1. Give Hook, Line and Sentence its OWN Firebase project, so abuse can never
 //          reach Family Hub. (Best blast-radius fix.)
 //       2. Turn on Firebase App Check, so only the real app can call the API.
 //       3. Or keep sync family-only: add `&& request.auth.uid in ['uid1', …]`

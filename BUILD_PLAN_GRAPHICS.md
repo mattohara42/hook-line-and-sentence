@@ -1,4 +1,4 @@
-# Typing Fishing — Graphics & Character Rig Build Plan
+# Hook, Line and Sentence — Graphics & Character Rig Build Plan
 
 > **⚠️ Superseded 2026-08-25 by `BUILD_PLAN_VISUAL.md`.** Matt played the G1
 > build and the layered angler didn't hold up — a separately generated hat and

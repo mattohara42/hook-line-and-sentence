@@ -232,12 +232,12 @@ test("shop items have unique ids; boats each reference a sprite file", () => {
 
 test("the 🧪 dev shortcut can never be on in production", () => {
   // the real site and anything unfamiliar must fail closed
-  for (const host of ["fishtyping.netlify.app", "wordsperminute.app", "example.com",
-                      "", "localhost.evil.com", "notlocalhost", "deploy-preview-x--fishtyping.netlify.app"])
+  for (const host of ["hook-line-and-sentence.netlify.app", "hooklineandsentence.app", "example.com",
+                      "", "localhost.evil.com", "notlocalhost", "deploy-preview-x--hook-line-and-sentence.netlify.app"])
     assert.equal(isDevHost(host), false, `dev shortcuts must be off on "${host}"`);
   // …and stay available where we actually playtest
   for (const host of ["localhost", "127.0.0.1", "[::1]", "matts-mac.local",
-                      "deploy-preview-30--fishtyping.netlify.app"])
+                      "deploy-preview-30--hook-line-and-sentence.netlify.app"])
     assert.equal(isDevHost(host), true, `dev shortcuts should be on for "${host}"`);
   // importing config.js outside a browser (these tests) must not switch them on
   assert.equal(CONFIG.dev.testShortcuts, false, "dev shortcuts leaked into a non-browser build");

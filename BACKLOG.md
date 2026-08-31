@@ -1,4 +1,4 @@
-# Typing Fishing — Backlog
+# Hook, Line and Sentence — Backlog
 
 Ideas captured during design/build. Nothing here expands the current milestone.
 
@@ -165,13 +165,20 @@ Rank is per-profile and permanent (you don't get demoted); a kid can always drop
 back to a lower pond for a cozy session. Advancement gate mirrors the existing
 letter-unlock model (fish-count / mastery milestone), not a speed test.
 
-**Muskie = the prestige capstone (four M's, and it closes a loop already in the
-data).** `data/fish.json` already has **Muskie Quixote** as the legendary
-nemesis. So Muskie isn't a fourth biome — it's the master-angler rank you earn
-*inside the Ocean* by finally landing the un-landable legendary. WordsPer**M**…,
-four **M**-ranks (Minnow → Mackerel → Marlin → Muskie), and the existing
-legendary fish becomes the finish line. Pairs with the parked "Named nemesis
-fish" backlog item (recurring lore + a bigger landing celebration).
+**Muskie = the prestige capstone (it closes a loop already in the data).**
+`data/fish.json` already has **Muskie Quixote** as the legendary nemesis. So
+Muskie isn't a fourth biome — it's the master-angler rank you earn *inside the
+Ocean* by finally landing the un-landable legendary, and the existing legendary
+fish becomes the finish line. Pairs with the parked "Named nemesis fish"
+backlog item (recurring lore + a bigger landing celebration).
+
+> **Note (2026-08-31 rename).** The four M-ranks (Minnow → Mackerel → Marlin →
+> Muskie) were originally chosen as a pun on the old repo name, WordsPer**M**…
+> That pun is gone. The ladder is kept as-is because it stands up on its own —
+> it's a real small-to-huge fish progression, the alliteration still scans, and
+> it's already shipped in `config.js` and in kids' saved profiles. Flagged here
+> rather than silently rewritten: if the ranks are ever revisited, know that the
+> reason they are all M's no longer applies.
 
 ### Graduation is gated by rods, and celebrated (decided)
 

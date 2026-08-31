@@ -1,4 +1,4 @@
-// app.js — Typing Fishing core loop (cast → wait → reel → catch).
+// app.js — Hook, Line and Sentence core loop (cast → wait → reel → catch).
 // All tuning values come from config.js. Words come from data/words.json,
 // filtered to the unlocked letter set; Stream phrases (data/phrases.json) and
 // Ocean sentences (data/sentences.json) are the same idea, gated by location.
@@ -27,6 +27,10 @@ async function loadJson(path) {
 //   tf:active       — last-picked profile id
 // All reads/writes funnel through here so M4b can add Firestore in one place.
 const AVATARS = ["🐸", "🐟", "🐠", "🦆", "🐢", "🦖", "🐙", "🦈", "⭐", "🍀", "🐳", "🦑"];
+// These key names predate the rename to Hook, Line and Sentence and are kept
+// verbatim on purpose: they address saved games on real devices, so renaming
+// them would orphan every existing profile. Same goes for the `typingFishing`
+// Firestore collection in config.js. They are storage paths, not display names.
 const PROFILE_KEY = id => "tf:profile:" + id;
 const INDEX_KEY = "tf:profiles";
 const ACTIVE_KEY = "tf:active";
