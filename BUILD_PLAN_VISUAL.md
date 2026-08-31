@@ -1,5 +1,17 @@
 # Hook, Line and Sentence — Visual Rework Plan
 
+> **⚠️ SUPERSEDED 2026-08-31 by `BUILD_PLAN_REFRESH.md`** (the Art & Animation
+> Refresh), after Matt called for a fresh start on backgrounds, boats and
+> characters under a new art direction (`ART_DIRECTION.md`, `ANIMATION.md`).
+> **V1 shipped and survives** — the three-plane scene with `#surface` painted in
+> front of the mid plane is kept and only retuned to the new palette. **V2–V5
+> are dead as written**: they planned art in the old pixel style, and the
+> angler's age + sex assignment they carried is retired in favour of one
+> protagonist with three costumes. Two things from V2 are carried forward into
+> the new plan rather than lost — the same-canvas, reference-drawn generation
+> rule, and the fingers-over-rod grip sandwich. Kept for the trail; don't build
+> from it.
+
 Supersedes `BUILD_PLAN_GRAPHICS.md` (G1–G6). Written 2026-08-25 after Matt
 played the G1 build and called it: the hat looks janky, the rod isn't in the
 kid's hand, the boat floats instead of bobbing, and the fish doesn't look

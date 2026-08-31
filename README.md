@@ -1,14 +1,17 @@
 # Hook, Line and Sentence 🎣
 
-A cozy pixel-art fishing game that teaches kids to type. Casting, reeling,
+A cozy fishing game that teaches kids to type. Casting, reeling,
 and catching all happen through the keyboard — practice that never feels
 like practice.
 
 **Status:** built and playable. The core game (M1–M10) and the Advanced
 Progression epic (A0–A8) are both done — four ranks, three fishing spots, words
-→ phrases → punctuated sentences. Current work is the **Visual Rework**
-(`BUILD_PLAN_VISUAL.md`): depth, a redrawn angler, and swappable gear. Hosted on
-Netlify — pushes to `main` are promoted to production manually.
+→ phrases → punctuated sentences. Current work is the **Art & Animation
+Refresh** (`BUILD_PLAN_REFRESH.md`): the whole visual layer is being restarted
+in a warm painterly style (`ART_DIRECTION.md`), and the cast, line and reel are
+getting real motion (`ANIMATION.md`). The engine underneath — progression, the
+ghost-hands keyboard, the unlockables — isn't changing. Hosted on Netlify —
+pushes to `main` are promoted to production manually.
 
 > **Renamed 2026-08-31.** This project was *Typing Fishing*, in a repo called
 > `WordsPerM...`, and lived at `fishtyping.netlify.app`. Everything moved to
@@ -23,8 +26,11 @@ Netlify — pushes to `main` are promoted to production manually.
 | `SPEC.md` | Design source of truth — all decisions and v1 scope |
 | `BUILD_PLAN.md` | v1 milestone order (M1–M10, all done) with done-criteria |
 | `BUILD_PLAN_ADVANCED.md` | Post-v1 Advanced Progression epic — tiers (Minnow→Muskie), phrases/sentences, WPM-as-goal; phased A0–A8 (done) |
-| `BUILD_PLAN_VISUAL.md` | **Current epic** — the visual rework, V1–V5: water depth, a redrawn angler, vessels per spot, fish shapes, the gear shop |
-| `BUILD_PLAN_GRAPHICS.md` | Superseded by the above; kept for the reasoning trail |
+| `BUILD_PLAN_REFRESH.md` | **Current epic** — the Art & Animation Refresh, R1–R7: motion, palette, painted backgrounds, one rigged angler, vessels, a rig per fish, gear |
+| `ART_DIRECTION.md` | How the game looks — warm painterly storybook; governs every visual choice, generated or CSS-drawn |
+| `ANIMATION.md` | How the cast, line and reel move — the R1 spec |
+| `BUILD_PLAN_VISUAL.md` | Superseded by the refresh (V1 shipped and survives); kept for the reasoning trail |
+| `BUILD_PLAN_GRAPHICS.md` | Superseded twice over; kept for the reasoning trail |
 | `CLAUDE.md` | Instructions for Claude Code sessions |
 | `FIRESTORE.md` | Profile/save data schema + cloud-saves setup (self-hosting) |
 | `BACKLOG.md` | Ideas parked to protect milestone scope, plus shipped post-v1 features |
