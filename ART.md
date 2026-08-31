@@ -42,24 +42,58 @@ once the file exists).
 
 ## How art is wired into the game
 
-- Almost everything is a CSS `background: url("assets/…png")` with
-  **`image-rendering: pixelated`** (see `style.css`). No sprite atlas, no build
-  step — one PNG per thing.
-- **Fish share one sprite per tier**, not per species: `fish-common.png`,
-  `fish-rare.png`, `fish-legendary.png`. Each species in `data/fish.json` has a
-  `color`, and the code tints the shared shape via the `--fish-color` CSS var.
-  So a *new fish species usually needs no new art* — just a `color`. Only make a
-  distinct sprite when a fish should look genuinely different (e.g. legendary).
+- Almost everything is a CSS `background: url("assets/…png")`. No sprite atlas,
+  no build step — one PNG per thing. (**`image-rendering: pixelated` is on its
+  way out** — it belonged to the pixel era and R2 removes it; painterly art must
+  not be nearest-neighbour scaled.)
+- **Fish currently share one sprite per tier**, not per species:
+  `fish-common.png`, `fish-rare.png`, `fish-legendary.png`, tinted per species
+  from `data/fish.json`'s `color` via the `--fish-color` CSS var. **The refresh
+  changes this** — R6 gives all 33 species their own rig. Until a species' art
+  lands, the tinted placeholder is what it renders as, on purpose.
 
 ## Style guardrails (put these in every prompt)
 
-- **Cozy pixel art**, chunky pixels, clean readable silhouette (it renders small).
-- **Palette:** warm dawn/dusk lake — teal water, muted purple hills, warm sky,
-  gold accents. Match the existing sprites' mood, not a neon/high-contrast look.
-- **Framing:** single subject, centered, **transparent background** for anything
-  that isn't a full scene (sprites, hats, boats, fish, junk items).
+> **Changed 2026-08-31.** `ART_DIRECTION.md` is now the authority on style, and
+> it replaces the pixel-art guardrails that were here. The old ones are kept
+> below, struck through, because every asset currently in `assets/` was made
+> under them — so they still explain what's on screen today.
+
+- **Warm painterly storybook**, Ghibli-anchored: soft diffused light, banded
+  skies, glowing light sources rather than flat discs, gentle rounded
+  proportions, clean readable silhouette (it renders small).
+- **Palette:** muted and warm, never saturated or neon. Muted teal-green water
+  with a darker depth band; warm slightly-desaturated wood and earth.
+- **Outlines:** thin (~1–1.5px at sprite scale) and **warm brown — never
+  black.** No pure black anywhere, in linework or shadow.
+- **Framing:** single subject, **transparent background** for anything that
+  isn't a full scene. For any piece belonging to a rig, see the same-canvas rule
+  below — it beats "centered".
 - **No text, no UI, no watermark, no drop shadow baked in.**
-- Square-ish canvas sized to how it's used (small sprites ~64×64; scenes wider).
+- Canvas sized to how it's used; rig pieces share the body's canvas exactly.
+
+~~Old pixel-era guardrails (what the current assets were made under): cozy pixel
+art, chunky pixels; warm dawn/dusk lake palette — teal water, muted purple
+hills, warm sky, gold accents; single centered subject; square-ish canvas
+~64×64 for small sprites.~~
+
+## The same-canvas rule (any piece that belongs to a rig)
+
+Learned the hard way in G1 and carried forward through V2 into the refresh —
+this is the rule that makes layered characters and fish work at all:
+
+1. **Every piece is drawn from the body sprite as an attached reference image**,
+   not from a text description of it.
+2. **Every piece comes back on the same canvas, in place** — a transparent
+   canvas the same size as the body, with the hat (or fin, or rod) already
+   sitting where it goes. Then all layers share one box and the offsets are
+   literally zero. Registration is the generator's job, not a tuning session.
+3. **The grip is a sandwich, not an alignment problem.** Body drawn with an
+   *open* curled hand → rod paints over it → a fingers-only overlay paints over
+   the rod. Any rod then looks held.
+
+A piece that doesn't fit is a **reroll, not an offset tweak**. Tuning offsets at
+4x zoom is exactly how G1 shipped something that looked wrong at 1x.
 
 ## Gotcha: Gemini fakes transparency
 
@@ -95,11 +129,31 @@ gets rewritten per batch as Gemini finds new ways to fake transparency.
 
 ## Prompt template Claude should reuse
 
-> Pixel art <subject>, cozy retro game asset, chunky clean pixels, warm dawn
-> lake palette (teal water, muted purple hills, warm sky, gold accents), single
-> centered subject, transparent background, no text, no shadow. <extra detail>.
+The base template from `ART_DIRECTION.md`, prefixed to **every** asset prompt so
+separately generated pieces still agree on palette and mood:
+
+> Soft painterly illustration in the style of Studio Ghibli background art, warm
+> muted color palette, gentle diffused lighting, thin warm brown outlines rather
+> than black, cozy and inviting mood, no harsh shadows, no neon or saturated
+> colors.
+
+Then the asset-specific part, then the framing constraints (transparent
+background / same canvas as the reference / no text, no baked shadow).
+
+~~Old template: "Pixel art <subject>, cozy retro game asset, chunky clean
+pixels, warm dawn lake palette…"~~ — retired 2026-08-31 with the pixel
+direction.
 
 ## Open art requests
+
+> **Nothing is open right now (2026-08-31).** The two requests that were open —
+> V2's four reference-drawn angler pieces and the re-shot Stream background —
+> were **withdrawn** with the pixel direction; both are marked below. The Art &
+> Animation Refresh (`BUILD_PLAN_REFRESH.md`) starts with two code-only
+> milestones, R1 and R2, so **Matt has no art to generate until R3**, which opens
+> with the Pond's three background layers. Don't generate anything against the
+> old prompts in this file; they are kept as a record of what's on screen, not as
+> a queue.
 
 ### ✅ G1 — the angler, taken apart (landed 2026-08-25)
 
@@ -188,7 +242,13 @@ poses, G3's age/sex sets): draw the head at the **same anchor point** within the
 canvas for a given pose. If every body in a pose puts its head in the same
 place, one hat PNG fits all of them and G4 never needs per-character hat sizes.
 
-### V2 — the angler and its gear, drawn to register (4 PNGs, Pond pose)
+### ❌ V2 — the angler and its gear, drawn to register (4 PNGs, Pond pose) — WITHDRAWN 2026-08-31
+
+**Do not generate these.** The pieces were specified in the pixel style and for
+a body/hat/rod split; `ART_DIRECTION.md` replaces both, and R4 of the refresh
+re-requests the angler as head/torso/arm/rod in one costume per level. **The
+method described here survives and is now a standing rule** — see *The
+same-canvas rule* near the top of this file. That is why this section is kept.
 
 **This replaces the G1 approach below, which didn't work.** G1 asked for a hat
 and a rod as isolated sprites and then tried to line them up with offsets. At 4x
@@ -315,7 +375,14 @@ card. The script is scratchpad-only, like the transparency salvage script above.
 tree, so committing the PNG is only half the job — upload it at
 **Settings → General → Social preview**.
 
-### ⚠️ The Stream scene, re-shot — the one open request
+### ❌ The Stream scene, re-shot — WITHDRAWN 2026-08-31 (folded into R3)
+
+**Do not generate this.** R3 repaints all three levels in the new direction, as
+three layers each, so a re-shot pixel-era Stream would be thrown away on
+arrival. **The framing lesson below is the part that matters and carries into
+every R3 prompt**: a side view with a flat waterline at ~55% (design y=198), and
+`.loc-stream`'s scale-1.246x workaround gets deleted when the new art lands
+rather than re-tuned.
 
 `assets/background-stream.png` is in and wired, but it came back as a forest
 pool seen from **above**, with its water in a low diagonal band, rather than the

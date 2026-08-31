@@ -6,15 +6,42 @@ snapshot, not a design doc — `SPEC.md`, `BUILD_PLAN*.md`, `BACKLOG.md`, and
 each session. This file just says *where things were left* and *what's
 waiting on a human*.
 
-## Where things stand (as of 2026-08-31)
+## Where things stand (as of 2026-08-31, second session)
 
 v1 core (M1–M10) and Advanced Progression (A0–A8) are done and playable:
 Minnow → Mackerel → Marlin → Muskie, three biomes, all their art landed.
 
-The active epic is the **Visual Rework** — `BUILD_PLAN_VISUAL.md`, V1–V5.
-**V1 is done. V2 is next and is waiting on art** (four Gemini prompts in
-`ART.md`). This epic replaced the Graphics & Character Rig plan mid-session,
-which is the main thing to understand before touching the visuals; see below.
+**The art direction and the animation were restarted this session.** Matt likes
+the engine — progression, the keyboard, the unlockables — and wants a fresh
+start on backgrounds, boats and characters. Two new docs he supplied are now in
+the repo and are the source of truth:
+
+- **`ART_DIRECTION.md`** — warm painterly storybook, Ghibli-anchored. Muted
+  palette, banded skies, glow not discs, thin warm-brown outlines, **no pure
+  black**. Replaces the pixel-art direction the game shipped v1 with.
+- **`ANIMATION.md`** — casting arc, sagging Bezier line, tension-driven curve,
+  per-keystroke rod tug. Fixes the oldest visual gap in the game: the line
+  currently *appears* instead of travelling.
+
+The active epic is the **Art & Animation Refresh** — `BUILD_PLAN_REFRESH.md`,
+**R1–R7, and R1 is next**. It supersedes `BUILD_PLAN_VISUAL.md` (V2–V5) and
+`BUILD_PLAN_GRAPHICS.md`. This session was scoping only — **no game code
+changed**, so the build on `main` is exactly what it was.
+
+**Three decisions Matt made when the direction was adopted** (all recorded at
+the bottom of `ART_DIRECTION.md`; don't relitigate):
+
+1. The restyle reaches **everything except the keyboard grid** — including the
+   collection screen's CSS-drawn fish icons. The game is no longer pixel art.
+2. **One protagonist with three costumes.** The angler-assigned-from-age+sex
+   decision is retired; the favorite-color accent tint survives.
+3. **One rig per species** for the fish — all **33** of them, not shape
+   families. That is ~99 generated pieces, so R6 ships in waves by biome with
+   the current tinted placeholder standing in for anything that hasn't landed.
+
+**R1 and R2 need no art at all**, deliberately — so there is nothing for Matt
+to generate until R3, and `ART.md`'s open-request queue is empty (both previous
+requests were withdrawn with the old direction).
 
 ## ⚠️ Pending from the 2026-08-31 branch audit
 
@@ -84,7 +111,9 @@ Why each is safe:
   #42/#43 already merged the parts that survived (`CONFIG.rig.lineOrigin` and
   the computed aim).
 
-## The arc of this session, in one paragraph
+## The arc of the *previous* session, in one paragraph
+
+*(Kept because it explains why the visuals were in the state Matt reacted to.)*
 
 The three outstanding art PNGs landed and got wired (Ocean scene, Muskie hero
 sprite, dino nugget). That exposed a scene-composition problem — the SVG wave
@@ -198,14 +227,15 @@ contradicted: it was always about the fishing loop, and now says so.
   branch.** A web session's git credentials are read-only — `git push` returns
   HTTP 403 on `git-receive-pack` — so branch deletions are a local or console
   step too, even though merging a PR through the GitHub MCP server works fine.
-- **V2 art — four prompts in `ART.md`, and the order matters.**
-  `body-kid-boat.png` (open C-curl hand) is generated first, then
-  `hand-kid-boat.png`, `hat-straw.png` and `rod-basic.png` are each generated
-  **from it as an attached reference image**, returned on the **same canvas**.
-  Watch for Gemini tight-cropping the subject — that's the reroll case.
-- **The Stream scene, re-shot** (prompt in `ART.md`). The current art is a
-  top-down forest pool; V3's standing angler in waders needs a bank to stand
-  on, and `.loc-stream`'s framing workaround comes out when it lands.
+- ~~V2 art — four prompts in `ART.md`~~ and ~~the re-shot Stream scene~~ —
+  **both withdrawn 2026-08-31** with the pixel direction. Nothing to generate
+  right now. The next art request is R3's Pond background layers, and it won't
+  be written until R1 and R2 (both code-only) are done. The *method* from those
+  requests survives as `ART.md`'s standing same-canvas rule.
+- **R1's prototype needs a review from Matt.** `ANIMATION.md` flags its own
+  central assumption — Bezier line with a tension-driven control point, rather
+  than a physics rope — and asks that it be prototyped once and looked at before
+  it's treated as final. That's the first thing that will want Matt's eyes.
 - **A7 fight-beats playtest with a real kid** still hasn't happened —
   `clauseRunMs`/`segmentRunMs` in `config.js` were picked by feel.
 
@@ -229,11 +259,19 @@ contradicted: it was always about the fishing loop, and now says so.
 
 ## Likely next steps
 
-1. Generate the four V2 PNGs; Claude composites them locally and checks the
-   stack at game scale *before* wiring.
-2. Then V3 (vessels: rowboat / waders / Whaler with fighting chair), which
-   wants the re-shot Stream background first.
-3. The kid playtest of the A7 fight beats, whenever a kid is available.
+1. **R1 — the line and the cast actually move.** Prototype in `prototype/`
+   first (`ANIMATION.md` asks for exactly that), get Matt's look at it, then
+   wire it: `#line` becomes an SVG `<path>`, the lure travels an arc, the curve
+   reacts to tension. No art needed. Read `ANIMATION.md`'s "Where the current
+   build stands" section before starting — the diff is smaller than the spec
+   sounds, and it names the one trap (`LINE_ORIGIN` is computed once at load and
+   has to follow the rod tip once the rod moves).
+2. **R2 — palette and treatment pass.** Also code-only. Includes a re-pass on
+   `data/fish.json`'s 33 per-species `color` values, which were picked against
+   the old locked palette.
+3. **R3** opens the first art request of the epic: the Pond's three background
+   layers, wired and judged before the other two levels are generated.
+4. The kid playtest of the A7 fight beats, whenever a kid is available.
 
 ## Housekeeping
 

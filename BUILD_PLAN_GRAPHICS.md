@@ -8,6 +8,11 @@
 > (per-location vessels, three poses, angler assigned from age + sex, favorite
 > color as a runtime tint) all carry over and are restated there. Kept for the
 > reasoning trail.
+>
+> **Superseded again 2026-08-31 by `BUILD_PLAN_REFRESH.md`**, which replaces
+> the art direction wholesale. Of the decisions above, the per-location vessels
+> and the favorite-color tint survive; **the angler assigned from age + sex does
+> not** — there is one protagonist now, with a costume per level.
 
 
 Companion to `SPEC.md`, `BUILD_PLAN.md` (v1, M1–M10) and

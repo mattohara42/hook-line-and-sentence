@@ -1,16 +1,25 @@
 # CLAUDE.md — Hook, Line and Sentence
 
-Cozy pixel-art fishing game that teaches kids to type. Read `SPEC.md` first —
-it is the source of truth for all design decisions. `BUILD_PLAN.md` defines
-milestone order for the v1 core (M1–M10, all done); `BUILD_PLAN_ADVANCED.md`
-was the plan for the post-v1 **Advanced Progression epic** (tiers, phrases,
-sentences, WPM-as-goal) — **A0–A8 all shipped 2026-08-22, epic complete.**
-All Advanced Progression art has landed. The current epic is the **Visual
-Rework** — `BUILD_PLAN_VISUAL.md` (V1 done, V2 next), which supersedes
-`BUILD_PLAN_GRAPHICS.md` after G1's layered angler didn't hold up in play.
-Two art requests are open in `ART.md`: V2's four reference-drawn angler
-pieces, and a re-shot Stream background that V3 needs. A real kid playtest of the A7
-fight beats is still outstanding (see `BACKLOG.md`).
+Cozy fishing game that teaches kids to type, in a warm painterly storybook
+style. Read `SPEC.md` first — it is the source of truth for all design
+decisions. `BUILD_PLAN.md` defines milestone order for the v1 core (M1–M10, all
+done); `BUILD_PLAN_ADVANCED.md` was the plan for the post-v1 **Advanced
+Progression epic** (tiers, phrases, sentences, WPM-as-goal) — **A0–A8 all
+shipped 2026-08-22, epic complete.**
+
+The current epic is the **Art & Animation Refresh** —
+`BUILD_PLAN_REFRESH.md` (R1–R7, opened 2026-08-31, **R1 next**). It is a
+significant piece of work: the whole visual layer is being restarted under two
+new source-of-truth docs, **`ART_DIRECTION.md`** (warm painterly, Ghibli-
+anchored, no pure black) and **`ANIMATION.md`** (the cast/line/reel motion the
+game has never had). It supersedes `BUILD_PLAN_VISUAL.md` (V2–V5) and
+`BUILD_PLAN_GRAPHICS.md`, both of which planned art in the old pixel style;
+V1's three-plane scene survives and is only retuned. **The engine is not being
+touched** — progression, the keyboard and the unlockables all stay as they are.
+`ART.md`'s open art requests were withdrawn with the old direction; R3 opens
+the new ones. A real kid playtest of the A7 fight beats is still outstanding
+(see `BACKLOG.md`).
+
 Work on exactly one milestone at a time. `ART.md` is the art pipeline: Claude
 writes Gemini prompts + filenames, Matt generates the PNGs.
 
@@ -36,11 +45,19 @@ older still and is load-bearing for the pre-profiles migration.
   catch, localStorage mirror. Do not add subcollections or per-keystroke
   writes.
 - Rendering is DOM/CSS (validated by `prototype/visual-mockup.html`). Do not
-  introduce canvas or Phaser without discussing first.
-- **The scene has three planes** (V1): background art, the mid plane (rig,
-  fish), and `#surface` — the water painted *in front* of the mid plane. New
-  scene elements have to pick a side of the surface. Nothing may land in the
-  bottom-center finger-guide panel; it covers the lower third.
+  introduce canvas or Phaser without discussing first. **Inline SVG is allowed**
+  for shapes CSS can't express — R1's curved fishing line is one `<path>` in the
+  scene. That is still DOM, still no build step; it is not the canvas door
+  opening.
+- **The scene has three planes** (V1, and it survives the art refresh):
+  background art, the mid plane (rig, fish), and `#surface` — the water painted
+  *in front* of the mid plane. New scene elements have to pick a side of the
+  surface. Nothing may land in the bottom-center finger-guide panel; it covers
+  the lower third.
+- **`ART_DIRECTION.md` governs every visual choice** — palette, light, outline
+  weight — including CSS-drawn UI, not just generated PNGs. No pure black
+  anywhere; warm dark browns instead. The ghost-hands keyboard is the one
+  deliberate exception and stays exactly as it is.
 
 ## Design decisions already made (don't relitigate)
 

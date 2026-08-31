@@ -4,7 +4,9 @@
 
 ## Vision
 
-A cozy, pixel-art fishing game that teaches kids to type. The vibe is Cast n Chill: calm water, gentle music, no fail-pressure. Typing *is* the fishing — casting, reeling, and catching all happen through the keyboard, so practice never feels like practice.
+A cozy fishing game that teaches kids to type. The vibe is Cast n Chill: calm water, gentle music, no fail-pressure. Typing *is* the fishing — casting, reeling, and catching all happen through the keyboard, so practice never feels like practice.
+
+**Visual direction (changed 2026-08-31):** v1 shipped as pixel art; the game is now warm, painterly and storybook — see `ART_DIRECTION.md`, which supersedes the pixel-art wording that used to be in this line and in "Assets" below. The change reaches everything **except the ghost-hands finger keyboard**, which stays exactly as it is. Motion (casting, the line, reeling) is specified separately in `ANIMATION.md`. Both are being delivered by the Art & Animation Refresh epic, `BUILD_PLAN_REFRESH.md`.
 
 **Primary players:** Matt's kids, learning to type from scratch.
 **Design principle:** Cozy first. Nothing in the game should punish slow typing — only carelessness (repeated wrong letters) has consequences, and even those are gentle.
@@ -73,7 +75,7 @@ This one structure powers everything:
 ## Tech Direction (Phase 3 — to be finalized after prototype)
 
 - **Likely stack:** vanilla JS + Firestore, matching Family Hub patterns (no build step, known deployment path via Netlify). Phaser 3 remains an option if pixel-art animation needs outgrow canvas/DOM — decide after prototyping game feel.
-- **Assets:** pixel art — source from open packs (e.g., itch.io fishing/water tilesets) for v1, custom art later if the game sticks.
+- **Assets:** ~~pixel art — source from open packs (e.g., itch.io fishing/water tilesets) for v1~~ — **superseded.** The game stuck, so it has custom art: AI-generated painterly backgrounds and rigged sprites, per `ART_DIRECTION.md` and the pipeline in `ART.md`.
 
 ## Open Questions → Working Defaults
 

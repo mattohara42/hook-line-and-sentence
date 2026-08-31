@@ -5,7 +5,8 @@ Ideas captured during design/build. Nothing here expands the current milestone.
 ## Flavor & fun
 - **Groan counter** — after each catch pun, a 🙄 button increments a lifetime "Dad Jokes Endured" stat per profile. Zero gameplay impact, maximum family lore.
 - Kids contribute puns: pun pools are one data structure; add a simple way for family to submit new ones.
-- Kid-drawn fish as real sprites (scan/photo → pixel-ify).
+- Kid-drawn fish as real sprites (scan/photo → cleaned up to match
+  `ART_DIRECTION.md`; the "pixel-ify" step retired with the pixel direction).
 
 ## Gameplay (v2 candidates — see SPEC.md)
 - Adaptive tension meter (accuracy/timing stats already being logged in v1 for this).
