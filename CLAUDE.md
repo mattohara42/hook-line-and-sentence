@@ -51,6 +51,14 @@ older still and is load-bearing for the pre-profiles migration.
   keep the literal instruction
 - Stage 1 (home row) is short by design — 37 words available, first unlock
   at 3 catches
+- **Quick Cast is the one mode outside the progression** and is meant to stay
+  that way: always in the tackle box, drawing from the whole word pool by
+  default, and sealed off from the fishing save (no coins/catches/badges, and
+  none of `save.stats`). Don't "fix" it to respect unlocked letters or to feed
+  the Grown-ups heatmap — both are deliberate, and the second would let a timed
+  run farm the "Hooked on Typing" badge. Its only state is `save.speedBest`.
+  The no-timers rule in `SPEC.md` is about the *fishing loop*; see its Non-Goals
+  note.
 
 ## Workflow
 

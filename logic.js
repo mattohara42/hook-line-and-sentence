@@ -167,6 +167,25 @@ export function computeWpm(chars, activeMs) {
   return Math.round((chars / 5) / (activeMs / 60000));
 }
 
+// ---- Quick Cast (the timed speed test) ----
+// Which words a timed run draws from. The mode is deliberately available at any
+// progression, so by default it uses the WHOLE pool: a speed score is only worth
+// anything measured against the same content every time, and gating it by
+// unlocked letters would make a kid's own scores incomparable as they progress.
+// Flip useUnlockedOnly to keep a run inside the letters they've been taught.
+export function speedTestPool(entries, unlockedLetters, useUnlockedOnly) {
+  if (!useUnlockedOnly) return entries;
+  return entries.filter(e => [...e.letters].every(l => unlockedLetters.has(l)));
+}
+
+// Accuracy over a timed run: correct keys as a whole percent of every key
+// pressed. Nothing pressed → 0, never NaN.
+export function typingAccuracy(correct, wrong) {
+  const total = correct + wrong;
+  if (total <= 0) return 0;
+  return Math.round((correct / total) * 100);
+}
+
 // A caught WPM is a new personal best when it beats the stored one (and is a
 // real, positive number). No record yet → any real WPM is a best.
 export function isPersonalBestWpm(previousBestWpm, wpm) {

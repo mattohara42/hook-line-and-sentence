@@ -17,6 +17,17 @@ export const CONFIG = {
     recastDelayMs: 1500,    // pause on the catch/escape message before recasting
   },
 
+  // Quick Cast — the timed typing-speed test. Deliberately OUTSIDE the
+  // progression: the tackle box always offers it, whatever a kid has unlocked,
+  // and it neither reads nor writes fishing stats (see app.js). Its only
+  // persisted state is save.speedBest.
+  speedTest: {
+    durationSec: 30,               // one run, wall-clock
+    countdownSec: 3,               // "ready?" beats before the clock starts
+    useUnlockedLettersOnly: false, // false = the whole word pool, so scores stay comparable
+    upcoming: 2,                   // queued words shown after the current one
+  },
+
   bite: {
     delayMsRange: [1200, 3200],
     // odds a bite comes from each tier, by rod level (must sum to 1)

@@ -652,3 +652,41 @@ h1 {
   #scene.shake, #word.shakeword, #word.pop, #unlock-banner.show, #unlock-banner.prestige, .key.fresh, #fish.hooked, #word .cur.space { animation: none; }
   .ripple, .p, .coinfloat { display: none; }
 }
+
+/* ── Quick Cast: the timed speed test (always available, outside progression) ── */
+#st-best { font-size: 12px; color: var(--dim); margin-bottom: 18px; letter-spacing: 0.04em; }
+
+#st-clock {
+  font-family: var(--display); font-size: 30px; color: var(--gold);
+  letter-spacing: 0.08em; margin-bottom: 14px;
+}
+#st-clock.ready { color: var(--foam); }
+#st-clock.low   { color: var(--ember); }
+
+#st-word {
+  font-size: 34px; letter-spacing: 0.14em; min-height: 48px;
+  margin-bottom: 10px; word-break: break-all;
+}
+#st-word .done { color: var(--moss); }
+#st-word .todo { color: var(--ink); }
+#st-word .cur  { color: var(--gold); }
+/* its own shake — #word's keyframes bake in the translateX(-50%) that centres
+   the fixed in-game word, which would fling this one out of the panel */
+#st-word.shakeword { animation: stshake 0.16s; }
+@keyframes stshake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+
+#st-next {
+  font-size: 15px; color: var(--dim); letter-spacing: 0.1em;
+  min-height: 20px; opacity: 0.75;
+}
+#st-hint { font-size: 11px; color: var(--dim); margin-top: 14px; opacity: 0.7; }
+
+#st-wpm { font-family: var(--display); font-size: 52px; color: var(--gold); line-height: 1.1; }
+#st-wpm-label { font-size: 11px; color: var(--dim); letter-spacing: 0.14em; margin-bottom: 14px; }
+#st-detail { font-size: 13px; color: var(--ink); margin-bottom: 10px; }
+#st-pb { font-family: var(--display); font-size: 12px; color: var(--moss); margin-bottom: 16px; }
+#st-pb[hidden] { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  #st-word.shakeword { animation: none; }
+}

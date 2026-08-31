@@ -49,6 +49,24 @@ Four ranks open three spots: the Pond (single words, lowercase only), the
 Stream (multi-word phrases, spacebar and capitals), and the Ocean (full
 sentences with punctuation). Catch the legendary and you're a Muskie.
 
+## Quick Cast — the speed test
+
+A timed typing test lives in the tackle box (⏱️ **Quick cast**), and it is
+**always available** — every profile, from the first minute, whatever they have
+unlocked. Type as many words as you can in 30 seconds; you get words-per-minute,
+accuracy, and a personal best to beat.
+
+It sits deliberately outside the game:
+
+- **No progression gate**, and by default it draws from the *whole* word pool
+  rather than a kid's unlocked letters, so a score means the same thing in week
+  one as in month six. `CONFIG.speedTest.useUnlockedLettersOnly` flips that.
+- **It cannot touch the fishing save** — no coins, no catches, no badges, and
+  none of the per-key stats behind the Grown-ups view. "Hooked on Typing" counts
+  words reeled from real fish, and typing under a clock is not the same evidence
+  about which keys a kid finds hard. Its only stored state is `speedBest`.
+- The finger guide follows along, same as it does while fishing.
+
 ## Play the prototypes
 
 Open `prototype/visual-mockup.html` in a browser. No server needed.
