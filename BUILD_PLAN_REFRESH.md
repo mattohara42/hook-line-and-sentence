@@ -2,7 +2,7 @@
 
 **Status: active epic, opened 2026-08-31. This is a significant new body of
 work — the largest since the Advanced Progression epic — and it replaces the
-game's entire visual layer.**
+game's entire visual layer. R1 shipped 2026-08-31; R2 is next.**
 
 Two new documents are the source of truth for it:
 
@@ -47,6 +47,46 @@ fish (R6) are last because they are the biggest generation job in the epic.
 
 ---
 
+### ✅ R1 — The line and the cast actually move (done 2026-08-31, no new art)
+
+**Shipped.** `#line`'s rotated `<div>` is gone; the line is an SVG quadratic
+Bezier redrawn every frame between two ends that both move. The cast has
+anticipation, an arc and a splash where the lure actually lands; the idle line
+sags; the reel curve tightens with tension; every correct keystroke tugs the rod.
+
+Verified in a real browser (Chromium, not just unit tests): a full catch and a
+full escape at 1x, and both again under `prefers-reduced-motion`. Measured
+rather than eyeballed — at 84% tension the sag came back 7.3px against a
+hand-computed 7.3, and the rod's tug peaks at 4.8° and settles to exactly 0.
+
+Four things worth knowing, three of them decisions:
+
+- **`LINE_ORIGIN` was the trap, and it was real.** The rod tip is now read from
+  `#rig`'s live transform matrix every frame — through the boat's bob *and* the
+  rod's own rotation — rather than resolved once at load.
+- **`CONFIG.anim.cast.landing` is now the single source of the landing point.**
+  It used to be hardcoded in three places that had drifted apart (the bobber's
+  CSS at 388,190; the splash at 400,195; the ripple at 394,196). The bobber is
+  positioned from it, so the lure and the bobber cannot separate again.
+- **The tug is a damped spring, not a tween** (`logic.stepTug`). Fast typing
+  stacks impulses into an irregular judder; a tween would restart and read
+  mechanical. A data test pins the rod's pivot to the rod layer's grip corner,
+  because a gear-shop rod (R7) with a different box would otherwise detach the
+  line from a rod that is visibly swinging.
+- **Reduced motion completes rather than skips.** No animation loop runs at all;
+  the cast lands instantly with the line drawn in its final position, and the
+  handful of things that change the line's shape between fish movements ask for
+  their own single redraw.
+
+**Still open for Matt:** `ANIMATION.md`'s own assumption — Bezier-with-a-
+tension-driven-control-point rather than a physics rope — is what
+`prototype/line-animation.html` exists to let you judge. If it fails the eye
+test the shape lives in `logic.js` and the numbers in `CONFIG.anim`, so the
+swap is contained.
+
+<details>
+<summary>The original plan for R1, as written</summary>
+
 ### R1 — The line and the cast actually move (no new art)
 
 Implements `ANIMATION.md`. Read its **"Where the current build stands"**
@@ -79,6 +119,8 @@ section first — it maps each requirement onto the code that exists.
   visibly tightens when a kid makes mistakes and loosens when they recover, and
   reduced-motion still lands every fish. Matt reviews the prototype before the
   wiring lands.
+
+</details>
 
 ### R2 — Palette and treatment pass (no new art)
 

@@ -152,27 +152,41 @@ h1 {
 }
 /* G1: the angler is a stack of these — body, hat, rod — built by renderRig()
    from CONFIG.rig.layers, which owns the geometry so one config edit swaps a
-   hat. Paint order is DOM order, and they're inserted before #line so the
-   fishing line always draws on top. */
+   hat. Paint order is DOM order. (R1: the line is no longer one of these
+   children — it's #line-svg below, in scene space, so it can curve.) */
 .rig-layer {
   position: absolute;
   background: center / contain no-repeat;
   image-rendering: pixelated;
 }
-/* The line hangs off the rod tip. Position comes from CONFIG.rig.lineOrigin
-   (renderRig sets it) and the length/angle are computed per cast, so moving or
-   resizing the rod layer moves the line with it — no more solved-by-hand
-   275px-at-9.8deg pair that only worked for one rod in one boat. */
-#line {
-  position: absolute; height: 2px; width: 0;
-  background: rgba(242,237,227,0.7);
-  transform-origin: left center;
-  transition: width 0.4s ease;
+/* R1: the line is an SVG path in scene design space (720x360), redrawn every
+   frame by app.js from the rod tip's live position to whatever it's attached to
+   — the lure in flight, the bobber, or a hooked fish. It's a quadratic Bezier
+   whose control point sags, and during a reel that sag tightens with tension.
+   No z-index: it sits between #rig and #surface in DOM order, so the stretch of
+   line below the waterline is tinted by the water like everything else. */
+#line-svg {
+  position: absolute; left: 0; top: 0; width: 720px; height: 360px;
+  pointer-events: none; overflow: visible;
 }
+#line-path { fill: none; stroke: rgba(242,237,227,0.72); }
+/* R1: the lure/hook on the end of the line while it's in the air. The bobber
+   takes over once it lands, so this is only ever visible mid-cast. */
+#lure {
+  position: absolute; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gold); opacity: 0; pointer-events: none;
+}
+#lure.on { opacity: 1; }
+/* R1: the rod rotates about the grip (CONFIG.anim.rod.pivot) for the cast's
+   backswing and the per-keystroke tug. renderRig() sets the origin from config;
+   the angle is set per frame in JS, so there's no transition to fight. */
+.rig-layer[data-id="rod"] { will-change: transform; }
 
 /* bobber floats where the line meets the water during the wait */
 #bobber {
-  position: absolute; left: 388px; top: 190px; width: 11px; height: 11px;
+  /* left/top are set from CONFIG.anim.cast.landing by app.js (R1) — the lure
+     lands and the bobber takes its place, so the two can't drift apart. */
+  position: absolute; width: 11px; height: 11px;
   border-radius: 50%;
   background: linear-gradient(180deg, var(--ember) 0 50%, var(--foam) 50% 100%);
   opacity: 0; transition: opacity 0.3s;
@@ -648,7 +662,7 @@ h1 {
 
 @media (prefers-reduced-motion: reduce) {
   #rig, .cloud, .reed, #bobber, #meter-fill.danger, #hull-shadow { animation: none !important; }
-  .finger, #line, #fish { transition: none; }
+  .finger, #fish { transition: none; }
   #scene.shake, #word.shakeword, #word.pop, #unlock-banner.show, #unlock-banner.prestige, .key.fresh, #fish.hooked, #word .cur.space { animation: none; }
   .ripple, .p, .coinfloat { display: none; }
 }

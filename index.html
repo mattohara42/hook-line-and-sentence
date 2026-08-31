@@ -18,8 +18,16 @@
     <div id="rig">
       <div id="boat"></div>
       <!-- the angler's layers (body/hat/rod) are built here from CONFIG.rig -->
-      <div id="line"></div>
     </div>
+    <!-- R1: the fishing line is a curve, so it's an SVG <path> rather than the
+         rotated <div> it used to be — a div can only ever be straight, which is
+         why the line "just appeared". It sits OUTSIDE #rig, in scene design
+         space, because both of its ends move independently now: the rod tip
+         swings with the cast and the bob, and the far end is a lure in flight
+         or a fish being reeled. app.js redraws it every frame from the rod
+         tip's live position. Still DOM, still no build step. -->
+    <svg id="line-svg" viewBox="0 0 720 360" aria-hidden="true"><path id="line-path"/></svg>
+    <div id="lure"></div>
     <div id="bobber"></div>
     <div id="fish"></div>
     <!-- V1: the water surface, painted IN FRONT of the boat and the fish. This

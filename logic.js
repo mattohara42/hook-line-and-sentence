@@ -240,3 +240,63 @@ export function tierWithFallback(tiersPresent, desired, order) {
   for (let i = start - 1; i >= 0; i--) if (tiersPresent.has(order[i])) return order[i];
   return desired;
 }
+
+// ---- R1: cast, line and reel motion (ANIMATION.md) ----------------------
+// Pure geometry only — the DOM side lives in app.js, and the prototype at
+// prototype/line-animation.html imports these same functions, so what Matt
+// reviewed and what ships are the same math.
+
+// The lure in flight: a projectile arc from the rod tip to where it lands,
+// `t` in [0,1]. Linear in x, with a parabolic lift that peaks `apexPx` above
+// the straight chord at t=0.5 and is exactly 0 at both ends — so the lure
+// leaves the rod tip and arrives at the landing point no matter the apex.
+export function castArcPoint(from, to, apexPx, t) {
+  const k = Math.min(1, Math.max(0, t));
+  return {
+    x: from.x + (to.x - from.x) * k,
+    y: from.y + (to.y - from.y) * k - apexPx * 4 * k * (1 - k),
+  };
+}
+
+// How far the line's control point hangs below the straight rod-tip→end chord.
+// Tension only ever *tightens* it: 0 sags by `slackPx`, 100 pulls in to
+// `tautPx`. Tension rises on errors and nothing else (SPEC.md), so a taut line
+// reads as "you're making mistakes" — never as "you're typing too slowly".
+export function lineSagPx(tension, slackPx, tautPx) {
+  const t = Math.min(100, Math.max(0, tension ?? 0)) / 100;
+  return slackPx + (tautPx - slackPx) * t;
+}
+
+// Control point for the quadratic Bezier that draws the line. Offset straight
+// down in screen space, which is what sells weight. Note a quadratic sits half
+// way to its control point at the midpoint, so the visible dip is sagPx/2.
+export function lineControlPoint(from, to, sagPx) {
+  return { x: (from.x + to.x) / 2, y: (from.y + to.y) / 2 + sagPx };
+}
+
+// One frame of the rod-tip tug: a damped spring pulling the rod back to rest.
+// A spring rather than a tween on purpose — fast typing stacks impulses into
+// an irregular judder, where a tween would keep restarting and read as
+// mechanical. Returns the next {angle, vel}; dtMs is clamped so a backgrounded
+// tab can't integrate one enormous step and fling the rod.
+export function stepTug(angle, vel, dtMs, cfg) {
+  const dt = Math.min(dtMs, 50) / 1000;
+  const acc = -cfg.stiffness * angle - cfg.damping * vel;
+  const v = vel + acc * dt;
+  return { angle: angle + v * dt, vel: v };
+}
+
+// Where a point rig-relative to #rig lands once the rod has rotated by `deg`
+// about the grip. The rod tip is the line's origin, so this is what keeps the
+// line attached to a rod that is being pulled back, swung, and tugged.
+export function rotateAboutPivot(point, pivot, deg) {
+  const r = deg * Math.PI / 180, cos = Math.cos(r), sin = Math.sin(r);
+  const dx = point.x - pivot.x, dy = point.y - pivot.y;
+  return { x: pivot.x + dx * cos - dy * sin, y: pivot.y + dx * sin + dy * cos };
+}
+
+// Eased progress helpers for the cast timeline. `easeIn` for the anticipation
+// (slow to load, quick to release), `easeOut` for the flight (the lure decays
+// into its landing rather than arriving at full speed).
+export function easeIn(t)  { const k = Math.min(1, Math.max(0, t)); return k * k; }
+export function easeOut(t) { const k = Math.min(1, Math.max(0, t)); return 1 - (1 - k) * (1 - k); }
