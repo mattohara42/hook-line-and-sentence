@@ -24,8 +24,9 @@ the repo and are the source of truth:
   to *appear* rather than travel. **Built in R1, below.**
 
 The active epic is the **Art & Animation Refresh** — `BUILD_PLAN_REFRESH.md`,
-**R1–R7. R1 shipped; R2 is next.** It supersedes `BUILD_PLAN_VISUAL.md` (V2–V5)
-and `BUILD_PLAN_GRAPHICS.md`.
+**R1–R7. R1 and R2 both shipped this session; R3 is next**, and it is the first
+milestone that needs Matt to generate anything. It supersedes
+`BUILD_PLAN_VISUAL.md` (V2–V5) and `BUILD_PLAN_GRAPHICS.md`.
 
 **Three decisions Matt made when the direction was adopted** (all recorded at
 the bottom of `ART_DIRECTION.md`; don't relitigate):
@@ -38,9 +39,9 @@ the bottom of `ART_DIRECTION.md`; don't relitigate):
    families. That is ~99 generated pieces, so R6 ships in waves by biome with
    the current tinted placeholder standing in for anything that hasn't landed.
 
-**R1 and R2 need no art at all**, deliberately — so there is nothing for Matt
-to generate until R3, and `ART.md`'s open-request queue is empty (both previous
-requests were withdrawn with the old direction).
+**R1 and R2 needed no art at all**, deliberately — which is why they went
+first and why both are done. `ART.md`'s open-request queue is empty (the two
+previous requests were withdrawn with the old direction); **R3 fills it.**
 
 ## R1 shipped the same session (2026-08-31)
 
@@ -78,6 +79,40 @@ Three things a future session should know:
   so a gear-shop rod (R7) can't silently break it.
 - **Reduced motion runs no animation loop at all.** The cast *completes*
   instantly with the line in its final position — never a scene stuck mid-cast.
+
+## R2 shipped the same session (2026-08-31)
+
+**The palette moved.** The M7.5 lock is lifted and everything except the
+keyboard is warm and muted. Worth knowing:
+
+- **`:root` is a real palette now.** The old one defined fourteen tokens of
+  which six were referenced at all — the actual colours were literals scattered
+  through the file. Panels and shadows now route through `--umber-rgb`,
+  `--shadow-rgb`, `--gold-rgb`, `--ink-rgb`.
+- **The keyboard is provably untouched.** Its colours are frozen as `--kb-*`
+  and it references nothing else. Proved by diffing the computed styles of every
+  key state before and after (byte-identical), and a test now fails if anything
+  in that block reaches for a scene token. A second test fails on any pure black
+  in the stylesheet — both were confirmed to fail when deliberately violated.
+- **The 33 fish colours were re-passed** — hue kept, saturation compressed into
+  the muted band, lightness clamped to read against teal-green water. Koi went
+  from a fully saturated `#ffd36e` to `#dac493`. All 33 stay distinct.
+- **One unplanned addition:** rare and legendary cells in the collection now
+  carry the scene's gold rim. Muting the palette *removed* a read that used to
+  exist by accident — the legendary fish was special by being the loudest colour
+  on screen. The scene glows rare/legendary, so now the grid does too.
+- `image-rendering: pixelated` is gone. The old pixel art is smooth-scaled until
+  R3 replaces it: very slightly softer at 1x, checked side by side, fine.
+
+**It looks transitional right now, and that's expected** — warm chrome over the
+old saturated pixel sunset. The modal scrim goes muddy-orange where the old sky
+bleeds through it. That's the background, not the scrim; R3 fixes it by
+replacing the art, and tuning the scrim now would be tuning against a moving
+target.
+
+**`ART.md` now carries the palette's real hex values**, with a note that a
+background outside that range is a reroll. That's what R3's prompts are written
+against.
 
 ## ⚠️ Pending from the 2026-08-31 branch audit
 
@@ -300,19 +335,18 @@ contradicted: it was always about the fishing loop, and now says so.
 
 ## Likely next steps
 
-1. **Matt looks at the cast** — in the game and/or the prototype — and says
-   whether the Bezier line is enough. That is R1's one open item.
-2. **R2 — palette and treatment pass.** Code-only. Lifts the locked M7.5
-   palette, drops `image-rendering: pixelated`, re-skins everything except the
-   keyboard grid. Includes a re-pass on `data/fish.json`'s 33 per-species
-   `color` values, which were picked against the old locked palette.
-3. **R3** opens the first art request of the epic: the Pond's three background
-   layers, wired and judged before the other two levels are generated.
-4. The kid playtest of the A7 fight beats, whenever a kid is available.
+1. **R3 — three painted backgrounds, and it needs Matt.** This is the first
+   art of the epic: Pond first, three layers (far / water / foreground), wired
+   and judged *before* the other two levels are generated, so a palette or
+   framing miss costs one level's prompts instead of nine. The waterline has to
+   land at design y=198 or every tuned coordinate moves. Prompts go in `ART.md`.
+2. **Matt's eye test on the cast** (R1) — in the game or the prototype. Still
+   the one open item behind us.
+3. The kid playtest of the A7 fight beats, whenever a kid is available.
 
 ## Housekeeping
 
-- Full test suite: 78/78 passing (`npm test` — Node's built-in runner).
+- Full test suite: 80/80 passing (`npm test` — Node's built-in runner).
 - Every PR this session was opened ready-for-review and squash-merged
   immediately, per `CLAUDE.md`. (PR #55 is the exception — it's a draft
   because it conflicts and needs a decision, not because the convention

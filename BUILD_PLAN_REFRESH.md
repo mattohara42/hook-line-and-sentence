@@ -2,7 +2,8 @@
 
 **Status: active epic, opened 2026-08-31. This is a significant new body of
 work — the largest since the Advanced Progression epic — and it replaces the
-game's entire visual layer. R1 shipped 2026-08-31; R2 is next.**
+game's entire visual layer. R1 and R2 shipped 2026-08-31; R3 is next,
+and it is the first that needs Matt to generate anything.**
 
 Two new documents are the source of truth for it:
 
@@ -122,6 +123,47 @@ section first — it maps each requirement onto the code that exists.
 
 </details>
 
+### ✅ R2 — Palette and treatment pass (done 2026-08-31, no new art)
+
+**Shipped.** The M7.5 palette lock is lifted and the whole game except the
+keyboard is warm and muted. `:root` is a real palette now rather than an
+aspiration — the old one defined fourteen tokens of which **six were referenced
+at all**, with the actual colours hardcoded as literals all over the file.
+
+- Every translucent panel and shadow routes through `--umber-rgb` /
+  `--shadow-rgb` / `--gold-rgb` / `--ink-rgb`, so the next retune is four values.
+- **No pure black anywhere** — the five `rgba(0,0,0,x)` shadows are warm brown,
+  and `.cfish`'s `color-mix(… black 18%)` mixes umber instead.
+- `image-rendering: pixelated` is gone (4 rules). The remaining pixel art is
+  now smooth-scaled: very slightly softer at 1x, checked side by side, fine.
+- **`data/fish.json`'s 33 species colours were re-passed**, which the milestone
+  called for: hue kept (that is what tells them apart), saturation compressed
+  into the muted band, lightness clamped to read against teal-green water. Koi
+  went from fully saturated `#ffd36e` to `#dac493`. All 33 stay distinct — the
+  script asserts it.
+- The Grown-ups accuracy heatmap keeps its red→green meaning, muted to match.
+- **Rare and legendary cells in the collection now carry the scene's gold.**
+  Not in the original plan: muting the palette *removed* a read that used to
+  exist by accident, since the legendary fish was special by being the loudest
+  colour on screen. The scene glows rare/legendary; now the grid does too.
+
+**The keyboard is provably untouched.** Its colours are frozen as `--kb-*` at
+their pre-refresh values and it references nothing else, so a future palette
+change cannot reach it. Verified by diffing the computed styles of every key
+state (plain, locked, ghost, target, finger, finger-active, panel) before and
+after — byte-identical — and a test now fails if anything in that block reaches
+for a scene token. A second test fails on any pure black in the stylesheet.
+Both were confirmed to fail when deliberately violated.
+
+**Judged with the old art still in place, as planned.** Against the current
+saturated pixel sunset the warm chrome reads transitional — the modal scrim in
+particular goes muddy-orange where it bleeds through. That is the old
+background, not the scrim, and tuning it now would be tuning against art that
+R3 replaces.
+
+<details>
+<summary>The original plan for R2, as written</summary>
+
 ### R2 — Palette and treatment pass (no new art)
 
 The M7.5 palette lock is lifted here, on purpose and in one place, so that
@@ -144,6 +186,8 @@ every prompt from R3 onward has a matching set of tokens to point at.
   nothing renders pure black, and the collection screen matches the scene.
   Judged with the *old* art still in place — it will look transitional, and
   that is expected.
+
+</details>
 
 ### R3 — Three painted backgrounds, layered for parallax
 

@@ -8,7 +8,7 @@ Progression epic** (tiers, phrases, sentences, WPM-as-goal) — **A0–A8 all
 shipped 2026-08-22, epic complete.**
 
 The current epic is the **Art & Animation Refresh** —
-`BUILD_PLAN_REFRESH.md` (R1–R7, opened 2026-08-31; **R1 shipped, R2 next**). It is a
+`BUILD_PLAN_REFRESH.md` (R1–R7, opened 2026-08-31; **R1 and R2 shipped, R3 next**). It is a
 significant piece of work: the whole visual layer is being restarted under two
 new source-of-truth docs, **`ART_DIRECTION.md`** (warm painterly, Ghibli-
 anchored, no pure black) and **`ANIMATION.md`** (the cast/line/reel motion the
@@ -16,9 +16,11 @@ game has never had). It supersedes `BUILD_PLAN_VISUAL.md` (V2–V5) and
 `BUILD_PLAN_GRAPHICS.md`, both of which planned art in the old pixel style;
 V1's three-plane scene survives and is only retuned. **The engine is not being
 touched** — progression, the keyboard and the unlockables all stay as they are.
-`ART.md`'s open art requests were withdrawn with the old direction; R3 opens
-the new ones. A real kid playtest of the A7 fight beats is still outstanding
-(see `BACKLOG.md`).
+`ART.md`'s open art requests were withdrawn with the old direction; **R3 opens
+the new ones — it is the first milestone of the epic that needs Matt to
+generate anything.** `ART.md` carries the palette's real hex values for it.
+A real kid playtest of the A7 fight beats is still outstanding (see
+`BACKLOG.md`).
 
 Work on exactly one milestone at a time. `ART.md` is the art pipeline: Claude
 writes Gemini prompts + filenames, Matt generates the PNGs.
@@ -56,8 +58,12 @@ older still and is load-bearing for the pre-profiles migration.
   the lower third.
 - **`ART_DIRECTION.md` governs every visual choice** — palette, light, outline
   weight — including CSS-drawn UI, not just generated PNGs. No pure black
-  anywhere; warm dark browns instead. The ghost-hands keyboard is the one
-  deliberate exception and stays exactly as it is.
+  anywhere; warm dark browns instead. **Two tests enforce this** (`no pure
+  black…`, `the ghost-hands keyboard stays exempt…` in `tests/data.test.mjs`).
+- **The keyboard's colours are frozen as `--kb-*` in `style.css` and it uses
+  nothing else.** It is the deliberate exception to the art direction and stays
+  exactly as it is — never point it at a scene token, even one that looks
+  equivalent.
 
 ## Design decisions already made (don't relitigate)
 
