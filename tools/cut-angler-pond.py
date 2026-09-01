@@ -31,9 +31,21 @@ SRC = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "assets", "angler
 # --- the rod, fitted from the delivered art (x = M*y + B, in source px) ------
 M, B = -0.9002, 1012.9   # 48 degrees above horizontal
 HALF = 16.0              # half the shaft's width, outline included
-Y_TIP, Y_TAPER, Y_BUTT = 60.0, 130.0, 560.0
+Y_BUTT = 560.0           # the butt, where it tucks behind the knee
 HAND_TOP = 408.0         # below this the corridor holds fingers, not rod
 TOL, LO, HI = 90.0, 55.0, 115.0
+
+# The delivered painting ran the rod off the top-right corner, so the canvas —
+# not the drawing — decided its length, and it came out 51% of the old rig's.
+# So the shaft is EXTENDED along its own axis onto a padded canvas rather than
+# tapered in. This is the same synthesis that fills the hand-occluded stretch,
+# and it is sound for the same reason: a straight shaft is featureless content
+# with no recognisable form to violate. Both targets are in design px, so
+# retuning the rod is a one-line change here.
+CHILD_H  = 50.0          # the seated kid's height on the 720x360 canvas
+ROD_LEN  = 65.0          # grip to tip; the old browser-tuned rig was 65.1
+TIP_HALF = 1.2           # half-width at the very tip, in source px
+GRIP = (572.0, 490.0)    # where the hand closes on the pole, in source px
 
 im = Image.open(SRC).convert("RGB")
 W, H = im.size
@@ -79,30 +91,81 @@ keyed = np.dstack([fg, alpha * 255])
 # --- split the rod off along its axis ---------------------------------------
 Y, X = np.mgrid[0:H, 0:W]
 perp = np.abs(X - M * Y - B) / np.sqrt(1 + M * M)
-half = np.where(Y >= Y_TAPER, HALF, np.clip((Y - Y_TIP) / (Y_TAPER - Y_TIP), 0, 1) * HALF)
-corridor = (perp <= half) & (Y >= Y_TIP) & (Y <= Y_BUTT)
+corridor = (perp <= HALF) & (Y <= Y_BUTT)
 hand = (Y >= HAND_TOP) & (Y <= Y_BUTT)
 
+# the child alone sets the scale, so measure it before anything is padded
+child = (keyed[..., 3] > 30) & ~corridor
+cys, cxs = np.where(child)
+scale = CHILD_H / (cys.max() - cys.min() + 1)          # design px per source px
+rod_len = ROD_LEN / scale                              # how long the rod must be
+unit = np.array([-M, -1.0]) / np.sqrt(1 + M * M)       # up and to the right
+across = np.array([unit[1], -unit[0]])
+tip = np.array(GRIP) + rod_len * unit
+print("child %d px tall -> scale %.5f;  rod %.0f src px, tip at (%.0f, %.0f)"
+      % (cys.max() - cys.min() + 1, scale, rod_len, tip[0], tip[1]))
+
+# pad so the extended shaft fits, and carry the axis into padded coordinates
+PAD_T = max(0, int(np.ceil(-tip[1])) + 8)
+PAD_R = max(0, int(np.ceil(tip[0] - W)) + 8)
+keyed = np.pad(keyed, ((PAD_T, 0), (0, PAD_R), (0, 0)))
+Hp, Wp = keyed.shape[:2]
+Bp = B + (-M) * PAD_T                                  # x = M*(y-PAD_T) + B
+gripp = np.array([GRIP[0], GRIP[1] + PAD_T])
+print("padded canvas %dx%d (top +%d, right +%d)" % (Wp, Hp, PAD_T, PAD_R))
+
+Yp, Xp = np.mgrid[0:Hp, 0:Wp]
+perpp = np.abs(Xp - M * Yp - Bp) / np.sqrt(1 + M * M)
+corridorp = (perpp <= HALF) & (Yp <= Y_BUTT + PAD_T)
+handp = (Yp >= HAND_TOP + PAD_T) & (Yp <= Y_BUTT + PAD_T)
+
 rod = np.zeros_like(keyed)
-visible = corridor & ~hand & (keyed[..., 3] > 30)
+visible = corridorp & ~handp & (keyed[..., 3] > 30)
 rod[visible] = keyed[visible]
 
+# one clean cross-section of the shaft, reused for both syntheses
 offsets = np.arange(-int(HALF), int(HALF) + 1)
 profile = np.zeros((len(offsets), 4))
 for i, o in enumerate(offsets):
-    cols = [keyed[y, int(round(M * y + B)) + o] for y in range(370, 405)
-            if 0 <= int(round(M * y + B)) + o < W
-            and keyed[y, int(round(M * y + B)) + o, 3] > 30]
+    cols = [keyed[y, int(round(M * (y - PAD_T) + B)) + o]
+            for y in range(100 + PAD_T, 300 + PAD_T)
+            if 0 <= int(round(M * (y - PAD_T) + B)) + o < Wp
+            and keyed[y, int(round(M * (y - PAD_T) + B)) + o, 3] > 30]
     if cols:
         profile[i] = np.mean(cols, axis=0)
-for y in range(int(HAND_TOP), int(Y_BUTT) + 1):
-    for i, o in enumerate(offsets):
-        xi = int(round(M * y + B)) + o
-        if 0 <= xi < W and profile[i, 3] > 30:
-            rod[y, xi] = profile[i]
+
+def stamp(t, half):
+    """Paint one cross-section at distance t along the axis from the grip,
+    resampling the real profile so the outline tapers with the shaft."""
+    c = gripp + t * unit
+    for o in np.arange(-half, half + 0.5, 0.5):
+        idx = (o / half) * HALF + HALF if half > 0 else HALF
+        i0, i1 = int(np.floor(idx)), min(int(np.floor(idx)) + 1, len(offsets) - 1)
+        f = idx - i0
+        if not (0 <= i0 < len(offsets)) or profile[i0, 3] <= 30:
+            continue
+        px_ = c + o * across
+        xi, yi = int(round(px_[0])), int(round(px_[1]))
+        if 0 <= xi < Wp and 0 <= yi < Hp:
+            rod[yi, xi] = profile[i0] * (1 - f) + profile[i1] * f
+
+# the stretch the hand hides — never seen, because the rod paints behind
+t_hand0 = np.dot(np.array([M * (HAND_TOP) + B, HAND_TOP + PAD_T]) - gripp, unit)
+t_butt  = np.dot(np.array([M * (Y_BUTT) + B, Y_BUTT + PAD_T]) - gripp, unit)
+for t in np.arange(t_butt, t_hand0, 0.5):
+    stamp(t, HALF)
+
+# and the extension: from where the delivered canvas cut the shaft off, out to
+# the real tip, tapering the profile as it goes
+t_edge = np.dot(np.array([M * 0 + B, 0 + PAD_T]) - gripp, unit)
+for t in np.arange(t_edge, rod_len, 0.5):
+    k = (t - t_edge) / (rod_len - t_edge)
+    stamp(t, HALF + (TIP_HALF - HALF) * k)
+print("extended the shaft from t=%.0f to t=%.0f src px (%.0f%% of its length)"
+      % (t_edge, rod_len, 100 * (rod_len - t_edge) / rod_len))
 
 body = keyed.copy()
-body[(perp <= HALF) & (Y <= Y_BUTT) & ~hand] = 0   # incl. the tip the taper drops
+body[corridorp & ~handp] = 0
 
 # --- crop both to ONE shared box, so the pose needs a single set of offsets --
 union = (rod[..., 3] > 30) | (body[..., 3] > 30)

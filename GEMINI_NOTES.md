@@ -152,12 +152,17 @@ kind of problem you have before deciding what a reroll is worth.
   shares one canvas, so they can only be wrong together and a shared offset is
   absorbed once when the pose's box is measured. Spend the weight on the pose and
   the character instead — those are what a reroll actually exists for.
-- **A held object may run off the canvas edge, and that is salvage, not a
-  reroll.** The accepted angler's rod exits the top-right corner rather than
-  tapering to a tip. A straight tapering shaft is featureless content — no
-  recognisable form to violate — so paint the last stretch to a point inside the
-  canvas. Weigh what a reroll risks: here it would have gambled a grip that took
-  three attempts in order to fix a tip.
+- **A held object that runs off the canvas has been cropped by the frame — so
+  extend it, do not taper it in.** The accepted angler's rod exits the top-right
+  corner, and the first salvage read that as a defect and tapered the tip inward.
+  That was backwards: the rod came out at **51% of the length the old rig had**,
+  and of the 32 design px missing, the taper cost 4 and the frame cost 28. The
+  frame is not a design decision. Decide what length the thing should be, then
+  walk it out along its own axis, resampling the real cross-section so the
+  outline tapers with it — a straight shaft is featureless content and the
+  synthesis is invisible, even at 42% of the visible length. Neither version
+  needed a reroll, and a reroll would have gambled a grip that took three
+  attempts.
 - **Don't assume the backdrop came back flat — measure it.** The first two
   angler generations keyed at a blue stdev under 2.5; the accepted one arrived at
   `(248,88,242)` with a stdev of **14.6**, a faint gradient across the magenta.

@@ -155,17 +155,22 @@ export const CONFIG = {
       // against this pose. The old pixel hat-straw would not match it.
       pond: {
         layers: [
-          { id: "rod",  file: "rod-basic-pond",  x: 39, y: -20, w: 48, h: 52 },
-          { id: "body", file: "angler-pond-body", x: 39, y: -20, w: 48, h: 52 },
+          { id: "rod",  file: "rod-basic-pond",   x: 39, y: -44, w: 70, h: 76 },
+          { id: "body", file: "angler-pond-body", x: 39, y: -44, w: 70, h: 76 },
         ],
-        // Measured off the delivered canvas, not tuned in the browser: the grip
-        // is where the hand closes on the pole and the tip is the rod's point,
-        // both carried through the same crop-and-scale as the art. They are no
+        // Measured off the canvas, not tuned in the browser: the grip is where
+        // the hand closes on the pole and the tip is the rod's point, both
+        // carried through the same crop-and-scale as the art. They are no
         // longer box corners — the rod shares the body's canvas, so its box is
-        // the whole pose. The line between them sits at 48.7 deg, against the
-        // 48.0 deg the rod is actually painted at.
-        rodPivot:   { x: 65, y:   5 },
-        lineOrigin: { x: 87, y: -20 },
+        // the whole pose and the rod crosses it diagonally at 48.0 deg.
+        //
+        // The delivered painting ran the rod off the canvas corner, so the
+        // frame decided its length and it came out at 51% of the old rig's.
+        // tools/cut-angler-pond.py now extends the shaft along its own axis to
+        // a length set in design px, which is why this is 65 — the same 130%
+        // of the kid's height the old browser-tuned rig had.
+        rodPivot:   { x: 65, y:    5 },
+        lineOrigin: { x: 108, y: -44 },
       },
     },
   },
