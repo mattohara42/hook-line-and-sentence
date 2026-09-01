@@ -480,7 +480,13 @@ ART NEEDED: Stream background, layer 3 of 3 — foreground detail
 Prompt:   Soft painterly illustration in the style of Studio Ghibli background
           art, warm muted color palette, gentle diffused lighting, thin warm
           brown outlines rather than black, cozy and inviting mood, no harsh
-          shadows, no neon or saturated colors. Foreground streamside detail,
+          shadows, no neon or saturated colors. Painted by hand in soft gouache
+          and watercolor, with visible brushwork and gentle tonal variation
+          inside every shape — moss, fern and stone are modelled with light, not
+          filled with flat color. Outlines are fine, delicate and varying in
+          weight, the way a brush leaves them; never thick, uniform or inked.
+          This must NOT look like flat vector art, a cartoon, or a clean digital
+          illustration with even line weight. Foreground streamside detail,
           framing an empty center. Along the very bottom-left corner and the
           very bottom-right corner of the canvas: wet mossy river rocks breaking
           the surface, clumps of ferns and long grass, and on one side only, the
