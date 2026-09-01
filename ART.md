@@ -177,7 +177,7 @@ direction.
 
 ## Open art requests
 
-### R4 — the Ocean angler, in the fighting chair (open — the last thing R4 needs)
+### ✅ R4 — the Ocean angler, in the fighting chair (landed and wired 2026-09-01)
 
 Third and last pose. The Pond and Stream are cut and wired; when this lands and
 is cut, **R4's done-when is met** and the epic moves to R5.
@@ -265,14 +265,44 @@ angler. Asking for it here would bake it into the body layer and R5 could not
 put the kid down into it. The pose has to read as braced without the chair being
 drawn — hence the posture described at length.
 
-**When it lands**, run the Pond/Stream checks in order: backdrop bled into the
-subject first (a reroll, nothing downstream fixes it), then canvas and aspect,
-then palette. Do **not** reroll for placement inside the canvas, or for a rod
-that runs off the corner — `tools/cut-angler.py` extends the shaft to a length
-set in design px. Then add an `ocean` entry to its `POSES` dict, measuring the
-rod axis, the arm skeleton and the pivots off the new painting, and set
-`figure_h` by **matching the head** to the other two rather than scaling the
-figure.
+**✅ Landed first attempt — the only pose that did.** Everything the first two
+cost was already priced into the prompt: the arm came back clear of the body,
+the rod came back bare, the hair matched, and the posture read as braced without
+a chair to sit in.
+
+Two measurements worth keeping. The **rod axis fitted with a maximum residual of
+0.9px over 47 samples** — the cleanest of the three, because a stout boat rod
+gives the fit more to work with than a fly rod does. And the **4,123px enclosed
+magenta pocket** between the forearm and the thigh is not contamination but the
+arm-clear-of-the-body instruction working exactly as asked; the flood seeds it
+like any other silhouette hole.
+
+**It is the first pose whose arm bends visibly enough to need two segments.** The
+Pond hides its upper arm behind the drawn-up knee and the Stream hides its behind
+the vest, so a single capsule sufficed for both; here the shoulder, elbow and
+forearm are all in view. `tools/cut-angler.py`'s arm block now takes an optional
+`elbow`.
+
+**The head match held up as a method.** Measured consistently — the widest row in
+the top 20% of the figure — the three heads come to 318 / 217 / 315 source px,
+giving 50 / 75 / 51 design px. Two seated poses landing within a design pixel of
+each other is the check that the method is measuring the child rather than the
+frame.
+
+Recomposite rod → arm → body against the delivered painting: **293px differ by
+more than 10, of 302,351 (0.097%)** — twice the other two poses' rate, all of it
+along the reel's edge and the rod's synthesis seam, and sub-pixel at sprite
+scale.
+
+Verified in Chromium at the Ocean: correct layers, no failed asset requests, the
+line leaves the rod tip at design **(130.2, 122.8)** against a predicted
+(129, 120), and the arm swings **−5.25° to +6.31°** with the tip-to-line gap
+peaking at **0.19px**.
+
+**Known and deliberately not tuned:** the angler reads as sitting *on* the pixel
+rowboat's gunwale rather than down in it. A reclined, legs-forward pose does not
+fit a rowboat — it fits the Boston Whaler's fighting chair that R5 draws. Tuning
+placement against art that is about to be replaced would be wasted.
 
 ### ✅ R4 — the Pond angler, one generation (landed and wired 2026-09-01)
 

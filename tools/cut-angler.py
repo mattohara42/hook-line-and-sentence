@@ -46,10 +46,15 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #               the body (the Stream's butt passes close to the waders)
 #   rod_len     grip to tip, in DESIGN px — the delivered rod is cropped by the
 #               canvas, so this is a decision, not a measurement
-#   arm         pivot / wrist / hand centre. The pivot is where the limb
-#               disappears behind something the body layer carries: the Pond's
-#               forearm behind the drawn-up knee, the Stream's sleeve behind the
-#               vest. The cut end then sits AT the pivot and never moves.
+#   arm         pivot / wrist / hand centre, and an optional elbow when the
+#               limb bends visibly (the Ocean's does; the other two hide their
+#               upper arm). The pivot is where the limb disappears behind
+#               something the body layer carries: the Pond's forearm behind the
+#               drawn-up knee, the Stream's and Ocean's sleeve behind the vest.
+#               The cut end then sits AT the pivot and never moves.
+#   figure_h    see below — measured as the widest row in the top 20% of the
+#               figure, which is the one head measure that has stayed consistent
+#               across all three poses (318 / 217 / 315 source px).
 #   figure_h    how tall the figure should render, in design px. NOT scaled from
 #               the source: the generator draws every pose to fill its frame, so
 #               the standing Stream kid came back only 2% taller than the seated
@@ -66,6 +71,15 @@ POSES = {
                  r_fore=30.0, r_hand=60.0, joint=35.0),
         profile_rows=(370, 405), figure_h=50.0, feet_y=200.0, centre_x=79.5,
         rod_file="rod-stick-pond",
+    ),
+    "ocean": dict(
+        axis=(-0.8156, 962.3), half=22.0, butt=612.0, hand=(398.0, 492.0),
+        reel=(595.0, 360.0, 58.0), rod_xmin=None, rod_len=65.0, tip_half=2.5,
+        grip=(603.0, 440.0),
+        arm=dict(pivot=(292.0, 445.0), elbow=(418.0, 517.0), wrist=(508.0, 487.0),
+                 hand=(615.0, 440.0), r_fore=42.0, r_hand=58.0, joint=34.0),
+        profile_rows=(100, 250), figure_h=51.0, feet_y=202.0, centre_x=79.5,
+        rod_file="rod-deepsea-ocean",
     ),
     "stream": dict(
         axis=(-0.8063, 993.2), half=15.0, butt=546.0, hand=(352.0, 464.0),
@@ -206,11 +220,23 @@ A = P["arm"]
 Pv = np.array([A["pivot"][0], A["pivot"][1] + PAD_T])
 Wr = np.array([A["wrist"][0], A["wrist"][1] + PAD_T])
 Hn = np.array([A["hand"][0],  A["hand"][1]  + PAD_T])
-d = Wr - Pv; L2 = (d * d).sum(); u = d / np.sqrt(L2)
-tt = np.clip(((Xp - Pv[0]) * d[0] + (Yp - Pv[1]) * d[1]) / L2, 0, 1)
+def segment(p, q, r):
+    v = q - p; l2 = (v * v).sum()
+    k = np.clip(((Xp - p[0]) * v[0] + (Yp - p[1]) * v[1]) / l2, 0, 1)
+    return np.hypot(Xp - (p[0] + k*v[0]), Yp - (p[1] + k*v[1])) <= r
+
+# A limb that bends visibly needs two segments; the Pond and Stream hide their
+# upper arm behind a knee or a vest, so one suffices there.
+bones = [(Pv, Wr)]
+if A.get("elbow"):
+    El = np.array([A["elbow"][0], A["elbow"][1] + PAD_T])
+    bones = [(Pv, El), (El, Wr)]
+limb = np.zeros((Hp, Wp), dtype=bool)
+for p_, q_ in bones:
+    limb |= segment(p_, q_, A["r_fore"])
+d = (bones[0][1] - Pv); u = d / np.sqrt((d * d).sum())
 adist = (Xp - Pv[0]) * u[0] + (Yp - Pv[1]) * u[1]
-arm = ((np.hypot(Xp - (Pv[0] + tt*d[0]), Yp - (Pv[1] + tt*d[1])) <= A["r_fore"])
-       | (np.hypot(Xp - Hn[0], Yp - Hn[1]) <= A["r_hand"])) & (adist >= 0) & (keyed[..., 3] > 30)
+arm = (limb | (np.hypot(Xp - Hn[0], Yp - Hn[1]) <= A["r_hand"])) & (adist >= 0) & (keyed[..., 3] > 30)
 
 body = keyed.copy()
 body[corridor & ~hand] = 0

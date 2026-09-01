@@ -9,50 +9,53 @@ something is the way it is, `git log` and the PR body have it in full.
 
 | | |
 |---|---|
-| **Active milestone** | **R4 — the angler**, `BUILD_PLAN_REFRESH.md` |
-| **Done when** | at 1x, in all three levels, the rod looks held and the costume suits the water; casting (R1) moves the arm and rod, not the whole kid |
-| **State** | Pond and Stream anglers **cut, wired and verified**; the Ocean is all R4 still needs |
-| `origin/main` | `658e5cf`, tree clean, nothing unpushed |
+| **Active milestone** | **R5 — vessels**, `BUILD_PLAN_REFRESH.md` (R4 closed 2026-09-01) |
+| **Done when** | switching spots swaps vessel, costume and pose together; the hull overlaps the angler correctly; the line still leaves the rod tip in all three |
+| **State** | **R4 is done** — all three anglers painted, cut, wired, verified. R5 has not started. |
+| `origin/main` | `cf2468a`, tree clean, nothing unpushed |
 | Tests | 81/81 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
 | Deploys | Netlify is **manual**; merging to `main` does not go live |
 
 ## Start here
 
-**The next action is Matt's, and it needs no decisions: run the Ocean prompt.**
-It is written and waiting in `ART.md` → *R4 — the Ocean angler, in the fighting
-chair*. Paste, generate, paste the image back. When it is cut and wired, **R4's
-done-when is met** and the epic moves to R5.
+**R4 is closed.** All three anglers are painted, cut into rod/arm/body, wired and
+verified frame by frame — the tip-to-line gap peaks at 0.13 / 0.37 / 0.19px
+across the Pond, Stream and Ocean. Three poses cost four generations; the Ocean
+landed first attempt because everything the first two cost was priced into its
+prompt.
 
-Then Claude, in order: run the delivery checks (`GEMINI_NOTES.md`'s checklist —
-backdrop bled into the subject first, it is the only one that forces a reroll) ·
-add an `ocean` entry to `tools/cut-angler.py`'s `POSES`, measuring the rod axis,
-arm skeleton and pivots off the new painting · `python3 tools/cut-angler.py
-ocean <file>`, which prints the `CONFIG.rig.poses.ocean` block · wire it ·
-verify in a browser at the Ocean.
+**R5 — vessels — is next, and it needs art**, so the first move is writing its
+requests in `ART.md`: a **rowboat** (Pond) and a **Boston Whaler with a stern
+fighting chair** (Ocean), each with a **near-side layer painted in front of the
+angler** so the kid sits down *in* the hull. The Stream needs no vessel.
 
-**Three things about that cut that are not obvious**, all learned the expensive
-way and all recorded in full where they belong:
+**Three things R4 deliberately left R5**, all listed in its section of
+`BUILD_PLAN_REFRESH.md`:
 
-- `figure_h` comes from **matching the head** to the other two poses, never from
-  scaling the figure — the generator draws every pose to fill its frame.
-- The rod will probably run off the canvas corner. That is not a defect and not
-  a reroll: the tool extends the shaft to a length set in design px.
-- **Measure a complaint before spending a reroll on it.** Two of three faults
-  called on the Stream's first attempt did not survive testing.
+- `#boat`/`#hull-shadow` are hidden in the Stream by one CSS rule — fold that
+  into proper per-location vessel handling rather than leaving a special case.
+- **`#rig` still bobs like a hull**, which is right for a boat and wrong for a
+  kid standing in a river. About a pixel, so not urgent; placement is where the
+  bob should become a per-pose property.
+- **The Ocean's fighting chair was deliberately not drawn.** Its angler is posed
+  as if braced with nothing under him, so R5 can paint the chair in front of him
+  the way the hull is painted in front.
 
-`GEMINI_NOTES.md` has all three, plus everything else about the generator. Read
-it before writing any prompt.
+**The one visible thing that is not a bug:** the Ocean angler reads as sitting
+*on* the pixel rowboat's gunwale rather than in it. A reclined, legs-forward pose
+does not fit a rowboat — it fits the Whaler R5 draws. Placement was left untuned
+on purpose rather than fitted to art that is about to be replaced.
 
-**Where R4 stands:** the pose machinery, both finished poses and the cut tool
-are on `main`. A location with no pose of its own falls back to the Pond's, so
-the Ocean currently wears pond clothes — the wrong shirt rather than no angler.
+**`tools/cut-angler.py` is the R4 asset:** one delivered painting per pose in,
+three registered layers out, every per-pose number in a `POSES` dict. R6's fish
+are the same shape of problem (body/fin/tail from one painting), so read it
+before inventing anything there.
 
-**The Pond's boat is the loudest wrong thing on screen** — a pixel rowboat under
-a painterly kid. That is R5, and it is expected. The Stream has no boat any
-more; R5's section lists what else R4 left it.
+Read `GEMINI_NOTES.md` before writing any prompt. Its *Characters* section is
+everything R4 paid for.
 
-## Waiting on Matt (none of it blocks R4)
+## Waiting on Matt (none of it blocks R5)
 
 - **Close PR #55 unmerged.** Verified 2026-09-01: it is a strict *subset* of
   `main` — merging it would delete 3463 lines including R1, R2 and the whole

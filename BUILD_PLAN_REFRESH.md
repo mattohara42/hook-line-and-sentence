@@ -3,8 +3,8 @@
 **Status: active epic, opened 2026-08-31. This is a significant new body of
 work — the largest since the Advanced Progression epic — and it replaces the
 game's entire visual layer. R1 and R2 shipped 2026-08-31, R3 on 2026-09-01;
-**R4 is active** — the Pond and Stream anglers are finished; the Ocean is what
-it still needs.**
+**R1–R4 shipped; R5 is next** — the vessels, which is now the loudest thing
+wrong on screen.**
 
 Two new documents are the source of truth for it:
 
@@ -289,11 +289,10 @@ level.
 
 </details>
 
-### R4 — The angler: one kid, three costumes, rigged
+### ✅ R4 — The angler: one kid, three costumes, rigged (done 2026-09-01)
 
-**In progress. The Pond and Stream anglers are painted, cut into rod/arm/body,
-wired and verified frame by frame in a browser (2026-09-01). The Ocean is what
-is left.**
+**Shipped 2026-09-01.** All three anglers are painted, cut into rod/arm/body,
+wired and verified frame by frame in a browser. **R5 is next.**
 
 What landed ahead of the art, so the drop is a measurement and not a refactor:
 `CONFIG.rig` is one **pose per location** (`rig.poses`, keyed by fishing spot),
@@ -353,9 +352,21 @@ fighting chair.
 - ~~The Stream pose.~~ ✅ landed 2026-09-01 — standing in waders and a fly vest,
   holding Bamboo Beauty, with a landing net. `#boat` is hidden there (one line
   borrowed from R5; the angler stands *in* the water).
-- **Still to do: the Ocean pose.** The done-when asks for all three levels and
-  the Ocean still wears the Pond kid via the pose fallback. Boat gear and a life
-  vest, in the fighting chair, holding **The Deep Endeavor**.
+- ~~The Ocean pose.~~ ✅ landed 2026-09-01, **first attempt** — the only one of
+  the three that did, because everything the first two cost was priced into its
+  prompt. Braced back in a life vest holding The Deep Endeavor, with no chair
+  drawn (R5 paints that in front of him).
+
+**✅ Done-when met 2026-09-01.** At 1x, in all three levels, the rod looks held
+and the costume suits the water; casting moves the arm and the rod, not the whole
+kid. Verified in Chromium per level, frame by frame — the tip-to-line gap peaks
+at 0.13 / 0.37 / 0.19px across the Pond, Stream and Ocean, which is the boat's
+bob between samples.
+
+**What it cost:** four generations for three poses (the Pond took three, the
+Stream two, the Ocean one), plus a cut tool that turns each delivered painting
+into three registered layers. The trend is the point — the prompt got better
+faster than the poses got harder.
 - **The rod changes with the level, not just the clothes** (settled 2026-09-01).
   Rods are the progression gate (`shop.rods[].unlocksLocation`), so a pose's
   default rod is that level's gate rod: Pond → Trusty Stick, Stream → **Bamboo
