@@ -638,6 +638,7 @@ let lureAt = { x: 0, y: 0 }, castFrom = { x: 0, y: 0 };
 let castPhase = null, castT0 = 0, castLanded = null;
 let lineRAF = null, lastFrame = 0;
 let rodLayerEl = null;                      // cached by renderRig(); re-cached on equip
+let armLayerEl = null;                      // R4: the forearm, which swings the rod with it
 let pose = poseFor();                       // R4: the active costume, re-read on every applyScene()
 
 // R4: one kid, three costumes. The pose carries its own layer stack, its own
@@ -654,8 +655,19 @@ function poseFor(loc) {
 // rotation about the grip, then #rig's live CSS transform (the boat's bob).
 // Reading the matrix each frame is the point — the old build resolved the rod
 // tip once at load, so any rod that moved would have left the line behind.
+// R4: the rod's swing is split between the wrist and the arm — see swingParts.
+// The arm rotates about its own pivot and carries the grip with it, so the tip
+// is two rotations composed, not one.
+function swingParts() {
+  const total = castSwing + rodAngle;
+  const arm = pose.armPivot ? total * (A.rod.armFollow ?? 0) : 0;
+  return { arm, wrist: total - arm };
+}
+
 function rodTip() {
-  const tip = logic.rotateAboutPivot(pose.lineOrigin, pose.rodPivot, castSwing + rodAngle);
+  const { arm, wrist } = swingParts();
+  let tip = logic.rotateAboutPivot(pose.lineOrigin, pose.rodPivot, wrist);
+  if (arm) tip = logic.rotateAboutPivot(tip, pose.armPivot, arm);
   const rig = $("rig");
   const t = getComputedStyle(rig).transform;
   const m = t && t !== "none" ? new DOMMatrix(t) : new DOMMatrix();
@@ -680,7 +692,22 @@ function drawLine() {
   const c = logic.lineControlPoint(from, to, currentSag());
   el.linePath.setAttribute("d", `M ${from.x} ${from.y} Q ${c.x} ${c.y} ${to.x} ${to.y}`);
   el.linePath.setAttribute("stroke-width", A.line.widthPx);
-  if (rodLayerEl) rodLayerEl.style.transform = `rotate(${castSwing + rodAngle}deg)`;
+  applySwing();
+}
+
+// Both layers take their transform-origin from the ARM's pivot, so the arm is a
+// plain rotation and the rod is the same rotation with its own wrist turn about
+// the grip nested inside it. One transform each, no DOM nesting — which matters
+// because the paint order (rod behind the arm) forbids making one a child of
+// the other.
+function applySwing() {
+  const { arm, wrist } = swingParts();
+  if (armLayerEl) armLayerEl.style.transform = `rotate(${arm}deg)`;
+  if (!rodLayerEl) return;
+  if (!pose.armPivot) { rodLayerEl.style.transform = `rotate(${wrist}deg)`; return; }
+  const dx = pose.rodPivot.x - pose.armPivot.x, dy = pose.rodPivot.y - pose.armPivot.y;
+  rodLayerEl.style.transform =
+    `rotate(${arm}deg) translate(${dx}px,${dy}px) rotate(${wrist}deg) translate(${-dx}px,${-dy}px)`;
 }
 
 // Reduced motion runs no animation loop, so anything that changes the line's
@@ -1466,7 +1493,7 @@ function renderRig(loc) {
   pose = poseFor(loc);
   const rig = $("rig");
   rig.querySelectorAll(".rig-layer").forEach(n => n.remove());
-  rodLayerEl = null;
+  rodLayerEl = armLayerEl = null;
   for (const L of pose.layers) {
     const d = document.createElement("div");
     d.className = "rig-layer";
@@ -1474,16 +1501,18 @@ function renderRig(loc) {
     d.style.left = L.x + "px"; d.style.top = L.y + "px";
     d.style.width = L.w + "px"; d.style.height = L.h + "px";
     d.style.backgroundImage = `url("assets/${L.file}.png")`;
-    if (L.id === "rod") {
-      // the grip, expressed inside the rod layer's own box
-      d.style.transformOrigin = `${pose.rodPivot.x - L.x}px ${pose.rodPivot.y - L.y}px`;
-      rodLayerEl = d;
+    // Both swinging layers rotate about the arm's pivot when there is one, so
+    // the rod's wrist turn can nest inside the arm's — see applySwing().
+    if (L.id === "rod" || L.id === "arm") {
+      const o = pose.armPivot ?? pose.rodPivot;
+      d.style.transformOrigin = `${o.x - L.x}px ${o.y - L.y}px`;
+      if (L.id === "rod") rodLayerEl = d; else armLayerEl = d;
     }
     rig.appendChild(d);
   }
-  // the rod may have been rebuilt mid-swing (a location switch during a cast),
-  // so put the angle back rather than letting it snap to zero for a frame
-  if (rodLayerEl) rodLayerEl.style.transform = `rotate(${castSwing + rodAngle}deg)`;
+  // the rig may have been rebuilt mid-swing (a location switch during a cast),
+  // so put the angles back rather than letting them snap to zero for a frame
+  applySwing();
 }
 renderRig();
 

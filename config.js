@@ -154,8 +154,12 @@ export const CONFIG = {
       // No hat layer: the angler is bare-headed on purpose so R7 can draw hats
       // against this pose. The old pixel hat-straw would not match it.
       pond: {
+        // rod → arm → body. The hand is painted in front of the pole, and the
+        // forearm's cut end tucks behind the knee, which the body carries — so
+        // the arm sits between them.
         layers: [
           { id: "rod",  file: "rod-basic-pond",   x: 39, y: -44, w: 70, h: 76 },
+          { id: "arm",  file: "angler-pond-arm",  x: 39, y: -44, w: 70, h: 76 },
           { id: "body", file: "angler-pond-body", x: 39, y: -44, w: 70, h: 76 },
         ],
         // Measured off the canvas, not tuned in the browser: the grip is where
@@ -171,6 +175,11 @@ export const CONFIG = {
         // of the kid's height the old browser-tuned rig had.
         rodPivot:   { x: 65, y:    5 },
         lineOrigin: { x: 108, y: -44 },
+        // The angler's upper arm and elbow are hidden behind the drawn-up knee,
+        // so the layer is forearm + hand and it pivots where they vanish — the
+        // cut end barely moves and stays tucked. 6.2 design px from here to the
+        // grip, so the arm carries the rod as well as swinging itself.
+        armPivot:   { x: 60, y:  8.5 },
       },
     },
   },
@@ -185,6 +194,12 @@ export const CONFIG = {
       // .rodPivot) — it moves with the costume; only the angles live here.
       backswingDeg: -15,   // anticipation: tip lifts back over the angler
       forwardDeg: 20,      // the swing that releases the lure (tip toward the water)
+      // R4: how much of the rod's swing the ARM contributes rather than the
+      // wrist. The two split the same total, so R1's tuned angles are unchanged
+      // — but the arm rotating about its own pivot carries the grip with it,
+      // which is what "moves the arm and rod, not the whole kid" asks for.
+      // 0 disables it, and a pose with no armPivot falls back to that.
+      armFollow: 0.35,
     },
     cast: {
       // where the lure lands and the bobber then sits. The old build hardcoded
