@@ -375,24 +375,28 @@ ART NEEDED: Stream background, layer 1 of 3 — far (sky, forest, far bank)
 Prompt:   Soft painterly illustration in the style of Studio Ghibli background
           art, warm muted color palette, gentle diffused lighting, thin warm
           brown outlines rather than black, cozy and inviting mood, no harsh
-          shadows, no neon or saturated colors. A cozy forest stream, seen
-          straight on from the opposite bank at eye level with the water — the
-          way you would see it standing in the shallows. This is a flat side
-          view like a stage backdrop. It is NOT seen from above, NOT a
-          bird's-eye or three-quarter view, and the water's edge is a straight
-          horizontal line running the full width of the canvas, not a diagonal
-          band and not a curve. Above that line: a far bank of mossy rocks and
-          ferns, dense green forest behind it, and a soft banded sky warming to
-          cream near the treetops. Cooler and greener than a golden-hour pond,
-          but still warm and muted. Include a simple, complete water fill below
-          the water's edge in muted teal-green, so this layer reads correctly on
-          its own. No people, no boat, no fishing gear. Keep even the deepest
-          shadows in the trunks a warm dark brown — never near-black. The water's
-          edge must sit at exactly 55% down from the top of the canvas: the
-          forest and sky fill the top 55% of the image and the water fills the
-          bottom 45%. The water must take up nearly half the picture. Do not
-          place the water's edge any lower than 55%. Aspect ratio 2.36:1.
-          Output as PNG.
+          shadows, no neon or saturated colors. Painted by hand in soft gouache
+          and watercolor, with visible brushwork and gentle tonal variation
+          inside every shape — leaves, moss and rock are modelled with light,
+          not filled with flat color. Outlines are fine, delicate and varying in
+          weight, the way a brush leaves them; they are never thick, uniform or
+          inked. Distant trees soften into atmospheric haze. This must NOT look
+          like flat vector art, a cartoon, or a clean digital illustration with
+          even line weight.
+          A cozy forest stream, seen straight on from the opposite bank at eye
+          level with the water — the way you would see it standing in the
+          shallows. This is a flat side view like a stage backdrop. It is NOT
+          seen from above, NOT a bird's-eye or three-quarter view, and the
+          water's edge is a straight horizontal line running the full width of
+          the canvas, not a diagonal band and not a curve. Above that line: a far
+          bank of mossy rocks and ferns, dense green forest behind it, and a soft
+          banded sky warming to cream in a gap between the treetops. Cooler and
+          greener than a golden-hour pond, but still warm and muted. Include a
+          simple, complete water fill below the water's edge in muted teal-green,
+          so this layer reads correctly on its own. No people, no boat, no
+          fishing gear. Keep even the deepest shadows in the trunks a warm dark
+          brown — never near-black. The water should fill at least the bottom
+          third of the canvas. Aspect ratio 2.36:1. Output as PNG.
 Save as:  assets/background-stream-far.png
 Size:     1584×672 (2.36:1), opaque, no transparency needed
 Wired in: not yet — lands with all three, replacing background-stream.png and
@@ -452,28 +456,37 @@ Wired in: not yet — the near plane, #bg-fore for .loc-stream. Nothing may land
           (design x20–138, y140–224)
 ```
 
-**⚠️ Layer 1, attempt 1 (2026-09-01) — rerolled for framing.** The side view was
-**fixed**: a dead-flat waterline running the full width, seen from the bank at
-eye level, no diagonal band, no bird's-eye. That was the historical failure and
-the tripled framing language solved it. But the waterline landed at **66.96%**
-against 55% — design y=241 where the scene needs ~201, so the rig would float
-40px above the water: the same bug as before, milder.
+**⚠️ Layer 1 — three attempts so far, and the prompt above is now weighted for
+style rather than framing.** Read `GEMINI_NOTES.md` on the compositional prior
+before touching it.
 
-**The prompt's own hedging caused it, and the wording above is fixed.** Attempt 1
-said *"just below the vertical middle — a little more sky and forest above it
-than water below it, roughly 55%"*. Every one of those clauses is **technically
-satisfied at 67%**: 67% is below the middle, and there is more above than below.
-The Pond's layer 1 said *"must sit at exactly 55% down"*, unhedged, and landed at
-55.95%. See `GEMINI_NOTES.md` — **the hedging words are the failure, not the
-percentage.** The rewrite states it three non-negotiable ways: the exact
-percentage, the complement (top 55% / bottom 45%), and a floor ("do not place it
-any lower").
+| attempt | wording | waterline | verdict |
+|---|---|---|---|
+| 1 | hedged position | 66.96% | good painterly texture, framing out |
+| 2 | position stated three unhedged ways | **66.96%**, identical to the pixel | proved wording does not move the prior |
+| 3 | — | 62.35% | best framing, but flatter and more graphic than the Pond |
 
-Everything else on that attempt was good and should survive the reroll: sky
-`#b0c4bf` against a `#b7cfd8` target, a forest that reads cooler and greener than
-the Pond as asked, and no pure black. One minor nudge folded into the rewrite —
-**0.58%** of pixels, the deep trunk shadows, went past the `#33291f` umber floor
-(darkest `#1a0f00`).
+**The side view is solved** in all three — flat waterline, full width, eye level,
+no bird's-eye. That was the historical failure and it has not recurred.
+
+**The waterline is now the *least* important instruction here, because a crop
+fixes it in either direction.** Cropping from the top lowers the percentage
+(98px took attempt 3 to 55.92%, within 0.03% of the Pond); cropping from the
+bottom raises it, and only costs water that layer 2 repaints anyway. So the
+prompt above asks merely that water fill "at least the bottom third" — a floor
+that is easy to satisfy — and spends its weight on the painterly treatment
+instead, since fewer competing constraints is the only lever left once the prior
+will not move.
+
+**Matt's call (2026-09-01):** attempt 3's framing with attempt 1's brushwork.
+The style block is the new part — visible brushwork, tonal variation inside
+shapes, fine varying outlines, and an explicit "NOT flat vector art or cartoon
+with even line weight", which is what attempt 3 drifted into.
+
+**Whatever lands, apply the identical crop to all three Stream layers** so they
+stay registered with each other, and expect the Stream's canvas to end up
+shorter than the Pond's 1584×672. That is fine — layers must match within a
+level, not across levels.
 
 **When these land:** key and register them against layer 1, composite all three
 at game scale, point `.loc-stream` at the three `#bg-*` planes, **delete the

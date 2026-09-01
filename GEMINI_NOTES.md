@@ -211,6 +211,26 @@ nowhere near the key.
 - **Backdrop colour bled into the subject is always a reroll.** A pink-fringed
   reed cannot be keyed out. Check for it first, before any other check.
 
+### Spend the prompt where it can win
+
+Corollary of the prior being immovable: **constraints compete.** Once a
+constraint can be fixed in salvage, stop spending prompt weight on it and give
+that weight to something that cannot be fixed downstream.
+
+The Stream's layer 1 is the worked example. Its waterline is fixable by cropping
+in either direction — from the top to lower the percentage, from the bottom to
+raise it (and the water lost that way is repainted by layer 2 anyway). So the
+prompt drops from three insistent statements of an exact percentage to a single
+easy floor ("water should fill at least the bottom third"), and the reclaimed
+weight goes to the painterly treatment, which **cannot** be salvaged afterwards.
+
+**Style is the thing to spend on**, because a style miss is always a reroll.
+Naming the medium ("painted by hand in soft gouache and watercolor, visible
+brushwork, tonal variation inside every shape") and explicitly naming the
+failure mode to avoid ("NOT flat vector art, a cartoon, or clean digital
+illustration with even line weight") is the phrasing that got written after a
+generation drifted flat and graphic.
+
 ---
 
 ## Multi-layer sets: let layer 1 define the truth
