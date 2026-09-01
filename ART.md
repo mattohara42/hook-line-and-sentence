@@ -229,11 +229,35 @@ Prompt:   Soft painterly storybook illustration in the style of Studio Ghibli,
           The image is 1536 by 640 pixels, aspect ratio 2.4:1. Output as PNG.
 Save as:  assets/boat-pond.png   (the source painting — the cut layers are
           boat-pond-far.png and boat-pond-near.png)
-Wired in: not yet — CONFIG.rig.poses.pond.vessel. It replaces the pixel
-          boat.png, and it is the vessel shop.boats reskins, so the five shop
-          hulls (`boat-red`, `boat-blue`, `boat-leaf`, `boat-purple`) each need
-          the same treatment eventually. Do the default first and judge it.
+Wired in: ✅ CONFIG.rig.poses.pond.vessel
 ```
+
+**✅ Landed first attempt 2026-09-01, and it is the cleanest delivery of the
+epic.** Canvas 1600×656 at aspect 2.439 against 2.4 asked; backdrop key
+`(254,55,253)` at stdev under 3, the flattest magenta yet; residue in the subject
+**stops entirely at 6px** with no enclosed pocket; and **0.000%** of it falls
+below the umber floor, minimum luminance 42.
+
+**The cut is exact.** Recompositing far + near against the delivered painting
+leaves **0 px of 490,319 different** — not "sub-pixel", identical. A cut along a
+detected line is lossless in a way a generated pair never could be, which is the
+whole argument for one painting rather than two.
+
+**The sheer is found, not traced**, which is what `tools/cut-vessel.py` exists
+for. Reading it by eye failed first: the candidate polyline ran ~25px high and
+crossed the thwarts — and a thwart's near end *is* the sheer. The detector uses
+what the painting actually gives, that the rail is a lighter band with a darker
+line above it, so per column it takes the brightest row in a window and walks up
+to where the brightness falls away, then fits a 4th-order curve because a sheer
+is a fair line and the fit removes jitter where a plank seam crosses it.
+**1,506 columns, residual mean 1.8px.**
+
+**One visible regression, worth knowing about:** the Pond vessel is
+`skinnable: false` now. `shop.boats`' four alternate hulls are still single
+pixel-era PNGs with no far/near split, so equipping one would paste a pixel
+rowboat over the painted one. **Each needs the same cut before the boat shop
+works again** — same prompt with the hull colour swapped, then
+`tools/cut-vessel.py`.
 
 ```
 ART NEEDED: the Ocean's Boston Whaler — one painting, cut into far and near
