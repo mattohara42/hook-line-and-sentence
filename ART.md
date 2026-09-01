@@ -408,7 +408,13 @@ ART NEEDED: Stream background, layer 2 of 3 — water
 Prompt:   Soft painterly illustration in the style of Studio Ghibli background
           art, warm muted color palette, gentle diffused lighting, thin warm
           brown outlines rather than black, cozy and inviting mood, no harsh
-          shadows, no neon or saturated colors. Just the surface of a shallow
+          shadows, no neon or saturated colors. Painted by hand in soft gouache
+          and watercolor, with visible brushwork and gentle tonal variation
+          inside every wash — the water is modelled with light, not filled with
+          flat color. Any line work is fine, delicate and varying in weight, the
+          way a brush leaves it; never thick, uniform or inked. This must NOT
+          look like flat vector art, a cartoon, or a clean digital illustration
+          with even line weight. Just the surface of a shallow
           forest stream, seen from the side at eye level. Moving water, not a
           still pond: soft broken riffles and gentle current lines running
           horizontally, a few pale foam streaks, the suggestion of submerged
@@ -419,16 +425,36 @@ Prompt:   Soft painterly illustration in the style of Studio Ghibli background
           flat tone; the deepening from top to bottom is the point of this
           layer. No bank, no rocks above the surface, no sky, no people. The
           painted water fills the bottom of the canvas and stops in a straight
-          horizontal line a little above the vertical middle. Everything above
+          horizontal line. It does not matter exactly where that line falls, so
+          long as the water fills at least the bottom third. Everything above
           that line must be filled with flat, solid, uniform magenta (#FF00FF) —
           a plain backdrop color, one single unvarying color, not a
           checkerboard, not a gradient, not transparency. No magenta anywhere in
           the water itself. Aspect ratio 2.36:1. Output as PNG.
 Save as:  assets/background-stream-water.png
 Size:     1584×672. Delivered on flat magenta above the line; the alpha is a cut
-          by row, registered to layer 1 (GEMINI_NOTES.md)
+          by row, then rescaled to sit under layer 1's waterline at row 376
 Wired in: not yet — the middle plane, #bg-water for .loc-stream
 ```
+
+**Two changes made after layer 1 landed (2026-09-01), both worth carrying to the
+Ocean's prompts.**
+
+1. **The painterly style block was added here too.** Layer 1 came back as
+   genuine watercolour, and this water is painted *directly against* the far
+   bank in the same frame. Without the same medium named, the two planes read as
+   two different paintings stacked on each other — a failure mode that does not
+   exist for a single-image background and only appears once a level is split
+   into layers. **Every layer of a level needs the style block, not just the
+   first.**
+2. **The waterline instruction was relaxed to "it does not matter exactly where
+   that line falls".** For this layer it genuinely does not: the alpha is a cut
+   by row and the band is then rescaled to sit under layer 1's line at row 376,
+   exactly as the Pond's water layer was after it came back 65px out. Spending
+   prompt weight on a position that is salvaged anyway takes weight from the
+   style, which is not — see `GEMINI_NOTES.md`, "spend the prompt where it can
+   win".
+
 
 ```
 ART NEEDED: Stream background, layer 3 of 3 — foreground detail

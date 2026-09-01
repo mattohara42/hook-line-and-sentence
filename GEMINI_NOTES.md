@@ -243,6 +243,13 @@ by row, the foreground by keying and placing. So a positional miss on layers 2
 or 3 is cheap, and the prompts for them can state the line loosely and lean on
 the backdrop colour instead.
 
+**Every layer of a level needs the style block, not just the first.** The
+layers of one level are painted against each other in the same frame, so if the
+medium is only named on layer 1, the others come back as a different painting
+stacked on it. This failure mode does not exist for a single-image background —
+it appears the moment a level is split — and it is invisible until the layers
+are composited, which is another reason to composite locally before wiring.
+
 **The layers agreeing with each other matters more than any of them agreeing
 with the nominal number.** A mismatch between planes is a visible seam; a small
 shared offset from the spec is not. The Pond's three layers all sit 3px low
