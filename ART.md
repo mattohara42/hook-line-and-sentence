@@ -288,16 +288,34 @@ step — nothing loads it at runtime.
 
 The rod's occluded stretch — where the hand covers it — is synthesised from the
 cross-section just above the hand. It is never seen, because the rod paints
-behind. Its tip was tapered to a point at source y=60 rather than left running
-off the top-right corner; that dropped 2,567px in a bbox of x 896–1023, y 0–112,
-which is the clipped tip and nothing else.
+behind.
+
+**The rod is also EXTENDED, and the first attempt at this got it backwards.**
+The delivered painting ran the shaft off the top-right corner, so the *canvas*
+decided the rod's length rather than the drawing. Reading that as a defect and
+tapering the tip inward made a rod that was already too short shorter still: it
+came out at **33.3 design px, 51% of the old browser-tuned rig's 65.1**, and it
+read stubby on screen. Of the 32px missing, the taper cost 4.2 and the canvas
+clipping cost 27.5 — so the fix was never un-tapering, it was extension.
+
+`tools/cut-angler-pond.py` now pads the canvas and walks the shaft out along its
+own axis to a length **set in design px** (`ROD_LEN = 65.0`, the same 130% of the
+kid's height the old rig had), resampling the real cross-section so the outline
+tapers with it. 42% of the visible rod is synthesised, and it is invisible for
+the same reason the occluded stretch is: a straight shaft is featureless content
+with no recognisable form to violate. **Retuning the rod is now one number in
+that script**, not a reroll and not a hand edit.
+
+The general lesson, which is in `GEMINI_NOTES.md`: a subject that runs off the
+canvas has been *cropped by the frame*, and the frame is not a design decision.
+Ask what length the thing should be, then extend to it.
 
 **The numbers, measured off the canvas rather than tuned in the browser:** both
-layers share one 844×911 canvas at rig `x 39, y −20, w 48, h 52`, with
-`rodPivot (65, 5)` and `lineOrigin (87, −20)` — 48.7° apart against the 48.0°
-the rod is actually painted at. Verified in Chromium past the profile picker:
-the line leaves the rod tip at design **(107, 148)**, exactly where those numbers
-predict, and reaches the bobber.
+layers share one 1222×1331 canvas at rig `x 39, y −44, w 70, h 76`, with
+`rodPivot (65, 5)` and `lineOrigin (108, −44)` — 65.0 design px apart at 48.0°,
+which is the angle the rod is actually painted at. Verified in Chromium past the
+profile picker: the line leaves the rod tip at design **(127.3, 124.0)** against
+a predicted (128, 124), the 0.7px being the boat's bob, and reaches the bobber.
 
 **Two data tests had to change**, and both were encoding assumptions from the G1
 art rather than real invariants:
