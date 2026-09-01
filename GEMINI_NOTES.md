@@ -129,13 +129,19 @@ on two counts and both were fixed in one reroll — which is the opposite of the
 Stream far layer, where three rerolls bought five percentage points. Know which
 kind of problem you have before deciding what a reroll is worth.
 
-- **A hand gesture needs a physical referent, not an anatomical description.**
-  *"held OPEN in a loose C-curl, palm toward the viewer, fingers apart"* produced
-  a flat splayed reach — a wave, not a grip. **"the shape of a hand about to
-  close around a bicycle handlebar"**, plus the negatives *"NOT a flat open palm,
-  NOT fingers spread apart, NOT a waving or reaching gesture"*, produced the grip
-  first try. Name the object the hand would be holding, then rule out the
-  gestures it could be confused with.
+- **A hand gripping nothing will not come back gripping.** This one cost two
+  rerolls, and the fix was to stop describing the hand. *"Held OPEN in a loose
+  C-curl, palm toward the viewer, fingers apart"* produced a flat splayed reach.
+  Naming a referent and the gestures to avoid — *"the shape of a hand about to
+  close around a bicycle handlebar… NOT a flat open palm, NOT fingers spread
+  apart"* — produced a **pincer in the wrong plane**: the fingers curled within
+  the picture plane, so the tube they formed pointed at the viewer rather than up
+  the rod. What worked was **drawing the object in the hand** — "the child is
+  HOLDING A FISHING ROD… the separate fingers visible crossing in FRONT of the
+  pole" — and then cutting the pieces apart locally. This is *the subject carries
+  more weight than any qualifier* one level down: a hand holding nothing is a
+  hand holding nothing, however precisely the grip is specified. **Give it the
+  object, then cut.**
 - **"A young child" defaults to a toddler.** The first attempt came back as
   roughly a two-year-old: big round head, no neck, stubby fingers. What fixed it
   was all three of an age in years (*"a school-age child of about eight"*), the
@@ -146,6 +152,16 @@ kind of problem you have before deciding what a reroll is worth.
   shares one canvas, so they can only be wrong together and a shared offset is
   absorbed once when the pose's box is measured. Spend the weight on the pose and
   the character instead — those are what a reroll actually exists for.
+- **A held object may run off the canvas edge, and that is salvage, not a
+  reroll.** The accepted angler's rod exits the top-right corner rather than
+  tapering to a tip. A straight tapering shaft is featureless content — no
+  recognisable form to violate — so paint the last stretch to a point inside the
+  canvas. Weigh what a reroll risks: here it would have gambled a grip that took
+  three attempts in order to fix a tip.
+- **Don't assume the backdrop came back flat — measure it.** The first two
+  angler generations keyed at a blue stdev under 2.5; the accepted one arrived at
+  `(248,88,242)` with a stdev of **14.6**, a faint gradient across the magenta.
+  Still floods fine at tolerance 70, but the convention is not a guarantee.
 
 ## The backdrop convention (use this instead of asking for transparency)
 
