@@ -23,7 +23,13 @@ A real kid playtest of the A7 fight beats is still outstanding (see
 `BACKLOG.md`).
 
 Work on exactly one milestone at a time. `ART.md` is the art pipeline: Claude
-writes Gemini prompts + filenames, Matt generates the PNGs.
+writes Gemini prompts + filenames, Matt generates the PNGs. **`GEMINI_NOTES.md`
+is required reading before writing any art prompt** — it is the accumulated
+memory of how the generator actually behaves (what it obeys, what it silently
+ignores, the flat-magenta backdrop convention, the alpha-salvage recipes and the
+delivery checklist). Two rules from it shape every prompt: **position by edges
+and corners, never by percentage**, and **name a flat backdrop colour rather
+than asking for transparency — then detect the colour you actually got.**
 
 **GitHub repo:** owner `mattohara42`, repo name `hook-line-and-sentence`.
 Renamed from `WordsPerM...` on 2026-08-31, along with the game itself (it was
