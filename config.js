@@ -119,25 +119,44 @@ export const CONFIG = {
   },
 
   // G1: the angler is drawn as stacked layers inside #rig, not one baked sprite
-  // — which is what unblocks swappable hats/rods (G4) and per-location poses
-  // (G2). Array order is paint order (body first, rod on top); x/y are design
-  // px relative to #rig, and `file` is assets/<file>.png. A missing PNG paints
-  // nothing (the console logs a harmless 404, same as the biome backgrounds did
-  // before they landed), so the stack degrades quietly to whatever art exists.
+  // — which is what unblocks swappable hats/rods (R7). R4 makes it one stack
+  // *per location*: one kid, three costumes (ART_DIRECTION.md decision 2), so
+  // applyScene() re-renders the rig whenever the kid changes water.
   //
-  // Offsets were tuned against the real art in the browser, side by side with
-  // the old kid.png, so the composite reads at the same size and sits in the
-  // boat the same way.
+  // Within a pose, array order is paint order (body first, rod on top); x/y are
+  // design px relative to #rig, and `file` is assets/<file>.png. A missing PNG
+  // paints nothing (the console logs a harmless 404, same as the biome
+  // backgrounds did before they landed), so a stack degrades quietly to
+  // whatever art exists.
+  //
+  // `rodPivot` is the grip the rod swings about and `lineOrigin` is the tip the
+  // line leaves from. Both belong to the *pose*, not to CONFIG.anim, because
+  // both are only meaningful against that pose's rod box — a standing angler
+  // holds the rod somewhere else. A data test keeps them on the box.
   rig: {
-    layers: [
-      { id: "body", file: "body-kid",  x: 43, y: -18, w: 33, h: 50 },
-      { id: "hat",  file: "hat-straw", x: 39, y: -25, w: 40, h: 22 },
-      { id: "rod",  file: "rod-basic", x: 58, y: -28, w: 46, h: 46 },
-    ],
-    // where the line leaves the rod: the rod sprite runs corner to corner, so
-    // its tip is the top-right of that layer's box (x+w, y). Rig-relative;
-    // app.js adds #rig's own offset to get scene coords.
-    lineOrigin: { x: 104, y: -28 },
+    // A location with no pose of its own wears this one. That is every level
+    // today: R4's art is requested in ART.md and has not landed, so the Stream
+    // and the Ocean are still the Pond kid in pond clothes. Giving them their
+    // own entries now, pointing at files that do not exist, would render an
+    // invisible angler in two of the three levels — worse than the wrong shirt.
+    defaultPose: "pond",
+    poses: {
+      // Still the G1 pixel set. Offsets were tuned against that art in the
+      // browser beside the old kid.png; R4 replaces all three files, and the
+      // numbers get re-measured off the new canvas rather than nudged.
+      pond: {
+        layers: [
+          { id: "body", file: "body-kid",  x: 43, y: -18, w: 33, h: 50 },
+          { id: "hat",  file: "hat-straw", x: 39, y: -25, w: 40, h: 22 },
+          { id: "rod",  file: "rod-basic", x: 58, y: -28, w: 46, h: 46 },
+        ],
+        // the grip: the bottom-left of the rod's box (the sprite runs corner to
+        // corner), and the tip: the top-right of the same box. Rig-relative;
+        // app.js adds #rig's own offset to get scene coords.
+        rodPivot:   { x: 58, y:  18 },
+        lineOrigin: { x: 104, y: -28 },
+      },
+    },
   },
 
   // R1 (ANIMATION.md): the cast, the line and the reel now move. Every number
@@ -145,10 +164,9 @@ export const CONFIG = {
   // 720x360 canvas, ms for durations, degrees for the rod.
   anim: {
     rod: {
-      // The rod rotates about the grip — the bottom-left of the rod layer's box
-      // — so the tip swings while the hand stays put. Rig-relative, and it must
-      // stay the bottom-left corner of rig.layers.rod (a data test checks it).
-      pivot: { x: 58, y: 18 },
+      // The rod rotates about the grip so the tip swings while the hand stays
+      // put. *Where* the grip is belongs to the pose (CONFIG.rig.poses.<loc>
+      // .rodPivot) — it moves with the costume; only the angles live here.
       backswingDeg: -15,   // anticipation: tip lifts back over the angler
       forwardDeg: 20,      // the swing that releases the lure (tip toward the water)
     },

@@ -108,15 +108,17 @@ const A = CONFIG.anim;
 const $ = (id) => document.getElementById(id);
 const rig = $("rig"), path = $("line-path"), lure = $("lure"), fish = $("fish"), scene = $("scene");
 
-// --- the rod, drawn from the same CONFIG.rig.layers the game builds ---
-for (const L of CONFIG.rig.layers) {
+// --- the rod, drawn from the same pose stack the game builds (R4: per-location
+// poses, and the prototype always shows the default one) ---
+const POSE = CONFIG.rig.poses[CONFIG.rig.defaultPose];
+for (const L of POSE.layers) {
   const d = document.createElement("div");
   d.className = "rig-layer"; d.dataset.id = L.id;
   d.style.cssText = `left:${L.x}px; top:${L.y}px; width:${L.w}px; height:${L.h}px;
                      background-image:url("../assets/${L.file}.png");`;
   if (L.id === "rod") {
     // rotate about the grip: the bottom-left corner of the rod layer's box
-    d.style.transformOrigin = `${A.rod.pivot.x - L.x}px ${A.rod.pivot.y - L.y}px`;
+    d.style.transformOrigin = `${POSE.rodPivot.x - L.x}px ${POSE.rodPivot.y - L.y}px`;
   }
   rig.appendChild(d);
 }
@@ -134,7 +136,7 @@ let castStart = { x: 124, y: 140 };            // where the lure leaves from, at
 // (a live CSS animation), plus the rod's rotation about the grip. This is the
 // bit the game gets wrong today — LINE_ORIGIN is read once at load.
 function rodTip() {
-  const tip = rotateAboutPivot(CONFIG.rig.lineOrigin, A.rod.pivot, swing + rodAngle);
+  const tip = rotateAboutPivot(POSE.lineOrigin, POSE.rodPivot, swing + rodAngle);
   const m = new DOMMatrix(getComputedStyle(rig).transform);
   const ox = 59, oy = 30;                       // #rig's transform-origin
   const dx = tip.x - ox, dy = tip.y - oy;

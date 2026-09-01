@@ -33,7 +33,9 @@ One protagonist across all three levels, costume changes per environment rather 
 - Stream: waders, fly fishing vest
 - Ocean: fishing boat gear, life vest
 
-Rig as separate parts (head, torso, arm, rod) so casting and reeling can be animated by moving parts rather than swapping frames.
+**The costumes are tied together by a warm terracotta accent garment** (R4): the shirt in the Pond, the fly vest in the Stream, the life vest in the Ocean. It is the one hue in the palette that holds a silhouette against teal-green water and green banks in all three levels, and it is the region the favorite-color accent tint filters — which is what keeps that tint a one-line filter instead of a per-costume tuning job.
+
+Rig as separate parts (head, torso, arm, rod) so casting and reeling can be animated by moving parts rather than swapping frames. (R4 settled how many parts and where they come from — see the open assumption below; a rig is three generations plus local cuts, not one generation per part.)
 
 ## Fish roster
 
@@ -65,7 +67,7 @@ Full prompt set to be generated per costume, per fish, and per background follow
 ## Open assumptions (flag for review)
 
 - Assuming three background paintings (one per level) is sufficient, rather than separate paintings per time-of-day or weather variant.
-- Assuming the character rig needs four pieces (head, torso, arm, rod) as a starting point, subject to revision once casting animation is prototyped.
+- ~~Assuming the character rig needs four pieces (head, torso, arm, rod) as a starting point, subject to revision once casting animation is prototyped.~~ **Answered in R4 (2026-09-01), and it was not an art question.** Any subdivision with no independent existence — a head off a torso, an arm off a shoulder — is a *local cut of one delivered painting*: it registers perfectly because it is the same pixels, and it costs no generation and no reroll risk. Only the rod (the shop swaps it) and the fingers that close over it must be generated apart from the body. So a pose is **three generations**, and how many layers the rig has is a code decision, free to revise later. The rule is in `ART.md`'s same-canvas section.
 
 ## Decisions taken on adoption (2026-08-31)
 

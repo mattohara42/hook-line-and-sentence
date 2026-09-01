@@ -262,15 +262,31 @@ test("every phrase and sentence is typeable once all letter stages are unlocked"
 });
 
 // G1: the angler's layer stack. It's data now, so a fat-fingered edit here is a
-// kid rendered wrong (or not at all) rather than a syntax error.
-test("CONFIG.rig.layers is a well-formed paint stack", () => {
-  const layers = CONFIG.rig.layers;
-  assert.ok(Array.isArray(layers) && layers.length > 0);
-  assert.equal(layers[0].id, "body", "body paints first — hat and rod sit on top of it");
-  assert.equal(new Set(layers.map(l => l.id)).size, layers.length, "duplicate layer id");
-  assert.equal(offenders(layers, l => !/^[a-z0-9-]+$/.test(l.file ?? "")), "", "bad layer filename");
-  assert.equal(offenders(layers, l => !(l.w > 0 && l.h > 0)), "", "layer with no size");
-  assert.equal(offenders(layers, l => ![l.x, l.y].every(Number.isFinite)), "", "layer with no offset");
+// kid rendered wrong (or not at all) rather than a syntax error. R4 made it one
+// stack per location, so every pose gets checked, not just the one on screen.
+test("every CONFIG.rig pose is a well-formed paint stack", () => {
+  const poses = Object.entries(CONFIG.rig.poses);
+  assert.ok(poses.length > 0, "no poses at all — the angler would not render");
+  for (const [name, pose] of poses) {
+    const layers = pose.layers;
+    assert.ok(Array.isArray(layers) && layers.length > 0, `${name}: no layers`);
+    assert.equal(layers[0].id, "body", `${name}: body paints first — everything else sits on it`);
+    assert.equal(new Set(layers.map(l => l.id)).size, layers.length, `${name}: duplicate layer id`);
+    assert.equal(offenders(layers, l => !/^[a-z0-9-]+$/.test(l.file ?? "")), "", `${name}: bad layer filename`);
+    assert.equal(offenders(layers, l => !(l.w > 0 && l.h > 0)), "", `${name}: layer with no size`);
+    assert.equal(offenders(layers, l => ![l.x, l.y].every(Number.isFinite)), "", `${name}: layer with no offset`);
+  }
+});
+
+// R4: a pose is looked up by location, and anything without one falls back to
+// the default. A typo in either key is an angler in the wrong clothes at best
+// and no angler at all at worst, and neither throws.
+test("rig poses are keyed by real locations, and the fallback exists", () => {
+  const locations = CONFIG.tiers.map(t => t.location);
+  assert.ok(CONFIG.rig.poses[CONFIG.rig.defaultPose], "defaultPose names no pose");
+  assert.ok(locations.includes(CONFIG.rig.defaultPose), "defaultPose is not a real location");
+  assert.equal(offenders(Object.keys(CONFIG.rig.poses), k => !locations.includes(k)), "",
+    "pose keyed by something that is not a fishing spot");
 });
 
 // R1 (ANIMATION.md): the rod rotates about the grip for the cast and the tug,
@@ -280,13 +296,16 @@ test("CONFIG.rig.layers is a well-formed paint stack", () => {
 // Getting this wrong doesn't throw: it detaches the line from a rod that is
 // visibly swinging, which is exactly the bug R1 exists to fix.
 test("the rod's pivot and the line's origin sit on the rod layer's box", () => {
-  const rod = CONFIG.rig.layers.find(l => l.id === "rod");
-  assert.ok(rod, "no rod layer to swing");
-  const pivot = CONFIG.anim.rod.pivot, tip = CONFIG.rig.lineOrigin;
-  // the grip is the bottom-left of the rod sprite (it runs corner to corner)
-  assert.deepEqual(pivot, { x: rod.x, y: rod.y + rod.h }, "pivot is not the rod's grip");
-  // …and the tip is the top-right of the same box
-  assert.deepEqual(tip, { x: rod.x + rod.w, y: rod.y }, "lineOrigin is not the rod's tip");
+  for (const [name, pose] of Object.entries(CONFIG.rig.poses)) {
+    const rod = pose.layers.find(l => l.id === "rod");
+    assert.ok(rod, `${name}: no rod layer to swing`);
+    // the grip is the bottom-left of the rod sprite (it runs corner to corner)
+    assert.deepEqual(pose.rodPivot, { x: rod.x, y: rod.y + rod.h },
+      `${name}: rodPivot is not the rod's grip`);
+    // …and the tip is the top-right of the same box
+    assert.deepEqual(pose.lineOrigin, { x: rod.x + rod.w, y: rod.y },
+      `${name}: lineOrigin is not the rod's tip`);
+  }
 });
 
 test("CONFIG.anim's timings and curve numbers are sane", () => {
