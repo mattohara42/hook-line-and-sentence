@@ -119,9 +119,55 @@ h1 {
   width: 720px;
   height: 360px;
   overflow: hidden;
-  /* painted sky/hills/sun/water base art (M9 art pass); pixelated keeps it
-     crisp under the cover-scale transform */
-  background: url("assets/background.png") center center / cover no-repeat;
+  /* R3: no background image of its own any more. The Pond is painted by the
+     three #bg-* planes below; the Stream and Ocean still stack their own art
+     over assets/background.png in their .loc-* rules, which name it explicitly,
+     so dropping it here costs them nothing and saves the Pond a 926KB load it
+     would only ever paint over. */
+  background: var(--water-deep);
+}
+
+/* ── R3: the Pond's three painted planes (ART_DIRECTION.md, "Background layers
+   per level") ────────────────────────────────────────────────────────────────
+   Separate elements, not three background-images on #scene, because each drifts
+   on its own timer and one element can only carry one animation — the water
+   layer is specified to animate *independently*.
+
+   The drift is deliberately tiny and slow: the milestone asks for parallax that
+   "reads at 1x without drawing attention to itself". At cover scale the art is
+   849px wide inside a 720px canvas, so there is ~64px of slack each side and a
+   ±7px drift can never expose an edge. The three periods are mutually prime-ish
+   so the planes never visibly resynchronise. */
+#bg-far, #bg-water, #bg-fore {
+  position: absolute; inset: 0; pointer-events: none;
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+#bg-far   { background-image: url("assets/background-pond-far.png");
+            animation: drift-far 121s ease-in-out infinite alternate; }
+#bg-water { background-image: url("assets/background-pond-water.png");
+            animation: drift-water 47s ease-in-out infinite alternate; }
+/* z-index 3 matches #surface; it comes later in the DOM, so it paints over the
+   water wash and the rig, but stays under the z-index 4 splashes and text. */
+#bg-fore  { background-image: url("assets/background-pond-fore.png"); z-index: 3;
+            animation: drift-fore 73s ease-in-out infinite alternate; }
+
+/* far barely moves, water moves most (it is water), foreground counter-drifts
+   so the planes separate rather than sliding as one sheet */
+@keyframes drift-far   { from { background-position: calc(50% - 3px) center; }
+                         to   { background-position: calc(50% + 3px) center; } }
+@keyframes drift-water { from { background-position: calc(50% - 7px) center; }
+                         to   { background-position: calc(50% + 7px) center; } }
+@keyframes drift-fore  { from { background-position: calc(50% + 5px) center; }
+                         to   { background-position: calc(50% - 5px) center; } }
+
+/* The Stream and Ocean have not been repainted yet (R3 covers all three levels;
+   the Pond went first on purpose). They keep their single-PNG art, so the Pond's
+   planes are hidden there rather than showing through it. */
+#scene.loc-stream #bg-far,  #scene.loc-stream #bg-water, #scene.loc-stream #bg-fore,
+#scene.loc-ocean  #bg-far,  #scene.loc-ocean  #bg-water, #scene.loc-ocean  #bg-fore {
+  display: none;
 }
 /* A3: the Stream biome, layered over the pond art (so a missing PNG degrades to
    the pond scene rather than a blank canvas).
@@ -291,7 +337,12 @@ h1 {
 }
 
 /* foreground reeds sway at the pond edges */
-.reeds { position: absolute; bottom: 8px; display: flex; gap: 7px; align-items: flex-end; pointer-events: none; }
+/* V1's CSS-drawn stand-in foreground. R3 gave the Pond real painted reeds in
+   #bg-fore, in the same two corners, so these would double up — they are kept
+   only for the Stream and Ocean, which have no painted foreground yet. They go
+   for good when those two levels are repainted. */
+.reeds { position: absolute; bottom: 8px; display: none; gap: 7px; align-items: flex-end; pointer-events: none; }
+#scene.loc-stream .reeds, #scene.loc-ocean .reeds { display: flex; }
 #reeds-left { left: 12px; }
 #reeds-right { right: 16px; }
 .reed {
@@ -716,7 +767,8 @@ h1 {
 .shop-btn.equipped { color: var(--umber); background: var(--moss); border-color: var(--moss); }
 
 @media (prefers-reduced-motion: reduce) {
-  #rig, .cloud, .reed, #bobber, #meter-fill.danger, #hull-shadow { animation: none !important; }
+  #rig, .cloud, .reed, #bobber, #meter-fill.danger, #hull-shadow,
+  #bg-far, #bg-water, #bg-fore { animation: none !important; }
   .finger, #fish { transition: none; }
   #scene.shake, #word.shakeword, #word.pop, #unlock-banner.show, #unlock-banner.prestige, .key.fresh, #fish.hooked, #word .cur.space { animation: none; }
   .ripple, .p, .coinfloat { display: none; }

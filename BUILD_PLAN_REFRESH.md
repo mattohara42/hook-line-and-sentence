@@ -189,6 +189,42 @@ every prompt from R3 onward has a matching set of tokens to point at.
 
 </details>
 
+### 🟡 R3 — Three painted backgrounds, layered for parallax (Pond done 2026-09-01)
+
+**The Pond half is done and wired.** All three planes are painted, keyed and
+live: `background-pond-{far,water,fore}.png`, rendered as three `#bg-*` elements
+inside `#scene` rather than stacked background-images, because each drifts on
+its own timer and `ART_DIRECTION.md` specifies the water layer as animating
+*independently* — one element can only carry one animation.
+
+Verified in Chromium, not just asserted: all three load, the waterline reads at
+**screen y=396 = design y=198** where `#surface` and every tuned coordinate
+assume it, the drift moves (water's `background-position` crept 0.24px over 4s),
+and `prefers-reduced-motion` reports `animation-name: none` on all three.
+
+- The drift is ±3px far / ±7px water / ∓5px foreground on periods of 121s / 47s
+  / 73s — mutually prime-ish so the planes never visibly resynchronise. At cover
+  scale the art is 849px wide in a 720px canvas, so ~64px of slack each side
+  means no drift can ever expose an edge.
+- `#bg-fore` shares `#surface`'s z-index 3 and follows it in the DOM: it paints
+  over the water wash and the rig, but stays under the z-index 4 splashes and
+  floating text, which must never hide behind a reed.
+- **V1's CSS-drawn `.reeds` are now hidden in the Pond** — the painted
+  foreground put real reeds in the same two corners and they doubled up. They
+  are kept for the Stream and Ocean, which have no painted foreground yet, and
+  go for good when those are repainted.
+- `#scene` no longer carries a background image at all. The Stream and Ocean
+  name `background.png` explicitly in their own `.loc-*` rules, so dropping it
+  saves the Pond a 926KB load it would only ever paint over.
+
+**Still open: the Stream and the Ocean.** Their prompts are not written yet —
+`ART.md` writes them now that the Pond is judged. `.loc-stream`'s `scale 1.246`
+workaround is still in `style.css` and can only be deleted when the Stream is
+repainted, so the milestone stays open.
+
+<details>
+<summary>The original plan for R3, as written</summary>
+
 ### R3 — Three painted backgrounds, layered for parallax
 
 First art milestone. Per `ART_DIRECTION.md`: far background (sky, hills,
@@ -206,6 +242,8 @@ level.
   parallax reads at 1x without drawing attention to itself, and `.loc-stream`'s
   framing workaround (`scale 1.246`, offset to y=198) is deleted rather than
   re-tuned.
+
+</details>
 
 ### R4 — The angler: one kid, three costumes, rigged
 
