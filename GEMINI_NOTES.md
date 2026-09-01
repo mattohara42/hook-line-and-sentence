@@ -36,8 +36,12 @@ Scope note, so the docs don't drift into each other:
 ## What it reliably gets right
 
 - **Aspect ratio, when stated as a ratio.** Adding `Aspect ratio 2.36:1` to the
-  end of a prompt produced exactly 1584×672 on three consecutive requests. This
-  is the single most dependable instruction in the whole set.
+  end of a prompt produced exactly 1584×672 on **six** consecutive requests
+  across two levels. This is the single most dependable instruction in the whole
+  set. **State the pixel dimensions in the prompt body too** — "The image is 1584
+  by 672 pixels, aspect ratio 2.36:1". The ratio alone has never missed, so this
+  is belt and braces rather than a fix, but it costs nothing and it makes the
+  prompt self-contained if it is ever pasted somewhere without its spec line.
 - **Palette, when described in words rather than hex.** The R3 far layer came
   back with sky `#b7cfd0` against a `#b7cfd8` target and glow `#f9e9b7` against
   `#f7e6bd` — effectively exact, from prose alone. Hex values in the prompt are
