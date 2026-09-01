@@ -345,11 +345,28 @@ h1 {
 /* left/top are driven every frame by the reel RAF (so the line can stay glued
    to the fish), so NO left/top transition here — a transition would smear the
    fish behind its per-frame target. Only opacity eases. */
+/* R6: a species with its own art renders as cut layers INSIDE #fish (renderFish
+   sets `.rigged` and the box), and a species without one keeps the tier
+   placeholder below. Every placeholder rule is scoped `:not(.rigged)` rather
+   than ordered after the art, so the two can never fight over specificity — the
+   glow and the submerged treatment stay unscoped, because rarity and being
+   underwater are true of a fish whatever it is drawn from. */
 #fish {
   position: absolute; top: 244px; width: 62px; height: 41px;
-  background: url("assets/fish-common.png") center / contain no-repeat;
   opacity: 0;
   transition: opacity 0.3s ease;
+}
+#fish:not(.rigged) { background: url("assets/fish-common.png") center / contain no-repeat; }
+.fish-layer { position: absolute; inset: 0; background: center / contain no-repeat; }
+/* the tail sweeps about the peduncle it was cut at — transform-origin and both
+   custom properties are set inline from CONFIG.fish (the pivot is per species,
+   the swing is not). `alternate` is why the duration is half a cycle. */
+.fish-layer[data-id="tail"] {
+  animation: tailSweep var(--tail-ms) ease-in-out infinite alternate;
+}
+@keyframes tailSweep {
+  from { transform: rotate(calc(var(--tail-deg) * -1)); }
+  to   { transform: rotate(var(--tail-deg)); }
 }
 /* V1: while it's below the waterline the fish is seen THROUGH water — softer,
    bluer, less contrasty. Removed when it's landed, so breaking the surface is
@@ -366,21 +383,18 @@ h1 {
           drop-shadow(0 0 12px rgba(var(--gold-rgb),0.6));
 }
 /* uncommon shares the common sprite but hue-shifted so it reads as a
-   different fish (no dedicated uncommon art) */
-#fish.tier-uncommon { filter: hue-rotate(150deg) saturate(1.2); }
-#fish.tier-rare {
-  background-image: url("assets/fish-rare.png");
-  filter: drop-shadow(0 0 8px rgba(var(--gold-rgb),0.7));
-}
-#fish.tier-legendary {
-  background-image: url("assets/fish-legendary.png");
-  filter: drop-shadow(0 0 12px rgba(var(--gold-rgb),0.9));
-}
+   different fish. This is a placeholder trick and nothing else — real art is
+   already the colour the species should be, so it is scoped away from it. */
+#fish:not(.rigged).tier-uncommon { filter: hue-rotate(150deg) saturate(1.2); }
+#fish:not(.rigged).tier-rare { background-image: url("assets/fish-rare.png"); }
+#fish.tier-rare { filter: drop-shadow(0 0 8px rgba(var(--gold-rgb),0.7)); }
+#fish:not(.rigged).tier-legendary { background-image: url("assets/fish-legendary.png"); }
+#fish.tier-legendary { filter: drop-shadow(0 0 12px rgba(var(--gold-rgb),0.9)); }
 /* A8: Muskie Quixote is the one Ocean fish with its own art — the Pond's
    legendary (Koi Story) keeps the shared sprite above. The muskie is a long
    2.9:1 predator against the shared sprites' 1.5:1, so the box widens to keep
    it reading big; `contain` still seats its mouth at left+6 for lineToFish(). */
-#scene.loc-ocean #fish.tier-legendary {
+#scene.loc-ocean #fish:not(.rigged).tier-legendary {
   background-image: url("assets/fish-muskie.png");
   width: 96px;
 }
@@ -690,6 +704,18 @@ h1 {
   border-radius: 50%;
   background: radial-gradient(circle at 65% 35%, var(--umber) 0 35%, var(--foam) 40% 100%);
 }
+/* R6: once a species has its own art AND has been caught, the cell shows the
+   real body sprite instead of the shape above — which is the whole point of
+   "the collection reads as 33 different fish". An UNCAUGHT cell keeps the blob
+   whatever art exists: the silhouette is the tease, and spoiling it would cost
+   more than the art buys. The box keeps the blob's total footprint (40 + 3 + 5
+   against 26 + 10 + 12) so a half-landed roster doesn't ripple the grid. */
+.cfish.art {
+  width: 70px; height: 40px; margin: 3px auto 5px;
+  background: center / contain no-repeat;
+  border-radius: 0;
+}
+.cfish.art::after, .cfish.art::before { content: none; }
 .cname { font-family: var(--display); font-size: 10px; color: var(--ink); min-height: 24px; }
 .cell.unknown .cname { color: var(--dim); }
 .csub { font-size: 10px; color: var(--dim); margin-top: 2px; }
@@ -757,7 +783,7 @@ h1 {
 
 @media (prefers-reduced-motion: reduce) {
   #rig, .cloud, .reed, #bobber, #meter-fill.danger, #hull-shadow,
-  #bg-far, #bg-water, #bg-fore { animation: none !important; }
+  #bg-far, #bg-water, #bg-fore, .fish-layer { animation: none !important; }
   .finger, #fish { transition: none; }
   #scene.shake, #word.shakeword, #word.pop, #unlock-banner.show, #unlock-banner.prestige, .key.fresh, #fish.hooked, #word .cur.space { animation: none; }
   .ripple, .p, .coinfloat { display: none; }

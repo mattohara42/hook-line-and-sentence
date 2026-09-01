@@ -286,6 +286,41 @@ export const CONFIG = {
     },
   },
 
+  // R6: per-species fish art. The same shape as CONFIG.rig.poses, and for the
+  // same reason — the config is the registry, so a species listed here renders
+  // its own art and a species absent from it renders the tier placeholder. That
+  // is the only switch between them, which is what makes a half-finished roster
+  // a playable state rather than a broken one.
+  //
+  // An entry is written by tools/cut-fish.py off the delivered painting and
+  // never tuned in the browser: `w`/`h` are the box in design px, `mouth` is
+  // where the line attaches (the leftmost opaque column at its own vertical
+  // centre), and `tail` is the pivot the tail layer sweeps about — the midpoint
+  // of the caudal peduncle, which is where the cut was made. Both cuts share one
+  // canvas, so their offsets are zero by construction and `layers` is only paint
+  // order.
+  fish: {
+    // What a species with no art renders as: the tier sprite, in the box #fish
+    // has always had, with the mouth drawFish() used to hardcode as left+6/+20.
+    // The Ocean muskie's A8 hero sprite is 96px wide by a CSS special case and
+    // still uses this mouth — as it does today — until its own wave lands.
+    placeholder: { w: 62, h: 41, mouth: { x: 6, y: 20 } },
+    // A species' length comes from its RANK, not from its painting. The
+    // generator draws every subject to fill its frame, so a minnow and a pike
+    // come back the same size — the same trap GEMINI_NOTES.md records for the
+    // standing and seated anglers. The cut tool scales each painting to this and
+    // a data test holds landed art to it, which is what stops 33 separate
+    // generations drifting into 33 separate scales.
+    lengthByTier: { common: 54, uncommon: 64, rare: 78, legendary: 96 },
+    // the tail sweep: how far it swings each way, and how long a full there-and-
+    // back cycle takes. Small on purpose — a fish at 60px reads as swimming from
+    // a few degrees, and more looks like a fish in trouble.
+    swim: { tailDeg: 7, tailPeriodMs: 1100 },
+    // Filled a wave at a time, Pond first — see ART.md. Empty is the correct
+    // state until art lands, not a missing config.
+    species: {},
+  },
+
   // R1 (ANIMATION.md): the cast, the line and the reel now move. Every number
   // the motion uses lives here — app.js owns no timings. Design-space px on the
   // 720x360 canvas, ms for durations, degrees for the rod.
