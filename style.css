@@ -119,16 +119,15 @@ h1 {
   width: 720px;
   height: 360px;
   overflow: hidden;
-  /* R3: no background image of its own any more. The Pond is painted by the
-     three #bg-* planes below; the Stream and Ocean still stack their own art
-     over assets/background.png in their .loc-* rules, which name it explicitly,
-     so dropping it here costs them nothing and saves the Pond a 926KB load it
-     would only ever paint over. */
+  /* R3: no background image of its own. Every level is painted by the three
+     #bg-* planes below, which swap their images per .loc-*; this colour is only
+     what shows if an image ever fails to load. */
   background: var(--water-deep);
 }
 
-/* ── R3: the Pond's three painted planes (ART_DIRECTION.md, "Background layers
-   per level") ────────────────────────────────────────────────────────────────
+/* ── R3: the three painted planes (ART_DIRECTION.md, "Background layers per
+   level"). These carry the Pond by default; the .loc-* rules further down swap
+   their images for the Stream and the Ocean. ─────────────────────────────────
    Separate elements, not three background-images on #scene, because each drifts
    on its own timer and one element can only carry one animation — the water
    layer is specified to animate *independently*.
@@ -177,24 +176,11 @@ h1 {
 #scene.loc-stream #bg-water { background-image: url("assets/background-stream-water.png"); }
 #scene.loc-stream #bg-fore  { background-image: url("assets/background-stream-fore.png"); }
 
-/* The Ocean has not been repainted yet (R3's third level). It keeps its
-   single-PNG art, so the planes are hidden there rather than showing through
-   it — the same self-resolving pattern the Stream used until now. */
-#scene.loc-ocean #bg-far, #scene.loc-ocean #bg-water, #scene.loc-ocean #bg-fore {
-  display: none;
-}
-/* A6: the Ocean biome, same self-resolving layering as the Stream above — the
-   pond art shows through until assets/background-ocean.png lands (prompt in
-   ART.md), then covers it with zero code change. */
-#scene.loc-ocean {
-  background-image: url("assets/background-ocean.png"), url("assets/background.png");
-  /* the ocean art came back 1.83:1 (not the ~2.4:1 the other scenes are), so
-     `cover` crops its top and bottom; `center 11%` pulls the horizon down onto
-     y=198 where the pond's waterline sits and the boat coords assume. */
-  background-position: center 11%, center center;
-  background-size: cover, cover;
-  background-repeat: no-repeat, no-repeat;
-}
+/* R3: the Ocean, repainted as three layers — the last of the nine, so every
+   level now works the same way and no scene carries a framing patch. */
+#scene.loc-ocean #bg-far   { background-image: url("assets/background-ocean-far.png"); }
+#scene.loc-ocean #bg-water { background-image: url("assets/background-ocean-water.png"); }
+#scene.loc-ocean #bg-fore  { background-image: url("assets/background-ocean-fore.png"); }
 #scene.shake { animation: shake 0.3s; }
 @keyframes shake {
   20% { transform: translate(-5px, 2px); } 40% { transform: translate(4px, -2px); }
@@ -333,12 +319,11 @@ h1 {
 }
 
 /* foreground reeds sway at the pond edges */
-/* V1's CSS-drawn stand-in foreground. The Pond and the Stream now have real
-   painted foregrounds in #bg-fore, in the same two corners, so these would
-   double up there. Only the Ocean still needs them, and they go for good when
-   it is repainted. */
+/* V1's CSS-drawn stand-in foreground, now unused: all three levels have real
+   painted foregrounds in #bg-fore. Kept hidden rather than deleted only because
+   the markup and the sway keyframes still reference them; they come out with
+   the next markup pass. */
 .reeds { position: absolute; bottom: 8px; display: none; gap: 7px; align-items: flex-end; pointer-events: none; }
-#scene.loc-ocean .reeds { display: flex; }
 #reeds-left { left: 12px; }
 #reeds-right { right: 16px; }
 .reed {
