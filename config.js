@@ -208,6 +208,26 @@ export const CONFIG = {
         // cut end never moves and the body layer covers it.
         armPivot:   { x: 56, y:   7 },
       },
+      // R4's Ocean angler: the same kid braced back as if in the fighting
+      // chair, in a life vest, holding The Deep Endeavor — the rod that unlocks
+      // this spot. The chair itself is deliberately NOT drawn: it is a vessel,
+      // and R5 paints vessels as a near-side layer in FRONT of the angler, so
+      // baking it into the body here would stop R5 seating the kid in it.
+      //
+      // Seated like the Pond, and it measures like it too — 51 design px
+      // against 50, by the same head match. It is the first pose whose arm
+      // bends visibly enough to need two segments in the cut tool; the other
+      // two hide their upper arm behind a knee or a vest.
+      ocean: {
+        layers: [
+          { id: "rod",  file: "rod-deepsea-ocean",   x: 38, y: -48, w: 71, h: 82 },
+          { id: "arm",  file: "angler-ocean-arm",    x: 38, y: -48, w: 71, h: 82 },
+          { id: "body", file: "angler-ocean-body",   x: 38, y: -48, w: 71, h: 82 },
+        ],
+        rodPivot:   { x: 68, y:   3 },
+        lineOrigin: { x: 109, y: -48 },
+        armPivot:   { x: 50, y:   3 },
+      },
     },
   },
 
