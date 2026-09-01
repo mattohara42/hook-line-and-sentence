@@ -8,7 +8,7 @@ Progression epic** (tiers, phrases, sentences, WPM-as-goal) — **A0–A8 all
 shipped 2026-08-22, epic complete.**
 
 The current epic is the **Art & Animation Refresh** —
-`BUILD_PLAN_REFRESH.md` (R1–R7, opened 2026-08-31; **R1 and R2 shipped, R3 next**). It is a
+`BUILD_PLAN_REFRESH.md` (R1–R7, opened 2026-08-31; **R1–R3 shipped, R4 next**). It is a
 significant piece of work: the whole visual layer is being restarted under two
 new source-of-truth docs, **`ART_DIRECTION.md`** (warm painterly, Ghibli-
 anchored, no pure black) and **`ANIMATION.md`** (the cast/line/reel motion the
@@ -16,9 +16,10 @@ game has never had). It supersedes `BUILD_PLAN_VISUAL.md` (V2–V5) and
 `BUILD_PLAN_GRAPHICS.md`, both of which planned art in the old pixel style;
 V1's three-plane scene survives and is only retuned. **The engine is not being
 touched** — progression, the keyboard and the unlockables all stay as they are.
-`ART.md`'s open art requests were withdrawn with the old direction; **R3 opens
-the new ones — it is the first milestone of the epic that needs Matt to
-generate anything.** `ART.md` carries the palette's real hex values for it.
+`ART.md`'s open art requests were withdrawn with the old direction and replaced
+per milestone. **R3 is done: all nine background layers are painted, keyed and
+wired, and no scene carries a framing patch any more.** `ART.md` carries the
+palette's real hex values.
 A real kid playtest of the A7 fight beats is still outstanding (see
 `BACKLOG.md`).
 
@@ -91,15 +92,27 @@ older still and is load-bearing for the pre-profiles migration.
 
 ## Workflow
 
-- Read `HANDOFF.md` first — it's the short-lived "where we left off" note
-  from the last session (open threads, what's waiting on Matt). Update it at
-  the end of every session; it's not a design doc, so don't let it drift
-  into duplicating `SPEC.md`/`BUILD_PLAN*.md`/`BACKLOG.md`.
+- Read `HANDOFF.md` first. It is a **state snapshot and a set of pointers** —
+  active milestone and its done-when, the next action, and what is blocked on a
+  human. Update it at the end of every session, and keep it cheap:
+  **rewrite it, never append** · **a resolved thread becomes one line, or
+  disappears** — point at the PR · **never restate another doc**, link it · and
+  **no session narrative**, which is what `git log` is for. Reasoning belongs in
+  the commit and PR that did the work, not here; the file hit 199 lines once by
+  accreting finished investigations and had to be cut in half.
 - Start each session by stating which milestone from `BUILD_PLAN.md` is
   active and its "done when" criterion.
 - Mid-build ideas go to `BACKLOG.md`, never into the current milestone.
 - **`git fetch` before branching.** The local clone runs many commits behind
-  `origin/main`; branch from `origin/main`, not local `main`.
+  `origin/main`; branch from `origin/main`, not local `main`. **Re-branch from
+  it after every squash-merge too** — reusing a branch across merges makes its
+  history diverge from `main` a little more each time, and the next PR conflicts
+  against work that is already in.
+- **Verify visual and motion claims in a real browser, and screenshot past the
+  startup modal.** `#profiles` covers the whole viewport until an angler is
+  created, so a screenshot taken on load is a picture of a scrim, not the game.
+  Every R3 background preview was shot that way and read half as bright as the
+  game really is.
 - **Art that doesn't fit is a reroll, not an offset tweak.** Sprite pieces are
   generated from a reference image and returned on the same canvas so they
   register by construction (see `ART.md`).
