@@ -9,60 +9,42 @@ something is the way it is, `git log` and the PR body have it in full.
 
 | | |
 |---|---|
-| **Active milestone** | **R5 — vessels**, `BUILD_PLAN_REFRESH.md` (R4 closed 2026-09-01) |
-| **Done when** | switching spots swaps vessel, costume and pose together; the hull overlaps the angler correctly; the line still leaves the rod tip in all three |
-| **State** | R5: rowboat **landed and wired**. Waiting on the Whaler, plus four shop hulls. |
-| `origin/main` | `93db370`, tree clean, nothing unpushed |
-| Tests | 81/81 (`npm test`) |
+| **Active milestone** | **R6 — fish, a rig per species**, `BUILD_PLAN_REFRESH.md` (R5 closed 2026-09-01) |
+| **Done when** | every species in `data/fish.json` has its own art, the collection screen reads as 33 different fish, and the landing has a visible moment — wave by wave, Pond first |
+| **State** | R5 shipped: both vessels painted, cut and wired. One piece of R5 debt is open — see below. |
+| `origin/main` | clean, nothing unpushed |
+| Tests | 82/82 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
 | Deploys | Netlify is **manual**; merging to `main` does not go live |
 
 ## Start here
 
-**The next action is Matt's: run the Whaler prompt** in `ART.md` → *R5 — the two
-vessels*. The rowboat beside it has landed and is wired; the Stream needs no
-vessel.
+**R6 is the big one and it has not been scoped yet.** ~33 species × body/fin/tail
+in waves by biome, per `BUILD_PLAN_REFRESH.md`. Before writing a single prompt:
 
-**And four more after it, which is new work R5 gained rather than inherited:**
-the Pond vessel is `skinnable: false` because `shop.boats`' alternate hulls
-(`boat-red`, `boat-blue`, `boat-leaf`, `boat-purple`) are still single pixel-era
-PNGs with no far/near split. **Equipping a boat skin currently does nothing at
-the Pond.** Each needs the same prompt with the hull colour swapped, then
-`tools/cut-vessel.py`.
+- **Read `tools/cut-angler.py` first.** R6 is the same shape of problem it
+  already solves — several registered pieces out of one delivered painting — and
+  R4 paid for every lesson in it. `tools/cut-vessel.py` is the simpler cousin,
+  and its sheer detector is the model for *finding* a cut line rather than
+  tracing one.
+- **Read `GEMINI_NOTES.md`.** Its *Characters* section is what R4 bought, and
+  R5 added the see-through recipe. Two that cost the most: **measure a complaint
+  before spending a reroll on it**, and **position by edges and corners, never
+  by percentage**.
+- **A half-finished roster is a playable state**: the tinted placeholder stays
+  for any species whose art has not landed, so ship a biome at a time and never
+  block on the full 33.
 
-**The code to receive them is already on `main`.** A pose owns its `anchor`
-(where `#rig` sits and the point it rocks about), its `bob`, and its `vessel` —
-`far` behind the angler, `near` in front so the kid sits *in* the hull rather
-than on it, `skinnable` for the one the boat shop reskins, or `null`. So landing
-a vessel is filenames and measured numbers, not new machinery.
+**One piece of R5 debt, and it is user-visible:** both painted vessels are
+`skinnable: false`, so **equipping one of `shop.boats`' four alternate hulls
+does nothing at any spot**. They are still pixel-era PNGs with no far/near
+split. The fix is *not* four fresh prompts — four fresh rowboats would be four
+different boats under one shared vessel box. Generate them **from** the
+delivered painting so they register by construction, then run the same cut.
+Prompt, the registration check, and a cheaper CSS-tint fallback: `ART.md` →
+*R5 debt — the four shop hulls*. It blocks nothing in R6.
 
-**One painting per vessel, cut locally into two halves.** A side-on boat already
-contains both: everything above the near gunwale paints behind the angler, the
-near hull side paints in front. Asking for two images that must register would
-invent a problem the cut doesn't have — R4's *don't generate a piece you could
-cut*, applied to hulls.
-
-Then Claude: add the vessel to `tools/cut-vessel.py`'s `VESSELS` dict with
-coarse sheer anchors (within ~35px; the detector refines per column) · wire ·
-**seat the Ocean angler in the fighting chair, which is a wiring step, not a
-reroll** (the pose has two knobs for it, the vessel's own `x/y` and the pose's
-`anchor`) · composite at 1x before believing any of it.
-
-**Don't trace the sheer by eye.** That was tried on the rowboat and ran 25px
-high, crossing the thwarts — and a thwart's near end *is* the sheer. The
-detector reads what the painting gives: the rail is a lighter band with a darker
-line above it.
-
-**R4's asset is `tools/cut-angler.py`** — one delivered painting per pose in,
-three registered layers out. R6's fish are the same shape of problem
-(body/fin/tail from one painting), so read it before inventing anything there.
-
-Read `GEMINI_NOTES.md` before writing any prompt. Its *Characters* section is
-everything R4 paid for, including the two that cost the most: **measure a
-complaint before spending a reroll on it**, and **seed a synthesised
-continuation from the measured width at the seam, never a nominal constant**.
-
-## Waiting on Matt (none of it blocks R5)
+## Waiting on Matt (none of it blocks R6)
 
 - **Close PR #55 unmerged.** Verified 2026-09-01: it is a strict *subset* of
   `main` — merging it would delete 3463 lines including R1, R2 and the whole
@@ -84,13 +66,7 @@ continuation from the measured width at the seam, never a nominal constant**.
   and the feel is in `CONFIG.anim` — it swaps out without touching the loop.
 - **A7 fight beats have never been tested on a real kid.**
   `CONFIG.fight.clauseRunMs` (550) and `segmentRunMs` (900) were picked by feel.
-- **The Firebase blast-radius decision**, in `BACKLOG.md`. Unchanged by the
-  above: the rules document the problem, they do not solve it.
-
-> **Correction, 2026-09-01:** the old note here said a web session's git
-> credentials are read-only. They are not — this session pushed and squash-merged
-> ten PRs (#85–#94). Closing PR #55 and deleting branches are still Matt's, but
-> because they are his calls, not because Claude cannot reach them.
+- **The Firebase blast-radius decision**, in `BACKLOG.md`.
 
 ## Rules of thumb
 
@@ -102,8 +78,9 @@ continuation from the measured width at the seam, never a nominal constant**.
   the profile picker's scrim and looked half as bright as the game really is.
   Measuring the right number on the wrong image is the failure mode.
 - **A piece that doesn't fit is a reroll, not an offset tweak** — G1's lesson,
-  and R3's for backgrounds. The exception R3 found is in `GEMINI_NOTES.md`:
-  *featureless* content can be fitted, drawn content cannot.
+  and R3's for backgrounds. But **placement is wiring, not art**: R5 seated the
+  Ocean kid in a fighting chair the generator put wherever it liked, using
+  `vessel.x/y` and the pose's `anchor`, and spent no reroll on it.
 - **Nothing may land in the bottom-center finger-guide panel.** It covers the
   lower third and it is the best part of the game.
 - **The keyboard is frozen and tested.** Never point `--kb-*` at a scene token.

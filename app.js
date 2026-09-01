@@ -1504,7 +1504,15 @@ function renderRig(loc) {
   rig.style.top = pose.anchor.y + "px";
   rig.style.transformOrigin = `${pose.anchor.pivot.x}px ${pose.anchor.pivot.y}px`;
   rig.classList.toggle("bobs", !!pose.bob);
-  $("hull-shadow").hidden = !pose.vessel?.shadow;
+  // the hull's shadow travels with the hull: it is a box on the vessel, not a
+  // rectangle in style.css, because a Whaler and a rowboat do not darken the
+  // same patch of water. CSS still owns its gradient, height and wake.
+  const sh = pose.vessel?.shadow, shEl = $("hull-shadow");
+  shEl.hidden = !sh;
+  if (sh) {
+    shEl.style.left = sh.x + "px"; shEl.style.top = sh.y + "px";
+    shEl.style.width = sh.w + "px";
+  }
 
   // the hull behind the angler; its near side goes on after the layers, so the
   // kid sits down IN it rather than on it

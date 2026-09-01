@@ -283,6 +283,32 @@ test("every CONFIG.rig pose is a well-formed paint stack", () => {
   }
 });
 
+// R5: the pose's vessel and its shadow are written straight into inline styles
+// by renderRig(), so a leftover from an older shape — `shadow: true` from before
+// it became a box — does not throw, it writes `left: undefinedpx` and the shadow
+// silently stacks up in the scene's top-left corner.
+test("every vessel is a well-formed hull with a placed shadow", () => {
+  for (const [name, pose] of Object.entries(CONFIG.rig.poses)) {
+    const v = pose.vessel;
+    if (v == null) continue;                       // the Stream: no boat, on purpose
+    assert.ok(/^[a-z0-9-]+$/.test(v.far ?? ""), `${name}: vessel has no far half`);
+    assert.ok(v.near == null || /^[a-z0-9-]+$/.test(v.near), `${name}: bad near half`);
+    assert.ok(v.w > 0 && v.h > 0, `${name}: vessel with no size`);
+    assert.ok([v.x, v.y].every(Number.isFinite), `${name}: vessel with no offset`);
+    if (v.shadow == null) continue;
+    assert.equal(typeof v.shadow, "object", `${name}: shadow is a flag, not a box`);
+    assert.ok(v.shadow.w > 0, `${name}: shadow with no width`);
+    assert.ok([v.shadow.x, v.shadow.y].every(Number.isFinite), `${name}: shadow with no place`);
+  }
+  // the anchor moves the whole rig, hull included, so it is the same kind of
+  // silent failure one level up
+  for (const [name, pose] of Object.entries(CONFIG.rig.poses)) {
+    const a = pose.anchor;
+    assert.ok(a && [a.x, a.y].every(Number.isFinite), `${name}: pose is not anchored`);
+    assert.ok(a.pivot && [a.pivot.x, a.pivot.y].every(Number.isFinite), `${name}: no rock pivot`);
+  }
+});
+
 // R4: a pose is looked up by location, and anything without one falls back to
 // the default. A typo in either key is an angler in the wrong clothes at best
 // and no angler at all at worst, and neither throws.

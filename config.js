@@ -144,8 +144,10 @@ export const CONFIG = {
     //             which is V1's front-plane trick applied to the hull so the kid
     //             sits down *in* it rather than on it. `near` may be null until
     //             that art lands; a missing PNG paints nothing. `skinnable`
-    //             marks the vessel that shop.boats reskins. null = no vessel,
-    //             which is the Stream.
+    //             marks the vessel that shop.boats reskins, and `shadow` is the
+    //             smudge of dark water under the hull — a box rather than a
+    //             flag, because it has to move and stretch when the hull does.
+    //             null = no vessel, which is the Stream.
     //
     // A location with no pose of its own wears this one. That is every level
     // today: R4's art is requested in ART.md and has not landed, so the Stream
@@ -180,7 +182,8 @@ export const CONFIG = {
         // pixel rowboat over this or, if matched by suffix, 404 into an
         // invisible boat. They each need the same cut — see ART.md.
         vessel: { far: "boat-pond-far", near: "boat-pond-near",
-                  x: -16, y: 2, w: 156, h: 42, skinnable: false, shadow: true },
+                  x: -16, y: 2, w: 156, h: 42, skinnable: false,
+                  shadow: { x: 24, y: 212, w: 116 } },
         // rod → arm → body. The hand is painted in front of the pole, and the
         // forearm's cut end tucks behind the knee, which the body carries — so
         // the arm sits between them.
@@ -252,13 +255,25 @@ export const CONFIG = {
       // bends visibly enough to need two segments in the cut tool; the other
       // two hide their upper arm behind a knee or a vest.
       ocean: {
-        anchor: { x: 20, y: 168, pivot: { x: 59, y: 30 } },
+        // The whole rig rides 24px higher than the other two poses, and that is
+        // the Whaler's doing rather than the kid's: a fighting chair is a raised
+        // seat, so putting his hips on it and then floating the hull at its own
+        // painted waterline lifts everything. The pivot is the hull's centre at
+        // that waterline, which is what the Pond's (59, 30) is too.
+        anchor: { x: 20, y: 144, pivot: { x: 98, y: 54 } },
         bob: true,
-        // Still the pixel rowboat, and still skinnable, until the Whaler lands.
-        // Both flip then: a Boston Whaler is not what shop.boats reskins, and a
-        // rowboat under a kid braced in a fighting chair is the placeholder.
-        vessel: { far: "boat", near: null, x: 0, y: 8, w: 118, h: 48,
-                  skinnable: true, shadow: true },
+        // R5's Boston Whaler, cut from one painting along the near gunwale like
+        // the rowboat. NOT skinnable, and this one never will be: shop.boats
+        // sells paint for a rowboat.
+        //
+        // x/y seat the kid rather than centre the boat — they put the chair's
+        // seat pan under his hips, measured off the painting (its pan is 326,122
+        // into a 1510x465 crop). The waterline the painting itself carries (the
+        // cool grey below the cream topsides, 85% down) then lands on the
+        // scene's own y=198, which is what anchor.y is solving for.
+        vessel: { far: "boat-ocean-far", near: "boat-ocean-near",
+                  x: 13, y: 10, w: 170, h: 52, skinnable: false,
+                  shadow: { x: 48, y: 206, w: 140 } },
         layers: [
           { id: "rod",  file: "rod-deepsea-ocean",   x: 38, y: -48, w: 71, h: 82 },
           { id: "arm",  file: "angler-ocean-arm",    x: 38, y: -48, w: 71, h: 82 },

@@ -257,6 +257,36 @@ residue from **6.01% → 3.79% → 0.00%**.
 4. Crop to the alpha bbox for sprites, so CSS `contain` seats them like the
    original. (Not for full-canvas layers, which must keep their canvas.)
 
+### When the subject is see-through, the ramp is the wrong tool (R5)
+
+The Whaler came back with a **glass windscreen, and the generator painted the
+backdrop through it** — a violet panel that is magenta seen through pale glass.
+That is the generator being *right*, and it is a third thing the depth test in
+step 1 does not cover: not residue, not a hole in the silhouette, but paint that
+genuinely carries some key.
+
+Distance-to-key cannot read it. The violet sits 112 from the key, past `HI`, so
+the ramp calls it opaque and hands you a purple blob on a cream boat.
+
+Read alpha from **how much key the pixel carries** instead:
+
+    gap   = min(R, B) - G                       # magenta's signature
+    alpha = 1 - gap / (min(KEY_R, KEY_B) - KEY_G)
+    fg    = (c - (1-alpha)*KEY) / alpha         # the same unpremultiply
+
+Magenta is the one colour in this palette whose green falls below *both* red and
+blue, so on any warm or neutral paint `gap` is negative and alpha clips to 1 —
+cream, teak, warm brown outlines and cool grey shadows all survive untouched.
+The windscreen came out pale grey at 70% opacity and shows the sky through it in
+the game, which is what glass should do. **It also replaces step 3**: unmixing
+removes the key's contribution by construction, so there is no spill left to
+despill — and a despill rule tuned for warm timber would have flattened the
+glass right back to grey anyway.
+
+Use it when the subject contains glass, water, smoke or a thin edge; the ramp is
+still right for something wholly opaque, which is most things. `cut-vessel.py`
+carries both, one named per painting.
+
 ### Checkerboard → alpha (legacy, for anything generated before the convention)
 
 1. Take the two most common **border** colours — that is the checkerboard pair.

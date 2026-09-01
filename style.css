@@ -293,8 +293,9 @@ h1 {
 /* contact: without a shadow the hull has nothing to sit on. It lives outside
    #rig so it stays flat on the water while the boat rocks, and behind #surface
    so it dims like anything else underwater. */
+/* left/top/width come from the pose's vessel.shadow — see renderRig() */
 #hull-shadow {
-  position: absolute; left: 30px; top: 212px; width: 110px; height: 10px;
+  position: absolute; height: 10px;
   z-index: 2; pointer-events: none;
   background: radial-gradient(ellipse at center,
     rgba(45, 62, 56, 0.45) 0%, rgba(45, 62, 56, 0) 70%);
