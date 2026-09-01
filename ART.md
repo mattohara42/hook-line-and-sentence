@@ -383,6 +383,37 @@ pink-fringed reed is a reroll, not a keying problem) · anything painted in the
 center · anything reaching the upper half · then key, flood-filling from the
 edges rather than globally.
 
+**✅ Landed 2026-09-01.** The compositional keep-out worked exactly as intended:
+**0.0%** of the bottom-center third is painted, and only **0.2%** of the rig's
+box (design x20–138, y140–224 — the boat, kid and rod) is clipped by a reed tip.
+Both were the point of the rewrite.
+
+**Two things came back wrong, and only one of them mattered.**
+
+1. **The backdrop is `#c642b0`, not `#FF00FF` — and it is the prompt's own fault.**
+   The style preamble every asset prompt carries says *"no neon or saturated
+   colors"*, and the generator applied that to the backdrop as well as the art.
+   It did not matter: uniformity is what keying needs, not a particular hue, and
+   the field came back at **stdev <1** across the whole clear area. **Detect the
+   backdrop from the border rather than assuming `#FF00FF`** — the existing rule
+   for checkerboards, and it holds here too. Worth expecting the softening on
+   every future request rather than fighting it.
+2. **The reeds reach 32.6%/37.5% down, well into the upper half the prompt
+   forbade.** That instruction was simply wrong: the waterline is at 56%, and
+   cattails at a pond edge stand *above* the water. Reeds that stopped below it
+   would look wrong. The constraint that actually mattered — don't foul the rig
+   or the guide panel — was met. **Say "must not reach the upper half" only
+   where something is genuinely flat to the water.**
+
+**Keying it took three passes, and the middle one is the reusable part:**
+flood fill from the edges (never globally) · an **alpha ramp** between distance
+55 and 110 from the key, unpremultiplying the key's contribution out of every
+blended edge pixel · then a **targeted despill**. Purple residue went 6.01% →
+3.79% → **0.00%**. The despill is safe here because real pond vegetation is
+olive and tan — blue *below* green — so any surviving pixel with blue well above
+green is keyer residue and never paint. That test is palette-specific; re-derive
+it per asset rather than copying the numbers.
+
 **Once these three land:** composite them locally at game scale before wiring
 (the established local-check habit — see *the same-canvas rule* above), swap
 `#scene`'s background for the three-layer stack, confirm the waterline still
