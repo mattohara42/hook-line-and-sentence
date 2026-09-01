@@ -12,7 +12,7 @@ something is the way it is, `git log` and the PR body have it in full.
 | **Active milestone** | **R4 — the angler**, `BUILD_PLAN_REFRESH.md` |
 | **Done when** | at 1x, in all three levels, the rod looks held and the costume suits the water; casting (R1) moves the arm and rod, not the whole kid |
 | **State** | code half **landed**; **blocked on Matt generating the Pond pose** |
-| `origin/main` | `a1249ce`, tree clean, nothing unpushed |
+| `origin/main` | `d9a7f1b` (R4's code half, #85), tree clean, nothing unpushed |
 | Tests | 81/81 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
 | Deploys | Netlify is **manual**; merging to `main` does not go live |
