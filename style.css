@@ -583,7 +583,13 @@ h1 {
 /* ============ OVERLAY SCREENS (collection, shop) ============ */
 .overlay {
   position: fixed; inset: 0; z-index: 10;
-  background: rgba(var(--umber-rgb),0.75);
+  /* R2 deferred this value until real art existed to judge it against; R3's
+     backgrounds landed, so it was judged and lightened 0.75 -> 0.45. The scrim
+     buys focus, not legibility: .overlay-panel below is fully opaque, so every
+     word in a modal sits on solid umber and nothing reads better at 0.75. At
+     that weight it was halving a scene that is now worth seeing — the profile
+     picker is the first thing a kid looks at. */
+  background: rgba(var(--umber-rgb),0.45);
   display: flex; align-items: center; justify-content: center;
 }
 .overlay[hidden] { display: none; }

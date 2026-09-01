@@ -161,6 +161,15 @@ particular goes muddy-orange where it bleeds through. That is the old
 background, not the scrim, and tuning it now would be tuning against art that
 R3 replaces.
 
+> **✅ Settled 2026-09-01, once R3's art landed.** `.overlay` went **0.75 → 0.45**
+> (Matt's call). The deciding fact: `.overlay-panel` is fully opaque
+> (`background: var(--umber)`), so every word in every modal already sits on
+> solid umber and **the scrim buys focus, not legibility** — at 0.75 it was
+> halving a scene that is now worth looking at, and the profile picker is the
+> first thing a kid sees. Scene mean luminance behind the picker: 65.7 → 92.2.
+> One class, so all seven overlays (collection, profiles, shop, journal,
+> progress, speedtest, rod-nudge) moved together.
+
 <details>
 <summary>The original plan for R2, as written</summary>
 
