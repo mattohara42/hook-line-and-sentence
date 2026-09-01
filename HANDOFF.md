@@ -11,49 +11,43 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R5 — vessels**, `BUILD_PLAN_REFRESH.md` (R4 closed 2026-09-01) |
 | **Done when** | switching spots swaps vessel, costume and pose together; the hull overlaps the angler correctly; the line still leaves the rod tip in all three |
-| **State** | **R4 is done** — all three anglers painted, cut, wired, verified. R5 has not started. |
-| `origin/main` | `cf2468a`, tree clean, nothing unpushed |
+| **State** | R4 done. **R5's code half is in**; it is waiting on two vessel paintings. |
+| `origin/main` | `65b9148`, tree clean, nothing unpushed |
 | Tests | 81/81 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
 | Deploys | Netlify is **manual**; merging to `main` does not go live |
 
 ## Start here
 
-**R4 is closed.** All three anglers are painted, cut into rod/arm/body, wired and
-verified frame by frame — the tip-to-line gap peaks at 0.13 / 0.37 / 0.19px
-across the Pond, Stream and Ocean. Three poses cost four generations; the Ocean
-landed first attempt because everything the first two cost was priced into its
-prompt.
+**The next action is Matt's: run R5's two vessel prompts**, written and waiting
+in `ART.md` → *R5 — the two vessels*. A rowboat and a Boston Whaler. The Stream
+needs none — that angler stands in the water.
 
-**R5 — vessels — is next, and it needs art**, so the first move is writing its
-requests in `ART.md`: a **rowboat** (Pond) and a **Boston Whaler with a stern
-fighting chair** (Ocean), each with a **near-side layer painted in front of the
-angler** so the kid sits down *in* the hull. The Stream needs no vessel.
+**The code to receive them is already on `main`.** A pose owns its `anchor`
+(where `#rig` sits and the point it rocks about), its `bob`, and its `vessel` —
+`far` behind the angler, `near` in front so the kid sits *in* the hull rather
+than on it, `skinnable` for the one the boat shop reskins, or `null`. So landing
+a vessel is filenames and measured numbers, not new machinery.
 
-**Three things R4 deliberately left R5**, all listed in its section of
-`BUILD_PLAN_REFRESH.md`:
+**One painting per vessel, cut locally into two halves.** A side-on boat already
+contains both: everything above the near gunwale paints behind the angler, the
+near hull side paints in front. Asking for two images that must register would
+invent a problem the cut doesn't have — R4's *don't generate a piece you could
+cut*, applied to hulls.
 
-- `#boat`/`#hull-shadow` are hidden in the Stream by one CSS rule — fold that
-  into proper per-location vessel handling rather than leaving a special case.
-- **`#rig` still bobs like a hull**, which is right for a boat and wrong for a
-  kid standing in a river. About a pixel, so not urgent; placement is where the
-  bob should become a per-pose property.
-- **The Ocean's fighting chair was deliberately not drawn.** Its angler is posed
-  as if braced with nothing under him, so R5 can paint the chair in front of him
-  the way the hull is painted in front.
+Then Claude: cut each along the near gunwale's top edge · wire · **seat the
+Ocean angler in the fighting chair, which is a wiring step, not a reroll** (the
+pose has two knobs for it now, the vessel's own `x/y` and the pose's `anchor`) ·
+composite at 1x before believing any of it.
 
-**The one visible thing that is not a bug:** the Ocean angler reads as sitting
-*on* the pixel rowboat's gunwale rather than in it. A reclined, legs-forward pose
-does not fit a rowboat — it fits the Whaler R5 draws. Placement was left untuned
-on purpose rather than fitted to art that is about to be replaced.
-
-**`tools/cut-angler.py` is the R4 asset:** one delivered painting per pose in,
-three registered layers out, every per-pose number in a `POSES` dict. R6's fish
-are the same shape of problem (body/fin/tail from one painting), so read it
-before inventing anything there.
+**R4's asset is `tools/cut-angler.py`** — one delivered painting per pose in,
+three registered layers out. R6's fish are the same shape of problem
+(body/fin/tail from one painting), so read it before inventing anything there.
 
 Read `GEMINI_NOTES.md` before writing any prompt. Its *Characters* section is
-everything R4 paid for.
+everything R4 paid for, including the two that cost the most: **measure a
+complaint before spending a reroll on it**, and **seed a synthesised
+continuation from the measured width at the seam, never a nominal constant**.
 
 ## Waiting on Matt (none of it blocks R5)
 

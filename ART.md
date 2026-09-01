@@ -177,6 +177,113 @@ direction.
 
 ## Open art requests
 
+### R5 — the two vessels (open — next to generate)
+
+The Stream needs none: that angler stands in the water. So R5 is **two
+paintings**, and the code to receive them is already on `main` — a pose owns its
+vessel, its anchor and whether it rocks, so dropping these in is filenames and
+measured numbers rather than new machinery.
+
+**One painting per vessel, cut into two layers locally.** Same rule that made R4
+work: *don't generate a piece you could cut.* A side-on boat already contains
+both halves — everything above the near gunwale is what paints **behind** the
+angler, and the near hull side is what paints **in front** of them. Asking for
+two images that have to register would be inventing a registration problem the
+cut does not have. `tools/cut-angler.py` is the model; the vessel cut is simpler,
+one curve along the gunwale.
+
+**Draw the whole hull, including below the waterline, and no water.** `#surface`
+is a translucent front plane that tints whatever sits in it — that is how the
+boat reads as floating rather than pasted on. Water painted into the art would
+double up, the same mistake the Stream angler's baked-in fishing line was.
+
+```
+ART NEEDED: the Pond rowboat — one painting, cut into far and near halves
+Prompt:   Soft painterly storybook illustration in the style of Studio Ghibli,
+          warm muted color palette, gentle diffused lighting, thin warm brown
+          outlines rather than black, cozy and inviting mood, no harsh shadows,
+          no neon or saturated colors. Soft two-tone shading with the edges
+          between tones blended, and soft brush texture visible inside the
+          larger shapes. NOT pixel art, NOT flat vector art with even line
+          weight, NOT thick black cartoon linework, NOT a glossy 3D render.
+          A small wooden rowboat seen directly from the side, EMPTY, floating
+          level, bow pointing to the RIGHT. Warm weathered timber in soft browns
+          with a slightly darker waterline stripe along the hull. Simple clinker
+          planking, a gently curved sheer, and TWO PLAIN WOODEN THWARTS (bench
+          seats) visible inside — a child sits between them.
+          Draw the WHOLE hull including the part that would be underwater: it
+          floats in the game's own painted water, which is a translucent layer
+          over the top.
+          IMPORTANT: the NEAR side of the hull — the gunwale rail nearest the
+          viewer and the planking below it — must be clearly readable as its own
+          band, with an unbroken top edge running the length of the boat. That
+          edge is where the painting is cut in two.
+          No water, no waves, no reflection, no oars in the water, no person, no
+          fish, no rope, no scenery, no other boats.
+          The boat fills the frame edge to edge with a little clearance at the
+          top and bottom.
+          Everything that is not the boat must be flat, solid, uniform magenta
+          (#FF00FF): a plain backdrop colour, not a checkerboard, not a gradient,
+          not transparency. No magenta anywhere on the boat.
+          No text, no UI, no watermark, no baked-in drop shadow.
+          The image is 1536 by 640 pixels, aspect ratio 2.4:1. Output as PNG.
+Save as:  assets/boat-pond.png   (the source painting — the cut layers are
+          boat-pond-far.png and boat-pond-near.png)
+Wired in: not yet — CONFIG.rig.poses.pond.vessel. It replaces the pixel
+          boat.png, and it is the vessel shop.boats reskins, so the five shop
+          hulls (`boat-red`, `boat-blue`, `boat-leaf`, `boat-purple`) each need
+          the same treatment eventually. Do the default first and judge it.
+```
+
+```
+ART NEEDED: the Ocean's Boston Whaler — one painting, cut into far and near
+Prompt:   Soft painterly storybook illustration in the style of Studio Ghibli,
+          warm muted color palette, gentle diffused lighting, thin warm brown
+          outlines rather than black, cozy and inviting mood, no harsh shadows,
+          no neon or saturated colors. Soft two-tone shading with the edges
+          between tones blended, and soft brush texture visible inside the
+          larger shapes. NOT pixel art, NOT flat vector art with even line
+          weight, NOT thick black cartoon linework, NOT a glossy 3D render.
+          A small centre-console sport fishing boat — a Boston Whaler — seen
+          directly from the side, EMPTY, floating level, bow pointing to the
+          RIGHT. Cream and soft grey hull with a warm teak rubbing strake, a
+          low centre console with a small windscreen in the middle, and A
+          PEDESTAL FIGHTING CHAIR IN THE STERN, which is the LEFT end of the
+          boat: a simple raised seat on a post, with a low back and footrest,
+          facing right along the boat.
+          Draw the WHOLE hull including the part that would be underwater: it
+          floats in the game's own painted water, which is a translucent layer
+          over the top.
+          IMPORTANT: the NEAR side of the hull — the gunwale rail nearest the
+          viewer and the topsides below it — must be clearly readable as its own
+          band, with an unbroken top edge running the length of the boat. That
+          edge is where the painting is cut in two.
+          No water, no waves, no reflection, no person, no fish, no rods, no
+          outboard motor spray, no scenery, no other boats.
+          The boat fills the frame edge to edge with a little clearance at the
+          top and bottom.
+          Everything that is not the boat must be flat, solid, uniform magenta
+          (#FF00FF): a plain backdrop colour, not a checkerboard, not a gradient,
+          not transparency. No magenta anywhere on the boat.
+          No text, no UI, no watermark, no baked-in drop shadow.
+          The image is 1536 by 640 pixels, aspect ratio 2.4:1. Output as PNG.
+Save as:  assets/boat-ocean.png   (the cut layers are boat-ocean-far.png and
+          boat-ocean-near.png)
+Wired in: not yet — CONFIG.rig.poses.ocean.vessel, which also stops being
+          `skinnable` then: rowboat skins have no business on a Whaler.
+```
+
+**Seating the Ocean angler is a wiring step, not a prompt one.** The chair will
+land wherever the generator puts it, and the pose block now carries **two**
+knobs to meet it — the vessel's own `x/y` and the pose's `anchor`. Measure where
+the chair's seat is, then move one or both. Do not reroll to move a chair.
+
+**When they land:** the usual checks (backdrop bled into the subject first, then
+canvas and aspect, then palette), then cut each painting along the near gunwale's
+top edge into `-far` and `-near`, then wire and judge at 1x. The near layer is
+what makes the kid sit *in* the boat rather than on it, so composite before
+believing any of it.
+
 ### ✅ R4 — the Ocean angler, in the fighting chair (landed and wired 2026-09-01)
 
 Third and last pose. The Pond and Stream are cut and wired; when this lands and
