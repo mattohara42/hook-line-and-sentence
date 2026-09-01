@@ -3,8 +3,8 @@
 **Status: active epic, opened 2026-08-31. This is a significant new body of
 work — the largest since the Advanced Progression epic — and it replaces the
 game's entire visual layer. R1 and R2 shipped 2026-08-31, R3 on 2026-09-01;
-**R4 is active** — the Pond angler is painted, cut and wired; the arm layer
-is what it still needs.**
+**R4 is active** — the Pond angler is finished; the Stream and Ocean costumes
+are what it still needs.**
 
 Two new documents are the source of truth for it:
 
@@ -291,8 +291,9 @@ level.
 
 ### R4 — The angler: one kid, three costumes, rigged
 
-**In progress. The Pond angler is painted, cut, wired and verified in a browser
-(2026-09-01). One thing left before the done-when is met: the arm layer.**
+**In progress. The Pond angler is painted, cut into rod/arm/body, wired and
+verified frame by frame in a browser (2026-09-01). What is left is the Stream
+and Ocean costumes — the same prompt with the clothes swapped.**
 
 What landed ahead of the art, so the drop is a measurement and not a refactor:
 `CONFIG.rig` is one **pose per location** (`rig.poses`, keyed by fishing spot),
@@ -346,12 +347,12 @@ fighting chair.
 - ~~Composite at game scale before touching `config.js`; measure the pose's
   box/grip/tip off the real canvas.~~ ✅ done — the numbers and the checks are
   in `ART.md`.
-- **Still to do:** cut the arm at the shoulder and make it swing with the rod —
-  the "moves the arm, not the whole kid" half of the done-when. One more local
-  cut of the same painting, no generation needed, deliberately left until the
-  rest was on screen and judged.
-- **Then the Stream and the Ocean**, which are the same prompt with the costume
-  swapped.
+- ~~Cut the arm and make it swing with the rod.~~ ✅ done — and it pivots at the
+  *elbow*, not the shoulder, because the angler's upper arm is hidden behind the
+  drawn-up knee. Details and the frame-by-frame verification are in `ART.md`.
+- **Still to do: the Stream and Ocean costumes.** The done-when asks for all
+  three levels and both still wear the Pond kid via the pose fallback. Same
+  prompt, clothes swapped — so this is a generation, and it is Matt's.
 - **Done when:** at 1x, in all three levels, the rod looks held and the costume
   suits the water; casting (R1) moves the arm and rod, not the whole kid.
 

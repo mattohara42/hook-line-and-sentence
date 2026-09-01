@@ -330,11 +330,54 @@ art rather than real invariants:
   which keeps the original intent: an R7 rod swapped in with a different box must
   move these with it, or the line detaches from a rod that is visibly swinging.
 
-**Still open for R4:** the **arm layer**. The done-when asks that casting move
-the arm and the rod rather than the whole kid; right now only the rod swings,
-about the grip, which is correct as far as it goes. Cutting the arm at the
-shoulder is one more local cut of the same painting — no generation needed — and
-it was deliberately left until the rest was on screen and judged.
+**✅ The arm layer landed too, and the anatomy decided where it pivots.** The
+plan said "cut the arm at the shoulder". Overlaying a candidate mask showed why
+that was wrong: what looked like a shoulder is the **chin and neck**, and the
+angler's upper arm and elbow are **hidden behind the drawn-up knee**. The
+visible limb is forearm and hand only, emerging from behind it — so there is no
+shoulder cut through the torso at all, and no filling the shirt behind one.
+
+It pivots where the forearm vanishes, which is the useful property: the cut end
+sits *at* the pivot, so it does not move and stays tucked behind the knee
+through the whole swing. The cut is flat there rather than a round cap, which
+would bite into the knee. The body keeps the first 35px past the pivot so the
+knee stays whole; the arm carries a copy of them, hidden because it paints
+behind — the standard joint overlap, and those pixels move a quarter of a design
+px across the full swing.
+
+Paint order is therefore **rod → arm → body**: the hand is in front of the pole,
+the forearm's stump is behind the knee. `tools/cut-angler-pond.py` checks the
+split by recompositing in that order against the delivered painting — mean 0.01,
+and the only pixels past a difference of 10 are **128 of 324,574 (0.04%)**, all
+of them the rod's synthesis seam rather than the arm's cut.
+
+**How the swing is composed, and why not by nesting the DOM.** The arm and the
+rod would naturally be parent and child, but the paint order forbids it — the
+rod sits *behind* the arm. So both layers take their transform-origin from the
+arm's pivot, the arm is a plain rotation, and the rod is that same rotation with
+its own wrist turn nested inside via a translate/rotate/translate. One transform
+each, no nesting. `CONFIG.anim.rod.armFollow` (0.35) splits R1's *existing*
+tuned angles between arm and wrist rather than adding to them, so nothing about
+the cast's feel changed; 0 disables it, and a pose with no `armPivot` falls back
+to the old single rotation.
+
+Verified in Chromium by sampling every frame of a full cast: the arm swings
+**−5.25° to +6.45°**, exactly 0.35 of R1's −15°/+18.4°, and the gap between the
+rod tip *as the browser actually renders it* — the live CSS matrix pushed
+through the composed transform — and where the line is drawn peaks at
+**0.13px over 92 frames**, which is the boat's bob between samples. That is the
+check that matters: if `applySwing()` and `rodTip()` disagreed, the line would
+detach from a visibly swinging rod, which is the exact bug R1 exists to fix.
+
+**Worth saying plainly: the effect is subtle.** The forearm is 6.2 design px
+from pivot to grip, so 0.35 of the swing moves the grip about 0.6 design px.
+What reads at 1x is the hand travelling with the rod rather than the rod
+pivoting inside a frozen fist — more correct, and better in motion, but nobody
+will point at it. It is one number if it ever wants more.
+
+**Still open for R4:** the **Stream and Ocean costumes**. The done-when asks for
+all three levels, and both still wear the Pond kid via the pose fallback. They
+are this same prompt with the clothes swapped.
 
 The far arm came back resting by the hip rather than on the knee. That is a
 harmless deviation: it stays with the body, and — the part that matters for the

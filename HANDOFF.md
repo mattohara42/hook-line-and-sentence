@@ -11,26 +11,27 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R4 — the angler**, `BUILD_PLAN_REFRESH.md` |
 | **Done when** | at 1x, in all three levels, the rod looks held and the costume suits the water; casting (R1) moves the arm and rod, not the whole kid |
-| **State** | Pond angler **painted, cut and wired**; the arm layer is what R4 still needs |
-| `origin/main` | `0b5c24d`, tree clean, nothing unpushed |
+| **State** | Pond angler **finished**; the Stream and Ocean costumes are what R4 still needs |
+| `origin/main` | `275d57e`, tree clean, nothing unpushed |
 | Tests | 81/81 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
 | Deploys | Netlify is **manual**; merging to `main` does not go live |
 
 ## Start here
 
-**The Pond angler is painted, cut, wired and on screen.** It took three
-generations to learn that a hand gripping *nothing* never comes back gripping —
-so the pose is one painting cut locally into layers, not three generations. The
-cut is scripted (`tools/cut-angler-pond.py`), the rod paints *behind* the body
-because that is how the art is drawn, and the line leaves the rod tip at design
-(107, 148) exactly as the measured numbers predict.
+**The Pond angler is finished** — painted, cut into rod/arm/body, wired, and
+verified frame by frame. Three generations taught that a hand gripping *nothing*
+never comes back gripping, so the pose is one painting cut locally
+(`tools/cut-angler-pond.py`), and the anatomy decided the rig: the upper arm is
+hidden behind the drawn-up knee, so the arm layer is forearm + hand and it
+pivots at the elbow, not the shoulder. Paint order is **rod → arm → body**.
 
-**The next action is Claude's, and it is the last thing R4 needs: cut the arm at
-the shoulder and make it swing with the rod.** That is the "moves the arm, not
-the whole kid" half of the done-when. One more local cut of the same painting —
-no generation, nothing blocked on Matt. Then the Stream and Ocean costumes,
-which are the same prompt with the clothes swapped.
+**The next action is Matt's: the Stream and Ocean costumes.** They are the same
+prompt with the clothes swapped (`ART.md` → R4), and both levels currently wear
+the Pond kid through the pose fallback, which is what R4's done-when still
+fails. Waders and a fly vest for the Stream; boat gear and a life vest for the
+Ocean — and the **warm terracotta accent garment travels with the character**,
+so it is the vest in both.
 
 **The boat is now the loudest wrong thing on screen** — a pixel rowboat under a
 painterly kid. That is R5, and it is expected.

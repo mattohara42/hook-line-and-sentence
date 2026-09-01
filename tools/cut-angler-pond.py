@@ -47,6 +47,16 @@ ROD_LEN  = 65.0          # grip to tip; the old browser-tuned rig was 65.1
 TIP_HALF = 1.2           # half-width at the very tip, in source px
 GRIP = (572.0, 490.0)    # where the hand closes on the pole, in source px
 
+# The arm. The upper arm and elbow are hidden behind the drawn-up knee, so the
+# visible limb is forearm + hand only, emerging from behind it — which is why
+# there is no shoulder cut through the torso. It pivots where it vanishes, so
+# the cut end barely moves and stays tucked. The cut is flat there rather than
+# a round cap, or it bites into the knee.
+ARM_PIVOT = (487.0, 558.0)
+ARM_WRIST = (566.0, 502.0)
+ARM_HAND  = (602.0, 486.0)
+R_FORE, R_HAND, JOINT = 30.0, 60.0, 35.0
+
 im = Image.open(SRC).convert("RGB")
 W, H = im.size
 a = np.asarray(im, dtype=np.float64)
@@ -164,11 +174,30 @@ for t in np.arange(t_edge, rod_len, 0.5):
 print("extended the shaft from t=%.0f to t=%.0f src px (%.0f%% of its length)"
       % (t_edge, rod_len, 100 * (rod_len - t_edge) / rod_len))
 
+# --- split the forearm and hand off, pivoting where the knee hides them ------
+Pv = np.array([ARM_PIVOT[0], ARM_PIVOT[1] + PAD_T])
+Wr = np.array([ARM_WRIST[0], ARM_WRIST[1] + PAD_T])
+Hn = np.array([ARM_HAND[0],  ARM_HAND[1]  + PAD_T])
+d = Wr - Pv; L2 = (d * d).sum(); u = d / np.sqrt(L2)
+tt = np.clip(((Xp - Pv[0]) * d[0] + (Yp - Pv[1]) * d[1]) / L2, 0, 1)
+along = (Xp - Pv[0]) * u[0] + (Yp - Pv[1]) * u[1]
+limb = np.hypot(Xp - (Pv[0] + tt*d[0]), Yp - (Pv[1] + tt*d[1])) <= R_FORE
+palm = np.hypot(Xp - Hn[0], Yp - Hn[1]) <= R_HAND
+arm = (limb | palm) & (along >= 0) & (keyed[..., 3] > 30)
+
 body = keyed.copy()
 body[corridorp & ~handp] = 0
+# The body keeps the first JOINT px past the pivot as well, so the knee stays
+# whole. The arm carries a copy of them, hidden because the arm paints behind
+# the body — the standard joint overlap. They sit at the pivot, so they move a
+# quarter of a design px across the whole swing.
+body[arm & (along >= JOINT)] = 0
+armlayer = np.zeros_like(keyed)
+armlayer[arm] = keyed[arm]
+print("arm layer %d px; body keeps the joint within %.0f px of the pivot" % (arm.sum(), JOINT))
 
 # --- crop both to ONE shared box, so the pose needs a single set of offsets --
-union = (rod[..., 3] > 30) | (body[..., 3] > 30)
+union = (rod[..., 3] > 30) | (body[..., 3] > 30) | (armlayer[..., 3] > 30)
 ys, xs = np.where(union)
 box = (xs.min(), ys.min(), xs.max() + 1, ys.max() + 1)
 
@@ -183,4 +212,16 @@ def save(arr, name, crop=True):
 print("key %s   backdrop %.1f%%   shared crop %s" % (KEY.round(1), 100 * bg.mean(), box))
 save(keyed, "angler-pond.png", crop=False)
 save(body, "angler-pond-body.png")
+save(armlayer, "angler-pond-arm.png")
 save(rod, "rod-basic-pond.png")
+
+# rod -> arm -> body must rebuild the delivered painting exactly, or the split
+# has lost or invented something
+out = rod.copy()
+for layer in (armlayer, body):
+    m = layer[..., 3] > 30
+    out[m] = layer[m]
+both = (out[..., 3] > 30) & (keyed[..., 3] > 30)
+print("recomposite rod->arm->body: mean %.2f max %.0f over %d px"
+      % (np.abs(out[..., :3] - keyed[..., :3])[both].mean(),
+         np.abs(out[..., :3] - keyed[..., :3])[both].max(), both.sum()))
