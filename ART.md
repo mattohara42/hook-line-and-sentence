@@ -456,37 +456,39 @@ Wired in: not yet — the near plane, #bg-fore for .loc-stream. Nothing may land
           (design x20–138, y140–224)
 ```
 
-**⚠️ Layer 1 — three attempts so far, and the prompt above is now weighted for
-style rather than framing.** Read `GEMINI_NOTES.md` on the compositional prior
-before touching it.
+**✅ Layer 1 landed 2026-09-01, on attempt 4, fitted rather than rerolled again.**
 
 | attempt | wording | waterline | verdict |
 |---|---|---|---|
 | 1 | hedged position | 66.96% | good painterly texture, framing out |
 | 2 | position stated three unhedged ways | **66.96%**, identical to the pixel | proved wording does not move the prior |
-| 3 | — | 62.35% | best framing, but flatter and more graphic than the Pond |
+| 3 | — | 62.35% | best framing, but flat and graphic |
+| 4 | style-weighted, position relaxed to a floor | 72.77% | **the style Matt asked for — kept** |
 
-**The side view is solved** in all three — flat waterline, full width, eye level,
-no bird's-eye. That was the historical failure and it has not recurred.
+**The side view was solved in every attempt** and never recurred as a problem.
+The trade in attempt 4 worked exactly as designed: relaxing the position to an
+easy floor let the prior run further than ever (72.77%, the lowest of the four),
+and bought genuine watercolour — soft washes, delicate varied linework,
+distant trees dissolving into haze. **The framing was the salvageable half and
+the style was not, so that is the right way round.**
 
-**The waterline is now the *least* important instruction here, because a crop
-fixes it in either direction.** Cropping from the top lowers the percentage
-(98px took attempt 3 to 55.92%, within 0.03% of the Pond); cropping from the
-bottom raises it, and only costs water that layer 2 repaints anyway. So the
-prompt above asks merely that water fill "at least the bottom third" — a floor
-that is easy to satisfy — and spends its weight on the painterly treatment
-instead, since fewer competing constraints is the only lever left once the prior
-will not move.
+**The fit costs nothing, and is better than any crop of the earlier attempts.**
+Crop **113px off the top** so the waterline lands on row 376, then **regrow
+113px of water at the bottom**. The canvas stays **1584×672**, so its aspect is
+identical to the Pond's and `cover` behaves the same — no extra horizontal loss
+(attempt 3's crop would have cost 273px of width instead of 129). The regrown
+water is free: **layer 2 repaints all of it**, and layer 1's water is only the
+standalone fallback. More sky survives than in any earlier crop.
 
-**Matt's call (2026-09-01):** attempt 3's framing with attempt 1's brushwork.
-The style block is the new part — visible brushwork, tonal variation inside
-shapes, fine varying outlines, and an explicit "NOT flat vector art or cartoon
-with even line weight", which is what attempt 3 drifted into.
+Waterline now sits at **design y=201, identical to the Pond's**.
 
-**Whatever lands, apply the identical crop to all three Stream layers** so they
-stay registered with each other, and expect the Stream's canvas to end up
-shorter than the Pond's 1584×672. That is fine — layers must match within a
-level, not across levels.
+**One open judgement, flagged rather than fixed:** the Stream reads darker and
+punchier than the Pond — mean luminance **143.9 vs 170.8**, contrast **50.2 vs
+41.0**. Defensible, since a forest stream *is* shadier than a golden-hour pond
+and the prompt asked for cooler and greener, but it is a real difference between
+two levels of one game. Judge it wired, next to the Pond, before deciding.
+Darks past the `#33291f` floor are also creeping across attempts — 0.58%, 1.37%,
+now **1.67%** — with no pure black.
 
 **When these land:** key and register them against layer 1, composite all three
 at game scale, point `.loc-stream` at the three `#bg-*` planes, **delete the
