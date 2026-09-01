@@ -638,6 +638,30 @@ Wired in: not yet — lands with all three; replaces background-ocean.png and
           deletes #scene.loc-ocean's `center 11%` offset in style.css
 ```
 
+**✅ Layer 1 landed 2026-09-01, first attempt, fitted.** The best far layer of
+the three levels on every measure that matters:
+
+| | Pond far | Stream far | **Ocean far** |
+|---|---|---|---|
+| darks past the `#33291f` floor | 0.58% | 1.67% | **0.00%** |
+| own depth gradient (lum drop) | 12 (flat) | — | **74** |
+| mean luminance / contrast | 170.8 / 41.0 | 143.9 / 50.2 | 161.8 / 66.1 |
+
+Palette landed close without argument: sky high `#acd9e2` against `#b7cfd8`, sky
+low `#efe8d5` against `#f2ddbe` — notably *better* than the Pond's, whose amber
+band ran hot at saturation 0.34. Water `#6595a0` → `#374143`, bluer than the
+other two levels by design. No pure black. The high contrast (66.1) is the
+strong sky-versus-sea split, which is what an ocean looks like.
+
+**Horizon came in at 52.23% — 25px *high*, the opposite direction from the
+Stream's misses.** Fitted the same way, mirrored: regrow 25px of sky at the top
+by stretching the smooth upper band, drop 25px of water off the bottom. The
+canvas stays **1584×672**, matching the Pond and Stream exactly, and both edits
+are free — the top is a smooth gradient, and layer 2 repaints the water anyway.
+Horizon now sits on **row 376, design y=201**, the same row as the other two
+levels.
+
+
 ```
 ART NEEDED: Ocean background, layer 2 of 3 — water
 Prompt:             Soft painterly illustration in the style of Studio Ghibli background
