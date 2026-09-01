@@ -12,7 +12,7 @@ something is the way it is, `git log` and the PR body have it in full.
 | **Active milestone** | **R4 — the angler**, `BUILD_PLAN_REFRESH.md` |
 | **Done when** | at 1x, in all three levels, the rod looks held and the costume suits the water; casting (R1) moves the arm and rod, not the whole kid |
 | **State** | Pond angler **finished**; the Stream and Ocean costumes are what R4 still needs |
-| `origin/main` | `275d57e`, tree clean, nothing unpushed |
+| `origin/main` | `a2d8d9b`, tree clean, nothing unpushed |
 | Tests | 81/81 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
 | Deploys | Netlify is **manual**; merging to `main` does not go live |
@@ -26,12 +26,14 @@ never comes back gripping, so the pose is one painting cut locally
 hidden behind the drawn-up knee, so the arm layer is forearm + hand and it
 pivots at the elbow, not the shoulder. Paint order is **rod → arm → body**.
 
-**The next action is Matt's: the Stream and Ocean costumes.** They are the same
-prompt with the clothes swapped (`ART.md` → R4), and both levels currently wear
-the Pond kid through the pose fallback, which is what R4's done-when still
-fails. Waders and a fly vest for the Stream; boat gear and a life vest for the
-Ocean — and the **warm terracotta accent garment travels with the character**,
-so it is the vest in both.
+**The next action is Matt's: generate the Stream angler**, whose prompt is now
+in `ART.md`. It is **not** the Pond prompt recoloured — the Stream kid *stands*,
+so it is a new pose and every cut parameter is measured fresh. Its one new ask
+is that the arm be held clear of the body: a standing figure has no drawn-up
+knee to hide the upper arm, and sleeve-against-torso in one colour is exactly
+what made a shoulder cut look impossible on the Pond. The Ocean follows once the
+Stream is cut and judged. The **warm terracotta accent garment travels with the
+character** — the fly vest, then the life vest.
 
 **The boat is now the loudest wrong thing on screen** — a pixel rowboat under a
 painterly kid. That is R5, and it is expected.
