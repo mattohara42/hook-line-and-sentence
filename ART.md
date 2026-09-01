@@ -576,7 +576,7 @@ verify the waterline in a browser. The Ocean's prompts get written after this
 level is judged — same one-level-at-a-time discipline that kept the Pond's
 misses cheap.
 
-### 🟡 R3 — the Ocean, repainted as three layers (open, ready to generate)
+### ✅ R3 — the Ocean, repainted as three layers (landed and wired 2026-09-01)
 
 **Last of the nine, and the first written with the whole lesson set in hand.**
 The Pond took three rerolls to learn the conventions; the Stream took four on
@@ -779,10 +779,32 @@ crest for **flat drifting foam patches**, adds an explicit "NO breaking wave, NO
 curling crest, NO tall spray", and caps the height at the bottom quarter.
 
 
-**When these land:** key and register against layer 1, composite all three at
-game scale, point `.loc-ocean` at the three `#bg-*` planes, **delete the
-`center 11%` offset and the `.reeds` exemption**, verify the horizon in a
-browser — and R3 closes.
+**✅ Layer 3 landed 2026-09-01 on attempt 2 — the cleanest foreground of the
+three levels.**
+
+| | Pond fore | Stream fore | **Ocean fore** |
+|---|---|---|---|
+| painted in the rig's box | 0.2% | 1.6% | **0.0%** |
+| painted in the bottom-center third | 0.0% | 6.5% | **0.0%** |
+| total coverage | 9.5% | 20.3% | 6.6% |
+
+Detail tops out at 66.7% / 76.2% down — entirely inside the bottom quarter the
+rewritten prompt asked for, against attempt 1's 36.5% / 44.6%. Backdrop
+`#d148b0` (softened again, as the Pond's was) but uniform at stdev ~1, so it
+keyed cleanly: **0.00%** purple among visible pixels.
+
+**Swapping the subject was the whole fix.** Same height instruction, same
+framing language — only "the near crest of a swell breaking" became "low
+drifting patches of pale sea foam". The buoy survived unchanged and is the nicest
+object in any of the three foregrounds.
+
+**R3 is closed.** All nine images are painted, keyed and wired; `.loc-ocean`'s
+`center 11%` offset is deleted along with the Stream's `scale 1.246`, so **no
+scene carries a framing patch any more** and every level works the same way.
+Verified in Chromium across all three: correct images on all nine planes, no
+failed asset requests, `#scene` carrying no background image, the CSS `.reeds`
+hidden everywhere, and **every waterline landing on screen y=396 = design
+y=198**.
 
 ### ✅ G1 — the angler, taken apart (landed 2026-08-25)
 

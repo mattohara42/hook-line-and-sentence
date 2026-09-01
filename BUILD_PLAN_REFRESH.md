@@ -189,7 +189,7 @@ every prompt from R3 onward has a matching set of tokens to point at.
 
 </details>
 
-### 🟡 R3 — Three painted backgrounds, layered for parallax (Pond done 2026-09-01)
+### ✅ R3 — Three painted backgrounds, layered for parallax (done 2026-09-01)
 
 **The Pond half is done and wired.** All three planes are painted, keyed and
 live: `background-pond-{far,water,fore}.png`, rendered as three `#bg-*` elements
@@ -232,9 +232,29 @@ framing in salvage, then spending the prompt on style instead, which cannot be
 salvaged. Both rules are in `GEMINI_NOTES.md`. Layers 2 and 3 then landed
 first-attempt.
 
-**Still open: the Ocean.** Its three prompts are not written yet; `ART.md`
-writes them now the Stream is judged. The milestone stays open until they land
-and `.loc-ocean` stops stacking a single PNG over the pond art.
+**✅ The Ocean landed the same day, and R3 is closed.** All nine images are
+painted, keyed and wired. `.loc-ocean`'s `center 11%` offset is deleted along
+with the Stream's `scale 1.246`, so **no scene carries a framing patch any
+more** — every level is three `#bg-*` planes that simply swap their images, and
+V1's CSS `.reeds` are unused everywhere.
+
+Verified in Chromium across all three levels: correct images on all nine planes,
+no failed asset requests, `#scene` carrying no background image of its own, and
+**every waterline landing on screen y=396 = design y=198**, which is what the
+milestone meant by "the waterline registers".
+
+**Done-when, checked off:** all three levels painted ✅ · the waterline registers
+✅ · the parallax reads at 1x without drawing attention to itself ✅ (±3/±7/∓5px
+on 121s/47s/73s) · `.loc-stream`'s framing workaround deleted rather than
+re-tuned ✅.
+
+**What it cost, for the next epic's planning:** nine images took **thirteen
+generations**. The Pond needed three rerolls learning the conventions, the
+Stream's far layer alone took four, and after that **five of the last six landed
+first attempt**. The lessons are all in `GEMINI_NOTES.md`; the single most
+valuable one is that the generator's compositional prior does not move for
+prompt wording, so framing is fixed in salvage and prompt weight is spent on
+style, which cannot be.
 
 <details>
 <summary>The original plan for R3, as written</summary>
