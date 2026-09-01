@@ -177,7 +177,104 @@ direction.
 
 ## Open art requests
 
-### R4 — the Pond angler, one generation (art delivered; waiting on the PNG)
+### R4 — the Ocean angler, in the fighting chair (open — the last thing R4 needs)
+
+Third and last pose. The Pond and Stream are cut and wired; when this lands and
+is cut, **R4's done-when is met** and the epic moves to R5.
+
+**Seated again, like the Pond — but nothing carries over.** Each pose's cut
+parameters are measured off its own painting (`tools/cut-angler.py`, `POSES`),
+and the two seated poses are not the same seat: the Pond kid sits low with knees
+drawn up in a rowboat, this one sits *back* in a fighting chair with feet braced.
+
+**The rod is The Deep Endeavor** — the gate rod for this spot, per the naming
+rule near the top of this file. A heavy boat rod: thicker, shorter in proportion,
+with a big reel. Not a cane pole and not the Stream's split cane.
+
+**Two asks carried forward, because both were paid for:**
+
+- **The arm held clear of the body.** This is what made the Stream's arm cut
+  clean, and a seated-back figure has no drawn-up knee to hide the upper arm the
+  way the Pond's did.
+- **A flagged, exhaustive no-line paragraph.** A plain "no fishing line" was
+  ignored on the Stream's first attempt because a rod implies a line; the
+  `CRITICAL:` paragraph naming every form it could take is what worked.
+
+```
+ART NEEDED: the Ocean angler, in the fighting chair — one image, cut locally
+Prompt:   Soft painterly storybook character illustration in the style of
+          Studio Ghibli, warm muted color palette, gentle diffused lighting,
+          thin warm brown outlines rather than black, cozy and inviting mood,
+          no harsh shadows, no neon or saturated colors. Soft two-tone shading
+          with the edges between tones blended, and soft brush texture visible
+          inside the larger shapes. NOT pixel art, NOT flat vector art with even
+          line weight, NOT thick black cartoon linework, NOT a glossy 3D render.
+          A school-age child of about eight, seen from the side, facing right,
+          SEATED and leaning back as if braced in a boat's fighting chair: hips
+          low, back reclined, both feet planted forward and braced, knees bent
+          and apart — a bracing posture, NOT curled up. Slim school-age
+          proportions with a visible neck, long limbs and slender fingers — NOT
+          a toddler, NOT a baby. Bare head with short but full, softly tousled
+          warm-brown hair that covers the ears and falls in a soft fringe — NOT
+          a buzz cut. Warm tan skin, soft rounded cheeks. Deep-sea fishing
+          clothes: a cream long-sleeved shirt, navy-grey shorts, simple deck
+          shoes, and a soft terracotta buoyancy vest with broad straps over the
+          chest.
+          The child is HOLDING A HEAVY BOAT ROD IN THE NEAR HAND ONLY: a thick
+          tapered pole in deep warm brown with a broad pale cork grip and a
+          large round dark-bronze reel mounted on top just above the grip. It is
+          a stout deep-sea rod, noticeably thicker than a garden cane. The near
+          arm is bent at the elbow with the forearm angled up and forward, and
+          the near hand holds the cork grip at about chin height, below the reel.
+          From that hand the rod runs diagonally up and to the right, passing
+          well clear of the child's head, its tip reaching the upper-right corner
+          of the canvas.
+          CRITICAL: draw NO FISHING LINE anywhere. No thread, string or filament
+          of any kind — not on the reel, not threaded through the guides, not
+          trailing from the rod tip. The rod must be completely bare.
+          IMPORTANT: the whole near arm must be held CLEAR OF THE BODY, with a
+          visible gap of background between the arm and the chest along its
+          entire length — the shoulder, upper arm, elbow and forearm all fully
+          visible and not overlapping the torso.
+          The FAR arm rests along the child's far thigh, out of the way of the
+          rod.
+          The hand on the rod must read as genuinely gripping it, seen from the
+          side: the fingers wrap around the cork and the separate fingers are
+          visible crossing in FRONT of the grip, with the thumb behind or
+          alongside them. NOT a pinch, NOT fingertips touching, NOT an open or
+          reaching hand.
+          No hook, no fish, no hat, no chair, no boat, no water, no scenery, no
+          other characters — the child alone, as if seated on nothing.
+          The child sits in the lower-left of the canvas with the shoes near the
+          bottom edge, leaving the upper-right clear for the rod.
+          Everything that is not the child and the rod must be flat, solid,
+          uniform magenta (#FF00FF): a plain backdrop colour, not a
+          checkerboard, not a gradient, not transparency. No magenta anywhere on
+          the child or the rod.
+          No text, no UI, no watermark, no baked-in drop shadow.
+          The image is 1024 by 1024 pixels, aspect ratio 1:1. Output as PNG.
+Save as:  assets/angler-ocean.png   (the source painting — the cut layers are
+          angler-ocean-body.png, angler-ocean-arm.png, rod-deepsea-ocean.png)
+Wired in: not yet — a new CONFIG.rig.poses.ocean block. Until it exists the
+          Ocean wears the Pond kid through the pose fallback.
+```
+
+**Note the "no chair".** The fighting chair is a *vessel* part and belongs to
+R5, which draws each vessel with a near-side layer painted in front of the
+angler. Asking for it here would bake it into the body layer and R5 could not
+put the kid down into it. The pose has to read as braced without the chair being
+drawn — hence the posture described at length.
+
+**When it lands**, run the Pond/Stream checks in order: backdrop bled into the
+subject first (a reroll, nothing downstream fixes it), then canvas and aspect,
+then palette. Do **not** reroll for placement inside the canvas, or for a rod
+that runs off the corner — `tools/cut-angler.py` extends the shaft to a length
+set in design px. Then add an `ocean` entry to its `POSES` dict, measuring the
+rod axis, the arm skeleton and the pivots off the new painting, and set
+`figure_h` by **matching the head** to the other two rather than scaling the
+figure.
+
+### ✅ R4 — the Pond angler, one generation (landed and wired 2026-09-01)
 
 **First character request of the refresh.** It replaces `body-kid.png` /
 `hat-straw.png` / `rod-basic.png`, which are pixel-era and were cut for a

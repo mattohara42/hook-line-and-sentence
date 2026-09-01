@@ -373,6 +373,17 @@ fighting chair.
 - Each vessel gets a **near-side layer painted in front of the angler**, the
   same front-plane trick as V1 applied to the hull, so the kid sits down *in* it.
 - Placement (x/y, rod tip, pose) moves into the per-location config block.
+- **Two things R4 left here.** `#boat` and `#hull-shadow` are already hidden in
+  the Stream (one line in `style.css`) because R4's angler stands *in* the water
+  and a pixel rowboat under him was worse than the alternative — fold that into
+  the proper per-location vessel handling rather than leaving it as a special
+  case. And **`#rig` still bobs like a hull in the Stream**: ±0.9° and 2px, which
+  is right for a boat and wrong for a kid standing in a river. It moves the
+  standing figure about a pixel, so it is not urgent, but placement is the
+  natural place to make the bob a per-pose property.
+- **The Ocean's fighting chair is a vessel, and R4 deliberately did not draw it.**
+  Its angler is generated with no chair, posed as if braced, so R5 can paint the
+  chair with a near-side layer in front of the kid the way the hull does.
 - **Done when:** switching spots swaps vessel, costume and pose together; the
   hull overlaps the angler correctly; the line still leaves the rod tip in all
   three.
