@@ -386,10 +386,13 @@ Prompt:   Soft painterly illustration in the style of Studio Ghibli background
           cream near the treetops. Cooler and greener than a golden-hour pond,
           but still warm and muted. Include a simple, complete water fill below
           the water's edge in muted teal-green, so this layer reads correctly on
-          its own. No people, no boat, no fishing gear. The water's edge must sit
-          just below the vertical middle of the canvas — a little more sky and
-          forest above it than water below it, roughly 55% of the way down from
-          the top. Aspect ratio 2.36:1. Output as PNG.
+          its own. No people, no boat, no fishing gear. Keep even the deepest
+          shadows in the trunks a warm dark brown — never near-black. The water's
+          edge must sit at exactly 55% down from the top of the canvas: the
+          forest and sky fill the top 55% of the image and the water fills the
+          bottom 45%. The water must take up nearly half the picture. Do not
+          place the water's edge any lower than 55%. Aspect ratio 2.36:1.
+          Output as PNG.
 Save as:  assets/background-stream-far.png
 Size:     1584×672 (2.36:1), opaque, no transparency needed
 Wired in: not yet — lands with all three, replacing background-stream.png and
@@ -448,6 +451,29 @@ Wired in: not yet — the near plane, #bg-fore for .loc-stream. Nothing may land
           where the bottom-center finger-guide panel sits, or over the rig's box
           (design x20–138, y140–224)
 ```
+
+**⚠️ Layer 1, attempt 1 (2026-09-01) — rerolled for framing.** The side view was
+**fixed**: a dead-flat waterline running the full width, seen from the bank at
+eye level, no diagonal band, no bird's-eye. That was the historical failure and
+the tripled framing language solved it. But the waterline landed at **66.96%**
+against 55% — design y=241 where the scene needs ~201, so the rig would float
+40px above the water: the same bug as before, milder.
+
+**The prompt's own hedging caused it, and the wording above is fixed.** Attempt 1
+said *"just below the vertical middle — a little more sky and forest above it
+than water below it, roughly 55%"*. Every one of those clauses is **technically
+satisfied at 67%**: 67% is below the middle, and there is more above than below.
+The Pond's layer 1 said *"must sit at exactly 55% down"*, unhedged, and landed at
+55.95%. See `GEMINI_NOTES.md` — **the hedging words are the failure, not the
+percentage.** The rewrite states it three non-negotiable ways: the exact
+percentage, the complement (top 55% / bottom 45%), and a floor ("do not place it
+any lower").
+
+Everything else on that attempt was good and should survive the reroll: sky
+`#b0c4bf` against a `#b7cfd8` target, a forest that reads cooler and greener than
+the Pond as asked, and no pure black. One minor nudge folded into the rewrite —
+**0.58%** of pixels, the deep trunk shadows, went past the `#33291f` umber floor
+(darkest `#1a0f00`).
 
 **When these land:** key and register them against layer 1, composite all three
 at game scale, point `.loc-stream` at the three `#bg-*` planes, **delete the

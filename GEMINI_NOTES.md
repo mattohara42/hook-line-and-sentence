@@ -50,18 +50,38 @@ Scope note, so the docs don't drift into each other:
 
 ## What it reliably ignores
 
-- **Percentages of canvas height.** This is the big one.
+- **Hedged positions.** This is the big one, and the evidence is sharper than it
+  first looked.
 
-  | asked | got |
-  |---|---|
-  | waterline at 55% | 55.95% — fine |
-  | waterline at 56% | **46.13%** — 65px out |
-  | "nothing above roughly 70% down" | detail reached 32.6% |
+  | asked | got | |
+  |---|---|---|
+  | "must sit at **exactly 55%** down" (Pond far) | 55.95% | ✅ |
+  | "must start at **exactly 56%** down" (Pond water) | **46.13%** | ❌ |
+  | "nothing above **roughly** 70% down" (Pond fore) | 32.6% | ❌ |
+  | "**just below** the middle… **a little more** above… **roughly** 55%" (Stream far) | **66.96%** | ❌ |
 
-  Do not rely on a percentage for anything that has to register with something
-  else. Say **"the very bottom-left corner"**, **"rise only a little way up from
-  the bottom edge"**, **"along the bottom edge"** — corners and edges are things
-  the generator can see.
+  The first read of this was "percentages don't work". That is not quite it.
+  **The hedging words are the failure.** *Roughly*, *just below*, *a little
+  more*, *only a little way* — each one is a clause the generator can satisfy at
+  almost any value. The Stream's 67% technically met every clause it was given:
+  67% *is* below the middle, and there *is* more above than below.
+
+  What actually works:
+
+  1. **State it exactly and unhedged** — "must sit at exactly 55% down". This is
+     the only phrasing that has ever landed on target.
+  2. **State the complement too** — "the forest fills the top 55%, the water
+     fills the bottom 45%". Two numbers that have to add up are harder to fudge
+     than one.
+  3. **State a bound** — "do not place it any lower than 55%".
+  4. **Anchor to edges and corners where you can** — "the very bottom-left
+     corner", "along the bottom edge". These are things the generator can see,
+     and they are what made the Pond's foreground keep-out work.
+
+  The one exact-percentage failure (Pond water, 56% → 46%) is the layer with
+  **no natural horizon in it** — water only, nothing to anchor the line to.
+  Expect abstract boundaries to drift, and rely on the salvage instead (see
+  "let layer 1 define the truth").
 
 - **Output format.** "Output as PNG" was in the prompt for all three R3 layers.
   All three arrived as JPEG. Format is chosen by the app and the download
