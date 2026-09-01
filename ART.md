@@ -576,6 +576,143 @@ verify the waterline in a browser. The Ocean's prompts get written after this
 level is judged — same one-level-at-a-time discipline that kept the Pond's
 misses cheap.
 
+### 🟡 R3 — the Ocean, repainted as three layers (open, ready to generate)
+
+**Last of the nine, and the first written with the whole lesson set in hand.**
+The Pond took three rerolls to learn the conventions; the Stream took four on
+one layer and then landed the other two first-attempt. These are written to that
+standard. **Read `GEMINI_NOTES.md` before touching them.**
+
+Everything proven is applied: the **style block on all three layers**, not just
+the first · the **flat magenta backdrop** on the two that need alpha · the
+**keep-out stated as composition** rather than geometry · the waterline stated
+exactly on layer 1 and left don't-care on layers 2 and 3, since **layer 1
+defines the truth and the others are salvaged into it** · and **explicit pixel
+dimensions in the prompt body**, not only in the spec line below it (Matt's ask,
+2026-09-01 — the aspect ratio alone has been reliable, this is belt and braces).
+
+**Expect to fit layer 1 rather than reroll it.** The Stream's far layer missed
+its waterline on all four attempts and was solved by cropping the top and
+regrowing water at the bottom, keeping the canvas at 1584×672 so `cover` behaves
+exactly as it does for the other levels. The same fix is available here and
+costs nothing, because layer 2 repaints the water anyway.
+
+**What this level replaces:** `assets/background-ocean.png`, which came back at
+1.83:1 rather than ~2.4:1, so `cover` crops its top and bottom and
+`#scene.loc-ocean` carries a `center 11%` offset to pull the horizon onto y=198.
+**That offset is deleted when these land** — the same closing move as the
+Stream's `scale 1.246`.
+
+```
+ART NEEDED: Ocean background, layer 1 of 3 — far (sky, horizon, open sea)
+Prompt:             Soft painterly illustration in the style of Studio Ghibli background
+          art, warm muted color palette, gentle diffused lighting, thin warm
+          brown outlines rather than black, cozy and inviting mood, no harsh
+          shadows, no neon or saturated colors. Painted by hand in soft gouache
+          and watercolor, with visible brushwork and gentle tonal variation
+          inside every shape, modelled with light rather than filled with flat
+          color. Outlines are fine, delicate and varying in weight, the way a
+          brush leaves them; never thick, uniform or inked. This must NOT look
+          like flat vector art, a cartoon, or a clean digital illustration with
+          even line weight.
+          The open ocean on a bright calm day, seen straight on at eye level
+          from just above the water, as if standing in a boat. This is a flat
+          side view like a stage backdrop. It is NOT seen from above and NOT a
+          three-quarter view, and the horizon is a straight horizontal line
+          running the full width of the canvas. Above it: a soft banded sky,
+          pale blue high up warming to cream near the horizon, with a few
+          gentle drifting clouds and a soft glow low in the sky — no
+          hard-edged sun disc. A faint suggestion of distant land or haze at
+          the horizon is welcome but must stay low and pale. Deeper and bluer
+          than a forest pond, but still muted and warm-lit, never a saturated
+          tropical blue. Include a simple, complete water fill below the
+          horizon so this layer reads correctly on its own. No boat, no people,
+          no birds, no fishing gear. Keep even the deepest tones a warm dark
+          brown-blue, never near-black. The horizon must sit at exactly 55%
+          down from the top of the canvas: sky fills the top 55% and water
+          fills the bottom 45%. The image is 1584 by 672 pixels, aspect ratio
+          2.36:1. Output as PNG.
+Save as:  assets/background-ocean-far.png
+Size:     1584×672 (2.36:1), opaque, no transparency needed
+Wired in: not yet — lands with all three; replaces background-ocean.png and
+          deletes #scene.loc-ocean's `center 11%` offset in style.css
+```
+
+```
+ART NEEDED: Ocean background, layer 2 of 3 — water
+Prompt:             Soft painterly illustration in the style of Studio Ghibli background
+          art, warm muted color palette, gentle diffused lighting, thin warm
+          brown outlines rather than black, cozy and inviting mood, no harsh
+          shadows, no neon or saturated colors. Painted by hand in soft gouache
+          and watercolor, with visible brushwork and gentle tonal variation
+          inside every shape, modelled with light rather than filled with flat
+          color. Outlines are fine, delicate and varying in weight, the way a
+          brush leaves them; never thick, uniform or inked. This must NOT look
+          like flat vector art, a cartoon, or a clean digital illustration with
+          even line weight.
+          Just the surface of the open ocean on a bright calm day, seen from
+          the side at eye level. Long low swells rolling horizontally, soft
+          pale foam catching the light along their crests, and the glitter of
+          reflected sky broken across the surface. The water must have a clear
+          sense of depth — lighter and more broken where it catches the light
+          nearest the top, deepening through a mid blue-teal to a much darker,
+          cooler band toward the bottom of the canvas. Do not paint it as one
+          flat tone; the deepening from top to bottom is the point of this
+          layer. No horizon, no sky, no boat, no people, no land. The painted
+          water fills the bottom of the canvas and stops in a straight
+          horizontal line. It does not matter exactly where that line falls, so
+          long as the water fills at least the bottom third. Everything above
+          that line must be filled with flat, solid, uniform magenta (#FF00FF)
+          — a plain backdrop color, one single unvarying color, not a
+          checkerboard, not a gradient, not transparency. No magenta anywhere
+          in the water itself. The image is 1584 by 672 pixels, aspect ratio
+          2.36:1. Output as PNG.
+Save as:  assets/background-ocean-water.png
+Size:     1584×672. Delivered on flat magenta above the line; the alpha is a cut
+          by row, then rescaled to sit under layer 1's horizon
+Wired in: not yet — the middle plane, #bg-water for .loc-ocean
+```
+
+```
+ART NEEDED: Ocean background, layer 3 of 3 — foreground detail
+Prompt:             Soft painterly illustration in the style of Studio Ghibli background
+          art, warm muted color palette, gentle diffused lighting, thin warm
+          brown outlines rather than black, cozy and inviting mood, no harsh
+          shadows, no neon or saturated colors. Painted by hand in soft gouache
+          and watercolor, with visible brushwork and gentle tonal variation
+          inside every shape, modelled with light rather than filled with flat
+          color. Outlines are fine, delicate and varying in weight, the way a
+          brush leaves them; never thick, uniform or inked. This must NOT look
+          like flat vector art, a cartoon, or a clean digital illustration with
+          even line weight.
+          Foreground open-water detail, framing an empty center. Along the very
+          bottom-left corner and the very bottom-right corner of the canvas:
+          the near crest of a swell breaking into soft pale foam and spray,
+          close to the viewer, and on one side only, a weathered wooden channel
+          buoy leaning in the water with a little seaweed and barnacle growth
+          at its waterline. These details cling to the left and right edges
+          like a framing vignette and rise only a little way up from the bottom
+          edge. The entire center of the canvas, and the whole middle of the
+          bottom edge, must be completely empty backdrop with nothing painted
+          in it at all. Everything that is not one of those corner details must
+          be filled with flat, solid, uniform magenta (#FF00FF) — a plain
+          backdrop color, one single unvarying color, not a checkerboard, not a
+          gradient, not transparency. No magenta, pink or purple anywhere in
+          the foam, spray or buoy. The image is 1584 by 672 pixels, aspect
+          ratio 2.36:1. Output as PNG.
+Save as:  assets/background-ocean-fore.png
+Size:     1584×672. Delivered on flat magenta; alpha keyed locally
+Wired in: not yet — the near plane, #bg-fore for .loc-ocean. Nothing may land
+          where the bottom-center finger-guide panel sits, and R5 puts a Boston
+          Whaler with a stern fighting chair in this level — a bigger hull than
+          the Pond's rowboat, so the empty center matters more here, not less
+```
+
+**When these land:** key and register against layer 1, composite all three at
+game scale, point `.loc-ocean` at the three `#bg-*` planes, **delete the
+`center 11%` offset and the `.reeds` exemption**, verify the horizon in a
+browser — and R3 closes.
+
 ### ✅ G1 — the angler, taken apart (landed 2026-08-25)
 
 All three PNGs are in, salvaged and wired: `body-kid.png` (RGBA 560×864),
