@@ -304,6 +304,36 @@ Wired in: not yet — a layer above background-pond-far.png; ART_DIRECTION.md
           is a follow-up CSS/JS task once the art lands, not part of this request
 ```
 
+**✅ Landed 2026-09-01, salvaged by row.** The magenta convention worked on its
+first outing: a **2-row** transition band, pink gone entirely by 3 rows below
+the cut, and **zero** magenta left after the cut. Far better than the
+checkerboard salvage it replaces.
+
+**But Gemini ignored the 56%** and put the waterline at **46.13%** — 65px high.
+It did not matter *here*, and the reason is worth keeping: this layer is a
+smooth vertical gradient with no drawn features, so its only meaningful edge is
+the top one, which is the very thing being set. The salvage discards rows 0–315
+and **rescales the remaining 356 rows of clean water down to the 296** that sit
+between layer 1's real waterline (y=376) and the bottom. Compressing a
+featureless gradient by 17% is invisible; there is nothing to misregister.
+
+**This is not the reroll rule bending.** That rule protects the registration of
+*drawn features* — a rig piece, a shoreline, a dock. Water has none. Layer 3
+does, so a positional miss there **is** a reroll: do not reuse this trick on it.
+
+The water quality is what the reworked prompt was for, and it delivered: mid
+`#4f8077` against a `#4f7d76` target and depth `#34534f` against `#375c58`, with
+a surface-to-depth luminance drop of **83** where layer 1's flat water managed
+only **12**.
+
+**Layer 2 is now pinned to layer 1's waterline at y=376.** If layer 1 is ever
+rerolled or trimmed, re-cut this layer from the original download rather than
+editing the PNG in the repo.
+
+Arrived as a **JPEG again**, despite the prompt asking for PNG — confirming the
+caveat above that format is a download-UI choice. Harmless here, because the cut
+is by row and the fringe was 3 rows.
+
 ```
 ART NEEDED: Pond background, layer 3 of 3 — foreground detail
 Prompt:   Soft painterly illustration in the style of Studio Ghibli background
