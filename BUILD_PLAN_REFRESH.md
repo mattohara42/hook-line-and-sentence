@@ -380,9 +380,16 @@ faster than the poses got harder.
 ### R5 — Vessels, with the kid inside them (in progress)
 
 **The code half landed 2026-09-01, ahead of the art**, the way R1 and R4's did.
-What is left is two paintings, requested in `ART.md`: a rowboat and a Boston
-Whaler, each **one painting cut locally into a far and a near half** rather than
-two images that have to register.
+The **rowboat landed and is wired** (2026-09-01, first attempt); the Boston
+Whaler is what is left. Each is **one painting cut locally into a far and a near
+half** rather than two images that have to register — and the rowboat proved the
+argument: recompositing the two halves against the delivered painting leaves
+**0 px of 490,319 different**.
+
+**Carried debt:** the Pond vessel is `skinnable: false` until `shop.boats`' four
+alternate hulls get the same cut. Equipping a boat skin currently does nothing
+at the Pond. Same prompt with the hull colour swapped, then
+`tools/cut-vessel.py`.
 
 - Rowboat (Pond), waders (Stream — no vessel, the kid stands in the water),
   Boston Whaler with the stern fighting chair (Ocean).

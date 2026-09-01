@@ -169,8 +169,18 @@ export const CONFIG = {
       pond: {
         anchor: { x: 20, y: 168, pivot: { x: 59, y: 30 } },
         bob: true,
-        vessel: { far: "boat", near: null, x: 0, y: 8, w: 118, h: 48,
-                  skinnable: true, shadow: true },
+        // R5's painted rowboat, cut from one painting along the near gunwale's
+        // sheer: `near` is the rail and topsides, and it paints over the kid's
+        // shins so he sits down IN the boat. Geometry places the sheer at design
+        // y≈190 (his thigh) and the hull straddling the y=198 waterline.
+        //
+        // NOT skinnable for now, and that is a visible regression worth knowing
+        // about: shop.boats' four alternate hulls are still single pixel-era
+        // PNGs with no far/near split, so equipping one would either paste a
+        // pixel rowboat over this or, if matched by suffix, 404 into an
+        // invisible boat. They each need the same cut — see ART.md.
+        vessel: { far: "boat-pond-far", near: "boat-pond-near",
+                  x: -16, y: 2, w: 156, h: 42, skinnable: false, shadow: true },
         // rod → arm → body. The hand is painted in front of the pole, and the
         // forearm's cut end tucks behind the knee, which the body carries — so
         // the arm sits between them.

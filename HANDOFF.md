@@ -11,17 +11,24 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R5 — vessels**, `BUILD_PLAN_REFRESH.md` (R4 closed 2026-09-01) |
 | **Done when** | switching spots swaps vessel, costume and pose together; the hull overlaps the angler correctly; the line still leaves the rod tip in all three |
-| **State** | R4 done. **R5's code half is in**; it is waiting on two vessel paintings. |
-| `origin/main` | `65b9148`, tree clean, nothing unpushed |
+| **State** | R5: rowboat **landed and wired**. Waiting on the Whaler, plus four shop hulls. |
+| `origin/main` | `93db370`, tree clean, nothing unpushed |
 | Tests | 81/81 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
 | Deploys | Netlify is **manual**; merging to `main` does not go live |
 
 ## Start here
 
-**The next action is Matt's: run R5's two vessel prompts**, written and waiting
-in `ART.md` → *R5 — the two vessels*. A rowboat and a Boston Whaler. The Stream
-needs none — that angler stands in the water.
+**The next action is Matt's: run the Whaler prompt** in `ART.md` → *R5 — the two
+vessels*. The rowboat beside it has landed and is wired; the Stream needs no
+vessel.
+
+**And four more after it, which is new work R5 gained rather than inherited:**
+the Pond vessel is `skinnable: false` because `shop.boats`' alternate hulls
+(`boat-red`, `boat-blue`, `boat-leaf`, `boat-purple`) are still single pixel-era
+PNGs with no far/near split. **Equipping a boat skin currently does nothing at
+the Pond.** Each needs the same prompt with the hull colour swapped, then
+`tools/cut-vessel.py`.
 
 **The code to receive them is already on `main`.** A pose owns its `anchor`
 (where `#rig` sits and the point it rocks about), its `bob`, and its `vessel` —
@@ -35,10 +42,16 @@ near hull side paints in front. Asking for two images that must register would
 invent a problem the cut doesn't have — R4's *don't generate a piece you could
 cut*, applied to hulls.
 
-Then Claude: cut each along the near gunwale's top edge · wire · **seat the
-Ocean angler in the fighting chair, which is a wiring step, not a reroll** (the
-pose has two knobs for it now, the vessel's own `x/y` and the pose's `anchor`) ·
-composite at 1x before believing any of it.
+Then Claude: add the vessel to `tools/cut-vessel.py`'s `VESSELS` dict with
+coarse sheer anchors (within ~35px; the detector refines per column) · wire ·
+**seat the Ocean angler in the fighting chair, which is a wiring step, not a
+reroll** (the pose has two knobs for it, the vessel's own `x/y` and the pose's
+`anchor`) · composite at 1x before believing any of it.
+
+**Don't trace the sheer by eye.** That was tried on the rowboat and ran 25px
+high, crossing the thwarts — and a thwart's near end *is* the sheer. The
+detector reads what the painting gives: the rail is a lighter band with a darker
+line above it.
 
 **R4's asset is `tools/cut-angler.py`** — one delivered painting per pose in,
 three registered layers out. R6's fish are the same shape of problem
