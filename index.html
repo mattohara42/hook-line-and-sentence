@@ -24,8 +24,9 @@
          surface, so it stays put while the boat rocks over it -->
     <div id="hull-shadow"></div>
     <div id="rig">
-      <div id="boat"></div>
-      <!-- the angler's layers (body/hat/rod) are built here from CONFIG.rig -->
+      <!-- R5: the vessel and the angler's layers are both built here by
+           renderRig() from CONFIG.rig.poses — the hull's far side, then the
+           rod/arm/body stack, then the hull's near side over the top. -->
     </div>
     <!-- R1: the fishing line is a curve, so it's an SVG <path> rather than the
          rotated <div> it used to be — a div can only ever be straight, which is

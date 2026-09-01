@@ -134,6 +134,19 @@ export const CONFIG = {
   // both are only meaningful against that pose's rod box — a standing angler
   // holds the rod somewhere else. A data test keeps them on the box.
   rig: {
+    // R5: a pose also owns its VESSEL and where the whole rig sits.
+    //   anchor  — #rig's position and the point it rocks about, in design px.
+    //             It was fixed in style.css until R5; a kid standing in a river
+    //             does not sit where a kid in a rowboat does.
+    //   bob     — whether #rig rocks like a hull. True in a boat, false in
+    //             waders: the Stream angler is standing on a riverbed.
+    //   vessel  — `far` paints behind the angler and `near` in FRONT of them,
+    //             which is V1's front-plane trick applied to the hull so the kid
+    //             sits down *in* it rather than on it. `near` may be null until
+    //             that art lands; a missing PNG paints nothing. `skinnable`
+    //             marks the vessel that shop.boats reskins. null = no vessel,
+    //             which is the Stream.
+    //
     // A location with no pose of its own wears this one. That is every level
     // today: R4's art is requested in ART.md and has not landed, so the Stream
     // and the Ocean are still the Pond kid in pond clothes. Giving them their
@@ -154,6 +167,10 @@ export const CONFIG = {
       // No hat layer: the angler is bare-headed on purpose so R7 can draw hats
       // against this pose. The old pixel hat-straw would not match it.
       pond: {
+        anchor: { x: 20, y: 168, pivot: { x: 59, y: 30 } },
+        bob: true,
+        vessel: { far: "boat", near: null, x: 0, y: 8, w: 118, h: 48,
+                  skinnable: true, shadow: true },
         // rod → arm → body. The hand is painted in front of the pole, and the
         // forearm's cut end tucks behind the knee, which the body carries — so
         // the arm sits between them.
@@ -196,6 +213,12 @@ export const CONFIG = {
       // one, and scaling them alike would have stood him up no taller than he
       // sits. 75 design px standing against 50 seated.
       stream: {
+        anchor: { x: 20, y: 168, pivot: { x: 59, y: 30 } },
+        // No hull, so no rocking: he is standing on a riverbed. This replaces
+        // the one-line `.loc-stream #boat { display: none }` R4 borrowed from
+        // R5 — the pose says it now, rather than a CSS special case.
+        bob: false,
+        vessel: null,
         layers: [
           { id: "rod",  file: "rod-bamboo-stream",   x: 38, y: -70, w: 88, h: 123 },
           { id: "arm",  file: "angler-stream-arm",   x: 38, y: -70, w: 88, h: 123 },
@@ -219,6 +242,13 @@ export const CONFIG = {
       // bends visibly enough to need two segments in the cut tool; the other
       // two hide their upper arm behind a knee or a vest.
       ocean: {
+        anchor: { x: 20, y: 168, pivot: { x: 59, y: 30 } },
+        bob: true,
+        // Still the pixel rowboat, and still skinnable, until the Whaler lands.
+        // Both flip then: a Boston Whaler is not what shop.boats reskins, and a
+        // rowboat under a kid braced in a fighting chair is the placeholder.
+        vessel: { far: "boat", near: null, x: 0, y: 8, w: 118, h: 48,
+                  skinnable: true, shadow: true },
         layers: [
           { id: "rod",  file: "rod-deepsea-ocean",   x: 38, y: -48, w: 71, h: 82 },
           { id: "arm",  file: "angler-ocean-arm",    x: 38, y: -48, w: 71, h: 82 },

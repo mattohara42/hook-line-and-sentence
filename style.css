@@ -172,11 +172,6 @@ h1 {
    to seat the near bank on y=198. It was playable but it cost the sky and ran
    the art chunkier than the other biomes. Deleting it was R3's done-when
    criterion for this level. */
-/* R4: the Stream angler stands IN the water — waders, no vessel — so the boat
-   and the shadow it casts come off. R5 owns vessels properly; this is the one
-   line R4 needs to stop a pixel rowboat sitting under a standing kid. */
-#scene.loc-stream #boat,
-#scene.loc-stream #hull-shadow { display: none; }
 #scene.loc-stream #bg-far   { background-image: url("assets/background-stream-far.png"); }
 #scene.loc-stream #bg-water { background-image: url("assets/background-stream-water.png"); }
 #scene.loc-stream #bg-fore  { background-image: url("assets/background-stream-fore.png"); }
@@ -211,11 +206,11 @@ h1 {
    translating the whole rig up and down over a static water plane. The heave is
    deliberately small — the sitting-in-water read comes from #surface cutting
    the hull, not from movement. */
-#rig {
-  position: absolute; left: 20px; top: 168px;
-  transform-origin: 59px 30px;
-  animation: bob 5.2s ease-in-out infinite;
-}
+/* R5: position, pivot and whether it rocks all come from the pose now
+   (CONFIG.rig.poses.<loc>.anchor / .bob), set by renderRig(). The bob is a class
+   so prefers-reduced-motion's `animation: none !important` still wins. */
+#rig { position: absolute; }
+#rig.bobs { animation: bob 5.2s ease-in-out infinite; }
 @keyframes bob {
   0%, 100% { transform: translateY(0) rotate(-0.9deg); }
   50%      { transform: translateY(2px) rotate(0.9deg); }
@@ -224,10 +219,11 @@ h1 {
    px, tuned so the boat sits on the waterline and the kid rides in it. The
    kid sprite has the rod baked in, so #line originates at the sprite's rod tip
    (upper-right of the kid image). */
-#boat {
-  position: absolute; left: 0; top: 8px; width: 118px; height: 48px;
-  background: url("assets/boat.png") center / contain no-repeat;
-}
+/* R5: the vessel is built by renderRig() from the pose, in two halves — `far`
+   behind the angler and `near` in front, so the kid sits down IN the hull. That
+   is V1's front-plane trick (the one that made #surface work) applied to the
+   boat. Geometry comes from the pose; this only says how they paint. */
+.vessel { position: absolute; background: center / contain no-repeat; }
 /* G1: the angler is a stack of these — body, hat, rod — built by renderRig()
    from CONFIG.rig.layers, which owns the geometry so one config edit swaps a
    hat. Paint order is DOM order. (R1: the line is no longer one of these

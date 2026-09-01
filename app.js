@@ -629,7 +629,9 @@ function setFishTarget() {
 // The maths is in logic.js and the numbers are in CONFIG.anim; this is only the
 // DOM half.
 const A = CONFIG.anim;
-const RIG_ORIGIN = { x: 59, y: 30 };        // #rig's transform-origin, from style.css
+// R5: #rig's transform-origin is the pose's anchor pivot, not a constant — the
+// hull it rocks about moves with the vessel.
+const rigPivot = () => pose.anchor.pivot;
 let rodAngle = 0, rodVel = 0;               // the tug spring, in degrees
 let castSwing = 0;                          // the cast's own rod angle, in degrees
 let lineMode = "off";                       // off | cast | wait | reel
@@ -671,10 +673,11 @@ function rodTip() {
   const rig = $("rig");
   const t = getComputedStyle(rig).transform;
   const m = t && t !== "none" ? new DOMMatrix(t) : new DOMMatrix();
-  const dx = tip.x - RIG_ORIGIN.x, dy = tip.y - RIG_ORIGIN.y;
+  const o = rigPivot();
+  const dx = tip.x - o.x, dy = tip.y - o.y;
   return {
-    x: rig.offsetLeft + RIG_ORIGIN.x + m.a * dx + m.c * dy + m.e,
-    y: rig.offsetTop  + RIG_ORIGIN.y + m.b * dx + m.d * dy + m.f,
+    x: rig.offsetLeft + o.x + m.a * dx + m.c * dy + m.e,
+    y: rig.offsetTop  + o.y + m.b * dx + m.d * dy + m.f,
   };
 }
 
@@ -1492,8 +1495,34 @@ function switchLocation(loc) {
 function renderRig(loc) {
   pose = poseFor(loc);
   const rig = $("rig");
-  rig.querySelectorAll(".rig-layer").forEach(n => n.remove());
+  rig.querySelectorAll(".rig-layer, .vessel").forEach(n => n.remove());
   rodLayerEl = armLayerEl = null;
+
+  // R5: the pose places the whole rig and decides whether it rocks. The bob is a
+  // class rather than an inline style so prefers-reduced-motion still wins.
+  rig.style.left = pose.anchor.x + "px";
+  rig.style.top = pose.anchor.y + "px";
+  rig.style.transformOrigin = `${pose.anchor.pivot.x}px ${pose.anchor.pivot.y}px`;
+  rig.classList.toggle("bobs", !!pose.bob);
+  $("hull-shadow").hidden = !pose.vessel?.shadow;
+
+  // the hull behind the angler; its near side goes on after the layers, so the
+  // kid sits down IN it rather than on it
+  const vessel = (which) => {
+    const v = pose.vessel;
+    if (!v || !v[which]) return;
+    const file = (which === "far" && v.skinnable && save?.upgrades?.boat)
+      ? (CONFIG.shop.boats.find(b => b.id === save.upgrades.boat)?.file ?? v.far)
+      : v[which];
+    const d = document.createElement("div");
+    d.className = "vessel vessel-" + which;
+    d.style.left = v.x + "px"; d.style.top = v.y + "px";
+    d.style.width = v.w + "px"; d.style.height = v.h + "px";
+    d.style.backgroundImage = `url("assets/${file}.png")`;
+    rig.appendChild(d);
+  };
+  vessel("far");
+
   for (const L of pose.layers) {
     const d = document.createElement("div");
     d.className = "rig-layer";
@@ -1510,6 +1539,7 @@ function renderRig(loc) {
     }
     rig.appendChild(d);
   }
+  vessel("near");
   // the rig may have been rebuilt mid-swing (a location switch during a cast),
   // so put the angles back rather than letting them snap to zero for a frame
   applySwing();
@@ -1601,10 +1631,10 @@ function baitHint(bait) {
 function boatHint()     { return "a fresh coat of paint"; }
 
 // swap the #boat sprite to the equipped skin (cosmetic; also called on load)
-function applyBoatSkin() {
-  const boat = CONFIG.shop.boats.find(b => b.id === save.upgrades.boat) ?? { file: "boat" };
-  $("boat").style.backgroundImage = `url("assets/${boat.file}.png")`;
-}
+// R5: the vessel is a rig layer now, not a standalone #boat, so equipping a
+// skin rebuilds the rig. Poses whose vessel isn't `skinnable` ignore it — a
+// rowboat skin has no business on a Boston Whaler.
+function applyBoatSkin() { renderRig(); }
 
 function renderShop() {
   $("shop-coin-count").textContent = save.coins;

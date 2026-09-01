@@ -377,21 +377,30 @@ faster than the poses got harder.
 - **Done when:** at 1x, in all three levels, the rod looks held and the costume
   suits the water; casting (R1) moves the arm and rod, not the whole kid.
 
-### R5 — Vessels, with the kid inside them
+### R5 — Vessels, with the kid inside them (in progress)
+
+**The code half landed 2026-09-01, ahead of the art**, the way R1 and R4's did.
+What is left is two paintings, requested in `ART.md`: a rowboat and a Boston
+Whaler, each **one painting cut locally into a far and a near half** rather than
+two images that have to register.
 
 - Rowboat (Pond), waders (Stream — no vessel, the kid stands in the water),
   Boston Whaler with the stern fighting chair (Ocean).
 - Each vessel gets a **near-side layer painted in front of the angler**, the
   same front-plane trick as V1 applied to the hull, so the kid sits down *in* it.
-- Placement (x/y, rod tip, pose) moves into the per-location config block.
-- **Two things R4 left here.** `#boat` and `#hull-shadow` are already hidden in
-  the Stream (one line in `style.css`) because R4's angler stands *in* the water
-  and a pixel rowboat under him was worse than the alternative — fold that into
-  the proper per-location vessel handling rather than leaving it as a special
-  case. And **`#rig` still bobs like a hull in the Stream**: ±0.9° and 2px, which
-  is right for a boat and wrong for a kid standing in a river. It moves the
-  standing figure about a pixel, so it is not urgent, but placement is the
-  natural place to make the bob a per-pose property.
+- ~~Placement (x/y, rod tip, pose) moves into the per-location config block.~~
+  ✅ done 2026-09-01, ahead of the art. A pose now owns its **`anchor`** (where
+  `#rig` sits and the point it rocks about), its **`bob`** (a hull rocks, a kid
+  standing on a riverbed does not), and its **`vessel`** — `far` behind the
+  angler, `near` in front, `skinnable` for the one `shop.boats` reskins, or
+  `null` for the Stream. `renderRig()` builds all of it, `#boat` is gone from
+  `index.html`, and the CSS special case R4 borrowed is deleted because the pose
+  says it instead. Verified across all three spots, and the boat shop still
+  reskins the hull (buying auto-equips; `boat-red.png` follows you between
+  spots).
+- ~~Two things R4 left here~~ — both folded in with the placement work: the
+  Stream's CSS special case is deleted (its pose declares `vessel: null`), and
+  the bob is a per-pose `bob` flag, off in the Stream.
 - **The Ocean's fighting chair is a vessel, and R4 deliberately did not draw it.**
   Its angler is generated with no chair, posed as if braced, so R5 can paint the
   chair with a near-side layer in front of the kid the way the hull does.
