@@ -162,30 +162,26 @@ h1 {
 @keyframes drift-fore  { from { background-position: calc(50% + 5px) center; }
                          to   { background-position: calc(50% - 5px) center; } }
 
-/* The Stream and Ocean have not been repainted yet (R3 covers all three levels;
-   the Pond went first on purpose). They keep their single-PNG art, so the Pond's
-   planes are hidden there rather than showing through it. */
-#scene.loc-stream #bg-far,  #scene.loc-stream #bg-water, #scene.loc-stream #bg-fore,
-#scene.loc-ocean  #bg-far,  #scene.loc-ocean  #bg-water, #scene.loc-ocean  #bg-fore {
-  display: none;
-}
-/* A3: the Stream biome, layered over the pond art (so a missing PNG degrades to
-   the pond scene rather than a blank canvas).
+/* R3: the Stream, repainted as three layers. The planes just swap their images —
+   no per-location framing, no scale, no offset, because the new art was
+   generated (and then fitted) to put its waterline on the same row as the
+   Pond's.
 
-   Framed, not `cover`: Gemini painted the stream as a forest pool seen from
-   above, with its water in a low diagonal band instead of the flat waterline at
-   55% the prompt asked for. Under `cover` the boat floated a hundred px above
-   the water, and dropping the boat to meet it buried the whole rig behind the
-   finger-guide panel. So the art is scaled up and offset instead, seating the
-   near bank on y=198 where the pond's waterline (and every position tuned
-   against it) already sits. 1714px = 1.246x native, the smallest scale whose
-   water still reaches the bottom of the 360px canvas. ART.md has the request
-   out for a proper side-view stream; when it lands this goes back to `cover`. */
-#scene.loc-stream {
-  background-image: url("assets/background-stream.png"), url("assets/background.png");
-  background-position: -520px -368px, center center;
-  background-size: 1714px auto, cover;
-  background-repeat: no-repeat, no-repeat;
+   This replaces the A3 workaround that stood here: the old stream PNG came back
+   as a forest pool seen from *above*, water in a low diagonal band, so the scene
+   was held together by scaling the art 1.246x and offsetting it to -520px,-368px
+   to seat the near bank on y=198. It was playable but it cost the sky and ran
+   the art chunkier than the other biomes. Deleting it was R3's done-when
+   criterion for this level. */
+#scene.loc-stream #bg-far   { background-image: url("assets/background-stream-far.png"); }
+#scene.loc-stream #bg-water { background-image: url("assets/background-stream-water.png"); }
+#scene.loc-stream #bg-fore  { background-image: url("assets/background-stream-fore.png"); }
+
+/* The Ocean has not been repainted yet (R3's third level). It keeps its
+   single-PNG art, so the planes are hidden there rather than showing through
+   it — the same self-resolving pattern the Stream used until now. */
+#scene.loc-ocean #bg-far, #scene.loc-ocean #bg-water, #scene.loc-ocean #bg-fore {
+  display: none;
 }
 /* A6: the Ocean biome, same self-resolving layering as the Stream above — the
    pond art shows through until assets/background-ocean.png lands (prompt in
@@ -337,12 +333,12 @@ h1 {
 }
 
 /* foreground reeds sway at the pond edges */
-/* V1's CSS-drawn stand-in foreground. R3 gave the Pond real painted reeds in
-   #bg-fore, in the same two corners, so these would double up — they are kept
-   only for the Stream and Ocean, which have no painted foreground yet. They go
-   for good when those two levels are repainted. */
+/* V1's CSS-drawn stand-in foreground. The Pond and the Stream now have real
+   painted foregrounds in #bg-fore, in the same two corners, so these would
+   double up there. Only the Ocean still needs them, and they go for good when
+   it is repainted. */
 .reeds { position: absolute; bottom: 8px; display: none; gap: 7px; align-items: flex-end; pointer-events: none; }
-#scene.loc-stream .reeds, #scene.loc-ocean .reeds { display: flex; }
+#scene.loc-ocean .reeds { display: flex; }
 #reeds-left { left: 12px; }
 #reeds-right { right: 16px; }
 .reed {

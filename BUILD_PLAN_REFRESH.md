@@ -217,10 +217,24 @@ and `prefers-reduced-motion` reports `animation-name: none` on all three.
   name `background.png` explicitly in their own `.loc-*` rules, so dropping it
   saves the Pond a 926KB load it would only ever paint over.
 
-**Still open: the Stream and the Ocean.** Their prompts are not written yet —
-`ART.md` writes them now that the Pond is judged. `.loc-stream`'s `scale 1.246`
-workaround is still in `style.css` and can only be deleted when the Stream is
-repainted, so the milestone stays open.
+**The Stream is done too (2026-09-01), and its workaround is gone.**
+`.loc-stream`'s `scale 1.246` + `-520px,-368px` offset — the framing patch that
+had been holding that level together since A3 — **is deleted**, which was this
+milestone's done-when criterion for the Stream. The planes there now just swap
+their images: no per-location framing, because the art was generated and fitted
+to put its waterline on the Pond's row. V1's CSS `.reeds` are hidden in the
+Stream now as well; only the Ocean still uses them.
+
+Four attempts on the Stream's far layer taught the epic more than any other
+asset — the waterline went 66.96% → 66.96% → 62.35% → 72.77% and **prompt
+wording never moved it**. What worked was giving up on wording and fixing the
+framing in salvage, then spending the prompt on style instead, which cannot be
+salvaged. Both rules are in `GEMINI_NOTES.md`. Layers 2 and 3 then landed
+first-attempt.
+
+**Still open: the Ocean.** Its three prompts are not written yet; `ART.md`
+writes them now the Stream is judged. The milestone stays open until they land
+and `.loc-ocean` stops stacking a single PNG over the pond art.
 
 <details>
 <summary>The original plan for R3, as written</summary>
