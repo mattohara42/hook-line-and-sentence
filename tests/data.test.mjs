@@ -448,3 +448,20 @@ test("the fish placeholder still has a box and a mouth", () => {
   assert.ok(p.mouth.y >= 0 && p.mouth.y <= p.h, "the placeholder's mouth is off its box");
   assert.ok(CONFIG.fish.swim.tailDeg > 0 && CONFIG.fish.swim.tailPeriodMs > 0, "the tail doesn't sweep");
 });
+
+// R6's two beats. The approach's numbers are the ones that were measured against
+// the finger panel (185,260 -> 535,353 in design px on a 2:1 viewport), so the
+// invariant worth holding is that the fish surfaces ABOVE it and rises from
+// below rather than falling into it.
+test("the fish rises into water the panel isn't covering, and breaks a real surface", () => {
+  const { approach: ap, surface } = CONFIG.fish;
+  assert.ok(ap.leadMs > 0, "the fish never shows itself before the bite");
+  assert.ok(ap.rise.dy > 0, "the silhouette drops to the hook instead of rising to it");
+  // fishTY at progress 0 is 232 (setFishTarget in app.js); the panel's top edge
+  // is y=260 on the widest measured viewport and lower on every other one
+  const spawnY = 232 + ap.spawn.dy;
+  assert.ok(spawnY < 260, `the fish surfaces at y=${spawnY}, behind the finger panel`);
+  assert.ok(spawnY > CONFIG.fish.surface.y, "the fish surfaces above the waterline");
+  assert.ok(surface.y > 0 && surface.y < 360, "the waterline is off the canvas");
+  assert.ok(surface.splashParticles > 0, "the surface break has no splash");
+});

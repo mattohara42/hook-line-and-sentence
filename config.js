@@ -316,6 +316,35 @@ export const CONFIG = {
     // back cycle takes. Small on purpose — a fish at 60px reads as swimming from
     // a few degrees, and more looks like a fish in trouble.
     swim: { tailDeg: 7, tailPeriodMs: 1100 },
+    // R6: the fish is SEEN before it bites. It drifts up out of the depths as a
+    // dark silhouette behind #surface, which is the front plane V1 built for
+    // exactly this, and the bite is then the moment it becomes a real fish
+    // rather than the moment one appears from nowhere. `lead` is how long before
+    // the bite it shows itself (clamped to the bite delay, so a fast bait still
+    // gets a tease, just a shorter one), `from` is where it enters, and `spawn`
+    // is the offset from the reel's first target that both the drift ends at and
+    // the hooked fish starts at — one number, so the tease and the hook cannot
+    // be two fish in slightly different places.
+    // `rise` is measured FROM the spawn rather than from the canvas, because the
+    // only reliably visible water is relative to where the fish already appears:
+    // #scene-frame covers the viewport, so design x past 480 is cropped on a 4:3
+    // screen, and #guide-panel measures 185,260→535,353 in design px on a 2:1
+    // one. Above y≈256 is clear of the panel on every shape measured (2:1,
+    // 16:10, 16:9, 4:3); below it, a silhouette would be teasing the back of the
+    // keyboard. So the fish rises from behind the panel band INTO clear water,
+    // which is also what "out of the depths" should look like.
+    //
+    // `spawn` moved up with it (dy 56 → 24, unchanged dx). It is the same offset
+    // the hooked fish has always used, and at 56 the bite itself emerged fully
+    // behind the panel on a 2:1 screen and swam out of it — the fish now appears
+    // where it can be seen. The reel is untouched: it still eases to the same
+    // targets from wherever the fish starts.
+    approach: { leadMs: 1100, rise: { dx: 12, dy: 44 }, spawn: { dx: 30, dy: 24 } },
+    // and the other end of it: the fish breaks the surface on the way to the
+    // boat. y is the waterline every biome's art is painted to and #surface
+    // starts at (55% of the 360px canvas) — a splash under the water is what
+    // this used to be, and it read as nothing at all.
+    surface: { y: 198, splashParticles: 18 },
     // Filled a wave at a time, Pond first — see ART.md. Empty is the correct
     // state until art lands, not a missing config.
     species: {},
