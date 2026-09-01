@@ -475,6 +475,14 @@ ever proves wrong.
   collection screen reads as 33 different fish, and the landing has a visible
   moment. Wave by wave; the milestone closes when the last wave lands.
 
+**Landed so far, and all of it is code (2026-09-01):** the scoping and the
+wave-1 request (#101) · the fish rig itself, with the tier placeholder as the
+fallback and three data tests set as traps for the first entry (#102) · both
+beats, the silhouette before the bite and the surface break on landing (#103).
+That leaves art, wave by wave, and the cut tool that gets written against the
+first delivered sheet. **The done-when's third clause — "the landing has a
+visible moment" — is met**; the other two are the roster.
+
 **Order of work, so nothing blocks on a generation:** the wave-1 request goes out
 first (it is the only part with a human round trip in it), the code half lands
 against the placeholder while the art is being made, and the cut tool is written
