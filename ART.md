@@ -339,17 +339,21 @@ ART NEEDED: Pond background, layer 3 of 3 — foreground detail
 Prompt:   Soft painterly illustration in the style of Studio Ghibli background
           art, warm muted color palette, gentle diffused lighting, thin warm
           brown outlines rather than black, cozy and inviting mood, no harsh
-          shadows, no neon or saturated colors. Foreground detail only for a
-          calm forest pond: a few lily pads and reeds near the bottom edge, a
-          suggestion of a wooden dock edge or mossy rock at one side. Nothing
-          in the bottom-center third of the canvas (a UI panel covers it
-          in-game). Nothing above roughly 70% down from the top. Every part of
-          the canvas that is not one of those foreground details must be
-          filled with flat, solid, uniform magenta (#FF00FF) — a plain
-          backdrop color, not a checkerboard, not a gradient, not
-          transparency. The magenta must be one single unvarying color across
-          the whole backdrop. No magenta, pink or purple anywhere in the
-          foreground details themselves. Output as PNG.
+          shadows, no neon or saturated colors. Foreground pond vegetation,
+          framing an empty center. Along the very bottom-left corner and the
+          very bottom-right corner of the canvas: a few lily pads and tall
+          slender reeds, and on one side only, the weathered end of a wooden
+          dock or a mossy rock. These details cling to the left and right
+          edges like a framing vignette and rise only a little way up from the
+          bottom edge — they must never reach the middle of the canvas and
+          never reach the upper half. The entire center of the canvas, and the
+          whole middle of the bottom edge, must be completely empty backdrop
+          with nothing painted in it at all. Everything that is not one of
+          those corner details must be filled with flat, solid, uniform
+          magenta (#FF00FF) — a plain backdrop color, one single unvarying
+          color, not a checkerboard, not a gradient, not transparency. No
+          magenta, pink or purple anywhere in the vegetation or the dock.
+          Output as PNG.
 Save as:  assets/background-pond-fore.png
 Size:     1584×672. Delivered on flat magenta; the alpha is cut locally by
           keying the magenta out (see "Name the backdrop color yourself").
@@ -357,6 +361,27 @@ Wired in: not yet — the top layer, painted over water and the mid plane
           (rig/fish), same as #surface already does; nothing may land where the
           bottom-center finger-guide panel sits
 ```
+
+**Why this prompt is worded differently from layers 1 and 2.** Both of those
+were given a percentage from the top, and layer 2 came back at 46% when it was
+asked for 56%. **Layer 3 cannot absorb that** — it has drawn features, so a
+positional miss is a reroll (see layer 2's note above). Two changes to make the
+constraint survive:
+
+1. **Position is expressed against the edges, not as a percentage.** "The very
+   bottom-left corner", "rise only a little way up from the bottom edge". Corners
+   and edges are things a generator can actually see; "70% down" is not.
+2. **The keep-out is stated as composition, not geometry.** Asking a model to
+   leave a specific rectangle empty is unreliable; asking for vegetation that
+   frames an empty center is an ordinary picture, and it happens to leave exactly
+   the bottom-center third clear. `#guide-panel` is `position: fixed`, centered,
+   pinned to the bottom of the viewport, so the middle of the lower scene is what
+   has to stay empty — a framing vignette gives that for free.
+
+**Check on delivery, in this order:** magenta bleed into the vegetation (a
+pink-fringed reed is a reroll, not a keying problem) · anything painted in the
+center · anything reaching the upper half · then key, flood-filling from the
+edges rather than globally.
 
 **Once these three land:** composite them locally at game scale before wiring
 (the established local-check habit — see *the same-canvas rule* above), swap
