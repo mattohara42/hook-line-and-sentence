@@ -168,7 +168,14 @@ kind of problem you have before deciding what a reroll is worth.
   frame is not a design decision. Decide what length the thing should be, then
   walk it out along its own axis, resampling the real cross-section so the
   outline tapers with it — a straight shaft is featureless content and the
-  synthesis is invisible, even at 42% of the visible length. Neither version
+  synthesis is invisible, even at 42% of the visible length. **Seed the taper
+  from the object's measured width at the seam, never from a nominal constant.**
+  All three R4 rods were first extended from the pose's nominal half-width, which
+  is measured lower down where the shaft is fatter — 16/15/22 px against real
+  seam widths of 11.5/6.0/15.5. That steps the shaft outward exactly where the
+  synthesis starts and then runs a needle down from it: the Ocean's rod read as a
+  spear. Measure the alpha at the seam and taper from *that*, back-loaded (`k**1.6`)
+  so the shaft stays full through the middle and thins near the tip like a rod. Neither version
   needed a reroll, and a reroll would have gambled a grip that took three
   attempts.
 - **Scale comes from a body part, never from the figure.** The generator draws

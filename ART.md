@@ -299,6 +299,16 @@ line leaves the rod tip at design **(130.2, 122.8)** against a predicted
 (129, 120), and the arm swings **−5.25° to +6.31°** with the tip-to-line gap
 peaking at **0.19px**.
 
+**The rod needed one fix after wiring, and it was the tool's fault, not the
+generation's.** The shaft showed a visible step where the synthesised extension
+began, then a long needle taper — it read as a spear. The extension was seeded
+from the pose's *nominal* `half`, which is measured lower down where the shaft is
+fatter, so it started wider than the shaft it was continuing. All three rods had
+it: nominal 16/15/22 px against real seam widths of **11.5/6.0/15.5**, the
+Stream's being the worst. `tools/cut-angler.py` now measures the alpha at the
+seam and tapers from that, back-loaded (`k**1.6`) so the shaft stays full through
+the middle and thins near the tip. All three rods were re-cut.
+
 **Known and deliberately not tuned:** the angler reads as sitting *on* the pixel
 rowboat's gunwale rather than down in it. A reclined, legs-forward pose does not
 fit a rowboat — it fits the Boston Whaler's fighting chair that R5 draws. Tuning

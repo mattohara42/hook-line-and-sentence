@@ -209,11 +209,29 @@ for t_ in np.arange(along((M*P["hand"][1] + B, P["hand"][1] + PAD_T)),
                     along((M*P["hand"][0] + B, P["hand"][0] + PAD_T)), 0.5):
     stamp(t_, P["half"])
 t_edge = along((B, PAD_T))
+
+# Start the taper from the shaft's REAL half-width where the canvas cut it off,
+# not from the pose's nominal `half`. `half` is measured lower down where the rod
+# is fatter, so seeding the extension with it steps the shaft outward at the
+# seam and then runs a long needle down from there — which is what made the
+# Ocean's rod read as a spear rather than a rod.
+def half_at(t_):
+    c = gripp + t_ * unit
+    hits = [abs(o) for o in np.arange(-P["half"] * 2, P["half"] * 2, 0.5)
+            if 0 <= int(round((c + o * across)[0])) < Wp
+            and 0 <= int(round((c + o * across)[1])) < Hp
+            and keyed[int(round((c + o * across)[1])), int(round((c + o * across)[0])), 3] > 30]
+    return max(hits) if hits else P["half"]
+half_edge = min(P["half"], half_at(t_edge - 6))
+
+# and taper back-loaded rather than linear, so the shaft stays full through the
+# middle and thins near the tip the way a rod actually does
 for t_ in np.arange(t_edge, rod_len, 0.5):
     k = (t_ - t_edge) / (rod_len - t_edge)
-    stamp(t_, P["half"] + (P["tip_half"] - P["half"]) * k)
-print("extended the shaft from t=%.0f to t=%.0f (%.0f%% of its length)"
-      % (t_edge, rod_len, 100 * (rod_len - t_edge) / rod_len))
+    stamp(t_, half_edge + (P["tip_half"] - half_edge) * (k ** 1.6))
+print("extended the shaft from t=%.0f to t=%.0f (%.0f%% of its length), "
+      "tapering %.1f -> %.1f px (nominal half %.0f)"
+      % (t_edge, rod_len, 100 * (rod_len - t_edge) / rod_len, half_edge, P["tip_half"], P["half"]))
 
 # --- the arm ------------------------------------------------------------------
 A = P["arm"]
