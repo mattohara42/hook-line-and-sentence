@@ -187,6 +187,27 @@ export const CONFIG = {
         // grip, so the arm carries the rod as well as swinging itself.
         armPivot:   { x: 60, y:  8.5 },
       },
+      // R4's Stream angler: the same kid standing in the water in waders and a
+      // fly vest, holding Bamboo Beauty — the rod that unlocks this spot.
+      // A different POSE, not a recolour, so every number here was measured off
+      // its own painting. It is taller than the Pond's because scale comes from
+      // matching the two HEADS: the generator drew both figures to fill their
+      // frames, so the standing kid came back only 2% taller than the seated
+      // one, and scaling them alike would have stood him up no taller than he
+      // sits. 75 design px standing against 50 seated.
+      stream: {
+        layers: [
+          { id: "rod",  file: "rod-bamboo-stream",   x: 38, y: -70, w: 88, h: 123 },
+          { id: "arm",  file: "angler-stream-arm",   x: 38, y: -70, w: 88, h: 123 },
+          { id: "body", file: "angler-stream-body",  x: 38, y: -70, w: 88, h: 123 },
+        ],
+        rodPivot:   { x: 65, y:   4 },
+        lineOrigin: { x: 125, y: -70 },
+        // the sleeve vanishes behind the vest rather than the knee here, but
+        // the principle is the Pond's: pivot where the limb disappears, so the
+        // cut end never moves and the body layer covers it.
+        armPivot:   { x: 56, y:   7 },
+      },
     },
   },
 
