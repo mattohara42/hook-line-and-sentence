@@ -145,7 +145,7 @@ direction.
 
 ## Open art requests
 
-### 🟡 R3 — the Pond, repainted as three layers (open, ready to generate)
+### ✅ R3 — the Pond, repainted as three layers (landed and wired 2026-09-01)
 
 **First art request of the refresh.** R1 and R2 were code-only; this is what
 Matt has to generate to move the epic forward. **Pond only, for now** — per
@@ -347,6 +347,114 @@ it per asset rather than copying the numbers.
 `#scene`'s background for the three-layer stack, confirm the waterline still
 reads at y=198, and only then does `BUILD_PLAN_REFRESH.md` mark R3's Pond half
 done and the Stream/Ocean prompts get written.
+
+### 🟡 R3 — the Stream, repainted as three layers (open, ready to generate)
+
+**Second of the three levels.** The Pond is landed, wired and judged, so the
+conventions below are proven rather than guessed. **Read `GEMINI_NOTES.md`
+first** — every wording choice here comes from it.
+
+**This is the level with a history, and the prompts are built around it.** The
+old `background-stream.png` came back as a forest pool seen **from above**, water
+in a low diagonal band instead of a flat waterline. Under `cover` the boat
+floated ~100px above the water; the scene is currently held together by
+`#scene.loc-stream`'s `scale 1.246` plus an offset, which costs the sky and runs
+the art chunkier than the other two biomes. **Deleting that workaround is R3's
+done-when criterion**, so the side view is the one thing these prompts cannot
+get wrong. The framing sentence below is lifted from the Ocean prompt, which
+produced exactly the right composition first time.
+
+**How the three layers register, now that the Pond has proved it:** *layer 1
+defines the waterline and layers 2 and 3 are salvaged into agreement with it
+locally.* So layer 1's waterline is the only one that has to be close, and a miss
+on 2 or 3 is cheap. That is why the water and foreground prompts state the line
+loosely and lean on the magenta instead.
+
+```
+ART NEEDED: Stream background, layer 1 of 3 — far (sky, forest, far bank)
+Prompt:   Soft painterly illustration in the style of Studio Ghibli background
+          art, warm muted color palette, gentle diffused lighting, thin warm
+          brown outlines rather than black, cozy and inviting mood, no harsh
+          shadows, no neon or saturated colors. A cozy forest stream, seen
+          straight on from the opposite bank at eye level with the water — the
+          way you would see it standing in the shallows. This is a flat side
+          view like a stage backdrop. It is NOT seen from above, NOT a
+          bird's-eye or three-quarter view, and the water's edge is a straight
+          horizontal line running the full width of the canvas, not a diagonal
+          band and not a curve. Above that line: a far bank of mossy rocks and
+          ferns, dense green forest behind it, and a soft banded sky warming to
+          cream near the treetops. Cooler and greener than a golden-hour pond,
+          but still warm and muted. Include a simple, complete water fill below
+          the water's edge in muted teal-green, so this layer reads correctly on
+          its own. No people, no boat, no fishing gear. The water's edge must sit
+          just below the vertical middle of the canvas — a little more sky and
+          forest above it than water below it, roughly 55% of the way down from
+          the top. Aspect ratio 2.36:1. Output as PNG.
+Save as:  assets/background-stream-far.png
+Size:     1584×672 (2.36:1), opaque, no transparency needed
+Wired in: not yet — lands with all three, replacing background-stream.png and
+          deleting #scene.loc-stream's scale/offset workaround in style.css
+```
+
+```
+ART NEEDED: Stream background, layer 2 of 3 — water
+Prompt:   Soft painterly illustration in the style of Studio Ghibli background
+          art, warm muted color palette, gentle diffused lighting, thin warm
+          brown outlines rather than black, cozy and inviting mood, no harsh
+          shadows, no neon or saturated colors. Just the surface of a shallow
+          forest stream, seen from the side at eye level. Moving water, not a
+          still pond: soft broken riffles and gentle current lines running
+          horizontally, a few pale foam streaks, the suggestion of submerged
+          stones showing through where it is shallowest. The water must have a
+          clear sense of depth — lighter and more broken where it catches the
+          light nearest the top, deepening through a mid teal to a darker,
+          cooler channel toward the bottom of the canvas. Do not paint it as one
+          flat tone; the deepening from top to bottom is the point of this
+          layer. No bank, no rocks above the surface, no sky, no people. The
+          painted water fills the bottom of the canvas and stops in a straight
+          horizontal line a little above the vertical middle. Everything above
+          that line must be filled with flat, solid, uniform magenta (#FF00FF) —
+          a plain backdrop color, one single unvarying color, not a
+          checkerboard, not a gradient, not transparency. No magenta anywhere in
+          the water itself. Aspect ratio 2.36:1. Output as PNG.
+Save as:  assets/background-stream-water.png
+Size:     1584×672. Delivered on flat magenta above the line; the alpha is a cut
+          by row, registered to layer 1 (GEMINI_NOTES.md)
+Wired in: not yet — the middle plane, #bg-water for .loc-stream
+```
+
+```
+ART NEEDED: Stream background, layer 3 of 3 — foreground detail
+Prompt:   Soft painterly illustration in the style of Studio Ghibli background
+          art, warm muted color palette, gentle diffused lighting, thin warm
+          brown outlines rather than black, cozy and inviting mood, no harsh
+          shadows, no neon or saturated colors. Foreground streamside detail,
+          framing an empty center. Along the very bottom-left corner and the
+          very bottom-right corner of the canvas: wet mossy river rocks breaking
+          the surface, clumps of ferns and long grass, and on one side only, the
+          mossy end of a fallen log lying part-submerged. These details cling to
+          the left and right edges like a framing vignette and rise only a
+          little way up from the bottom edge. The entire center of the canvas,
+          and the whole middle of the bottom edge, must be completely empty
+          backdrop with nothing painted in it at all. Everything that is not one
+          of those corner details must be filled with flat, solid, uniform
+          magenta (#FF00FF) — a plain backdrop color, one single unvarying
+          color, not a checkerboard, not a gradient, not transparency. No
+          magenta, pink or purple anywhere in the rocks, ferns or log. Aspect
+          ratio 2.36:1. Output as PNG.
+Save as:  assets/background-stream-fore.png
+Size:     1584×672. Delivered on flat magenta; alpha keyed locally
+Wired in: not yet — the near plane, #bg-fore for .loc-stream. Nothing may land
+          where the bottom-center finger-guide panel sits, or over the rig's box
+          (design x20–138, y140–224)
+```
+
+**When these land:** key and register them against layer 1, composite all three
+at game scale, point `.loc-stream` at the three `#bg-*` planes, **delete the
+`scale 1.246` + offset block and the `.reeds` exemption for the Stream**, then
+verify the waterline in a browser. The Ocean's prompts get written after this
+level is judged — same one-level-at-a-time discipline that kept the Pond's
+misses cheap.
 
 ### ✅ G1 — the angler, taken apart (landed 2026-08-25)
 
