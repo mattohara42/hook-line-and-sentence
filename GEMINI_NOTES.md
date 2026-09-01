@@ -178,6 +178,27 @@ nowhere near the key.
 
 ---
 
+## Multi-layer sets: let layer 1 define the truth
+
+Proven on the Pond, and it changes how the other levels get asked for.
+
+**Only the first layer's registration has to be close.** Layers 2 and 3 are
+salvaged into agreement with it locally — the water layer by a cut-and-rescale
+by row, the foreground by keying and placing. So a positional miss on layers 2
+or 3 is cheap, and the prompts for them can state the line loosely and lean on
+the backdrop colour instead.
+
+**The layers agreeing with each other matters more than any of them agreeing
+with the nominal number.** A mismatch between planes is a visible seam; a small
+shared offset from the spec is not. The Pond's three layers all sit 3px low
+together and nothing in the scene shows it.
+
+Corollary worth stating because it is easy to get backwards: **if layer 1 is
+ever rerolled, re-cut layers 2 and 3 from their original downloads** rather than
+editing the committed PNGs, which have already been baked to the old layer 1.
+
+---
+
 ## Delivery checklist
 
 Run these in order — the early ones are the ones that force a reroll, so
