@@ -8,12 +8,30 @@ waiting on a human*.
 
 ## Where things stand (as of 2026-08-31, third session)
 
-**Third session was a short one and changed no game code.** It confirmed the
-state below still holds (80/80 green, tree clean, `origin/main` identical), and
-it closed out the oldest open thread in this file by actually diffing it: **PR
-#55 is fully superseded and should be closed unmerged** — see "Open threads"
-below. R3 is still the active milestone and still needs Matt to generate the
-three Pond PNGs; nothing about that changed.
+**Third session: R3's Pond half is done, start to finish.** All three painted
+layers were generated, salvaged, wired and verified in a real browser, and a new
+doc now carries the generator lessons so the next batch is cheaper.
+
+- **`GEMINI_NOTES.md` is new and is required reading before writing any art
+  prompt** (`CLAUDE.md` says so now). It is the memory of how Gemini actually
+  behaves. Two rules reshape every future prompt: **position by edges and
+  corners, never by percentage** — percentages missed by up to 65px — and **name
+  a flat backdrop colour instead of asking for transparency, then detect the
+  colour you actually got**, because you will not get the one you asked for.
+  `ART.md`'s two "gotcha" sections moved into it wholesale; `ART.md` now points
+  there rather than duplicating.
+- **The Pond is wired** (PR #66): three `#bg-*` planes inside `#scene` with
+  independent drift, `#scene`'s own background image dropped, V1's CSS `.reeds`
+  hidden in the Pond because the painted foreground doubled them up. Verified in
+  Chromium: waterline at design y=198, drift running, `prefers-reduced-motion`
+  stops all three.
+- **PR #55 is fully superseded and should be closed unmerged** — see "Open
+  threads" below.
+
+**R3 is still open, for the Stream and the Ocean.** Their prompts are not
+written yet; that is the obvious next task, and `GEMINI_NOTES.md` should shape
+them. `.loc-stream`'s `scale 1.246` workaround can only be deleted when the
+Stream is repainted.
 
 ### The picture as of the end of the second session
 
@@ -47,7 +65,7 @@ bottom of `ART_DIRECTION.md`; don't relitigate):
    families. ~99 generated pieces, so R6 ships in waves by biome with the
    tinted placeholder standing in for anything that hasn't landed.
 
-## This is an art session — start here
+## Superseded: the R3 Pond art session (kept for one cycle)
 
 **`ART.md` already has the R3 Pond prompts written and ready to hand to
 Matt** — three layers (far/water/foreground), full Gemini prompts, filenames,
@@ -151,8 +169,8 @@ Sequence:
 - **A piece that doesn't fit is a reroll, not an offset tweak** — for rig
   pieces (G1's lesson) and now for background layers too (the waterline
   constraint above is the same principle).
-- **Gemini fakes transparency a new way every batch** — `ART.md`'s salvage
-  script detects the checkerboard pair per file rather than assuming one.
+- **Everything about the generator now lives in `GEMINI_NOTES.md`** — read it
+  before writing a prompt, and add to it whenever a batch teaches something.
 - **Nothing may land in the bottom-center finger-guide panel** — it covers the
   lower third and it's the best part of the game.
 - **Verify claims in a real browser, not just unit tests**, for anything

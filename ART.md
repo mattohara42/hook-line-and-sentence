@@ -113,90 +113,18 @@ this is the rule that makes layered characters and fish work at all:
 A piece that doesn't fit is a **reroll, not an offset tweak**. Tuning offsets at
 4x zoom is exactly how G1 shipped something that looked wrong at 1x.
 
-## Gotcha: Gemini fakes transparency
+## How the generator behaves → `GEMINI_NOTES.md`
 
-Gemini often ignores "transparent background" and instead **paints the
-transparency checkerboard as opaque pixels** (alpha 255), with the subject
-floating in an oversized canvas. Expect it on nearly every sprite. Tells: a corner pixel reads
-alpha 255, and the file is far bigger than a tight sprite (`boat.png` is
-1152×466; the bad batch came in at 1408×768). Salvage it with Pillow — no
-ImageMagick on this Mac.
+Everything about **how Gemini responds** — what it obeys, what it silently
+ignores, the flat-magenta backdrop convention that replaced asking for
+transparency, both alpha-salvage recipes, and the delivery checklist — lives in
+**`GEMINI_NOTES.md`** so it is in one place and does not get re-derived each
+session. **Read it before writing any prompt below.**
 
-**Don't hardcode the checkerboard color — detect it.** Every generation picks a
-different pair: gray-on-gray (138/204, and 88/203 on the G1 body), black-on-gray
-(0/145), gray-on-gray-again (158/223), and the rod came back **blue-on-black**
-(0,1,22 / 60,79,243). Brightness bands and "neutral pixels" rules both broke on
-that spread. What works:
-
-1. Take the two most common **border** colors — that's the checkerboard pair.
-2. A pixel is background if it sits within ~60 RGB of the **line between those
-   two colors**. That covers both squares plus the anti-aliasing along every
-   square boundary, and nothing else.
-3. **Flood-fill from the edges**, never key globally, so a matching color inside
-   the subject is safe. Count `alpha==0` as fillable so a re-run still floods.
-4. Crop to the alpha bbox, so CSS `contain` seats the sprite like the original.
-
-Why the line rather than a tolerance around each color: it's what protects a
-**black outline**. The G1 body sprite is outlined in pure black on a 88/203 gray
-checkerboard — a chroma-only or "dark pixels are background" rule eats that
-outline and leaks into the sprite, while black sits far off the 88↔203 line and
-survives untouched.
-
-The working script lives in the scratchpad, not the repo — it's ~40 lines and
-gets rewritten per batch as Gemini finds new ways to fake transparency.
-
-## Better: name the backdrop color yourself (R3 onward)
-
-Everything above is *salvage* — it reverse-engineers a checkerboard Gemini
-chose. From R3 on, don't let it choose. **Ask for a flat magenta `#FF00FF`
-backdrop instead of a transparent one**, and the detection problem mostly
-disappears.
-
-Why this beats specifying a checkerboard, which was the other option
-considered:
-
-- **One color to find, not two.** The whole "line between the pair" rule above
-  exists because a checkerboard is two colors. A flat fill needs a plain
-  distance test.
-- **A checkerboard is high-frequency detail, which is the fragile kind.** Square
-  edges are exactly what JPEG compression smears and what a diffusion model
-  blurs into the subject. A large flat field survives both.
-- **It removes the reason the checkerboard appears at all.** Gemini paints one
-  because we asked for "transparent" and it renders what transparency *looks
-  like* in an editor. Give it a color to paint and it has nothing to imitate.
-
-**Why magenta specifically:** it is absent from `ART_DIRECTION.md`'s palette,
-which is warm creams, ambers, teal-greens and browns. The nearest things in the
-whole game are ember `#d4886a` and the muskie's lavender `#d4c5f0`, both far
-away in hue and saturation. Green would be the worst possible choice here
-(foliage, moss `#93ac78`, teal water); blue sits too close to the pale sky
-`#b7cfd8`.
-
-**Two things to check on delivery, because naming a lurid color in a prompt can
-bleed into the art:**
-
-1. Scan the *subject* for magenta contamination — pink fringing on a reed, a
-   stray purple highlight. If it bled, reroll; it is not fixable by keying.
-2. Key with a tolerance and **flood-fill from the edges**, exactly as steps 3–4
-   above. A global key is still wrong even with one color.
-
-Warm-brown outlines (`#33291f`) sit nowhere near magenta, so the black-outline
-problem the "line" rule was invented for does not arise here.
-
-**And where the geometry gives you the answer, don't key at all.** The Pond's
-water layer (layer 2) is transparent above a straight horizontal line and
-painted below it. That is a **cut by row**, not a color detection — no
-tolerance, no flood fill, nothing to get wrong. The magenta is still worth
-asking for there, but only as a check that the model put the waterline where it
-was told. Layer 3's reeds and lily pads are genuinely irregular, and that is
-where keying earns its keep.
-
-**On asking for PNG in the prompt:** include the line, it costs nothing — but
-do not rely on it. Output format is chosen by the app and the download control,
-not by the prompt text, and R3's first layer came down as a JPEG despite the
-spec saying PNG. **Grab PNG from the download UI where the choice exists.** It
-matters most for layer 3: JPEG smears a flat key color into dozens of
-near-variants, which is the one thing that breaks the key.
+The two headline rules, because they change how every request here is worded:
+**position by edges and corners, never by percentage**, and **name a flat
+backdrop colour rather than asking for transparency — then detect the colour you
+actually got.**
 
 ## Prompt template Claude should reuse
 
@@ -296,7 +224,7 @@ Prompt:   Soft painterly illustration in the style of Studio Ghibli background
           anywhere in the water itself. Output as PNG.
 Save as:  assets/background-pond-water.png
 Size:     1584×672. Delivered on flat magenta above the waterline; the alpha
-          is cut locally (see "Name the backdrop color yourself" above — and
+          is cut locally (see GEMINI_NOTES.md — and
           for this layer specifically, the cut is by row at 56%, so the
           magenta is a belt-and-braces check, not the mechanism).
 Wired in: not yet — a layer above background-pond-far.png; ART_DIRECTION.md
@@ -356,7 +284,7 @@ Prompt:   Soft painterly illustration in the style of Studio Ghibli background
           Output as PNG.
 Save as:  assets/background-pond-fore.png
 Size:     1584×672. Delivered on flat magenta; the alpha is cut locally by
-          keying the magenta out (see "Name the backdrop color yourself").
+          keying the magenta out (recipe in GEMINI_NOTES.md).
 Wired in: not yet — the top layer, painted over water and the mid plane
           (rig/fish), same as #surface already does; nothing may land where the
           bottom-center finger-guide panel sits
@@ -426,7 +354,7 @@ All three PNGs are in, salvaged and wired: `body-kid.png` (RGBA 560×864),
 `hat-straw.png` (1131×617) and `rod-basic.png` (800×800). Offsets in
 `CONFIG.rig.layers` were tuned in the browser against the old `kid.png` side by
 side, so the composite reads at the same size and sits in the boat the same way.
-The rod arrived on a **blue** checkerboard — see the gotcha above, which now
+The rod arrived on a **blue** checkerboard — GEMINI_NOTES.md's legacy recipe
 detects the pair per file instead of assuming gray.
 
 The original request, kept for the pattern the next sprite set follows:
@@ -704,7 +632,7 @@ background lands at y≈210 and reads fine, so **±13px of waterline drift is
 inside tolerance**. Reach for a `background-position` nudge before asking Matt
 to regenerate.
 
-**`assets/fish-muskie.png`** arrived as the fake-transparency case above (RGB,
+**`assets/fish-muskie.png`** arrived as the fake-transparency case (GEMINI_NOTES.md) (RGB,
 1264×848, checkerboard baked in as opaque gray) and was salvaged to RGBA
 1128×391, tight-cropped, sparkles intact. Two deviations from the prompt, both
 kept: it's **lavender** (matching `muskie.color` `#d4c5f0`) rather than the
@@ -721,7 +649,7 @@ sprites' 1.5:1), so its rule widens `#fish` to 96px or the hero would render
 `{ id: "nugget", name: "a dinosaur chicken nugget", file: "junk-nugget" }`, so
 it rolls alongside the boot/can/weed, and `PUNS.junk` gained a dino-mite line.
 
-Arrived as the fake-transparency case above in its **black-checkerboard**
+Arrived as the fake-transparency case (GEMINI_NOTES.md) in its **black-checkerboard**
 variant (RGB 1024×1024, squares at 0 and 145). Salvaged on `chroma<=26` with no
 brightness gate — safe here because the nugget is all tan, brown, teal and
 ketchup-red, with no neutral pixel of its own. Final: RGBA 696×574, which sits
