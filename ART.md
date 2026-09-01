@@ -437,6 +437,25 @@ Size:     1584×672. Delivered on flat magenta above the line; the alpha is a cu
 Wired in: not yet — the middle plane, #bg-water for .loc-stream
 ```
 
+**✅ Landed 2026-09-01, first attempt, no reroll.** The per-layer style block
+worked: the water came back as the same watercolour as the bank, and the two
+planes read as one painting rather than two stacked ones.
+
+- **Depth gradient is the best of any layer so far** — a surface-to-depth
+  luminance drop of **112**, against the Pond water layer's 83 and the Pond far
+  layer's 12. Mid `#6f9885` against a `#4f7d76` target, depth `#2d5557` against
+  `#375c58`. The pale `#c4bca5` at the top is the light-catching riffle band the
+  prompt asked for, not a miss.
+- **Magenta behaved exactly as on the Pond**: a 4-row transition, pink gone by 3
+  rows below the cut, **zero** remaining after it.
+- **The waterline landed at 47.77%, and it did not matter** — precisely the
+  point of relaxing it. The clean band (343 rows) was rescaled to the 296 rows
+  between layer 1's waterline at row 376 and the bottom.
+
+Verified: RGBA 1584×672, fully transparent above row 376, fully opaque below, no
+magenta anywhere, composited against layer 1 at game scale before committing.
+
+
 **Two changes made after layer 1 landed (2026-09-01), both worth carrying to the
 Ocean's prompts.**
 
