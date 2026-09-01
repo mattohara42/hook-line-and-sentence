@@ -248,24 +248,28 @@ Prompt:   Soft painterly storybook character illustration in the style of
           Studio Ghibli, warm muted color palette, gentle diffused lighting,
           thin warm brown outlines rather than black, cozy and inviting mood,
           no harsh shadows, no neon or saturated colors. Soft two-tone shading
-          with the edges between tones blended rather than hard cel blocks.
-          NOT pixel art, NOT flat vector art with even line weight, NOT thick
-          black cartoon linework, NOT a glossy 3D render.
-          A young child seen from the side, facing right, seated low as if in a
-          small rowboat: knees drawn up, back gently rounded, a calm contented
-          expression, gentle rounded proportions. Bare head, short warm-brown
+          with the edges between tones blended, and soft brush texture visible
+          inside the larger shapes. NOT pixel art, NOT flat vector art with even
+          line weight, NOT thick black cartoon linework, NOT a glossy 3D render.
+          A school-age child of about eight, seen from the side, facing right,
+          seated low as if in a small rowboat: knees drawn up, back gently
+          rounded, a calm contented expression. Slim school-age proportions with
+          a visible neck, long limbs and slender fingers — NOT a toddler, NOT a
+          baby, NOT a chubby big-headed infant. Bare head, short warm-brown
           hair, warm tan skin. Cozy pond fishing clothes — a soft terracotta
           long-sleeved shirt, warm oat-coloured shorts, simple brown shoes.
-          The far arm rests on the knee. The NEAR arm reaches forward and
-          slightly up, and the near hand is held OPEN in a loose C-curl, palm
-          toward the viewer, fingers apart and NOT closed — as if about to take
-          hold of a fishing rod that is not there yet.
+          The far arm rests on the knee. The NEAR arm is bent at the elbow with
+          the forearm angled up and forward, the hand roughly level with the
+          chin. That near hand is held in a loose C-curl — thumb and curled
+          fingers facing each other with a gap between them, the shape of a hand
+          about to close around a bicycle handlebar. NOT a flat open palm, NOT
+          fingers spread apart, NOT a waving or reaching gesture.
           No hat, no fishing rod, no fishing line, no hook, no boat, no water,
           no scenery, no other characters.
-          The child sits in the lower-left of the canvas with the shoes near
-          the bottom edge, and the upper-right corner of the canvas is left
-          empty — a fishing rod is painted into that empty space as a separate
-          layer later.
+          Draw the child small enough that the entire upper-right quarter of the
+          canvas is empty magenta — a fishing rod is painted into that space as
+          a separate layer later. The child's back is near the left edge and the
+          shoes are near the bottom edge.
           Everything that is not the child must be flat, solid, uniform magenta
           (#FF00FF): a plain backdrop colour, not a checkerboard, not a
           gradient, not transparency. No magenta anywhere on the child itself.
@@ -278,6 +282,28 @@ Size:     1024×1024 (1:1), delivered on flat magenta. Whatever canvas this come
 Wired in: not yet — CONFIG.rig.poses.pond.layers, the "body" and "arm" layers
           (both are cut from this one image locally)
 ```
+
+**✅ Approved 2026-09-01, on the second attempt — and the prompt above is the one
+that worked.** The first came back a clean, well-keyed *toddler* reaching with a
+flat splayed palm: right clothes, right palette, wrong character and wrong hand.
+Both misses were subject description, which — unlike a compositional prior —
+**does** move for wording, so one reroll fixed both. The rules it paid for are in
+`GEMINI_NOTES.md` under *Characters: what moves for wording, and what doesn't*.
+
+Delivery, measured rather than eyeballed: key `(254,45,251)` at stdev <2.5 over
+72.8% of the canvas, all border-reachable; backdrop residue in the subject is
+**rim only** (6,915px at 0–2 from the edge, 24 at 6–8, none past 8); darks sit
+above the umber floor at the 1st percentile. Two things carried forward rather
+than rerolled for: the clear diagonal from the hand to the top-right corner is
+~570px against a child 870px tall, so **the rod lands around 65% of the kid's
+height** — watch it in generation 2 — and the head sits 106px off the top edge,
+which is enough for a hat but tight when R7 draws one.
+
+**One salvage note, or the sprite renders with a magenta window:** the silhouette
+has a genuine hole in it — the gap between the shirt hem, the forearm and the
+shorts — holding ~1,055 key-coloured pixels that a border flood can never reach.
+It needs its own seed. That is not backdrop bleed, and depth is how to tell:
+residue hugs edges, this pocket sits 185–217px deep.
 
 ```
 ART NEEDED: Pond angler, generation 2 of 3 — the basic rod, drawn into that hand

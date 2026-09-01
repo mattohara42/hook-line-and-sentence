@@ -11,8 +11,8 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R4 — the angler**, `BUILD_PLAN_REFRESH.md` |
 | **Done when** | at 1x, in all three levels, the rod looks held and the costume suits the water; casting (R1) moves the arm and rod, not the whole kid |
-| **State** | code half **landed**; **blocked on Matt generating the Pond pose** |
-| `origin/main` | `d9a7f1b` (R4's code half, #85), tree clean, nothing unpushed |
+| **State** | code half landed; Pond generation **1 of 3 approved**, 2 and 3 waiting on Matt |
+| `origin/main` | `2419045`, tree clean, nothing unpushed |
 | Tests | 81/81 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
 | Deploys | Netlify is **manual**; merging to `main` does not go live |
@@ -26,17 +26,18 @@ levels until the costumes land. Verified in Chromium across all three spots: the
 right stack rebuilds on every switch, the rod tip is unmoved to 0.2px, no
 console errors.
 
-**The next action is Matt's: generate the three Pond prompts in `ART.md`**
-(`### R4 — the Pond angler, three generations`). Generation 1 must be judged and
-kept *before* 2 and 3 are run — both attach it as a reference, so a reroll of 1
-kills them.
+**Generation 1 is approved** (2026-09-01, second attempt — the first was a
+toddler with a splayed palm). **The next action is Matt's: save it as PNG to
+`assets/angler-pond-body.png`, then run generations 2 and 3 with it attached**
+(`ART.md` → `### R4 — the Pond angler, three generations`).
 
-Then Claude, in this order: check for backdrop bled into the child (that one is
-a reroll and nothing else fixes it) · key all three · cut the near arm out of
-generation 1 at the shoulder · composite at game scale *before* touching
-`config.js` · measure the box, grip and tip off the real canvas · then make the
-arm swing with the rod, which is the half of the done-when that was deliberately
-left until there is an arm to look at.
+Then Claude, in this order: key all three — **generation 1's silhouette has a
+real hole in it (shirt hem / forearm / shorts) that needs its own flood seed, or
+the sprite renders with a magenta window** · cut the near arm out of generation 1
+at the shoulder · composite at game scale *before* touching `config.js` · measure
+the box, grip and tip off the real canvas · then make the arm swing with the rod,
+which is the half of the done-when that was deliberately left until there is an
+arm to look at.
 
 Read `GEMINI_NOTES.md` before writing any follow-up prompt. R4 added two rules
 of its own, both in `ART.md`: **don't generate a piece you could cut**, and

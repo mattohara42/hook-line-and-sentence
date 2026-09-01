@@ -122,6 +122,31 @@ Scope note, so the docs don't drift into each other:
 
 ---
 
+## Characters: what moves for wording, and what doesn't (R4)
+
+Unlike composition, **subject description does move.** R4's first angler missed
+on two counts and both were fixed in one reroll — which is the opposite of the
+Stream far layer, where three rerolls bought five percentage points. Know which
+kind of problem you have before deciding what a reroll is worth.
+
+- **A hand gesture needs a physical referent, not an anatomical description.**
+  *"held OPEN in a loose C-curl, palm toward the viewer, fingers apart"* produced
+  a flat splayed reach — a wave, not a grip. **"the shape of a hand about to
+  close around a bicycle handlebar"**, plus the negatives *"NOT a flat open palm,
+  NOT fingers spread apart, NOT a waving or reaching gesture"*, produced the grip
+  first try. Name the object the hand would be holding, then rule out the
+  gestures it could be confused with.
+- **"A young child" defaults to a toddler.** The first attempt came back as
+  roughly a two-year-old: big round head, no neck, stubby fingers. What fixed it
+  was all three of an age in years (*"a school-age child of about eight"*), the
+  proportions spelled out (*"slim school-age proportions with a visible neck,
+  long limbs and slender fingers"*), and the negative (*"NOT a toddler, NOT a
+  baby, NOT a chubby big-headed infant"*).
+- **Don't spend a reroll on placement inside the canvas.** For a rig, every piece
+  shares one canvas, so they can only be wrong together and a shared offset is
+  absorbed once when the pose's box is measured. Spend the weight on the pose and
+  the character instead — those are what a reroll actually exists for.
+
 ## The backdrop convention (use this instead of asking for transparency)
 
 **Ask for a flat magenta `#FF00FF` backdrop, not a transparent one, and not a
@@ -161,6 +186,13 @@ residue from **6.01% → 3.79% → 0.00%**.
 
 1. **Flood fill from the edges**, never a global key — a matching colour inside
    the subject must stay. Count `alpha==0` as fillable so a re-run still floods.
+   **Then seed the enclosed pockets too.** A silhouette with a real hole in it —
+   the gap between an arm, a shirt hem and a leg — leaves key-coloured pixels the
+   border flood can never reach, and they must come out or the sprite renders
+   with a magenta window. Tell them from contamination by **depth**: residue
+   hugs edges (0–8px on R4's angler), a genuine pocket sits 180px+ deep and is
+   uniformly the key colour. Measure before calling it bleed — the reroll rule
+   only bites on the shallow kind.
 2. **Alpha ramp across the fringe.** Between distance `LO` and `HI` from the key
    (55 and 110 worked), set `alpha = (d-LO)/(HI-LO)` and **unpremultiply**:
    `fg = (c - (1-t)*KEY) / t`. This is what stops a coloured halo on every
