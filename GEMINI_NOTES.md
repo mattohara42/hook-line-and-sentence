@@ -195,6 +195,16 @@ nowhere near the key.
 
 **The dividing line is whether the content has drawn features.**
 
+- **Fitting beats cropping: trade rows between the two edges.** A crop alone
+  changes the canvas and so changes what `cover` discards. Instead move the
+  horizon by taking rows off one edge and regrowing them at the other, which
+  holds the canvas — and therefore the framing — exactly where the other levels
+  have it. It has now worked in both directions: the Stream's far layer was 74px
+  **low**, so 113px came off the top and 113px of water was regrown at the
+  bottom; the Ocean's was 25px **high**, so 25px of sky was regrown at the top
+  and 25px of water dropped off the bottom. Both edits are free in practice —
+  sky and water are smooth gradients at the outer edges, and **layer 2 repaints
+  the water regardless**, so the regrown half is never seen.
 - **Cropping is not rescaling, and it is available to drawn content.** A crop
   reframes without distorting, so it can move a horizon into registration where
   a rescale would smear the trees. The cost is canvas: cropping the Stream's far
