@@ -60,16 +60,24 @@ Scope note, so the docs don't drift into each other:
   | "nothing above **roughly** 70% down" (Pond fore) | 32.6% | ❌ |
   | "**just below** the middle… **a little more** above… **roughly** 55%" (Stream far) | **66.96%** | ❌ |
 
-  The first read of this was "percentages don't work". That is not quite it.
-  **The hedging words are the failure.** *Roughly*, *just below*, *a little
-  more*, *only a little way* — each one is a clause the generator can satisfy at
-  almost any value. The Stream's 67% technically met every clause it was given:
-  67% *is* below the middle, and there *is* more above than below.
+  **⚠️ The "hedging is the failure" reading was tested and is wrong.** The Stream
+  far layer was rerolled with the hedges removed and the line stated three
+  non-negotiable ways — the exact percentage, the complement (top 55% / bottom
+  45%), and a floor ("do not place it any lower"). It came back at **66.96%**:
+  identical to the hedged attempt, to the pixel. A third attempt moved it only to
+  **62.35%**.
+
+  **The real rule is that the generator has a strong compositional prior per
+  subject, and prompt wording barely moves it.** A "forest stream seen from the
+  far bank" wants roughly two thirds forest; three rerolls bought five
+  percentage points. Wording is worth getting right, but do not expect it to win
+  an argument with the prior — **budget one reroll, then fix the rest in
+  salvage.**
 
   What actually works:
 
-  1. **State it exactly and unhedged** — "must sit at exactly 55% down". This is
-     the only phrasing that has ever landed on target.
+  1. **State it exactly and unhedged** — "must sit at exactly 55% down". Worth
+     doing, but on its own it is not sufficient: see the warning above.
   2. **State the complement too** — "the forest fills the top 55%, the water
      fills the bottom 45%". Two numbers that have to add up are harder to fudge
      than one.
@@ -183,6 +191,13 @@ nowhere near the key.
 
 **The dividing line is whether the content has drawn features.**
 
+- **Cropping is not rescaling, and it is available to drawn content.** A crop
+  reframes without distorting, so it can move a horizon into registration where
+  a rescale would smear the trees. The cost is canvas: cropping the Stream's far
+  layer by 98px landed its waterline within 0.03% of the Pond's, but took the
+  canvas to a 2.76 aspect, so `cover` then throws away 273px of width instead of
+  129. Check what leaves the frame before accepting it — and apply the identical
+  crop to all three of that level's layers.
 - **Featureless content is salvageable.** The Pond's water layer missed its
   waterline by 65px and was still kept: it is a smooth vertical gradient, so its
   only meaningful edge is the top one — the very thing being set. Discard the
