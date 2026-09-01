@@ -145,6 +145,59 @@ survives untouched.
 The working script lives in the scratchpad, not the repo — it's ~40 lines and
 gets rewritten per batch as Gemini finds new ways to fake transparency.
 
+## Better: name the backdrop color yourself (R3 onward)
+
+Everything above is *salvage* — it reverse-engineers a checkerboard Gemini
+chose. From R3 on, don't let it choose. **Ask for a flat magenta `#FF00FF`
+backdrop instead of a transparent one**, and the detection problem mostly
+disappears.
+
+Why this beats specifying a checkerboard, which was the other option
+considered:
+
+- **One color to find, not two.** The whole "line between the pair" rule above
+  exists because a checkerboard is two colors. A flat fill needs a plain
+  distance test.
+- **A checkerboard is high-frequency detail, which is the fragile kind.** Square
+  edges are exactly what JPEG compression smears and what a diffusion model
+  blurs into the subject. A large flat field survives both.
+- **It removes the reason the checkerboard appears at all.** Gemini paints one
+  because we asked for "transparent" and it renders what transparency *looks
+  like* in an editor. Give it a color to paint and it has nothing to imitate.
+
+**Why magenta specifically:** it is absent from `ART_DIRECTION.md`'s palette,
+which is warm creams, ambers, teal-greens and browns. The nearest things in the
+whole game are ember `#d4886a` and the muskie's lavender `#d4c5f0`, both far
+away in hue and saturation. Green would be the worst possible choice here
+(foliage, moss `#93ac78`, teal water); blue sits too close to the pale sky
+`#b7cfd8`.
+
+**Two things to check on delivery, because naming a lurid color in a prompt can
+bleed into the art:**
+
+1. Scan the *subject* for magenta contamination — pink fringing on a reed, a
+   stray purple highlight. If it bled, reroll; it is not fixable by keying.
+2. Key with a tolerance and **flood-fill from the edges**, exactly as steps 3–4
+   above. A global key is still wrong even with one color.
+
+Warm-brown outlines (`#33291f`) sit nowhere near magenta, so the black-outline
+problem the "line" rule was invented for does not arise here.
+
+**And where the geometry gives you the answer, don't key at all.** The Pond's
+water layer (layer 2) is transparent above a straight horizontal line and
+painted below it. That is a **cut by row**, not a color detection — no
+tolerance, no flood fill, nothing to get wrong. The magenta is still worth
+asking for there, but only as a check that the model put the waterline where it
+was told. Layer 3's reeds and lily pads are genuinely irregular, and that is
+where keying earns its keep.
+
+**On asking for PNG in the prompt:** include the line, it costs nothing — but
+do not rely on it. Output format is chosen by the app and the download control,
+not by the prompt text, and R3's first layer came down as a JPEG despite the
+spec saying PNG. **Grab PNG from the download UI where the choice exists.** It
+matters most for layer 3: JPEG smears a flat key color into dozens of
+near-variants, which is the one thing that breaks the key.
+
 ## Prompt template Claude should reuse
 
 The base template from `ART_DIRECTION.md`, prefixed to **every** asset prompt so
@@ -186,6 +239,22 @@ Stream's mis-framed art forced a scale-and-offset workaround that R3 exists to
 delete. A generated image whose waterline lands anywhere else is a **reroll**,
 not something to crop or offset into place.
 
+> **Update 2026-09-01 — layer 1 has landed, and it moved the target for layers
+> 2 and 3.** `background-pond-far.png` came back with its waterline at
+> **55.95%**, which at game scale puts it at design y=201 against the y=198
+> `#surface` (`top: 55%`) assumes. Three pixels. That was accepted rather than
+> rerolled: the rule above is aimed at gross misses like the Stream's
+> (`scale 1.246` plus a −368px offset), `#surface`'s read comes from a
+> 0.30-alpha lip in its first 6px, and a reroll would have been a lottery over
+> 3px rather than a fix.
+>
+> **So layers 2 and 3 are specified at 56%, not 55%** — the three layers
+> agreeing with *each other* matters more than agreeing with the nominal
+> number, because a mismatch between them is a visible seam while a shared 3px
+> offset is not. If exactness is ever wanted, trimming 15px off the top of all
+> three identically lands the waterline on y=198 and preserves registration by
+> construction.
+
 ```
 ART NEEDED: Pond background, layer 1 of 3 — far (sky, hills, treeline)
 Prompt:   Soft painterly illustration in the style of Studio Ghibli background
@@ -212,13 +281,24 @@ Prompt:   Soft painterly illustration in the style of Studio Ghibli background
           art, warm muted color palette, gentle diffused lighting, thin warm
           brown outlines rather than black, cozy and inviting mood, no harsh
           shadows, no neon or saturated colors. Just the water surface of a
-          calm forest pond at golden hour: muted teal-green with a darker band
-          for depth further from shore, soft reflected light catching the
-          surface near the top. Transparent above the waterline. The painted
-          water must start at exactly 55% down from the top of the canvas and
-          fill everything below it — nothing above that line.
+          calm forest pond at golden hour, seen from the side. The water must
+          have a clear sense of depth: a lighter muted teal-green where the
+          surface catches reflected light nearest the top, deepening through a
+          mid teal to a distinctly darker, cooler band toward the bottom of
+          the canvas. Do not paint it as one flat tone — the deepening from
+          top to bottom is the point of this layer. Soft reflected highlights
+          catching the surface near the top edge of the water. No boat, no
+          lily pads, no reeds, no shoreline, no sky. The painted water must
+          start at exactly 56% down from the top of the canvas and fill
+          everything below it. Everything above that line must be filled with
+          flat, solid, uniform magenta (#FF00FF) — a plain backdrop color, not
+          a checkerboard, not a gradient, not transparency. No magenta
+          anywhere in the water itself. Output as PNG.
 Save as:  assets/background-pond-water.png
-Size:     1584×672, transparent above the waterline
+Size:     1584×672. Delivered on flat magenta above the waterline; the alpha
+          is cut locally (see "Name the backdrop color yourself" above — and
+          for this layer specifically, the cut is by row at 56%, so the
+          magenta is a belt-and-braces check, not the mechanism).
 Wired in: not yet — a layer above background-pond-far.png; ART_DIRECTION.md
           calls for this layer to "animate independently" (a slow drift), which
           is a follow-up CSS/JS task once the art lands, not part of this request
@@ -231,13 +311,18 @@ Prompt:   Soft painterly illustration in the style of Studio Ghibli background
           brown outlines rather than black, cozy and inviting mood, no harsh
           shadows, no neon or saturated colors. Foreground detail only for a
           calm forest pond: a few lily pads and reeds near the bottom edge, a
-          suggestion of a wooden dock edge or mossy rock at one side. Fully
-          transparent everywhere else — this paints over the water layer, so
-          only the foreground details themselves should have any pixels.
-          Nothing in the bottom-center third of the canvas (a UI panel covers
-          it in-game). Nothing above roughly 70% down from the top.
+          suggestion of a wooden dock edge or mossy rock at one side. Nothing
+          in the bottom-center third of the canvas (a UI panel covers it
+          in-game). Nothing above roughly 70% down from the top. Every part of
+          the canvas that is not one of those foreground details must be
+          filled with flat, solid, uniform magenta (#FF00FF) — a plain
+          backdrop color, not a checkerboard, not a gradient, not
+          transparency. The magenta must be one single unvarying color across
+          the whole backdrop. No magenta, pink or purple anywhere in the
+          foreground details themselves. Output as PNG.
 Save as:  assets/background-pond-fore.png
-Size:     1584×672, transparent except the foreground details
+Size:     1584×672. Delivered on flat magenta; the alpha is cut locally by
+          keying the magenta out (see "Name the backdrop color yourself").
 Wired in: not yet — the top layer, painted over water and the mid plane
           (rig/fish), same as #surface already does; nothing may land where the
           bottom-center finger-guide panel sits
