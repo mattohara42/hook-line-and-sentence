@@ -49,8 +49,16 @@ Scope note, so the docs don't drift into each other:
   `ART_DIRECTION.md`'s preamble is doing the work.
 - **Mood, treatment and outline weight.** The Ghibli-anchored preamble delivers
   consistently across separate generations. Keep prefixing it to everything.
-- **Subject exclusion.** "No boat, no lily pads, no reeds" was obeyed every time.
-  Listing what must *not* be in frame works well.
+- **Subject exclusion — of separate objects.** "No boat, no lily pads, no reeds"
+  was obeyed every time. Listing what must *not* be in frame works well **as long
+  as the thing is separable from the subject**. It is not reliable for something
+  the subject *implies*: R4's Stream angler was asked for "no fishing line" and
+  came back with line threaded through the guides, because a rod has a line. What
+  fixed it was a whole paragraph, flagged and exhaustive — *"CRITICAL: draw NO
+  FISHING LINE anywhere. No thread, string or filament of any kind — not on the
+  reel, not threaded through the guides, not trailing from the rod tip. The rod
+  must be completely bare."* When you are excluding part of an object's own idiom,
+  spend a paragraph and name every form it could take.
 
 ## What it reliably ignores
 
@@ -163,6 +171,22 @@ kind of problem you have before deciding what a reroll is worth.
   synthesis is invisible, even at 42% of the visible length. Neither version
   needed a reroll, and a reroll would have gambled a grip that took three
   attempts.
+- **Scale comes from a body part, never from the figure.** The generator draws
+  every pose to fill its frame, so figure height carries no world scale between
+  poses: R4's *standing* Stream angler arrived 897px tall against the *seated*
+  Pond angler's 878 — 2% taller. Scaling both alike would have stood the child up
+  no taller than he sits. Match the **head** instead (the Pond's is 318 source px
+  wide, 18.1 design px at its scale; the Stream's 217px head matches at 0.083),
+  which gave 75 design px standing against 50 seated.
+- **Measure a complaint before you spend a reroll on it.** On R4's first Stream
+  attempt I called three faults; **two did not survive testing.** "The style has
+  gone flat vector" — tonal variation measured stdev 26.4 against the accepted
+  Pond angler's 27.3, and the outlines were *less* even, not more. "The
+  arm-clear-of-the-body instruction was ignored" — there were 2 separate subject
+  runs per scanline through the whole limb; it had worked perfectly. Only the
+  baked-in line and the wrong haircut were real. A generation costs Matt a round
+  trip, and eyes are worse than a five-line script at judging flatness, evenness
+  and clearance. **Reroll on what you measured, not on what you felt.**
 - **Don't assume the backdrop came back flat — measure it.** The first two
   angler generations keyed at a blue stdev under 2.5; the accepted one arrived at
   `(248,88,242)` with a stdev of **14.6**, a faint gradient across the magenta.

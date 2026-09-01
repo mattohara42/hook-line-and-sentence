@@ -11,38 +11,46 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R4 — the angler**, `BUILD_PLAN_REFRESH.md` |
 | **Done when** | at 1x, in all three levels, the rod looks held and the costume suits the water; casting (R1) moves the arm and rod, not the whole kid |
-| **State** | Pond and Stream anglers **finished**; the Ocean is what R4 still needs |
-| `origin/main` | `27e2fca`, tree clean, nothing unpushed |
+| **State** | Pond and Stream anglers **cut, wired and verified**; the Ocean is all R4 still needs |
+| `origin/main` | `658e5cf`, tree clean, nothing unpushed |
 | Tests | 81/81 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
 | Deploys | Netlify is **manual**; merging to `main` does not go live |
 
 ## Start here
 
-**The Pond angler is finished** — painted, cut into rod/arm/body, wired, and
-verified frame by frame. Three generations taught that a hand gripping *nothing*
-never comes back gripping, so the pose is one painting cut locally
-(`tools/cut-angler-pond.py`), and the anatomy decided the rig: the upper arm is
-hidden behind the drawn-up knee, so the arm layer is forearm + hand and it
-pivots at the elbow, not the shoulder. Paint order is **rod → arm → body**.
+**The next action is Matt's, and it needs no decisions: run the Ocean prompt.**
+It is written and waiting in `ART.md` → *R4 — the Ocean angler, in the fighting
+chair*. Paste, generate, paste the image back. When it is cut and wired, **R4's
+done-when is met** and the epic moves to R5.
 
-**The Stream angler is done too** (2026-09-01, second attempt) — standing in
-waders and a fly vest, holding Bamboo Beauty, with a landing net, and `#boat`
-hidden there because he stands *in* the water. Scale came from matching the two
-**heads**, not the figures: the generator draws every pose to fill its frame, so
-the standing kid arrived only 2% taller than the seated one.
+Then Claude, in order: run the delivery checks (`GEMINI_NOTES.md`'s checklist —
+backdrop bled into the subject first, it is the only one that forces a reroll) ·
+add an `ocean` entry to `tools/cut-angler.py`'s `POSES`, measuring the rod axis,
+arm skeleton and pivots off the new painting · `python3 tools/cut-angler.py
+ocean <file>`, which prints the `CONFIG.rig.poses.ocean` block · wire it ·
+verify in a browser at the Ocean.
 
-**The next action is Matt's: the Ocean angler** — boat gear and a life vest in
-the fighting chair, holding **The Deep Endeavor**. Its prompt is not written
-yet; ask Claude for it. That is the last thing R4's done-when needs.
+**Three things about that cut that are not obvious**, all learned the expensive
+way and all recorded in full where they belong:
 
-**The Pond's boat is now the loudest wrong thing on screen** — a pixel rowboat
-under a painterly kid. That is R5, and it is expected. (The Stream has no boat
-any more; the Ocean still shows one.)
+- `figure_h` comes from **matching the head** to the other two poses, never from
+  scaling the figure — the generator draws every pose to fill its frame.
+- The rod will probably run off the canvas corner. That is not a defect and not
+  a reroll: the tool extends the shaft to a length set in design px.
+- **Measure a complaint before spending a reroll on it.** Two of three faults
+  called on the Stream's first attempt did not survive testing.
 
-Read `GEMINI_NOTES.md` before writing any follow-up prompt. R4 added two rules
-of its own, both in `ART.md`: **don't generate a piece you could cut**, and
-**characters don't get the background style block**.
+`GEMINI_NOTES.md` has all three, plus everything else about the generator. Read
+it before writing any prompt.
+
+**Where R4 stands:** the pose machinery, both finished poses and the cut tool
+are on `main`. A location with no pose of its own falls back to the Pond's, so
+the Ocean currently wears pond clothes — the wrong shirt rather than no angler.
+
+**The Pond's boat is the loudest wrong thing on screen** — a pixel rowboat under
+a painterly kid. That is R5, and it is expected. The Stream has no boat any
+more; R5's section lists what else R4 left it.
 
 ## Waiting on Matt (none of it blocks R4)
 
@@ -69,8 +77,10 @@ of its own, both in `ART.md`: **don't generate a piece you could cut**, and
 - **The Firebase blast-radius decision**, in `BACKLOG.md`. Unchanged by the
   above: the rules document the problem, they do not solve it.
 
-> A web session's git credentials are **read-only**, so PR-closing and branch
-> deletion are console steps, not something to attempt here.
+> **Correction, 2026-09-01:** the old note here said a web session's git
+> credentials are read-only. They are not — this session pushed and squash-merged
+> ten PRs (#85–#94). Closing PR #55 and deleting branches are still Matt's, but
+> because they are his calls, not because Claude cannot reach them.
 
 ## Rules of thumb
 
