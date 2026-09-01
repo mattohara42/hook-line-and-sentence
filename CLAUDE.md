@@ -8,7 +8,8 @@ Progression epic** (tiers, phrases, sentences, WPM-as-goal) — **A0–A8 all
 shipped 2026-08-22, epic complete.**
 
 The current epic is the **Art & Animation Refresh** —
-`BUILD_PLAN_REFRESH.md` (R1–R7, opened 2026-08-31; **R1–R3 shipped, R4 next**). It is a
+`BUILD_PLAN_REFRESH.md` (R1–R7, opened 2026-08-31; **R1–R3 shipped; R4 active — its
+code half is in, its art is waiting on Matt**). It is a
 significant piece of work: the whole visual layer is being restarted under two
 new source-of-truth docs, **`ART_DIRECTION.md`** (warm painterly, Ghibli-
 anchored, no pure black) and **`ANIMATION.md`** (the cast/line/reel motion the

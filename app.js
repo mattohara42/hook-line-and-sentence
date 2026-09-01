@@ -638,13 +638,24 @@ let lureAt = { x: 0, y: 0 }, castFrom = { x: 0, y: 0 };
 let castPhase = null, castT0 = 0, castLanded = null;
 let lineRAF = null, lastFrame = 0;
 let rodLayerEl = null;                      // cached by renderRig(); re-cached on equip
+let pose = poseFor();                       // R4: the active costume, re-read on every applyScene()
+
+// R4: one kid, three costumes. The pose carries its own layer stack, its own
+// grip and its own rod tip, because a standing angler in waders holds the rod
+// somewhere a seated one doesn't. A location with no pose of its own falls back
+// to the default, which is the state of the Stream and the Ocean until their
+// art lands — the wrong shirt rather than no angler at all.
+function poseFor(loc) {
+  const p = CONFIG.rig.poses;
+  return p[loc ?? save?.location] ?? p[CONFIG.rig.defaultPose];
+}
 
 // The rod tip in scene coords, through everything that moves it: the rod's own
 // rotation about the grip, then #rig's live CSS transform (the boat's bob).
 // Reading the matrix each frame is the point — the old build resolved the rod
 // tip once at load, so any rod that moved would have left the line behind.
 function rodTip() {
-  const tip = logic.rotateAboutPivot(CONFIG.rig.lineOrigin, A.rod.pivot, castSwing + rodAngle);
+  const tip = logic.rotateAboutPivot(pose.lineOrigin, pose.rodPivot, castSwing + rodAngle);
   const rig = $("rig");
   const t = getComputedStyle(rig).transform;
   const m = t && t !== "none" ? new DOMMatrix(t) : new DOMMatrix();
@@ -1445,15 +1456,18 @@ function switchLocation(loc) {
   setStatus("Now fishing " + CONFIG.tiers.find(t => t.location === loc).locationName + ".");
 }
 
-// G1: draw the angler as layers from CONFIG.rig.layers. Called once at boot;
-// the hat/rod shop (R7) re-runs it on equip, which is the whole point of the
-// split. R1: the line is no longer a child of #rig — it's an SVG in scene space
-// — and the rod layer gets the pivot it rotates about, so the cast and the tug
-// swing the rod rather than the whole angler.
-function renderRig() {
+// G1: draw the angler as layers from the active pose's stack. Called at boot,
+// again from applyScene() whenever the kid changes water (R4 — the costume
+// belongs to the location), and by the hat/rod shop (R7) on equip, which is the
+// whole point of the split. R1: the line is no longer a child of #rig — it's an
+// SVG in scene space — and the rod layer gets the pivot it rotates about, so
+// the cast and the tug swing the rod rather than the whole angler.
+function renderRig(loc) {
+  pose = poseFor(loc);
   const rig = $("rig");
   rig.querySelectorAll(".rig-layer").forEach(n => n.remove());
-  for (const L of CONFIG.rig.layers) {
+  rodLayerEl = null;
+  for (const L of pose.layers) {
     const d = document.createElement("div");
     d.className = "rig-layer";
     d.dataset.id = L.id;
@@ -1462,11 +1476,14 @@ function renderRig() {
     d.style.backgroundImage = `url("assets/${L.file}.png")`;
     if (L.id === "rod") {
       // the grip, expressed inside the rod layer's own box
-      d.style.transformOrigin = `${A.rod.pivot.x - L.x}px ${A.rod.pivot.y - L.y}px`;
+      d.style.transformOrigin = `${pose.rodPivot.x - L.x}px ${pose.rodPivot.y - L.y}px`;
       rodLayerEl = d;
     }
     rig.appendChild(d);
   }
+  // the rod may have been rebuilt mid-swing (a location switch during a cast),
+  // so put the angle back rather than letting it snap to zero for a frame
+  if (rodLayerEl) rodLayerEl.style.transform = `rotate(${castSwing + rodAngle}deg)`;
 }
 renderRig();
 
@@ -1477,6 +1494,7 @@ function applyScene() {
   const loc = save?.location ?? CONFIG.tiers[0].location;
   el.scene.classList.remove(...CONFIG.tiers.map(t => "loc-" + t.location));
   el.scene.classList.add("loc-" + loc);
+  renderRig(loc);   // R4: the costume and the pose belong to the water, not to the boot
 }
 tackleBtn.addEventListener("click", (e) => { e.stopPropagation(); toggleControls(); });
 // picking a nav item (collection/shop/…) closes the tray; the ON/OFF toggles leave it open

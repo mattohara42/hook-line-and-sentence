@@ -11,28 +11,36 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R4 — the angler**, `BUILD_PLAN_REFRESH.md` |
 | **Done when** | at 1x, in all three levels, the rod looks held and the costume suits the water; casting (R1) moves the arm and rod, not the whole kid |
-| `origin/main` | `2fed2cf`, tree clean, nothing unpushed |
-| Tests | 80/80 (`npm test`) |
+| **State** | code half **landed**; **blocked on Matt generating the Pond pose** |
+| `origin/main` | `a1249ce`, tree clean, nothing unpushed |
+| Tests | 81/81 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
 | Deploys | Netlify is **manual**; merging to `main` does not go live |
 
 ## Start here
 
-R4 is the first milestone to generate **character** art rather than
-backgrounds. Two things to read before writing a single prompt:
+**R4's code half is in and the milestone is now waiting on art.** `CONFIG.rig`
+is one pose per location (`rig.poses`), `applyScene()` re-renders the rig, and a
+location with no pose of its own falls back to the Pond's — which is all three
+levels until the costumes land. Verified in Chromium across all three spots: the
+right stack rebuilds on every switch, the rod tip is unmoved to 0.2px, no
+console errors.
 
-1. **`GEMINI_NOTES.md`** — how the generator actually behaves. R3 spent
-   thirteen generations on nine images learning this; it is why five of the last
-   six landed first attempt. Do not re-derive it.
-2. **`ART.md`'s same-canvas rule** — every rig piece is drawn *from* the torso
-   as a reference image and returned on the *same canvas*, so offsets are zero
-   by construction. This matters more in R4 than anywhere else in the epic, and
-   G1 is the cautionary tale: it asked for pieces in isolation, tuned offsets at
-   4x zoom, and shipped a hat that sat on the hair like a sticker.
+**The next action is Matt's: generate the three Pond prompts in `ART.md`**
+(`### R4 — the Pond angler, three generations`). Generation 1 must be judged and
+kept *before* 2 and 3 are run — both attach it as a reference, so a reroll of 1
+kills them.
 
-`BUILD_PLAN_REFRESH.md`'s R4 section has the rest. Note its sequencing point:
-R1 landed before R4 deliberately, so the rig is cut for motion that already
-works rather than for guesses.
+Then Claude, in this order: check for backdrop bled into the child (that one is
+a reroll and nothing else fixes it) · key all three · cut the near arm out of
+generation 1 at the shoulder · composite at game scale *before* touching
+`config.js` · measure the box, grip and tip off the real canvas · then make the
+arm swing with the rod, which is the half of the done-when that was deliberately
+left until there is an arm to look at.
+
+Read `GEMINI_NOTES.md` before writing any follow-up prompt. R4 added two rules
+of its own, both in `ART.md`: **don't generate a piece you could cut**, and
+**characters don't get the background style block**.
 
 ## Waiting on Matt (none of it blocks R4)
 

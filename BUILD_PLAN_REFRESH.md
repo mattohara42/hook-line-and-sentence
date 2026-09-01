@@ -2,8 +2,9 @@
 
 **Status: active epic, opened 2026-08-31. This is a significant new body of
 work — the largest since the Advanced Progression epic — and it replaces the
-game's entire visual layer. R1 and R2 shipped 2026-08-31; R3 is next,
-and it is the first that needs Matt to generate anything.**
+game's entire visual layer. R1 and R2 shipped 2026-08-31, R3 on 2026-09-01;
+**R4 is active** — its code half has landed and its first three prompts are
+waiting on Matt.**
 
 Two new documents are the source of truth for it:
 
@@ -32,7 +33,7 @@ backgrounds, boats, characters, fish, palette and motion.
 | Survives, do not redo | Why |
 |---|---|
 | **V1's three planes** (`#surface` painted in front of the mid plane) | It is the one visual thing that worked, and `ART_DIRECTION.md`'s layered backgrounds are the same idea extended. Its palette gets retuned in R2; its structure doesn't move. |
-| **`CONFIG.rig.layers` + `renderRig()` + `lineOrigin` + the computed aim** | The layer machinery was never the problem — the art strategy was. R1 and R4 both build on it. |
+| **`CONFIG.rig` + `renderRig()` + `lineOrigin` + the computed aim** | The layer machinery was never the problem — the art strategy was. R1 and R4 both build on it. |
 | **Same-canvas, reference-drawn generation** (V2's rule) | The single most valuable thing the old epic learned: every piece is drawn *from* the body sprite, returned on the *same canvas*, so offsets are zero and registration is the generator's job. Carried into `ART.md` as a standing rule. |
 | **The ghost-hands finger keyboard** | Off limits (`CLAUDE.md`). Not restyled, not moved, not touched. If anything the rest of the UI borrows its clarity. |
 | The 720×360 design canvas, no build step, all tuning in `config.js` | Architecture rules, unchanged. |
@@ -290,6 +291,42 @@ level.
 
 ### R4 — The angler: one kid, three costumes, rigged
 
+**In progress. The code half has landed and the Pond's three prompts are open in
+`ART.md` — the milestone is now waiting on Matt to generate.**
+
+What landed ahead of the art, so the drop is a measurement and not a refactor:
+`CONFIG.rig` is one **pose per location** (`rig.poses`, keyed by fishing spot),
+each carrying its own layer stack, its own `rodPivot` and its own `lineOrigin` —
+because a kid standing in waders holds the rod somewhere a seated one doesn't,
+and `CONFIG.anim.rod.pivot` had been asserting otherwise. `applyScene()` now
+re-renders the rig, so the costume follows the water. A location with no pose of
+its own **falls back to the default**, which is every level today: pointing the
+Stream and Ocean at filenames that don't exist yet would render an invisible
+angler in two levels out of three, and the wrong shirt beats no kid.
+
+Two decisions were taken writing the prompts, both recorded in `ART.md`:
+
+- **`ART_DIRECTION.md`'s four-piece assumption is answered, and it turned out
+  not to be an art question at all.** Any subdivision with no independent
+  existence — a head off a torso, an arm off a shoulder — is a **local cut of
+  one delivered painting**, which registers perfectly because it is the same
+  pixels and costs no generation and no reroll risk. Only the rod (the shop
+  swaps it) and the fingers that close over it have to be generated apart from
+  the body. So the pose is **three generations**, not four or five, and how many
+  layers the rig has became a code decision.
+- **Characters do not get the background style block.** `ART_DIRECTION.md` says
+  sprites take the backgrounds' palette and edge treatment *without* their
+  painterly texture, so the gouache/visible-brushwork language `GEMINI_NOTES.md`
+  recommends for a background is wrong here — it is invisible at 66×100 screen
+  px and reads as noise. Soft two-tone shading with blended edges instead, and
+  character-specific failure modes named in its place.
+
+Also settled: the protagonist is identified across all three costumes by a
+**warm terracotta accent garment** — shirt, fly vest, life vest. It is the one
+hue in the palette guaranteed to hold a silhouette against teal-green water and
+green banks in all three levels, and it is the region the favorite-color tint
+filters, which keeps that a one-line filter rather than a per-costume tuning job.
+
 One protagonist (`ART_DIRECTION.md`, decision 2): pond clothes seated in the
 rowboat, waders and vest standing in the stream, boat gear and life vest in the
 fighting chair.
@@ -305,7 +342,12 @@ fighting chair.
 - The grip stays a sandwich: open curled hand on the body, rod over it, a
   fingers-only overlay over the rod. It is what makes a swappable rod look held.
 - The favorite-color accent tint stays — a filter on one region, no extra art.
-- `CONFIG.rig` grows a per-pose block; `lineOrigin` is set per pose.
+- ~~`CONFIG.rig` grows a per-pose block; `lineOrigin` is set per pose.~~ ✅ done.
+- **Still to do once the art lands:** cut the near arm out of generation 1 at
+  the shoulder, composite all four layers at game scale *before* touching
+  `config.js`, measure the pose's box/grip/tip off the real canvas, then make
+  the arm swing with the rod — the "moves the arm, not the whole kid" half of
+  the done-when, deliberately left until there is an arm layer to look at.
 - **Done when:** at 1x, in all three levels, the rod looks held and the costume
   suits the water; casting (R1) moves the arm and rod, not the whole kid.
 

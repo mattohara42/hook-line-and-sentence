@@ -110,8 +110,29 @@ this is the rule that makes layered characters and fish work at all:
    *open* curled hand → rod paints over it → a fingers-only overlay paints over
    the rod. Any rod then looks held.
 
+4. **Do not generate a piece you could cut.** (R4.) Any subdivision of a
+   painted character that has no independent existence — a head off a torso, an
+   arm off a shoulder — is a **local cut of one delivered image**. It registers
+   perfectly because it is the same pixels, and it costs no generation and no
+   reroll risk. Generate separately only what must exist apart from the body:
+   the rod (the shop swaps it) and the fingers that close over it. The
+   consequence is that **how many pieces a rig has is a code decision, not an
+   art decision** — which is how `ART_DIRECTION.md`'s four-piece assumption got
+   answered without costing a prompt.
+
 A piece that doesn't fit is a **reroll, not an offset tweak**. Tuning offsets at
 4x zoom is exactly how G1 shipped something that looked wrong at 1x.
+
+**Characters do not get the background style block.** `ART_DIRECTION.md` says
+sprites take the palette and edge treatment of the backgrounds *"without
+attempting full painterly texture on moving parts"*, so the gouache /
+visible-brushwork language that `GEMINI_NOTES.md` records as the thing worth
+spending prompt weight on for a background is wrong on a character — it is
+invisible at 66×100 screen px and reads as noise. Keep the palette, the diffused
+light and the thin warm-brown outline; swap brushwork for **soft two-tone
+shading with blended edges**, and name the character failure modes instead: NOT
+pixel art, NOT flat vector art with even line weight, NOT thick black cartoon
+linework, NOT a glossy 3D render.
 
 ## How the generator behaves → `GEMINI_NOTES.md`
 
@@ -144,6 +165,202 @@ pixels, warm dawn lake palette…"~~ — retired 2026-08-31 with the pixel
 direction.
 
 ## Open art requests
+
+### R4 — the Pond angler, three generations (open — this is the next thing to generate)
+
+**First character request of the refresh, and the first art of any kind since
+R3 closed.** It replaces `body-kid.png` / `hat-straw.png` / `rod-basic.png`,
+which are pixel-era and were made for a body/hat/rod split the direction has
+since revised.
+
+**Pond only, deliberately.** R3's one-level-at-a-time discipline is what kept a
+framing miss down to three prompts instead of nine, and R4 has the same shape:
+the Pond pose is generated, cut, wired and judged at 1x *before* the Stream and
+Ocean costumes are asked for. Their prompts are the same three with the costume
+swapped, so nothing is lost by waiting and a style miss costs a third as much.
+
+#### Two things that changed in how this is asked for
+
+**1. The rig is cut locally, not generated piece by piece.** `ART_DIRECTION.md`
+flagged its four-piece assumption (head / torso / arm / rod) as reviewable once
+R1's casting animation existed. R1 has shipped, so: **it is a code decision, not
+an art decision.** Every subdivision of a painted character — head off torso,
+arm off shoulder — is a *local cut of one delivered image*, which registers
+perfectly because it is literally the same pixels, and costs no generation and
+no reroll risk. Only the pieces that must exist **independently of** the body
+have to be generated separately, and there are exactly two: the **rod** (it is
+swappable in the shop, R7) and the **fingers** that close over it (the grip
+sandwich). So the four ART_DIRECTION pieces become:
+
+| layer | where it comes from |
+|---|---|
+| `body` | generation #1, with the near arm cut away locally |
+| `arm` | the near arm, cut out of generation #1 at the shoulder |
+| `rod` | generation #2 — reference-drawn into the open hand |
+| `fingers` | generation #3 — reference-drawn over the open hand |
+
+A separate **head** layer is not requested. Nothing in R1's motion moves it, and
+R7's hats are reference-drawn against each pose anyway — and under the rule
+above, if a head layer is ever wanted it is one more local cut, not a reroll.
+
+**2. Characters get a different style block from backgrounds.**
+`ART_DIRECTION.md`'s production-approach paragraph is explicit that character
+and fish sprites "pick up the same palette and soft edge treatment as the
+backgrounds, **without attempting full painterly texture on moving parts**". So
+the gouache/visible-brushwork language that `GEMINI_NOTES.md` records as the
+thing to spend prompt weight on for a background is **wrong here** — brushwork
+is invisible at 66×100 screen px and reads as noise. The character block below
+keeps the palette, the light and the thin warm-brown outline, and swaps
+brushwork for soft two-tone shading. The named failure modes change with it.
+
+#### The costume decision, so the three poses read as one kid
+
+The protagonist is identified by a **warm terracotta/ember accent garment**,
+which is a different garment in each level: the **shirt** (Pond), the **fly
+vest** (Stream), the **life vest** (Ocean). Two reasons, and they both matter
+more than they look:
+
+- Every background in the game is teal-green water and warm green banks. A warm
+  ember garment is the only thing in the palette that is guaranteed to hold a
+  silhouette against all three, and the angler renders at about 66×100 px.
+- It is the region the **favorite-color accent tint** filters (`ART_DIRECTION.md`
+  decision 2 — a CSS filter on one region, no extra art). One garment per pose,
+  in one hue, is what makes that a one-line filter rather than a per-costume
+  tuning job.
+
+#### The canvas
+
+**1024×1024, aspect ratio 1:1**, all three generations. Square because the
+canvas has to hold the seated kid *and* the rod's full diagonal up to the
+upper-right. The ratio is stated as a ratio because that is the single most
+dependable instruction in the set (`GEMINI_NOTES.md`).
+
+**Placement inside the canvas is deliberately loose**, and that is not an
+oversight — it is the "spend the prompt where it can win" rule. All three pieces
+share one canvas, so they can only be wrong *together*, and a shared offset is
+absorbed once when the pose's box is measured at wiring time. What cannot be
+fixed downstream is style and pose, so the prompt weight goes there.
+
+```
+ART NEEDED: Pond angler, generation 1 of 3 — the whole child, open hand
+            (this is the reference image for generations 2 and 3)
+Prompt:   Soft painterly storybook character illustration in the style of
+          Studio Ghibli, warm muted color palette, gentle diffused lighting,
+          thin warm brown outlines rather than black, cozy and inviting mood,
+          no harsh shadows, no neon or saturated colors. Soft two-tone shading
+          with the edges between tones blended rather than hard cel blocks.
+          NOT pixel art, NOT flat vector art with even line weight, NOT thick
+          black cartoon linework, NOT a glossy 3D render.
+          A young child seen from the side, facing right, seated low as if in a
+          small rowboat: knees drawn up, back gently rounded, a calm contented
+          expression, gentle rounded proportions. Bare head, short warm-brown
+          hair, warm tan skin. Cozy pond fishing clothes — a soft terracotta
+          long-sleeved shirt, warm oat-coloured shorts, simple brown shoes.
+          The far arm rests on the knee. The NEAR arm reaches forward and
+          slightly up, and the near hand is held OPEN in a loose C-curl, palm
+          toward the viewer, fingers apart and NOT closed — as if about to take
+          hold of a fishing rod that is not there yet.
+          No hat, no fishing rod, no fishing line, no hook, no boat, no water,
+          no scenery, no other characters.
+          The child sits in the lower-left of the canvas with the shoes near
+          the bottom edge, and the upper-right corner of the canvas is left
+          empty — a fishing rod is painted into that empty space as a separate
+          layer later.
+          Everything that is not the child must be flat, solid, uniform magenta
+          (#FF00FF): a plain backdrop colour, not a checkerboard, not a
+          gradient, not transparency. No magenta anywhere on the child itself.
+          No text, no UI, no watermark, no baked-in drop shadow.
+          The image is 1024 by 1024 pixels, aspect ratio 1:1. Output as PNG.
+Save as:  assets/angler-pond-body.png
+Size:     1024×1024 (1:1), delivered on flat magenta. Whatever canvas this comes
+          back on IS the canvas for this pose — generations 2 and 3 are drawn
+          onto it and returned the same size, so every offset is zero.
+Wired in: not yet — CONFIG.rig.poses.pond.layers, the "body" and "arm" layers
+          (both are cut from this one image locally)
+```
+
+```
+ART NEEDED: Pond angler, generation 2 of 3 — the basic rod, drawn into that hand
+Prompt:   [ATTACH assets/angler-pond-body.png AS A REFERENCE IMAGE]
+          Soft painterly storybook illustration in the style of Studio Ghibli,
+          warm muted color palette, gentle diffused lighting, thin warm brown
+          outlines rather than black, no harsh shadows, no neon or saturated
+          colors. Soft two-tone shading with blended edges. NOT pixel art, NOT
+          flat vector art with even line weight, NOT a glossy 3D render.
+          Using the attached child as reference: paint a simple wooden fishing
+          rod — a slender tapered pole in warm brown with a darker wrapped grip
+          at the thick end — angled the way this child would hold it. The GRIP
+          END sits inside that open near hand; the pole runs up and to the
+          right; the thin tip reaches toward the upper-right corner of the
+          canvas, clear of the child's head. Match the reference's lighting,
+          scale and outline weight exactly.
+          Paint the ROD ALONE. No hand, no fingers, no arm, no child, no
+          fishing line, no hook, no reel, no fish.
+          Output the rod on a canvas THE SAME SIZE as the reference image, in
+          exactly the position it would occupy when held, so it lands correctly
+          when layered straight over the reference with no offset. Everything
+          that is not the rod must be flat, solid, uniform magenta (#FF00FF) —
+          not a checkerboard, not a gradient, not transparency.
+          No text, no UI, no watermark, no baked-in drop shadow.
+          The image is 1024 by 1024 pixels, aspect ratio 1:1. Output as PNG.
+Save as:  assets/rod-basic-pond.png
+Size:     same canvas as angler-pond-body.png, aligned, on flat magenta.
+Wired in: not yet — CONFIG.rig.poses.pond.layers, the "rod" layer. Named for the
+          gear item plus the pose because R7 needs one PNG per rod per pose.
+```
+
+```
+ART NEEDED: Pond angler, generation 3 of 3 — the fingers that close the grip
+Prompt:   [ATTACH assets/angler-pond-body.png AS A REFERENCE IMAGE]
+          Soft painterly storybook illustration in the style of Studio Ghibli,
+          warm muted color palette, gentle diffused lighting, thin warm brown
+          outlines rather than black, no harsh shadows, no neon or saturated
+          colors. Soft two-tone shading with blended edges. NOT pixel art, NOT
+          flat vector art with even line weight, NOT a glossy 3D render.
+          Using the attached child as reference: paint ONLY the fingers and
+          thumb of this child's near hand, curled closed as if gripping a
+          fishing rod — the same skin tone, the same lighting, the same thin
+          warm brown outline weight as the reference. They must sit exactly
+          over the open hand in the reference, closing it.
+          Nothing else in the image: no arm, no wrist, no body, no rod, no
+          line, no background scenery.
+          Output on a canvas THE SAME SIZE as the reference image, positioned
+          exactly over that hand, so it lands correctly when layered straight
+          over the reference with no offset. Everything that is not the fingers
+          must be flat, solid, uniform magenta (#FF00FF) — not a checkerboard,
+          not a gradient, not transparency.
+          No text, no UI, no watermark, no baked-in drop shadow.
+          The image is 1024 by 1024 pixels, aspect ratio 1:1. Output as PNG.
+Save as:  assets/angler-pond-fingers.png
+Size:     same canvas as angler-pond-body.png, aligned, on flat magenta.
+Wired in: not yet — CONFIG.rig.poses.pond.layers, the "fingers" layer. It paints
+          over the rod, which is what makes any rod look held.
+```
+
+**The order matters.** Generation 1 has to be judged and kept before 2 and 3 are
+run, because both attach it. If 1 is rerolled after 2 or 3 exist, they are dead
+— they were painted against a hand that no longer sits there.
+
+**What happens when they land** (Claude, before anything is wired):
+
+1. **Check for magenta bled into the child first.** A pink-fringed sleeve is a
+   reroll and nothing downstream fixes it (`GEMINI_NOTES.md`).
+2. Key all three off the backdrop — detect the colour actually delivered, do not
+   assume `#FF00FF`.
+3. **Cut the near arm out of generation 1** at the shoulder seam, filling the
+   hole behind it with the shirt's own tone. The arm keeps the open hand.
+   That yields `angler-pond-body.png` and `angler-pond-arm.png` on the same
+   canvas.
+4. Composite all four layers **at game scale** before touching `config.js`. That
+   is the step G1 skipped, and it is why G1 shipped a hat sitting on the hair
+   like a sticker.
+5. Measure the pose's box, the grip and the rod tip off the real art and write
+   them into `CONFIG.rig.poses.pond` — the plumbing for that landed ahead of the
+   art, so this is three numbers and not a refactor.
+
+**A piece that doesn't fit is a reroll, not an offset tweak.** Under the
+same-canvas rule the only way a piece *can* fail to fit is if the generator
+ignored the canvas, and that is not tunable.
 
 ### ✅ R3 — the Pond, repainted as three layers (landed and wired 2026-09-01)
 
