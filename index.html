@@ -12,6 +12,14 @@
   <h1>HOOK, LINE AND SENTENCE</h1>
 
   <div id="scene-viewport"><div id="scene-frame"><div id="scene">
+    <!-- R3: the Pond's painted background, in the three parallax planes
+         ART_DIRECTION.md calls for. They are elements rather than stacked
+         background-images on #scene because each one drifts on its own timer —
+         a single element can only carry one animation, and the water layer is
+         specified to "animate independently". #bg-fore is NOT here: it is the
+         nearest plane, so it lives after #surface further down. -->
+    <div id="bg-far"></div>
+    <div id="bg-water"></div>
     <!-- V1: the hull's shadow on the water, behind the boat and under the
          surface, so it stays put while the boat rocks over it -->
     <div id="hull-shadow"></div>
@@ -34,6 +42,12 @@
          is what makes the hull sit *in* the water and the fish read as under
          it; the landing is the fish rising up through this layer. -->
     <div id="surface"></div>
+    <!-- R3: the Pond's foreground plane — reeds, lily pads, the dock edge.
+         After #surface and sharing its z-index, so it paints over the water
+         wash and the mid plane (rig/fish) the way #surface already does, but
+         still under the z-index 4 splashes and floating text, which must never
+         be hidden behind a reed. -->
+    <div id="bg-fore"></div>
     <div class="reeds" id="reeds-left">
       <div class="reed" style="height:34px; animation-duration:4.2s;"></div>
       <div class="reed" style="height:48px; animation-duration:5.1s; animation-delay:-1.6s;"></div>
