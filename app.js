@@ -332,6 +332,7 @@ let typed = 0;
 let tension = 0;
 let fish = null;           // roster entry currently on the line
 let junk = null;           // junk item on the line instead of a fish (comedy), or null
+let hookedTier = "common"; // the tier that was rolled for it — set at the approach, used at the bite
 let reelPool = [];         // words matched to the hooked fish's difficulty
 let reelMode = "words";    // "words" (Pond) | "phrase" (Stream, A1) — set at each bite
 let reelSegments = [];     // A7: the sentences this catch is fought over (1 outside the Ocean)
@@ -515,6 +516,17 @@ function burst(x, y, n) {
     setTimeout(() => p.remove(), 700);
   }
 }
+// R6: the fish breaks the surface on its way to the boat. The splash goes where
+// it actually crosses the waterline — under its own middle, on the line #surface
+// starts at — rather than at the fixed point below the water this used to be,
+// where it read as nothing at all.
+function surfaceBreak() {
+  const x = parseInt(el.fish.style.left) + fishBox().w / 2;
+  burst(x, CONFIG.fish.surface.y, CONFIG.fish.surface.splashParticles);
+  ripple(x, CONFIG.fish.surface.y + 2);
+  sfxSplash();
+}
+
 // visual-cadence constants (rendering only — gameplay tuning stays in config.js)
 const JUICE = { shadowEveryMs: 6000, bobberRippleMs: 1700, ambientRippleMs: 6500, rippleLifeMs: 1700 };
 
@@ -612,8 +624,7 @@ let fishX = 0, fishY = 0, fishTX = 0, fishTY = 0;   // current + target fish pos
 
 // target for the current reel progress: starts deep-and-right, ends near the
 // boat at the surface, so reeling pulls the fish up and in
-function setFishTarget() {
-  const progress = 1 - wordsLeft / wordsToLand;   // 0 at bite, 1 at land
+function setFishTarget(progress = 1 - wordsLeft / wordsToLand) {   // 0 at bite, 1 at land
   fishTX = 430 - progress * 280;                  // 430 -> 150 (toward the boat)
   // kept above the bottom-center ghost-hands panel so the fish stays visible
   // while it's reeled across; the "up from the depths" dip is the spawn offset
@@ -883,7 +894,8 @@ function startCast() {
   el.fish.style.removeProperty("--fish-color");
   el.fish.style.removeProperty("background-image");   // clear a junk sprite swap
   renderFish(null);                                   // R6: and any species layers with it
-  junk = null;
+  el.fish.style.removeProperty("--drift");
+  fish = junk = null;                                 // the next approach rolls its own
   setStatus(pick(PUNS.cast));
   renderWord();
 }
@@ -904,13 +916,18 @@ function startWait() {
     ripple(A.cast.landing.x, A.cast.landing.y);
     sfxSplash();
     bobberIn();
-    later(bite, rand(...CONFIG.bite.delayMsRange) * equippedBait().biteSpeedMult);
+    // R6: the fish shows itself before it bites. A fast bait shortens the tease
+    // rather than losing it — the approach never starts before the cast lands.
+    const wait = rand(...CONFIG.bite.delayMsRange) * equippedBait().biteSpeedMult;
+    later(approach, Math.max(0, wait - CONFIG.fish.approach.leadMs));
+    later(bite, wait);
   });
 }
 
-function bite() {
-  phase = "reel"; inputLocked = false;
-  bobberOut(true);
+// What is on its way up. Rolled at the START of the approach rather than at the
+// bite, so the silhouette a kid sees is the fish that actually takes the hook —
+// the odds are untouched, only the moment they are asked.
+function chooseCatch() {
   junk = Math.random() < CONFIG.junk.chance ? pick(CONFIG.junk.items) : null;
   const rolled = junk ? "common" : pickTier();        // junk reels like an easy common
   // Fish come from the current spot (A3). If this spot has no fish of the rolled
@@ -919,8 +936,44 @@ function bite() {
   // falls back to the home water so a bite never picks from an empty pool.
   const localFish = FISH.filter(f => f.location === save.location);
   const pool = localFish.length ? localFish : FISH.filter(f => f.location === CONFIG.tiers[0].location);
-  const tier = junk ? "common" : logic.tierWithFallback(new Set(pool.map(f => f.tier)), rolled, TIER_ORDER);
-  fish = junk ? null : pick(pool.filter(f => f.tier === tier));
+  hookedTier = junk ? "common" : logic.tierWithFallback(new Set(pool.map(f => f.tier)), rolled, TIER_ORDER);
+  fish = junk ? null : pick(pool.filter(f => f.tier === hookedTier));
+}
+
+// R6: the fish rises out of the depths as a silhouette before it bites, behind
+// #surface — which is the front plane V1 was built for and has never had
+// anything to put behind it. It drifts to exactly where the hooked fish starts,
+// so the tease and the hook are one fish rather than two that line up.
+//
+// Deliberately NO tier class here: the glow and the placeholder's per-tier
+// sprite both belong to a fish you have hooked, and a legendary announcing
+// itself through the water in gold would give the whole moment away. The
+// silhouette says "something big is coming", not what.
+function approach() {
+  if (phase !== "wait") return;
+  chooseCatch();
+  renderFish(fish);
+  const ap = CONFIG.fish.approach;
+  setFishTarget(0);                         // where the reel will start it, and so where the rise ends
+  const to = { x: fishTX + ap.spawn.dx, y: fishTY + ap.spawn.dy };
+  el.fish.className = "silhouette";
+  el.fish.style.left = to.x + ap.rise.dx + "px";
+  el.fish.style.top = to.y + ap.rise.dy + "px";
+  void el.fish.offsetWidth;                 // paint it down there first, or there is nothing to drift from
+  el.fish.classList.add("approaching");
+  el.fish.style.setProperty("--drift", ap.leadMs + "ms");
+  el.fish.style.opacity = 1;
+  el.fish.style.left = to.x + "px";
+  el.fish.style.top = to.y + "px";
+}
+
+function bite() {
+  phase = "reel"; inputLocked = false;
+  bobberOut(true);
+  if (!fish && !junk) chooseCatch();   // a bite too quick for the approach to have run
+  const tier = hookedTier;
+  el.fish.classList.remove("silhouette", "approaching");
+  el.fish.style.removeProperty("--drift");
 
   // Content unit for this catch (AD2): reel a phrase when typeable phrase content
   // is tagged for this spot (the Stream, A1); otherwise word-at-a-time — the Pond,
@@ -956,7 +1009,10 @@ function bite() {
   el.fish.classList.add("submerged");   // V1: seen through the water until it's landed
   lineMode = "reel";                    // R1: the curve now answers to tension
   setFishTarget();
-  fishX = fishTX + 30; fishY = fishTY + 56;   // emerge deep & right of the panel, then rise up-and-in
+  // emerge deep and right of the finger panel, then rise up-and-in — and this is
+  // the point the silhouette has just drifted to, from the same config
+  fishX = fishTX + CONFIG.fish.approach.spawn.dx;
+  fishY = fishTY + CONFIG.fish.approach.spawn.dy;
   el.dist.textContent = wordsLeft + " words";
   shakeScene();
   burst(410, 200, 10);
@@ -1082,7 +1138,7 @@ function land(success) {
     // comedy catch: no coins, no collection — just a groan
     el.fish.classList.remove("submerged");   // breaks the surface, snaps into focus
     el.fish.classList.add("landing");
-    burst(150, 240, 14);
+    surfaceBreak();
     save.jokesEndured = (save.jokesEndured ?? 0) + 1;
     persistSave();
     sfxEscape();
@@ -1093,7 +1149,7 @@ function land(success) {
   if (success) {
     el.fish.classList.remove("submerged");   // breaks the surface, snaps into focus
     el.fish.classList.add("landing");
-    burst(150, 240, 14);
+    surfaceBreak();
     const stagesBefore = unlockedStageCount(totalCatches());
     const firstCatch = !save.collection[fish.id];
     // A8: asked *before* the collection is credited, since prestige is derived

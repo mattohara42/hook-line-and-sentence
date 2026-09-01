@@ -398,6 +398,16 @@ h1 {
   background-image: url("assets/fish-muskie.png");
   width: 96px;
 }
+/* R6: before it bites, the fish is a shape in the water rather than a fish —
+   dark, soft-edged and low-contrast, seen through #surface. Warm dark, never
+   black (ART_DIRECTION.md): brightness on a warm sprite stays warm, which a
+   grayscale or a flat fill would not. Declared after the tier rules so it wins
+   any tie; the approach deliberately carries no tier class of its own. */
+#fish.silhouette { filter: brightness(0.42) saturate(0.35) contrast(0.85) blur(1.4px); opacity: 0.8; }
+/* the drift itself. --drift is set inline from CONFIG.fish.approach.leadMs, and
+   the opacity fade keeps its own timing — a fish that took a second to appear
+   would arrive already half way across. */
+#fish.approaching { transition: left var(--drift) ease-out, top var(--drift) ease-out, opacity 0.3s ease; }
 #fish.landing { animation: fishArc 0.7s ease forwards; }
 @keyframes fishArc {
   40% { transform: translate(-30px, -90px) rotate(-30deg); }
