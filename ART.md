@@ -284,7 +284,7 @@ One oddity worth recording: the backdrop arrived at key `(248,87,243)` with a
 blue stdev of **14.6**, where the two earlier generations were under 2.5 — the
 first time the magenta has not been dead flat. It floods fine at tolerance 90.
 
-**The cut is scripted: `tools/cut-angler-pond.py`.** Re-run it against any
+**The cut is scripted: `tools/cut-angler.py`.** Re-run it against any
 better source and the layers regenerate. It is an art-pipeline tool, not a build
 step — nothing loads it at runtime.
 
@@ -309,7 +309,7 @@ came out at **33.3 design px, 51% of the old browser-tuned rig's 65.1**, and it
 read stubby on screen. Of the 32px missing, the taper cost 4.2 and the canvas
 clipping cost 27.5 — so the fix was never un-tapering, it was extension.
 
-`tools/cut-angler-pond.py` now pads the canvas and walks the shaft out along its
+`tools/cut-angler.py` now pads the canvas and walks the shaft out along its
 own axis to a length **set in design px** (`ROD_LEN = 65.0`, the same 130% of the
 kid's height the old rig had), resampling the real cross-section so the outline
 tapers with it. 42% of the visible rod is synthesised, and it is invisible for
@@ -357,7 +357,7 @@ behind — the standard joint overlap, and those pixels move a quarter of a desi
 px across the full swing.
 
 Paint order is therefore **rod → arm → body**: the hand is in front of the pole,
-the forearm's stump is behind the knee. `tools/cut-angler-pond.py` checks the
+the forearm's stump is behind the knee. `tools/cut-angler.py` checks the
 split by recompositing in that order against the delivered painting — mean 0.01,
 and the only pixels past a difference of 10 are **128 of 324,574 (0.04%)**, all
 of them the rod's synthesis seam rather than the arm's cut.
@@ -395,11 +395,11 @@ harmless deviation: it stays with the body, and — the part that matters for th
 arm cut still to come — it is **not** on the rod, so swinging the arm and the rod
 together cannot tear a second hand off.
 
-### R4 — the Stream angler, standing in waders (open — next to generate)
+### ✅ R4 — the Stream angler, standing in waders (landed and wired 2026-09-01)
 
 **Not the Pond prompt with a recolour.** `ART_DIRECTION.md` puts the Stream
 angler *standing in the water* rather than seated in a boat, so it is a
-different pose and every cut parameter in `tools/cut-angler-pond.py` — rod axis,
+different pose and every cut parameter in `tools/cut-angler.py` — rod axis,
 arm skeleton, pivots, scale — is measured fresh. Budget it as a new pose, not a
 variant.
 
@@ -484,12 +484,53 @@ Wired in: not yet — a new CONFIG.rig.poses.stream block. Until it exists the
           wrong shirt rather than no angler.
 ```
 
-**When it lands**, the checks are the Pond's: backdrop bled into the subject
-first (a reroll, and nothing downstream fixes it), then canvas and aspect, then
-palette against `ART_DIRECTION.md`'s table. Do not reroll for placement inside
-the canvas — every piece shares it, so a shared offset is absorbed once when the
-pose's box is measured. **Do not reroll for a rod that runs off the corner
-either**: the cut tool extends the shaft to a length set in design px.
+**✅ Landed, cut and wired 2026-09-01, on the second attempt.**
+
+The first came back with three faults, and only one of the three things I first
+called out survived testing — worth recording, because two were my own bad eye:
+I claimed the style had gone flat vector and that the arm-clear-of-the-body ask
+had been ignored. Measured, the tonal variation matched the Pond's (stdev 26.4
+vs 27.3) and its outlines were *less* even, and the arm ask had worked
+perfectly — 2 separate subject runs per scanline through y=330–490. **The style
+and clearance instructions were fine; my reading of them was not.** What was
+real: a **baked-in fishing line** (asked for none, got one threaded through the
+guides), and a **buzz cut** where the Pond kid has full tousled hair, which
+breaks `ART_DIRECTION.md`'s one-protagonist decision.
+
+The reroll fixed all three, and its `CRITICAL: draw NO FISHING LINE anywhere`
+worked — a single 14–18px run per scanline in the upper-right quadrant, which is
+the rod alone. It also carries the **landing net** and **grey-green waders**
+(the first attempt's vest and waders were only 35 RGB apart, so the whole figure
+read tan and the terracotta accent could not do its job).
+
+**Scale had to come from the head, not the figure.** The generator draws every
+pose to fill its frame, so the *standing* Stream kid came back 897px tall
+against the *seated* Pond kid's 878 — 2% taller. Scaling both alike would have
+stood the child up no taller than he sits. Matching the two heads instead (the
+Pond's is 318 source px wide, 18.1 design px at its scale; the Stream's is 217)
+gives 75 design px standing against 50 seated.
+
+The cut is the Pond's method with all-new numbers, and two additions the Pond
+did not need: an **off-axis circle for the reel**, which the rod corridor would
+otherwise miss entirely, and a **hard left bound** where the corridor reaches
+past the rod butt into the waders. The arm pivots where the sleeve vanishes
+behind the vest — the same principle as the Pond's forearm behind the knee.
+Recomposite rod → arm → body against the delivered painting: **70px differ by
+more than 10, of 157,559 (0.044%)**, the same order as the Pond's.
+
+`tools/cut-angler-pond.py` is now `tools/cut-angler.py`, taking the pose as an
+argument, with every per-pose number in one `POSES` dict. It still reproduces
+the Pond's committed numbers exactly.
+
+Verified in Chromium at the Stream: correct layers, no failed asset requests,
+the line leaves the rod tip at design **(146.4, 100.9)** against a predicted
+(145, 98), and the arm swings **−5.25° to +6.06°** with the tip-to-line gap
+peaking at **0.37px** — the composition holds with a completely different set of
+numbers from the Pond's.
+
+**One line borrowed from R5:** `#boat` and `#hull-shadow` are hidden in the
+Stream. The angler stands *in* the water there, and a pixel rowboat under a
+standing kid was worse than the alternative. R5 still owns vessels properly.
 
 ### ✅ R3 — the Pond, repainted as three layers (landed and wired 2026-09-01)
 

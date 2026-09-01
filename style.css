@@ -172,6 +172,11 @@ h1 {
    to seat the near bank on y=198. It was playable but it cost the sky and ran
    the art chunkier than the other biomes. Deleting it was R3's done-when
    criterion for this level. */
+/* R4: the Stream angler stands IN the water — waders, no vessel — so the boat
+   and the shadow it casts come off. R5 owns vessels properly; this is the one
+   line R4 needs to stop a pixel rowboat sitting under a standing kid. */
+#scene.loc-stream #boat,
+#scene.loc-stream #hull-shadow { display: none; }
 #scene.loc-stream #bg-far   { background-image: url("assets/background-stream-far.png"); }
 #scene.loc-stream #bg-water { background-image: url("assets/background-stream-water.png"); }
 #scene.loc-stream #bg-fore  { background-image: url("assets/background-stream-fore.png"); }

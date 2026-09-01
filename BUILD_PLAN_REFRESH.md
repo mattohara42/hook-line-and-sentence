@@ -3,8 +3,8 @@
 **Status: active epic, opened 2026-08-31. This is a significant new body of
 work — the largest since the Advanced Progression epic — and it replaces the
 game's entire visual layer. R1 and R2 shipped 2026-08-31, R3 on 2026-09-01;
-**R4 is active** — the Pond angler is finished; the Stream and Ocean costumes
-are what it still needs.**
+**R4 is active** — the Pond and Stream anglers are finished; the Ocean is what
+it still needs.**
 
 Two new documents are the source of truth for it:
 
@@ -291,9 +291,9 @@ level.
 
 ### R4 — The angler: one kid, three costumes, rigged
 
-**In progress. The Pond angler is painted, cut into rod/arm/body, wired and
-verified frame by frame in a browser (2026-09-01). What is left is the Stream
-and Ocean costumes — the same prompt with the clothes swapped.**
+**In progress. The Pond and Stream anglers are painted, cut into rod/arm/body,
+wired and verified frame by frame in a browser (2026-09-01). The Ocean is what
+is left.**
 
 What landed ahead of the art, so the drop is a measurement and not a refactor:
 `CONFIG.rig` is one **pose per location** (`rig.poses`, keyed by fishing spot),
@@ -350,10 +350,12 @@ fighting chair.
 - ~~Cut the arm and make it swing with the rod.~~ ✅ done — and it pivots at the
   *elbow*, not the shoulder, because the angler's upper arm is hidden behind the
   drawn-up knee. Details and the frame-by-frame verification are in `ART.md`.
-- **Still to do: the Stream and Ocean poses.** The done-when asks for all three
-  levels and both still wear the Pond kid via the pose fallback. Each is a
-  generation, and it is Matt's. **Not a recolour** — the Stream kid *stands*, so
-  every cut parameter is measured fresh.
+- ~~The Stream pose.~~ ✅ landed 2026-09-01 — standing in waders and a fly vest,
+  holding Bamboo Beauty, with a landing net. `#boat` is hidden there (one line
+  borrowed from R5; the angler stands *in* the water).
+- **Still to do: the Ocean pose.** The done-when asks for all three levels and
+  the Ocean still wears the Pond kid via the pose fallback. Boat gear and a life
+  vest, in the fighting chair, holding **The Deep Endeavor**.
 - **The rod changes with the level, not just the clothes** (settled 2026-09-01).
   Rods are the progression gate (`shop.rods[].unlocksLocation`), so a pose's
   default rod is that level's gate rod: Pond → Trusty Stick, Stream → **Bamboo
