@@ -394,3 +394,57 @@ test("the ghost-hands keyboard stays exempt from the palette", () => {
   assert.deepEqual([...new Set(scenePalette)], [],
     "CLAUDE.md: the keyboard is off limits — it must use only the frozen --kb-* tokens");
 });
+
+// R6: CONFIG.fish.species is the registry that decides whether a species renders
+// its own art or the tier placeholder, so every entry in it has to be complete —
+// a half-written one renders a fish with no mouth for the line to attach to, or
+// a tail that sweeps about the box's corner. The suite is deliberately written
+// to pass on an EMPTY registry: that is the correct state until a wave lands,
+// and these are the traps set for when one does.
+test("every landed fish species is a well-formed rig", () => {
+  const ids = new Set(fish.map(f => f.id));
+  const species = Object.entries(CONFIG.fish.species);
+  for (const [id, art] of species) {
+    assert.ok(ids.has(id), `${id}: art for a species that isn't in fish.json`);
+    assert.ok(art.w > 0 && art.h > 0, `${id}: no box`);
+    assert.ok(Array.isArray(art.layers) && art.layers.length > 0, `${id}: no layers`);
+    assert.ok(art.layers.some(l => l.id === "body"), `${id}: no body layer`);
+    assert.equal(new Set(art.layers.map(l => l.id)).size, art.layers.length, `${id}: duplicate layer id`);
+    assert.equal(offenders(art.layers, l => !/^[a-z0-9-]+$/.test(l.file ?? "")), "", `${id}: bad layer filename`);
+    // the line attaches at the mouth and the tail swings about the peduncle;
+    // both are measured off the painting, so both must land on the box
+    const on = p => p && p.x >= 0 && p.x <= art.w && p.y >= 0 && p.y <= art.h;
+    assert.ok(on(art.mouth), `${id}: the mouth is off the fish's box`);
+    assert.ok(art.mouth.x < art.w / 2, `${id}: the mouth is not on the leading half — is the art facing right?`);
+    if (art.layers.some(l => l.id === "tail")) {
+      assert.ok(on(art.tail), `${id}: a tail layer with no pivot on the box`);
+      assert.ok(art.tail.x > art.w / 2, `${id}: the tail pivot is not on the trailing half`);
+    }
+  }
+});
+
+// A species' length comes from its RANK, not from its painting — the generator
+// draws every subject to fill its frame, so scaling from the source would make a
+// minnow and a pike the same size (GEMINI_NOTES.md records the same trap for the
+// standing and seated anglers). This is what stops 33 separate generations
+// drifting into 33 separate scales.
+test("a fish's box length is the one its rank calls for", () => {
+  const byId = new Map(fish.map(f => [f.id, f]));
+  for (const [id, art] of Object.entries(CONFIG.fish.species)) {
+    const want = CONFIG.fish.lengthByTier[byId.get(id)?.tier];
+    assert.equal(art.w, want, `${id}: ${art.w}px against the ${byId.get(id)?.tier} length of ${want}px`);
+  }
+  for (const tier of TIERS) {
+    assert.ok(CONFIG.fish.lengthByTier[tier] > 0, `no length for the ${tier} rank`);
+  }
+});
+
+// The placeholder is what every unlanded species renders as, which is most of
+// them for the length of R6 — so it stays well-formed the whole time.
+test("the fish placeholder still has a box and a mouth", () => {
+  const p = CONFIG.fish.placeholder;
+  assert.ok(p.w > 0 && p.h > 0, "the placeholder has no box");
+  assert.ok(p.mouth.x >= 0 && p.mouth.x < p.w / 2, "the placeholder's mouth is not on its leading half");
+  assert.ok(p.mouth.y >= 0 && p.mouth.y <= p.h, "the placeholder's mouth is off its box");
+  assert.ok(CONFIG.fish.swim.tailDeg > 0 && CONFIG.fish.swim.tailPeriodMs > 0, "the tail doesn't sweep");
+});

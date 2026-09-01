@@ -794,11 +794,56 @@ function lineOff() {
   drawLine();
 }
 
+// ---- R6: the fish is a rig too, when it has the art for it ----
+// CONFIG.fish.species is the registry and the only switch: a species listed
+// there renders as cut layers inside #fish, a species absent from it renders
+// the tier placeholder. That is what makes a half-finished roster playable
+// rather than broken, and it is the same arrangement CONFIG.rig.poses uses for
+// the angler.
+const fishArt = (f) => (f ? CONFIG.fish.species[f.id] : null) ?? null;
+// Where the mouth and the middle are. The placeholder's numbers are the ones
+// drawFish() and pullFishOneWord() used to hardcode, so a species without art
+// behaves exactly as it did — including the Ocean muskie, whose hero sprite is
+// 96px wide by a CSS rule and still measures its mouth from this box, as it
+// always has. That inconsistency leaves with its own wave.
+const fishBox = () => fishArt(fish) ?? CONFIG.fish.placeholder;
+
+function renderFish(f) {
+  const art = fishArt(f);
+  el.fish.querySelectorAll(".fish-layer").forEach(n => n.remove());
+  el.fish.classList.toggle("rigged", !!art);
+  if (!art) {
+    // let the stylesheet own the box again — the muskie's is wider than the
+    // placeholder's, and an inline width would quietly shrink it
+    el.fish.style.removeProperty("width");
+    el.fish.style.removeProperty("height");
+    return;
+  }
+  el.fish.style.width = art.w + "px";
+  el.fish.style.height = art.h + "px";
+  for (const L of art.layers) {
+    const d = document.createElement("div");
+    d.className = "fish-layer";
+    d.dataset.id = L.id;
+    d.style.backgroundImage = `url("assets/${L.file}.png")`;
+    if (L.id === "tail") {
+      // the pivot is the peduncle the cut was made at, so the tail swings from
+      // where it actually joins the body rather than from the box's corner
+      d.style.transformOrigin = `${art.tail.x}px ${art.tail.y}px`;
+      d.style.setProperty("--tail-deg", CONFIG.fish.swim.tailDeg + "deg");
+      // `alternate` runs there-and-back, so one leg is half a cycle
+      d.style.setProperty("--tail-ms", CONFIG.fish.swim.tailPeriodMs / 2 + "ms");
+    }
+    el.fish.appendChild(d);
+  }
+}
+
 // the fish's mouth (left edge; the art faces left) is where the line attaches
 function drawFish(x, y) {
   el.fish.style.left = x + "px";
   el.fish.style.top = y + "px";
-  lineEnd = { x: x + 6, y: y + 20 };
+  const m = fishBox().mouth;
+  lineEnd = { x: x + m.x, y: y + m.y };
   if (REDUCE_MOTION) drawLine();
 }
 
@@ -837,6 +882,7 @@ function startCast() {
   el.fish.style.transform = "";
   el.fish.style.removeProperty("--fish-color");
   el.fish.style.removeProperty("background-image");   // clear a junk sprite swap
+  renderFish(null);                                   // R6: and any species layers with it
   junk = null;
   setStatus(pick(PUNS.cast));
   renderWord();
@@ -899,6 +945,7 @@ function bite() {
   }
   wordsLeft = wordsToLand;
   el.fish.classList.add("hooked");
+  renderFish(fish);                    // R6: species art if it has landed, the placeholder if not
   if (junk) {
     el.fish.style.backgroundImage = `url("assets/${junk.file}.png")`;
   } else {
@@ -930,8 +977,9 @@ function pullFishOneWord() {
   setFishTarget();
   rodTug(A.tug.wordImpulse);           // R1: the rod bends to the pull
   if (REDUCE_MOTION) drawFish(fishTX, fishTY);
-  burst(parseInt(el.fish.style.left) + 28, 258, 4);
-  ripple(parseInt(el.fish.style.left) + 28, 262);
+  const mid = parseInt(el.fish.style.left) + fishBox().w / 2;   // R6: a species' box is its own
+  burst(mid, 258, 4);
+  ripple(mid, 262);
   sfxWordTick();
   el.word.classList.remove("pop"); void el.word.offsetWidth; el.word.classList.add("pop");
 }
@@ -1602,6 +1650,15 @@ function renderCollection() {
       const shape = document.createElement("div");
       shape.className = "cfish";
       if (count) shape.style.setProperty("--fish-color", f.color);
+      // R6: a caught species with its own art shows the real body sprite here —
+      // this is the half of "reads as 33 different fish" that isn't the scene.
+      // An uncaught one keeps the tinted blob however much art exists: the
+      // silhouette is the tease, and the grid would spoil every fish otherwise.
+      const body = count ? CONFIG.fish.species[f.id]?.layers.find(L => L.id === "body") : null;
+      if (body) {
+        shape.classList.add("art");
+        shape.style.backgroundImage = `url("assets/${body.file}.png")`;
+      }
       const name = document.createElement("div");
       name.className = "cname";
       name.textContent = count ? f.name : "???";
