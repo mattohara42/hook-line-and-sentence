@@ -697,6 +697,21 @@ Size:     1584×672. Delivered on flat magenta above the line; the alpha is a cu
 Wired in: not yet — the middle plane, #bg-water for .loc-ocean
 ```
 
+**✅ Landed 2026-09-01, first attempt.** **The strongest depth gradient of any
+layer in the epic** — a surface-to-depth luminance drop of **131.8**, against the
+Stream water's 112, the Pond water's 83 and the Ocean far layer's 74. Depth
+`#2f5966` against a `#375c58` target; surface `#c5d6cd` is the light-catching
+crest band the prompt asked for. Only **0.16%** of the water goes past the
+`#33291f` floor.
+
+Magenta: 6-row transition, pink gone by 3 rows below the cut, **zero** after it.
+The waterline landed at 45.68% and did not matter — the clean 362-row band was
+rescaled into the 296 rows below layer 1's horizon at row 376.
+
+Verified: RGBA 1584×672, fully transparent above row 376, fully opaque below, no
+magenta anywhere, composited against layer 1 at game scale before committing.
+
+
 ```
 ART NEEDED: Ocean background, layer 3 of 3 — foreground detail
 Prompt:             Soft painterly illustration in the style of Studio Ghibli background
