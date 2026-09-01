@@ -260,44 +260,68 @@ Size:     1024×1024 (1:1), delivered on flat magenta.
 Wired in: not yet — CONFIG.rig.poses.pond.layers
 ```
 
-**✅ Delivered 2026-09-01, third attempt, accepted. Waiting on the PNG** — the
-JPEG the chat carries would bake compression into the sprite.
+**✅ Delivered, cut and wired 2026-09-01, third attempt.** Cut from the JPEG the
+chat carried rather than waiting for a PNG, because the codec turned out not to
+be the limiting factor: a deliberately brutal q30 re-encode of the delivered
+file differs from it by a mean of **1.72 / 255** at sprite scale, where the art
+renders at about an eighth of its canvas. The delivered file is around q88.
 
 Measured on delivery: canvas exactly 1024×1024 at 1:1; backdrop residue in the
 subject is **rim only** (7,088px at 0–2 from the edge, 3 at 6–8, none past 8,
-and no enclosed pocket); darks sit above the umber floor at the 1st percentile
-(p1 luminance 53 against a floor of 43).
+and no enclosed pocket); darks sit above the umber floor at the 1st percentile.
+One oddity worth recording: the backdrop arrived at key `(248,87,243)` with a
+blue stdev of **14.6**, where the two earlier generations were under 2.5 — the
+first time the magenta has not been dead flat. It floods fine at tolerance 90.
 
-One thing worth recording about the backdrop: it came back at key
-`(248,88,242)` with a blue stdev of **14.6**, where the two previous
-generations were under 2.5. First time the magenta has arrived with a faint
-gradient rather than dead flat. It floods fine at tolerance 70 — but do not
-assume flatness, measure it.
+**The cut is scripted: `tools/cut-angler-pond.py`.** Re-run it against any
+better source and the layers regenerate. It is an art-pipeline tool, not a build
+step — nothing loads it at runtime.
 
-**The salvage list, before anything is wired:**
+**What came out, and the two things the art decided for us:**
 
-1. **The rod runs off the top-right corner instead of tapering to a tip** —
-   subject pixels sit on the top edge at x 1003–1023 and the right edge at
-   y 0–7. Paint the last stretch down to a point inside the canvas. This is not
-   the reroll rule bending: a straight tapering shaft is featureless content
-   with no recognisable form to violate, and rerolling would gamble the grip
-   (which took three attempts) to fix a tip.
-2. **Cut the arm at the shoulder**, hand included, filling the hole behind it
-   with the shirt's own tone.
-3. **Cut the rod**, filling the stretch the hand hides — again a straight taper.
-   Also **extend its butt downward**: the delivered butt vanishes behind the
-   knee, and since the rod rotates about the grip, that end sweeps ~3px at
-   screen scale and would otherwise show a blunt cut edge.
-4. Composite all three **at game scale** before touching `config.js` — the step
-   G1 skipped, and why it shipped a hat sitting on the hair like a sticker.
-5. Measure the pose's box, grip and tip off the real canvas and write them into
-   `CONFIG.rig.poses.pond`. The plumbing landed ahead of the art (#85), so this
-   is numbers, not a refactor.
+- **The rod paints BEHIND the body.** The hand is drawn in front of the pole and
+  the butt tucks behind the knee, so `layers` is `[rod, body]`. Compositing them
+  in that order reproduces the delivered painting **pixel for pixel** (mean diff
+  0.00, max 0), which is the check that the split is lossless.
+- **There is no hat layer.** The angler is bare-headed on purpose so R7 can draw
+  hats against this pose; the old pixel `hat-straw` would not match it.
+
+The rod's occluded stretch — where the hand covers it — is synthesised from the
+cross-section just above the hand. It is never seen, because the rod paints
+behind. Its tip was tapered to a point at source y=60 rather than left running
+off the top-right corner; that dropped 2,567px in a bbox of x 896–1023, y 0–112,
+which is the clipped tip and nothing else.
+
+**The numbers, measured off the canvas rather than tuned in the browser:** both
+layers share one 844×911 canvas at rig `x 39, y −20, w 48, h 52`, with
+`rodPivot (65, 5)` and `lineOrigin (87, −20)` — 48.7° apart against the 48.0°
+the rod is actually painted at. Verified in Chromium past the profile picker:
+the line leaves the rod tip at design **(107, 148)**, exactly where those numbers
+predict, and reaches the bobber.
+
+**Two data tests had to change**, and both were encoding assumptions from the G1
+art rather than real invariants:
+
+- *body paints first* is not a rule — paint order is a property of the art, and
+  here the rod is behind. The test now requires a body layer and a rod layer to
+  exist, without fixing their order.
+- *the grip and the tip are corners of the rod's box* was true when the rod had
+  its own tight canvas running corner to corner. Under the same-canvas rule the
+  rod's box is the whole pose and the rod crosses it diagonally, so the test is
+  now containment plus a direction check (tip up and to the right of the grip),
+  which keeps the original intent: an R7 rod swapped in with a different box must
+  move these with it, or the line detaches from a rod that is visibly swinging.
+
+**Still open for R4:** the **arm layer**. The done-when asks that casting move
+the arm and the rod rather than the whole kid; right now only the rod swings,
+about the grip, which is correct as far as it goes. Cutting the arm at the
+shoulder is one more local cut of the same painting — no generation needed — and
+it was deliberately left until the rest was on screen and judged.
 
 The far arm came back resting by the hip rather than on the knee. That is a
 harmless deviation: it stays with the body, and — the part that matters for the
-rig — it is **not** on the rod, so swinging the arm and rod together cannot tear
-a second hand off.
+arm cut still to come — it is **not** on the rod, so swinging the arm and the rod
+together cannot tear a second hand off.
 
 ### ✅ R3 — the Pond, repainted as three layers (landed and wired 2026-09-01)
 
