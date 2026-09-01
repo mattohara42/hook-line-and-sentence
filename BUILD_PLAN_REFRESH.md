@@ -350,9 +350,17 @@ fighting chair.
 - ~~Cut the arm and make it swing with the rod.~~ ✅ done — and it pivots at the
   *elbow*, not the shoulder, because the angler's upper arm is hidden behind the
   drawn-up knee. Details and the frame-by-frame verification are in `ART.md`.
-- **Still to do: the Stream and Ocean costumes.** The done-when asks for all
-  three levels and both still wear the Pond kid via the pose fallback. Same
-  prompt, clothes swapped — so this is a generation, and it is Matt's.
+- **Still to do: the Stream and Ocean poses.** The done-when asks for all three
+  levels and both still wear the Pond kid via the pose fallback. Each is a
+  generation, and it is Matt's. **Not a recolour** — the Stream kid *stands*, so
+  every cut parameter is measured fresh.
+- **The rod changes with the level, not just the clothes** (settled 2026-09-01).
+  Rods are the progression gate (`shop.rods[].unlocksLocation`), so a pose's
+  default rod is that level's gate rod: Pond → Trusty Stick, Stream → **Bamboo
+  Beauty** (split cane — a fly rod, as its name always implied), Ocean → **The
+  Deep Endeavor**. Files are `rod-<shop id>-<pose>.png`, which starts R7's
+  per-item-per-pose grid with the three that matter already filled in instead of
+  drawing one generic pole three times and redoing it.
 - **Done when:** at 1x, in all three levels, the rod looks held and the costume
   suits the water; casting (R1) moves the arm and rod, not the whole kid.
 
@@ -395,7 +403,11 @@ mostly content.
 
 - One PNG per gear item **per pose** — a hat drawn for the seated pose won't sit
   on the standing one. Start each item at the Pond pose; add the other two once
-  it is proven.
+  it is proven. **R4 already delivers the diagonal of that grid**: each pose is
+  drawn holding its own gate rod, so `stick`/Pond, `bamboo`/Stream and
+  `deepsea`/Ocean exist before R7 starts.
+- `shop.rods` needs a `file` naming convention of `rod-<id>-<pose>`, which R4
+  established.
 - `config.js`: `shop.hats`, and `file` on `shop.rods` the way boats already have.
 - **Done when:** buying and equipping a hat changes the angler everywhere and
   persists, and the rod you bought is the rod in your hand.

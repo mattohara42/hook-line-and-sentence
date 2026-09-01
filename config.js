@@ -157,8 +157,14 @@ export const CONFIG = {
         // rod → arm → body. The hand is painted in front of the pole, and the
         // forearm's cut end tucks behind the knee, which the body carries — so
         // the arm sits between them.
+        //
+        // Rod files are named rod-<shop id>-<pose>, because a pose's default rod
+        // is that level's GATE rod (shop.rods[].unlocksLocation), not one
+        // generic pole: the Pond's is the free `stick`, and you cannot reach the
+        // Stream without buying `bamboo` or the Ocean without `deepsea`. R7 then
+        // fills in the rest of the grid, one PNG per owned rod per pose.
         layers: [
-          { id: "rod",  file: "rod-basic-pond",   x: 39, y: -44, w: 70, h: 76 },
+          { id: "rod",  file: "rod-stick-pond",   x: 39, y: -44, w: 70, h: 76 },
           { id: "arm",  file: "angler-pond-arm",  x: 39, y: -44, w: 70, h: 76 },
           { id: "body", file: "angler-pond-body", x: 39, y: -44, w: 70, h: 76 },
         ],
