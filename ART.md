@@ -376,13 +376,95 @@ pivoting inside a frozen fist — more correct, and better in motion, but nobody
 will point at it. It is one number if it ever wants more.
 
 **Still open for R4:** the **Stream and Ocean costumes**. The done-when asks for
-all three levels, and both still wear the Pond kid via the pose fallback. They
-are this same prompt with the clothes swapped.
+all three levels, and both still wear the Pond kid via the pose fallback. The
+Stream is requested below; the Ocean follows once it is cut and judged.
 
 The far arm came back resting by the hip rather than on the knee. That is a
 harmless deviation: it stays with the body, and — the part that matters for the
 arm cut still to come — it is **not** on the rod, so swinging the arm and the rod
 together cannot tear a second hand off.
+
+### R4 — the Stream angler, standing in waders (open — next to generate)
+
+**Not the Pond prompt with a recolour.** `ART_DIRECTION.md` puts the Stream
+angler *standing in the water* rather than seated in a boat, so it is a
+different pose and every cut parameter in `tools/cut-angler-pond.py` — rod axis,
+arm skeleton, pivots, scale — is measured fresh. Budget it as a new pose, not a
+variant.
+
+**The gear does not change, the costume does.** Same simple wooden pole. R7's
+model is one PNG per gear item *per pose*, so the rod a kid bought should be the
+rod in their hand in every level; only the clothes follow the water.
+
+**One thing the Pond prompt did not need: ask for the arm held clear of the
+body.** The Pond angler's upper arm and elbow happened to hide behind the
+drawn-up knee, which is what made that cut easy. A standing figure has no such
+cover, and the sleeve would otherwise sit against the torso in the same colour
+with no contour between them — the exact problem that made a shoulder cut look
+impossible there. Asking for a visible gap of backdrop along the whole limb
+costs nothing artistically (it is a natural casting stance) and turns the arm
+cut into an isolated silhouette against magenta.
+
+**No water in the picture.** The game's own water layers and `#surface` cut the
+angler at design y=198; anything painted here would double up.
+
+```
+ART NEEDED: the Stream angler, standing in waders — one image, cut locally
+Prompt:   Soft painterly storybook character illustration in the style of
+          Studio Ghibli, warm muted color palette, gentle diffused lighting,
+          thin warm brown outlines rather than black, cozy and inviting mood,
+          no harsh shadows, no neon or saturated colors. Soft two-tone shading
+          with the edges between tones blended, and soft brush texture visible
+          inside the larger shapes. NOT pixel art, NOT flat vector art with even
+          line weight, NOT thick black cartoon linework, NOT a glossy 3D render.
+          A school-age child of about eight, seen from the side, facing right,
+          STANDING upright and full length with weight on both feet, calm and
+          contented. Slim school-age proportions with a visible neck, long limbs
+          and slender fingers — NOT a toddler, NOT a baby. Bare head, short
+          warm-brown hair, warm tan skin. Stream fishing clothes: warm sand-tan
+          chest waders over a cream long-sleeved shirt, and a soft terracotta
+          fly-fishing vest with small pockets.
+          The child is HOLDING A FISHING ROD: a slender tapered pole of warm
+          brown wood with a darker wrapped grip at its thick end. The near arm
+          is bent at the elbow with the forearm angled up and forward, and the
+          near hand holds the rod's grip at about chin height. From that hand
+          the pole runs diagonally up and to the right, passing well clear of
+          the child's head, its thin tip reaching the upper-right corner of the
+          canvas.
+          IMPORTANT: the whole near arm must be held CLEAR OF THE BODY, with a
+          visible gap of background between the arm and the chest along its
+          entire length — the shoulder, upper arm, elbow and forearm all fully
+          visible and not overlapping the torso. The far arm hangs down at the
+          child's other side.
+          The hand must read as genuinely gripping the pole, seen from the side:
+          the fingers wrap around the grip and the separate fingers are visible
+          crossing in FRONT of the pole, with the thumb behind or alongside
+          them. NOT a pinch, NOT fingertips touching, NOT an open or reaching
+          hand.
+          No fishing line, no hook, no reel, no fish, no hat, no water, no
+          riverbank, no scenery, no other characters.
+          The child's feet are near the bottom edge of the canvas and the child
+          stands toward the left, leaving the upper-right clear for the rod.
+          Everything that is not the child and the rod must be flat, solid,
+          uniform magenta (#FF00FF): a plain backdrop colour, not a
+          checkerboard, not a gradient, not transparency. No magenta anywhere on
+          the child or the rod.
+          No text, no UI, no watermark, no baked-in drop shadow.
+          The image is 1024 by 1024 pixels, aspect ratio 1:1. Output as PNG.
+Save as:  assets/angler-stream.png   (the source painting — the cut layers are
+          angler-stream-body.png, angler-stream-arm.png, rod-basic-stream.png)
+Size:     1024×1024 (1:1), delivered on flat magenta.
+Wired in: not yet — a new CONFIG.rig.poses.stream block. Until it exists the
+          Stream wears the Pond kid through the pose fallback, which is the
+          wrong shirt rather than no angler.
+```
+
+**When it lands**, the checks are the Pond's: backdrop bled into the subject
+first (a reroll, and nothing downstream fixes it), then canvas and aspect, then
+palette against `ART_DIRECTION.md`'s table. Do not reroll for placement inside
+the canvas — every piece shares it, so a shared offset is absorbed once when the
+pose's box is measured. **Do not reroll for a rod that runs off the corner
+either**: the cut tool extends the shaft to a length set in design px.
 
 ### ✅ R3 — the Pond, repainted as three layers (landed and wired 2026-09-01)
 
