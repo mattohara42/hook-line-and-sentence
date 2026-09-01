@@ -19,13 +19,6 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**R4's code half is in and the milestone is now waiting on art.** `CONFIG.rig`
-is one pose per location (`rig.poses`), `applyScene()` re-renders the rig, and a
-location with no pose of its own falls back to the Pond's — which is all three
-levels until the costumes land. Verified in Chromium across all three spots: the
-right stack rebuilds on every switch, the rod tip is unmoved to 0.2px, no
-console errors.
-
 **The Pond angler is painted, cut, wired and on screen.** It took three
 generations to learn that a hand gripping *nothing* never comes back gripping —
 so the pose is one painting cut locally into layers, not three generations. The

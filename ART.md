@@ -318,6 +318,11 @@ about the grip, which is correct as far as it goes. Cutting the arm at the
 shoulder is one more local cut of the same painting — no generation needed — and
 it was deliberately left until the rest was on screen and judged.
 
+The far arm came back resting by the hip rather than on the knee. That is a
+harmless deviation: it stays with the body, and — the part that matters for the
+arm cut still to come — it is **not** on the rod, so swinging the arm and the rod
+together cannot tear a second hand off.
+
 ### ✅ R3 — the Pond, repainted as three layers (landed and wired 2026-09-01)
 
 **First art request of the refresh.** R1 and R2 were code-only; this is what
