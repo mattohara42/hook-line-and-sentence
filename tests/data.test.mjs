@@ -270,7 +270,12 @@ test("every CONFIG.rig pose is a well-formed paint stack", () => {
   for (const [name, pose] of poses) {
     const layers = pose.layers;
     assert.ok(Array.isArray(layers) && layers.length > 0, `${name}: no layers`);
-    assert.equal(layers[0].id, "body", `${name}: body paints first — everything else sits on it`);
+    // Paint order is a property of the art, not a rule: R4's angler is drawn
+    // with the hand in front of the pole, so the rod paints BEHIND the body.
+    // What must hold is that both pieces exist — a pose missing either renders
+    // a kid with no rod, or a rod with no kid, and neither throws.
+    assert.ok(layers.some(l => l.id === "body"), `${name}: no body layer`);
+    assert.ok(layers.some(l => l.id === "rod"), `${name}: no rod layer`);
     assert.equal(new Set(layers.map(l => l.id)).size, layers.length, `${name}: duplicate layer id`);
     assert.equal(offenders(layers, l => !/^[a-z0-9-]+$/.test(l.file ?? "")), "", `${name}: bad layer filename`);
     assert.equal(offenders(layers, l => !(l.w > 0 && l.h > 0)), "", `${name}: layer with no size`);
@@ -299,12 +304,21 @@ test("the rod's pivot and the line's origin sit on the rod layer's box", () => {
   for (const [name, pose] of Object.entries(CONFIG.rig.poses)) {
     const rod = pose.layers.find(l => l.id === "rod");
     assert.ok(rod, `${name}: no rod layer to swing`);
-    // the grip is the bottom-left of the rod sprite (it runs corner to corner)
-    assert.deepEqual(pose.rodPivot, { x: rod.x, y: rod.y + rod.h },
-      `${name}: rodPivot is not the rod's grip`);
-    // …and the tip is the top-right of the same box
-    assert.deepEqual(pose.lineOrigin, { x: rod.x + rod.w, y: rod.y },
-      `${name}: lineOrigin is not the rod's tip`);
+    // R4 loosened this from an equality to a containment, because the corners
+    // stopped meaning anything. The G1 rod had its own tight canvas running
+    // grip-corner to tip-corner, so the grip and tip WERE box corners. Under
+    // the same-canvas rule the rod shares the body's canvas, so its box is the
+    // whole pose and the rod crosses it diagonally somewhere in the middle.
+    // The intent is unchanged: a gear-shop rod (R7) swapped in with a different
+    // box must move these with it, or the line detaches from a rod that is
+    // visibly swinging.
+    for (const [what, p] of [["rodPivot", pose.rodPivot], ["lineOrigin", pose.lineOrigin]]) {
+      assert.ok(p.x >= rod.x && p.x <= rod.x + rod.w && p.y >= rod.y && p.y <= rod.y + rod.h,
+        `${name}: ${what} is outside the rod layer's box`);
+    }
+    // and the rod points up and to the right, which is what the cast assumes
+    assert.ok(pose.lineOrigin.x > pose.rodPivot.x, `${name}: the rod tip is not right of the grip`);
+    assert.ok(pose.lineOrigin.y < pose.rodPivot.y, `${name}: the rod tip is not above the grip`);
   }
 });
 

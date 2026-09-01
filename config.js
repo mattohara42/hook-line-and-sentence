@@ -141,20 +141,31 @@ export const CONFIG = {
     // invisible angler in two of the three levels — worse than the wrong shirt.
     defaultPose: "pond",
     poses: {
-      // Still the G1 pixel set. Offsets were tuned against that art in the
-      // browser beside the old kid.png; R4 replaces all three files, and the
-      // numbers get re-measured off the new canvas rather than nudged.
+      // R4's painted angler. Both layers are cuts of ONE delivered painting
+      // (assets/angler-pond.png), so they share one canvas and one box and the
+      // offsets are zero by construction — change the box and both move
+      // together, which is the whole point of the same-canvas rule.
+      //
+      // The rod paints BEHIND the body because that is how the art is drawn:
+      // the hand is painted in front of the pole, and the butt tucks behind the
+      // knee. That is also what makes a swapped shop rod (R7) look held without
+      // a separate fingers overlay.
+      //
+      // No hat layer: the angler is bare-headed on purpose so R7 can draw hats
+      // against this pose. The old pixel hat-straw would not match it.
       pond: {
         layers: [
-          { id: "body", file: "body-kid",  x: 43, y: -18, w: 33, h: 50 },
-          { id: "hat",  file: "hat-straw", x: 39, y: -25, w: 40, h: 22 },
-          { id: "rod",  file: "rod-basic", x: 58, y: -28, w: 46, h: 46 },
+          { id: "rod",  file: "rod-basic-pond",  x: 39, y: -20, w: 48, h: 52 },
+          { id: "body", file: "angler-pond-body", x: 39, y: -20, w: 48, h: 52 },
         ],
-        // the grip: the bottom-left of the rod's box (the sprite runs corner to
-        // corner), and the tip: the top-right of the same box. Rig-relative;
-        // app.js adds #rig's own offset to get scene coords.
-        rodPivot:   { x: 58, y:  18 },
-        lineOrigin: { x: 104, y: -28 },
+        // Measured off the delivered canvas, not tuned in the browser: the grip
+        // is where the hand closes on the pole and the tip is the rod's point,
+        // both carried through the same crop-and-scale as the art. They are no
+        // longer box corners — the rod shares the body's canvas, so its box is
+        // the whole pose. The line between them sits at 48.7 deg, against the
+        // 48.0 deg the rod is actually painted at.
+        rodPivot:   { x: 65, y:   5 },
+        lineOrigin: { x: 87, y: -20 },
       },
     },
   },

@@ -3,8 +3,8 @@
 **Status: active epic, opened 2026-08-31. This is a significant new body of
 work — the largest since the Advanced Progression epic — and it replaces the
 game's entire visual layer. R1 and R2 shipped 2026-08-31, R3 on 2026-09-01;
-**R4 is active** — its code half has landed and its first three prompts are
-waiting on Matt.**
+**R4 is active** — the Pond angler is painted, cut and wired; the arm layer
+is what it still needs.**
 
 Two new documents are the source of truth for it:
 
@@ -291,8 +291,8 @@ level.
 
 ### R4 — The angler: one kid, three costumes, rigged
 
-**In progress. The code half has landed and the Pond's three prompts are open in
-`ART.md` — the milestone is now waiting on Matt to generate.**
+**In progress. The Pond angler is painted, cut, wired and verified in a browser
+(2026-09-01). One thing left before the done-when is met: the arm layer.**
 
 What landed ahead of the art, so the drop is a measurement and not a refactor:
 `CONFIG.rig` is one **pose per location** (`rig.poses`, keyed by fishing spot),
@@ -343,11 +343,15 @@ fighting chair.
   fingers-only overlay over the rod. It is what makes a swappable rod look held.
 - The favorite-color accent tint stays — a filter on one region, no extra art.
 - ~~`CONFIG.rig` grows a per-pose block; `lineOrigin` is set per pose.~~ ✅ done.
-- **Still to do once the art lands:** cut the near arm out of generation 1 at
-  the shoulder, composite all four layers at game scale *before* touching
-  `config.js`, measure the pose's box/grip/tip off the real canvas, then make
-  the arm swing with the rod — the "moves the arm, not the whole kid" half of
-  the done-when, deliberately left until there is an arm layer to look at.
+- ~~Composite at game scale before touching `config.js`; measure the pose's
+  box/grip/tip off the real canvas.~~ ✅ done — the numbers and the checks are
+  in `ART.md`.
+- **Still to do:** cut the arm at the shoulder and make it swing with the rod —
+  the "moves the arm, not the whole kid" half of the done-when. One more local
+  cut of the same painting, no generation needed, deliberately left until the
+  rest was on screen and judged.
+- **Then the Stream and the Ocean**, which are the same prompt with the costume
+  swapped.
 - **Done when:** at 1x, in all three levels, the rod looks held and the costume
   suits the water; casting (R1) moves the arm and rod, not the whole kid.
 
