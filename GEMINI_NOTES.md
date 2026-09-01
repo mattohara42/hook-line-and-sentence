@@ -238,6 +238,19 @@ prompt drops from three insistent statements of an exact percentage to a single
 easy floor ("water should fill at least the bottom third"), and the reclaimed
 weight goes to the painterly treatment, which **cannot** be salvaged afterwards.
 
+**Pick foreground subjects that are naturally small.** A near plane has to hug
+the bottom edge and leave the middle of the frame clear, and the reliable way to
+get that is to name objects that are *inherently* low — lily pads, reeds, mossy
+rocks, ferns, a fallen log. Then "hug the bottom edge" agrees with the subject
+instead of fighting it, and it worked first time on both the Pond and the
+Stream. Name a subject with no small version and the adjectives lose: the
+Ocean's foreground asked for "the near crest of a swell **breaking**… close to
+the viewer" and got exactly that — a breaking wave is big by definition, and it
+covered **42.9%** of the box where the angler renders, against 0.2% and 1.6% for
+the other two levels. **The subject carries more weight than any qualifier
+attached to it**, which is the same lesson as the compositional prior, one level
+down: choose what you are asking for, not just how you describe it.
+
 **Style is the thing to spend on**, because a style miss is always a reroll.
 Naming the medium ("painted by hand in soft gouache and watercolor, visible
 brushwork, tonal variation inside every shape") and explicitly naming the

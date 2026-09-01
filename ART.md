@@ -724,21 +724,24 @@ Prompt:             Soft painterly illustration in the style of Studio Ghibli ba
           brush leaves them; never thick, uniform or inked. This must NOT look
           like flat vector art, a cartoon, or a clean digital illustration with
           even line weight.
-          Foreground open-water detail, framing an empty center. Along the very
-          bottom-left corner and the very bottom-right corner of the canvas:
-          the near crest of a swell breaking into soft pale foam and spray,
-          close to the viewer, and on one side only, a weathered wooden channel
-          buoy leaning in the water with a little seaweed and barnacle growth
-          at its waterline. These details cling to the left and right edges
-          like a framing vignette and rise only a little way up from the bottom
-          edge. The entire center of the canvas, and the whole middle of the
+          Foreground open-water detail, framing an empty center, on a calm
+          day. Along the very bottom-left corner and the very bottom-right
+          corner of the canvas: low drifting patches of pale sea foam and
+          scattered bubbles lying flat on the water close to the viewer, and on
+          one side only, the top of a small weathered wooden channel buoy
+          sitting low in the water with a little seaweed and barnacle growth at
+          its waterline. Everything here is low, flat and calm. There is NO
+          breaking wave, NO curling crest, NO tall spray and NO whitewater —
+          this is a quiet sea, not a rough one. These details hug the very
+          bottom edge of the canvas and must all stay within the bottom quarter
+          of the image, never rising into the middle of it. The entire center of the canvas, and the whole middle of the
           bottom edge, must be completely empty backdrop with nothing painted
           in it at all. Everything that is not one of those corner details must
           be filled with flat, solid, uniform magenta (#FF00FF) — a plain
           backdrop color, one single unvarying color, not a checkerboard, not a
           gradient, not transparency. No magenta, pink or purple anywhere in
-          the foam, spray or buoy. The image is 1584 by 672 pixels, aspect
-          ratio 2.36:1. Output as PNG.
+          the foam or buoy. The image is 1584 by 672 pixels, aspect ratio
+          2.36:1. Output as PNG.
 Save as:  assets/background-ocean-fore.png
 Size:     1584×672. Delivered on flat magenta; alpha keyed locally
 Wired in: not yet — the near plane, #bg-fore for .loc-ocean. Nothing may land
@@ -746,6 +749,35 @@ Wired in: not yet — the near plane, #bg-fore for .loc-ocean. Nothing may land
           Whaler with a stern fighting chair in this level — a bigger hull than
           the Pond's rowboat, so the empty center matters more here, not less
 ```
+
+**⚠️ Attempt 1 (2026-09-01) — rerolled, and the prompt above is fixed.** It came
+back as big curling Hokusai-style breakers with heavy spray. Two problems, one
+of them fatal:
+
+| | Pond fore | Stream fore | Ocean fore, attempt 1 |
+|---|---|---|---|
+| painted inside the **rig's box** | 0.2% | 1.6% | **42.9%** |
+| painted in the bottom-center third | 0.0% | 6.5% | 1.8% ✅ |
+| total coverage | 9.5% | 20.3% | 19.0% ✅ |
+
+**42.9% of the rig's box was behind a wave** — and R5 puts a Boston Whaler
+there, a bigger hull than the Pond's rowboat, so the real cost is worse than
+that. The keep-out and the coverage were both fine; the problem was purely
+*height*, with detail reaching 36.5% down where the waterline is at 55.95%.
+
+Tonally it was wrong too: layers 1 and 2 are "a bright calm day" with long low
+swells, and these were breakers. Different weather in the same scene, and
+`ART_DIRECTION.md`'s mood is cozy, not perilous.
+
+**The cause was the subject, not the adjectives** — see `GEMINI_NOTES.md`, *pick
+foreground subjects that are naturally small*. "The near crest of a swell
+**breaking**… **close to the viewer**" has no small version; a breaking wave is
+big by definition. The Pond and Stream foregrounds worked because lily pads,
+reeds, rocks and ferns are *inherently* low objects, so "hug the bottom edge"
+agreed with the subject instead of fighting it. The rewrite swaps the breaking
+crest for **flat drifting foam patches**, adds an explicit "NO breaking wave, NO
+curling crest, NO tall spray", and caps the height at the bottom quarter.
+
 
 **When these land:** key and register against layer 1, composite all three at
 game scale, point `.loc-ocean` at the three `#bg-*` planes, **delete the
