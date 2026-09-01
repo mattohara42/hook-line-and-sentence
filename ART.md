@@ -123,6 +123,17 @@ this is the rule that makes layered characters and fish work at all:
 A piece that doesn't fit is a **reroll, not an offset tweak**. Tuning offsets at
 4x zoom is exactly how G1 shipped something that looked wrong at 1x.
 
+**Rod files are named `rod-<shop id>-<pose>.png`, and a pose's default rod is
+that level's *gate* rod.** Rods are not cosmetics — `shop.rods[].unlocksLocation`
+makes them the progression gate, so you cannot reach the Stream without buying
+**Bamboo Beauty** or the Ocean without **The Deep Endeavor**. The rod a kid is
+holding in a given level is therefore that gate rod or better (a kid can
+re-equip a cheaper one they own, but it costs them luck, so it is the exception).
+Drawing one generic pole for every pose would mean drawing the wrong rod twice
+and redoing it in R7; drawing each pose's gate rod starts R7's per-item-per-pose
+grid with the three that matter already filled in. Pond → `stick`, Stream →
+`bamboo`, Ocean → `deepsea`.
+
 **Characters do not get the background style block.** `ART_DIRECTION.md` says
 sprites take the palette and edge treatment of the backgrounds *"without
 attempting full painterly texture on moving parts"*, so the gouache /
@@ -255,7 +266,7 @@ Prompt:   Soft painterly storybook character illustration in the style of
           No text, no UI, no watermark, no baked-in drop shadow.
           The image is 1024 by 1024 pixels, aspect ratio 1:1. Output as PNG.
 Save as:  assets/angler-pond.png   (the source painting — the cut layers are
-          angler-pond-body.png, angler-pond-arm.png and rod-basic-pond.png)
+          angler-pond-body.png, angler-pond-arm.png and rod-stick-pond.png)
 Size:     1024×1024 (1:1), delivered on flat magenta.
 Wired in: not yet — CONFIG.rig.poses.pond.layers
 ```
@@ -392,9 +403,20 @@ different pose and every cut parameter in `tools/cut-angler-pond.py` — rod axi
 arm skeleton, pivots, scale — is measured fresh. Budget it as a new pose, not a
 variant.
 
-**The gear does not change, the costume does.** Same simple wooden pole. R7's
-model is one PNG per gear item *per pose*, so the rod a kid bought should be the
-rod in their hand in every level; only the clothes follow the water.
+**The rod changes too, and it is Bamboo Beauty.** An earlier draft of this
+request said the gear stays the same and only the costume follows the water.
+That was wrong, and the rod ladder is why: `shop.rods[].unlocksLocation` makes
+rods the **progression gate**, so no kid reaches the Stream without buying
+**Bamboo Beauty** — and that rod's name has been promising split cane, the
+classic fly-rod material, since the shop shipped. A cane pole in chest waders
+was never right. See the naming rule near the top of this file: a pose's default
+rod is that level's gate rod.
+
+**One caution that shapes the prompt: do not ask for it thin.** At sprite scale
+the whole rod is ~65 design px long and about **1.8 device px** wide. A literally
+slender fly rod goes sub-pixel and vanishes. The **reel and the honey cane** are
+what survive an 8× downscale; taper is not. So the prompt asks for a visible
+reel and explicitly says *not* hair-thin.
 
 **One thing the Pond prompt did not need: ask for the arm held clear of the
 body.** The Pond angler's upper arm and elbow happened to hide behind the
@@ -424,13 +446,16 @@ Prompt:   Soft painterly storybook character illustration in the style of
           warm-brown hair, warm tan skin. Stream fishing clothes: warm sand-tan
           chest waders over a cream long-sleeved shirt, and a soft terracotta
           fly-fishing vest with small pockets.
-          The child is HOLDING A FISHING ROD: a slender tapered pole of warm
-          brown wood with a darker wrapped grip at its thick end. The near arm
-          is bent at the elbow with the forearm angled up and forward, and the
-          near hand holds the rod's grip at about chin height. From that hand
-          the pole runs diagonally up and to the right, passing well clear of
-          the child's head, its thin tip reaching the upper-right corner of the
-          canvas.
+          The child is HOLDING A BAMBOO FLY ROD: a slender split-cane pole in
+          warm honey-amber tones with a pale cork grip at its thick end, fine
+          dark-red thread wraps where the line guides sit, and a small round
+          dark-bronze fly reel mounted just below the grip. Keep the pole
+          clearly visible and readable rather than hair-thin. The near arm is
+          bent at the elbow with the forearm angled up and forward, and the near
+          hand holds the cork grip at about chin height, above the reel. From
+          that hand the rod runs diagonally up and to the right, passing well
+          clear of the child's head, its tip reaching the upper-right corner of
+          the canvas.
           IMPORTANT: the whole near arm must be held CLEAR OF THE BODY, with a
           visible gap of background between the arm and the chest along its
           entire length — the shoulder, upper arm, elbow and forearm all fully
@@ -441,8 +466,8 @@ Prompt:   Soft painterly storybook character illustration in the style of
           crossing in FRONT of the pole, with the thumb behind or alongside
           them. NOT a pinch, NOT fingertips touching, NOT an open or reaching
           hand.
-          No fishing line, no hook, no reel, no fish, no hat, no water, no
-          riverbank, no scenery, no other characters.
+          No fishing line, no hook, no fish, no hat, no water, no riverbank,
+          no scenery, no other characters.
           The child's feet are near the bottom edge of the canvas and the child
           stands toward the left, leaving the upper-right clear for the rod.
           Everything that is not the child and the rod must be flat, solid,
@@ -452,7 +477,7 @@ Prompt:   Soft painterly storybook character illustration in the style of
           No text, no UI, no watermark, no baked-in drop shadow.
           The image is 1024 by 1024 pixels, aspect ratio 1:1. Output as PNG.
 Save as:  assets/angler-stream.png   (the source painting — the cut layers are
-          angler-stream-body.png, angler-stream-arm.png, rod-basic-stream.png)
+          angler-stream-body.png, angler-stream-arm.png, rod-bamboo-stream.png)
 Size:     1024×1024 (1:1), delivered on flat magenta.
 Wired in: not yet — a new CONFIG.rig.poses.stream block. Until it exists the
           Stream wears the Pond kid through the pose fallback, which is the

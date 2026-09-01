@@ -9,7 +9,7 @@ instead of redoing the work by hand.
     python3 tools/cut-angler-pond.py <source.jpg|png>
 
 Writes assets/angler-pond.png (the keyed source), assets/angler-pond-body.png
-and assets/rod-basic-pond.png. The two layers share ONE canvas, so their box in
+and assets/rod-stick-pond.png. The two layers share ONE canvas, so their box in
 CONFIG.rig.poses.pond is identical and the offsets are zero by construction.
 
 Method and its reasoning are in ART.md (the R4 section) and GEMINI_NOTES.md
@@ -213,7 +213,7 @@ print("key %s   backdrop %.1f%%   shared crop %s" % (KEY.round(1), 100 * bg.mean
 save(keyed, "angler-pond.png", crop=False)
 save(body, "angler-pond-body.png")
 save(armlayer, "angler-pond-arm.png")
-save(rod, "rod-basic-pond.png")
+save(rod, "rod-stick-pond.png")
 
 # rod -> arm -> body must rebuild the delivered painting exactly, or the split
 # has lost or invented something

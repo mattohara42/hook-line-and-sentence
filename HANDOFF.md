@@ -12,7 +12,7 @@ something is the way it is, `git log` and the PR body have it in full.
 | **Active milestone** | **R4 — the angler**, `BUILD_PLAN_REFRESH.md` |
 | **Done when** | at 1x, in all three levels, the rod looks held and the costume suits the water; casting (R1) moves the arm and rod, not the whole kid |
 | **State** | Pond angler **finished**; the Stream and Ocean costumes are what R4 still needs |
-| `origin/main` | `a2d8d9b`, tree clean, nothing unpushed |
+| `origin/main` | `27e2fca`, tree clean, nothing unpushed |
 | Tests | 81/81 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
 | Deploys | Netlify is **manual**; merging to `main` does not go live |
@@ -34,6 +34,11 @@ knee to hide the upper arm, and sleeve-against-torso in one colour is exactly
 what made a shoulder cut look impossible on the Pond. The Ocean follows once the
 Stream is cut and judged. The **warm terracotta accent garment travels with the
 character** — the fly vest, then the life vest.
+
+**The rod changes with the level too** (settled 2026-09-01): rods are the
+progression gate, so each pose holds that level's gate rod — Stream gets
+**Bamboo Beauty**, drawn as the split-cane fly rod its name always implied.
+Files are `rod-<shop id>-<pose>.png`.
 
 **The boat is now the loudest wrong thing on screen** — a pixel rowboat under a
 painterly kid. That is R5, and it is expected.
