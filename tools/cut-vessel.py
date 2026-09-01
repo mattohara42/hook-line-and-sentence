@@ -34,7 +34,12 @@ VESSELS = {
     "boat-pond": dict(
         guess=[(40, 290), (300, 305), (600, 307), (800, 312), (1000, 300),
                (1200, 268), (1350, 232), (1470, 192), (1560, 158)],
-        window=35, drop=28, degree=4,
+        window=35, drop=28, degree=4, alpha="ramp",
+    ),
+    "boat-ocean": dict(
+        guess=[(60, 258), (200, 283), (400, 306), (600, 318), (800, 319),
+               (1000, 306), (1200, 275), (1300, 250), (1400, 215), (1550, 160)],
+        window=35, drop=28, degree=4, alpha="unmix",
     ),
 }
 TOL, LO, HI = 70.0, 55.0, 115.0
@@ -67,16 +72,32 @@ while q:
     for nx, ny in ((x+1, y), (x-1, y), (x, y+1), (x, y-1)):
         if 0 <= nx < W and 0 <= ny < H and not bg[ny, nx] and dist[ny, nx] <= TOL:
             bg[ny, nx] = True; q.append((nx, ny))
-bg |= (dist <= TOL) & ~bg
-
-alpha = np.clip((dist - LO) / (HI - LO), 0.0, 1.0)
-alpha[bg] = 0.0
-t = np.clip(alpha, 1e-3, 1.0)[..., None]
-fg = np.clip((a - (1.0 - t) * KEY) / t, 0, 255)
-# despill: this subject is warm timber; blue never exceeds green on a plank
-solid = alpha > 0.05
-spill = solid & (fg[..., 2] > fg[..., 1] + 6)
-fg[..., 2] = np.where(spill, np.minimum(fg[..., 2], fg[..., 1]), fg[..., 2])
+# Two ways to read alpha back out of the backdrop, one per painting:
+#   ramp   alpha from the distance to the key, despilled afterwards. Enough for
+#          an opaque subject like the rowboat, where every pixel is either paint
+#          or backdrop.
+#   unmix  alpha from how much KEY the pixel carries. The Whaler's windscreen is
+#          glass and the backdrop is genuinely visible THROUGH it; the ramp
+#          cannot tell that from an opaque violet and paints a purple blob on a
+#          cream boat. Magenta is the one colour in this palette whose green
+#          falls below both red and blue, so that gap measures the key's share
+#          directly -- and removing it by construction leaves nothing to despill.
+if V["alpha"] == "unmix":
+    gap = np.minimum(a[..., 0], a[..., 2]) - a[..., 1]
+    alpha = np.clip(1.0 - gap / (min(KEY[0], KEY[2]) - KEY[1]), 0.0, 1.0)
+    alpha[bg] = 0.0
+    t = np.clip(alpha, 1e-3, 1.0)[..., None]
+    fg = np.clip((a - (1.0 - t) * KEY) / t, 0, 255)
+else:
+    bg |= (dist <= TOL) & ~bg
+    alpha = np.clip((dist - LO) / (HI - LO), 0.0, 1.0)
+    alpha[bg] = 0.0
+    t = np.clip(alpha, 1e-3, 1.0)[..., None]
+    fg = np.clip((a - (1.0 - t) * KEY) / t, 0, 255)
+    # despill: this subject is warm timber; blue never exceeds green on a plank
+    solid = alpha > 0.05
+    spill = solid & (fg[..., 2] > fg[..., 1] + 6)
+    fg[..., 2] = np.where(spill, np.minimum(fg[..., 2], fg[..., 1]), fg[..., 2])
 keyed = np.dstack([fg, alpha * 255])
 print("key %s  backdrop %.1f%%" % (KEY.round(1), 100 * bg.mean()))
 

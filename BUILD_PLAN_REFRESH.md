@@ -377,19 +377,30 @@ faster than the poses got harder.
 - **Done when:** at 1x, in all three levels, the rod looks held and the costume
   suits the water; casting (R1) moves the arm and rod, not the whole kid.
 
-### R5 — Vessels, with the kid inside them (in progress)
+### ✅ R5 — Vessels, with the kid inside them (done 2026-09-01)
 
-**The code half landed 2026-09-01, ahead of the art**, the way R1 and R4's did.
-The **rowboat landed and is wired** (2026-09-01, first attempt); the Boston
-Whaler is what is left. Each is **one painting cut locally into a far and a near
-half** rather than two images that have to register — and the rowboat proved the
-argument: recompositing the two halves against the delivered painting leaves
-**0 px of 490,319 different**.
+**The code half landed ahead of the art**, the way R1 and R4's did, and both
+vessels then landed **first attempt on 2026-09-01** — the rowboat, then the
+Boston Whaler. Each is **one painting cut locally into a far and a near half**
+rather than two images that have to register, and both proved the argument:
+recompositing the halves against the delivered painting leaves **0 px** of
+490,319 and 496,473 respectively different. Not "sub-pixel" — identical.
 
-**Carried debt:** the Pond vessel is `skinnable: false` until `shop.boats`' four
-alternate hulls get the same cut. Equipping a boat skin currently does nothing
-at the Pond. Same prompt with the hull colour swapped, then
-`tools/cut-vessel.py`.
+**Two things the Whaler taught, both written up where they belong.** Its
+windscreen is glass and the generator painted the backdrop *through* it, which
+the alpha ramp reads as an opaque violet; `cut-vessel.py` grew a second alpha
+model that takes alpha from how much key a pixel carries, and the recipe is in
+`GEMINI_NOTES.md`. And seating the kid in the fighting chair was the worked
+example of the wiring-not-rerolling rule: the chair landed where it landed, and
+`vessel.x/y` plus `anchor.y` met it. The whole Ocean rig rides 24px higher than
+the other two poses because a fighting chair is a raised seat.
+
+**Carried debt, and it is now visible everywhere:** both painted vessels are
+`skinnable: false`, so equipping one of `shop.boats`' four alternate hulls does
+nothing at any spot. They are still pixel-era PNGs with no far/near split. The
+fix is not four fresh prompts — it is four repaints generated *from* the
+delivered rowboat so they register by construction, then the same cut. Request
+and the cheaper CSS-tint fallback are both in `ART.md`.
 
 - Rowboat (Pond), waders (Stream — no vessel, the kid stands in the water),
   Boston Whaler with the stern fighting chair (Ocean).
@@ -411,9 +422,10 @@ at the Pond. Same prompt with the hull colour swapped, then
 - **The Ocean's fighting chair is a vessel, and R4 deliberately did not draw it.**
   Its angler is generated with no chair, posed as if braced, so R5 can paint the
   chair with a near-side layer in front of the kid the way the hull does.
-- **Done when:** switching spots swaps vessel, costume and pose together; the
+- **Done when:** ✅ switching spots swaps vessel, costume and pose together; the
   hull overlaps the angler correctly; the line still leaves the rod tip in all
-  three.
+  three. Verified in the browser past the profile modal at all three spots, with
+  a cast and a fight at the Ocean.
 
 ### R6 — Fish: a rig per species (the big one)
 
@@ -462,7 +474,7 @@ mostly content.
 | R2 | **none** — code and CSS |
 | R3 | 9 background layers (3 per level), Pond first |
 | R4 | per pose: head, torso, arm, rod + a fingers overlay — all on one canvas, drawn from the torso |
-| R5 | rowboat, Whaler + fighting chair, and a near-side layer for each |
+| R5 | ~~rowboat, Whaler + fighting chair, and a near-side layer for each~~ ✅ — four shop hull repaints outstanding |
 | R6 | ~33 species × body/fin/tail, in waves by biome |
 | R7 | one PNG per gear item per pose |
 

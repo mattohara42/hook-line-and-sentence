@@ -177,7 +177,62 @@ direction.
 
 ## Open art requests
 
-### R5 — the two vessels (open — next to generate)
+### R5 debt — the four shop hulls (open — the only art R5 still owes)
+
+`shop.boats` sells five rowboats and only one of them exists in the new style.
+Both painted vessels are `skinnable: false`, so **buying and equipping a hull
+changes nothing at any spot** — a shop item that has quietly stopped working.
+The Whaler is not part of this and never will be: rowboat paint does not go on a
+Boston Whaler, and `skinnable` is how the pose says so.
+
+**Do not prompt these from scratch.** Four fresh rowboats would be four
+different boats — a different sheer, a different crop, a different length — and
+the vessel box (`x/y/w/h`) belongs to the *pose*, not the skin, so they would
+each land somewhere slightly different under the same kid. This is the
+same-canvas rule again: **generate from the delivered painting as a reference so
+they register by construction**, then cut each with `boat-pond`'s own anchors,
+which stay correct because the hull has not moved.
+
+```
+ART NEEDED: four repaints of the Pond rowboat (red / blue / green / purple)
+Reference: assets/boat-pond.png — attach it, and ask for the SAME painting back
+Prompt:   Repaint this exact rowboat in <COLOUR>. Keep everything else identical:
+          the same boat at the same size in the same place on the same canvas,
+          the same viewing angle, the same thwarts, the same shading and brush
+          texture, the same warm brown outlines, the same flat magenta backdrop.
+          Change only the colour of the hull planking and the gunwale rail: paint
+          them a soft, muted <COLOUR> as if the timber were painted, keeping the
+          existing light and shadow — a warm muted storybook colour, not a bright
+          or saturated one, and no neon.
+          Leave the thwarts and the boat's interior as bare warm timber.
+          No water, no person, no scenery, no text, no watermark.
+          Return the image at the same 1536 by 640 pixels. Output as PNG.
+   <COLOUR> per skin, from ART.md's palette:
+          red    → a soft weathered barn red      (shop id `red`,    Red Rover)
+          blue   → a muted dusty slate blue       (shop id `blue`,   Blue Bayou)
+          green  → a soft sage/lily-pad green     (shop id `leaf`,   Lily Pad)
+          purple → a dusty muted heather purple   (shop id `purple`, Purple Reign)
+Save as:  assets/boat-red.png, boat-blue.png, boat-leaf.png, boat-purple.png
+          (overwriting the pixel-era files, whose names shop.boats already uses)
+Wired in: not yet — cut each with `python3 tools/cut-vessel.py boat-pond <file>`
+          after pointing its output name at the skin, then flip
+          CONFIG.rig.poses.pond.vessel.skinnable back to true.
+```
+
+**Check registration before anything else when they land:** composite each
+repaint against `boat-pond.png` and look at where the hull's edges fall. If a
+skin's sheer has moved more than a pixel or two, the shared anchors stop being
+shared and this becomes four cut entries instead of one — reroll rather than
+carry that.
+
+**The cheaper alternative, if the rerolls fight back:** tint the existing painted
+layers in CSS — a `filter: hue-rotate()` + `saturate()` on `.vessel` driven by a
+per-skin class needs no art at all, and a painted hull is exactly the kind of
+flat colour shift a filter does well. It would tint the thwarts along with the
+planking, which is the reason to try the repaints first, not a reason to rule it
+out. Worth ten minutes before spending four generations.
+
+### ✅ R5 — the two vessels (landed and wired 2026-09-01)
 
 The Stream needs none: that angler stands in the water. So R5 is **two
 paintings**, and the code to receive them is already on `main` — a pose owns its
@@ -253,11 +308,9 @@ is a fair line and the fit removes jitter where a plank seam crosses it.
 **1,506 columns, residual mean 1.8px.**
 
 **One visible regression, worth knowing about:** the Pond vessel is
-`skinnable: false` now. `shop.boats`' four alternate hulls are still single
-pixel-era PNGs with no far/near split, so equipping one would paste a pixel
-rowboat over the painted one. **Each needs the same cut before the boat shop
-works again** — same prompt with the hull colour swapped, then
-`tools/cut-vessel.py`.
+`skinnable: false` now, and so is the Whaler — so **equipping a boat skin does
+nothing anywhere**. It is a shop item that has stopped changing anything, which
+is the one piece of R5 debt carried forward; see the open request below.
 
 ```
 ART NEEDED: the Ocean's Boston Whaler — one painting, cut into far and near
@@ -293,20 +346,37 @@ Prompt:   Soft painterly storybook illustration in the style of Studio Ghibli,
           The image is 1536 by 640 pixels, aspect ratio 2.4:1. Output as PNG.
 Save as:  assets/boat-ocean.png   (the cut layers are boat-ocean-far.png and
           boat-ocean-near.png)
-Wired in: not yet — CONFIG.rig.poses.ocean.vessel, which also stops being
-          `skinnable` then: rowboat skins have no business on a Whaler.
+Wired in: ✅ CONFIG.rig.poses.ocean.vessel, which stopped being `skinnable` at
+          the same time: rowboat skins have no business on a Whaler.
 ```
 
-**Seating the Ocean angler is a wiring step, not a prompt one.** The chair will
-land wherever the generator puts it, and the pose block now carries **two**
-knobs to meet it — the vessel's own `x/y` and the pose's `anchor`. Measure where
-the chair's seat is, then move one or both. Do not reroll to move a chair.
+**✅ Landed first attempt 2026-09-01**, and it measures like the rowboat: canvas
+1600×656 at aspect 2.439 against 2.4 asked, backdrop key `(253,53,249)` at stdev
+under 3.1, residue in the subject **stopping at 10px**, and **0.000%** of it
+below the umber floor (minimum luminance 53). The cut is exact again — **0 px of
+496,473 differ** on recomposite. The near gunwale came back unbroken along the
+whole length, which is the one property the cut depends on, and the console and
+the chair both sit clear above it.
 
-**When they land:** the usual checks (backdrop bled into the subject first, then
-canvas and aspect, then palette), then cut each painting along the near gunwale's
-top edge into `-far` and `-near`, then wire and judge at 1x. The near layer is
-what makes the kid sit *in* the boat rather than on it, so composite before
-believing any of it.
+**Its windscreen is glass, and the generator painted the backdrop through it** —
+a violet panel, because that is what magenta looks like through pale glass. The
+alpha ramp reads that as an opaque violet and paints a purple blob on a cream
+boat. `cut-vessel.py` now carries a second alpha model for it, taking alpha from
+how much key a pixel *carries* rather than how far it sits from it; the glass
+comes out pale grey at 70% and shows the sky through it in the game. The full
+recipe, and when to reach for it, is in `GEMINI_NOTES.md`.
+
+**Seating the Ocean angler was a wiring step, not a prompt one**, and this is the
+worked example of it. The chair landed where it landed; the pose met it with the
+two knobs it carries. Measured off the painting, the chair's seat pan is 326,122
+into the 1510×465 crop, so `vessel.x/y` put that pan under the kid's hips — and
+then `anchor.y` dropped to 144 so the waterline the painting carries in its own
+paint (the cool grey under the cream topsides, 85% down) lands on the scene's
+y=198. **The whole rig rides 24px higher than the other two poses, and that is
+the chair's doing, not the kid's:** a fighting chair is a raised seat, so he sits
+above the gunwale with his feet braced on the console step. The near hull never
+overlaps him, and that is correct here — unlike the rowboat, where it crosses his
+shins. No reroll was spent on any of it.
 
 ### ✅ R4 — the Ocean angler, in the fighting chair (landed and wired 2026-09-01)
 
