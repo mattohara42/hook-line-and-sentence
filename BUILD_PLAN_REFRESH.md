@@ -2,9 +2,9 @@
 
 **Status: active epic, opened 2026-08-31. This is a significant new body of
 work — the largest since the Advanced Progression epic — and it replaces the
-game's entire visual layer. R1 and R2 shipped 2026-08-31, R3 on 2026-09-01;
-**R1–R4 shipped; R5 is next** — the vessels, which is now the loudest thing
-wrong on screen.**
+game's entire visual layer. R1 and R2 shipped 2026-08-31, R3, R4 and R5 on
+2026-09-01; **R1–R5 shipped — the fish (R6) are the milestone in hand, and they
+are the biggest generation job in the epic.**
 
 Two new documents are the source of truth for it:
 
@@ -431,21 +431,55 @@ and the cheaper CSS-tint fallback are both in `ART.md`.
 
 **Matt's call: one rig per species, not shape families** (`ART_DIRECTION.md`,
 decision 3). The roster is **33 species**, currently served by four PNGs and a
-hue-rotate. At body/fin/tail per fish that is ~99 generated pieces — by a wide
-margin the most expensive item in this epic, and the reason it is last.
+hue-rotate. It is by a wide margin the most expensive item in this epic, and the
+reason it is last.
+
+**Scoped 2026-09-01, and the scoping halved it twice.** The number that has been
+carried since the direction was adopted — ~99 generated pieces, body/fin/tail per
+fish — was never a real cost. R4 already settled that a subdivision with no
+independent existence is a **local cut of one delivered painting** (`ART.md`, the
+same-canvas rule, point 4), and a tail is exactly that: nothing swaps it, nothing
+else wears it. So a species is **one generation**, not three, and the second
+halving is the sheet — the four Pond commons are asked for on one canvas, which
+is a test as much as a saving (see `ART.md`). Best case the whole roster is
+**~11 generations**; worst case it is 33, and nothing about the wiring changes
+either way.
+
+**Two pieces per fish, and how many there are is a code decision** (R4's rule
+again, so it stays cheap to revise). **Body** and **tail**, cut apart at the
+caudal peduncle — the narrowest section of any fish, which is why the cut can be
+*found* rather than traced, the way `cut-vessel.py` finds a sheer. The tail is
+the only piece whose motion reads at this size: a pectoral fin is ~5 design px
+and its sweep would be invisible. The same painting still contains a fin if that
+ever proves wrong.
 
 - **Delivered in waves by biome**: Pond → Stream → Ocean, and within a wave by
   rank. Each wave is independently shippable.
 - The existing tinted placeholder stays for any species whose art hasn't landed,
   so **no milestone ever blocks on the full set** and a half-finished roster is
-  a playable state, not a broken one.
-- Same-canvas rule again: fin and tail drawn from the body, returned in place,
-  so the swim wobble is a transform on a piece rather than a frame swap.
-- Also here: the underwater silhouette before the reel, and the surface-break
-  splash on landing — the payoff V1's three planes were built for.
+  a playable state, not a broken one. `CONFIG.fish.species` is the registry:
+  a species listed there renders its art, a species absent from it renders the
+  placeholder, and that is the only switch.
+- **Size starts saying something.** Every fish today renders in the same 62×41
+  box (the muskie's 96 is a CSS special case). A species' box is now its own:
+  length by rank — 54 / 64 / 78 / 96 design px, common → legendary — and height
+  from the painting's own aspect, both printed by the cut tool rather than tuned.
+  A pike is long, a bluegill is deep, and a legendary is worth looking at.
+- Also here, and both are **code, no art**: the underwater silhouette before the
+  reel, and the surface-break splash on landing — the payoff V1's three planes
+  were built for.
+- **The muskie's A8 hero sprite is retired by its own wave.** `fish-muskie.png`
+  and `#scene.loc-ocean #fish.tier-legendary`'s 96px override in `style.css` both
+  go when the Ocean wave lands; until then they stay exactly as they are.
 - **Done when:** every species in `data/fish.json` has its own art, the
   collection screen reads as 33 different fish, and the landing has a visible
   moment. Wave by wave; the milestone closes when the last wave lands.
+
+**Order of work, so nothing blocks on a generation:** the wave-1 request goes out
+first (it is the only part with a human round trip in it), the code half lands
+against the placeholder while the art is being made, and the cut tool is written
+against the first delivered painting rather than guessed at — which is how
+`cut-angler.py` and `cut-vessel.py` were both built, and why their detectors work.
 
 ### R7 — Gear in the new style
 
