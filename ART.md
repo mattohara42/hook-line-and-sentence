@@ -177,6 +177,165 @@ direction.
 
 ## Open art requests
 
+### R6 wave 1 — the Pond's ten fish (open — the active milestone)
+
+Ten species, and **the first generation is an experiment as much as an asset.**
+33 fish one at a time is 33 round trips; if four fish share a canvas and still
+come back right, the whole roster is ~11. Nothing downstream cares which way it
+goes — the cut splits a sheet into components and crops each one to its own box —
+so the sheet is worth finding out about on the cheapest four fish in the game.
+
+**Generate sheet A first and look at it before doing anything else.** If the four
+fish are separate, side-on and in the same painting's style, do B and C the same
+way. If they have merged, drifted apart in treatment, or come back at wildly
+different sizes, drop to one fish per canvas using the same species clauses —
+they are written to work either way.
+
+Three sheets, in rank order, so the Pond can ship in stages if the sheet fails:
+
+| sheet | fish | canvas |
+|---|---|---|
+| **A** | bluegill · perch · minnow · pumpkinseed (the four commons) | 1600×1200, 4:3 |
+| **B** | carp · bass · trout (the three uncommons) | 1600×1200, 4:3 |
+| **C** | pike · walleye · koi (two rares and the legendary) | 1600×1200, 4:3 |
+
+**Why one fish per canvas is still the fallback and not the plan:** a fish is a
+single small subject with no composition to get wrong, which is the case where
+the generator's compositional prior — the thing `GEMINI_NOTES.md` says never
+moves — has nothing to push against. The risk on a sheet is *consistency between
+subjects*, and that is the one thing a sheet is better at than four separate
+generations.
+
+```
+ART NEEDED: R6 wave 1, sheet A — the Pond's four common fish
+Prompt:   [STYLE]
+          Soft painterly storybook illustration, warm muted color palette, gentle
+          diffused lighting, thin warm brown outlines rather than black, cozy and
+          inviting mood, no harsh shadows, no neon or saturated colours. Soft
+          two-tone shading with blended edges. NOT pixel art, NOT flat vector art
+          with even line weight, NOT thick black cartoon linework, NOT a glossy
+          3D render, NOT a photograph.
+
+          [LAYOUT]
+          Four different fish on one canvas, one in each quarter of the image:
+          top-left, top-right, bottom-left, bottom-right. Every fish is fully
+          separated from every other by a wide band of empty background — no fish
+          touches, overlaps or crowds another, and none touches the edge of the
+          canvas. Each fish is drawn at a comfortable size within its own quarter.
+
+          [POSE — every fish]
+          Exact side view, facing LEFT: the head at the left of its own quarter
+          and the tail at the right, level and horizontal as if swimming straight
+          across. One calm friendly eye. Mouth closed. Fins spread and clearly
+          separate from the body, the dorsal fin standing up and the tail fan
+          open. A gentle storybook fish, NOT a googly-eyed grinning cartoon.
+
+          [THE FOUR FISH]
+          Top-left — a bluegill: a deep, round, plate-shaped little sunfish, olive
+          back fading to a pale sage belly, faint darker vertical bars, a small
+          dark spot at the rear edge of the gill cover, a small mouth. Overall a
+          muted sage green.
+          Top-right — a yellow perch: a rounder-backed fish with six or seven bold
+          dark vertical bars over a brassy tan flank, two dorsal fins with the
+          front one spiny, and muted amber lower fins.
+          Bottom-left — a fathead minnow: a very small plain fish, blunt rounded
+          snout, a soft dusky stripe along the flank, small simple fins. Overall a
+          pale grey-teal.
+          Bottom-right — a pumpkinseed sunfish: the same deep round plate shape as
+          the bluegill but freckled — soft orange-gold flecks over olive, a few
+          wavy blue-green lines on the cheek, a warm muted ember edge to the gill
+          flap. Overall a warm tan.
+
+          [CRITICAL: nothing but the fish]
+          Draw NO water of any kind. No bubbles, no splash, no ripples, no waves,
+          no weeds, no sand, no rocks, no coral, no bowl, no tank, no net, no
+          hook, no fishing line, no scenery, no plants, no other animals. No drop
+          shadow or reflection under any fish. No text, no labels, no names, no
+          watermark, no border, no frame, no grid lines, no panel dividers between
+          the fish.
+
+          [BACKDROP]
+          Every part of the canvas that is not a fish is one completely flat, even
+          magenta #FF00FF, edge to edge and into all four corners. A single flat
+          colour: no gradient, no texture, no vignette, no pattern.
+
+          [CANVAS]
+          The image is 1600 by 1200 pixels, aspect ratio 4:3. Output as PNG.
+Save as:  assets/Gemini_fish-pond-common.png (the raw sheet — the cut writes the
+          final names from it)
+Size:     1600×1200, flat magenta backdrop, four separated subjects
+Wired in: not yet — `tools/cut-fish.py` (to be written against this sheet) splits
+          it and writes assets/fish-<id>-body.png + fish-<id>-tail.png per species,
+          then prints the CONFIG.fish.species block. Nothing renders until that
+          block exists; until then all four keep the tier placeholder, on purpose.
+```
+
+Sheets **B** and **C** are the same prompt with the layout and species clauses
+swapped — three fish in a row, left / middle / right, and:
+
+```
+          [THE THREE FISH — sheet B]
+          Left — a common carp: a heavy, deep-bodied fish with large soft scales,
+          a blunt rounded head, two short barbels at the corners of the mouth and
+          a long dorsal fin running well down the back. Overall a warm muted
+          bronze-brown.
+          Middle — a largemouth bass: a long, strong fish with a notably big mouth
+          reaching back past the eye, a dark ragged horizontal stripe broken along
+          the flank, olive-green back and a pale belly.
+          Right — a brook trout: a smooth torpedo shape with a squared-off tail, a
+          dark olive back marked with pale wavy worm-like lines, scattered pale
+          and soft rose spots down the flank, and cream-edged lower fins. Overall a
+          muted rose.
+
+          [THE THREE FISH — sheet C]
+          Left — a northern pike: long and lean with a flat duck-bill snout and a
+          large jaw, rows of pale bean-shaped spots over a darker flank, and the
+          dorsal fin set far back close to the tail. Overall a muted teal-blue.
+          Middle — a walleye: long-bodied with a large glassy pale eye, a brassy
+          gold flank softly mottled with darker olive, two dorsal fins, and a
+          cream-white tip on the lower lobe of the tail.
+          Right — a golden koi: plump and round-bellied with long flowing fins and
+          a wide flowing tail, large soft scales and two short barbels. Pale soft
+          gold with a few cream and warm ember patches. This one is the Pond's
+          legendary and it renders the largest of the ten — give it the most
+          detail on the sheet.
+```
+
+**When they land, in this order** (the checklist in `GEMINI_NOTES.md`, with the
+fish-specific ones first because they are the reroll-forcing kind):
+
+1. **Magenta bled into a fin?** Fins are thin and semi-transparent in painterly
+   art, which is the case `cut-vessel.py`'s `unmix` alpha model was written for
+   (`GEMINI_NOTES.md`, "when the subject is see-through"). Bleed *into a solid
+   flank* is still a reroll; a magenta-tinted fin edge is probably not, and the
+   tool decides which model to use per sheet.
+2. **Does each fish face LEFT?** The line attaches at the mouth
+   (`drawFish()` in `app.js`), and every reeling coordinate in the game assumes
+   the head leads. A mirrored fish is a flip in the cut, not a reroll.
+3. **Are the four separable?** Flood the backdrop and count connected components:
+   four fish must be four. Two fish sharing a fin tip is a cut problem, not a
+   reroll — but three components where there should be four is.
+4. **Species read.** Cover the names and see whether the bluegill and the
+   pumpkinseed are telling themselves apart. They are the closest pair in the
+   Pond, and if a sheet cannot separate those two it will not separate the
+   Stream's four trout either.
+5. Then key, cut, and composite at game scale before wiring anything.
+
+**Do not scale a fish from its painting.** The generator draws every subject to
+fill its frame, so a minnow and a pike come back the same length — the same trap
+`GEMINI_NOTES.md` records for the standing and seated anglers. A species' length
+is decided by rank in `BUILD_PLAN_REFRESH.md` R6 (54 / 64 / 78 / 96 design px),
+and the cut tool scales each painting to it.
+
+**How the cut will work, so it is not re-derived:** the split is at the **caudal
+peduncle**, the narrowest vertical section of any fish, found the way
+`cut-vessel.py` finds a sheer — walk the rear third of the fish column by column,
+count opaque pixels, and take the minimum. Everything right of it is the tail
+layer, everything left is the body, both cropped to the *shared* bbox so they
+register by construction. The pivot the tail sweeps about is the midpoint of that
+section, and the mouth the line attaches to is the leftmost opaque column at its
+own vertical centre. All three numbers are measured, not tuned.
+
 ### R5 debt — the four shop hulls (open — the only art R5 still owes)
 
 `shop.boats` sells five rowboats and only one of them exists in the new style.
