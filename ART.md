@@ -348,7 +348,7 @@ it per asset rather than copying the numbers.
 reads at y=198, and only then does `BUILD_PLAN_REFRESH.md` mark R3's Pond half
 done and the Stream/Ocean prompts get written.
 
-### 🟡 R3 — the Stream, repainted as three layers (open, ready to generate)
+### ✅ R3 — the Stream, repainted as three layers (landed and wired 2026-09-01)
 
 **Second of the three levels.** The Pond is landed, wired and judged, so the
 conventions below are proven rather than guessed. **Read `GEMINI_NOTES.md`
@@ -505,6 +505,34 @@ Size:     1584×672. Delivered on flat magenta; alpha keyed locally
 Wired in: not yet — the near plane, #bg-fore for .loc-stream. Nothing may land
           where the bottom-center finger-guide panel sits, or over the rig's box
           (design x20–138, y140–224)
+```
+
+**✅ Landed 2026-09-01, first attempt.** Backdrop came back at **`#fa05f8`** —
+near-pure magenta this time, against the Pond foreground's `#c642b0`, and dead
+uniform (stdev ≤1.1). Keyed with the standard three passes; **0.00%** purple
+among visible pixels. 20.3% opaque coverage.
+
+Two intrusions, both judged acceptable rather than rerolled:
+
+- **6.5% of the bottom-center third is painted** (the Pond managed 0.0%) — the
+  mossy log's right end reaches into it. The guide panel is translucent and sits
+  over it, so the log simply reads as continuing behind the UI. Nothing is
+  hidden that carries meaning.
+- **1.6% of the rig's box** is clipped by the left-hand growth, against the
+  Pond's 0.2%. Foreground vegetation partly overlapping the angler is what a
+  near plane is *for* — you are standing behind the reeds.
+
+Detail tops out at 35.6% / 41.7% down, well above the waterline, which is
+correct: streamside rocks and ferns sit above the water, not flat to it.
+
+**The Stream is wired, and `.loc-stream`'s `scale 1.246` workaround is deleted**
+— R3's done-when criterion for this level. The planes now just swap their
+images; no per-location framing, no scale, no offset, because the art was
+generated and fitted to put its waterline on the Pond's row. Verified in
+Chromium: all three planes load and drift, the waterline reads at screen y=396 =
+design y=198, `#scene` carries no background image, and the CSS `.reeds` are
+hidden here now that real painted ones exist.
+
 ```
 
 **✅ Layer 1 landed 2026-09-01, on attempt 4, fitted rather than rerolled again.**
