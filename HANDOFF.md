@@ -11,7 +11,7 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R6 — fish, a rig per species**, `BUILD_PLAN_REFRESH.md` |
 | **Done when** | every species in `data/fish.json` has its own art, the collection screen reads as 33 different fish, and the landing has a visible moment — wave by wave, Pond first |
-| **State** | **The Pond and the Stream are complete — 20 of 33 painted, cut and wired.** Five sheets, five first attempts. Only the Ocean remains. |
+| **State** | **26 of 33 painted, cut and wired** — the Pond, the Stream, and the Ocean's first sheet. Seven species left: sheet B's six and the muskie. |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 86/86 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
@@ -24,12 +24,15 @@ are written out and all three are pre-registered in `tools/cut-fish.py`, so each
 is paste, save, and one command. **Every one of the 33 species is now accounted
 for by a sheet**, with no duplicates.
 
-**Sheet A has been rerolled once and its prompt is the corrected one.** The first
-attempt came back as a field-guide plate on cream paper with Latin captions — the
-prompt's own fault, since a list of field marks *is* a field guide. The corrected
-version opens by saying what the picture is not and states the backdrop as a
-place rather than a colour. The species clauses were right first time and are
-unchanged.
+**Sheet A is done** (it took two attempts — the first was a field-guide plate on
+cream paper, the prompt's own fault). **Sheets B and the muskie use the same
+corrected prompt shape**, so open with the `[WHAT THIS IS]` block: a list of
+field marks *is* a field guide, and the generator will draw one given the chance.
+
+**Captions are not worth a reroll on their own.** Sheet A's second attempt still
+came back captioned; the text is 35× smaller than any fish, so the cut drops it.
+`cut-fish.py` takes the N largest components and refuses if the margin is under
+4×.
 
 Two sheets of six and the muskie alone, grouped so each set of look-alikes shares
 a canvas — the rule the Stream bought (`GEMINI_NOTES.md` → *Several subjects on

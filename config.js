@@ -430,6 +430,31 @@ export const CONFIG = {
       catfish:       { w: 78, h: 30, mouth: { x: 0, y: 17 }, tail: { x: 60, y: 15 },
                      layers: [{ id: "tail", file: "fish-catfish-tail" },
                               { id: "body", file: "fish-catfish-body" }] },
+
+      // ---- the Ocean ----
+      // Wave 3, sheet A: the four silvery pelagics — the worst look-alike group
+      // in the game — plus two easy ones, all on one canvas so the generator had
+      // to draw them against each other. The delivered sheet carried species
+      // captions the prompt forbade; they are 35x smaller than any fish, so the
+      // cut drops them and no sprite ever sees them.
+      herring:       { w: 54, h: 18, mouth: { x: 0, y: 10 }, tail: { x: 43, y: 9 },
+                     layers: [{ id: "tail", file: "fish-herring-tail" },
+                              { id: "body", file: "fish-herring-body" }] },
+      mackerel:      { w: 54, h: 18, mouth: { x: 0, y: 10 }, tail: { x: 46, y: 10 },
+                     layers: [{ id: "tail", file: "fish-mackerel-tail" },
+                              { id: "body", file: "fish-mackerel-body" }] },
+      anchovy:       { w: 54, h: 14, mouth: { x: 0, y: 8 }, tail: { x: 44, y: 7 },
+                     layers: [{ id: "tail", file: "fish-anchovy-tail" },
+                              { id: "body", file: "fish-anchovy-body" }] },
+      sardine:       { w: 54, h: 16, mouth: { x: 0, y: 9 }, tail: { x: 43, y: 8 },
+                     layers: [{ id: "tail", file: "fish-sardine-tail" },
+                              { id: "body", file: "fish-sardine-body" }] },
+      mahi:          { w: 64, h: 23, mouth: { x: 0, y: 12 }, tail: { x: 50, y: 12 },
+                     layers: [{ id: "tail", file: "fish-mahi-tail" },
+                              { id: "body", file: "fish-mahi-body" }] },
+      snapper:       { w: 64, h: 31, mouth: { x: 0, y: 17 }, tail: { x: 49, y: 16 },
+                     layers: [{ id: "tail", file: "fish-snapper-tail" },
+                              { id: "body", file: "fish-snapper-body" }] },
     },
   },
 
