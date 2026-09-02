@@ -155,6 +155,19 @@ export const CONFIG = {
     // own entries now, pointing at files that do not exist, would render an
     // invisible angler in two of the three levels — worse than the wrong shirt.
     defaultPose: "pond",
+    // R7: which gear paintings actually exist, as `assets/<file>.png` stems.
+    // The same switch as CONFIG.fish.species and CONFIG.rig.poses, for the same
+    // reason: a stem listed here is drawn, a stem absent from it falls back to
+    // the layer's own `file` (the pose's painted rod) or to nothing (a hat).
+    // That is what lets the shop sell all four rods and all five hats before
+    // any of the grid is painted — you get the pose's own rod rather than an
+    // invisible one, and the milestone never blocks on a generation.
+    //
+    // Today it holds only R4's diagonal: each pose was painted holding its own
+    // gate rod. Add a stem here the moment its PNG lands.
+    gearArt: [
+      "rod-stick-pond", "rod-bamboo-stream", "rod-deepsea-ocean",
+    ],
     poses: {
       // R4's painted angler. Both layers are cuts of ONE delivered painting
       // (assets/angler-pond.png), so they share one canvas and one box and the
@@ -193,10 +206,18 @@ export const CONFIG = {
         // generic pole: the Pond's is the free `stick`, and you cannot reach the
         // Stream without buying `bamboo` or the Ocean without `deepsea`. R7 then
         // fills in the rest of the grid, one PNG per owned rod per pose.
+        //
+        // R7: `gear` on a layer means "draw the equipped item here, if its art
+        // for this pose exists"; `file` is what to draw when it doesn't. So the
+        // rod falls back to the pose's own painted gate rod, and the hat — which
+        // has no `file` — falls back to nothing, which is the bare head R4
+        // deliberately painted. Array order is paint order, so the hat is last:
+        // over the head, not under it.
         layers: [
-          { id: "rod",  file: "rod-stick-pond",   x: 39, y: -44, w: 70, h: 76 },
-          { id: "arm",  file: "angler-pond-arm",  x: 39, y: -44, w: 70, h: 76 },
-          { id: "body", file: "angler-pond-body", x: 39, y: -44, w: 70, h: 76 },
+          { id: "rod",  gear: "rod", file: "rod-stick-pond",   x: 39, y: -44, w: 70, h: 76 },
+          { id: "arm",              file: "angler-pond-arm",  x: 39, y: -44, w: 70, h: 76 },
+          { id: "body",             file: "angler-pond-body", x: 39, y: -44, w: 70, h: 76 },
+          { id: "hat",  gear: "hat",                          x: 39, y: -44, w: 70, h: 76 },
         ],
         // Measured off the canvas, not tuned in the browser: the grip is where
         // the hand closes on the pole and the tip is the rod's point, both
@@ -233,9 +254,10 @@ export const CONFIG = {
         bob: false,
         vessel: null,
         layers: [
-          { id: "rod",  file: "rod-bamboo-stream",   x: 38, y: -70, w: 88, h: 123 },
-          { id: "arm",  file: "angler-stream-arm",   x: 38, y: -70, w: 88, h: 123 },
-          { id: "body", file: "angler-stream-body",  x: 38, y: -70, w: 88, h: 123 },
+          { id: "rod",  gear: "rod", file: "rod-bamboo-stream",  x: 38, y: -70, w: 88, h: 123 },
+          { id: "arm",              file: "angler-stream-arm",  x: 38, y: -70, w: 88, h: 123 },
+          { id: "body",             file: "angler-stream-body", x: 38, y: -70, w: 88, h: 123 },
+          { id: "hat",  gear: "hat",                            x: 38, y: -70, w: 88, h: 123 },
         ],
         rodPivot:   { x: 65, y:   4 },
         lineOrigin: { x: 125, y: -70 },
@@ -275,9 +297,10 @@ export const CONFIG = {
                   x: 13, y: 10, w: 170, h: 52, skinnable: false,
                   shadow: { x: 48, y: 206, w: 140 } },
         layers: [
-          { id: "rod",  file: "rod-deepsea-ocean",   x: 38, y: -48, w: 71, h: 82 },
-          { id: "arm",  file: "angler-ocean-arm",    x: 38, y: -48, w: 71, h: 82 },
-          { id: "body", file: "angler-ocean-body",   x: 38, y: -48, w: 71, h: 82 },
+          { id: "rod",  gear: "rod", file: "rod-deepsea-ocean",  x: 38, y: -48, w: 71, h: 82 },
+          { id: "arm",              file: "angler-ocean-arm",   x: 38, y: -48, w: 71, h: 82 },
+          { id: "body",             file: "angler-ocean-body",  x: 38, y: -48, w: 71, h: 82 },
+          { id: "hat",  gear: "hat",                            x: 38, y: -48, w: 71, h: 82 },
         ],
         rodPivot:   { x: 68, y:   3 },
         lineOrigin: { x: 109, y: -48 },
@@ -530,11 +553,19 @@ export const CONFIG = {
     // between them as a pure luck upgrade — the deep-sea rod is both the Ocean
     // gate and the best odds in the game. Every rodLevel here needs a matching
     // bite.tierOddsByRod entry (a data test enforces it).
+    //
+    // R7: `file` is the stem of the rod's art, and renderRig appends the pose —
+    // `rod-bamboo` + `-stream` = assets/rod-bamboo-stream.png. One PNG per rod
+    // per pose, because a rod drawn for a seated kid does not sit in a standing
+    // kid's hand. R4 already delivered the diagonal of that grid (each pose is
+    // painted holding its own gate rod); rig.gearArt lists what exists, and a
+    // rod with no art for the pose you are standing in falls back to the pose's
+    // own painted rod rather than 404ing into an invisible one.
     rods: [
-      { id: "stick",   name: "Trusty Stick",       cost: 0,   rodLevel: 1 },
-      { id: "bamboo",  name: "Bamboo Beauty",      cost: 25,  rodLevel: 2, unlocksLocation: "stream" },
-      { id: "carbon",  name: "The Carp Whisperer", cost: 80,  rodLevel: 3 },
-      { id: "deepsea", name: "The Deep Endeavor",  cost: 150, rodLevel: 4, unlocksLocation: "ocean" },
+      { id: "stick",   name: "Trusty Stick",       cost: 0,   rodLevel: 1, file: "rod-stick"   },
+      { id: "bamboo",  name: "Bamboo Beauty",      cost: 25,  rodLevel: 2, file: "rod-bamboo",  unlocksLocation: "stream" },
+      { id: "carbon",  name: "The Carp Whisperer", cost: 80,  rodLevel: 3, file: "rod-carbon"  },
+      { id: "deepsea", name: "The Deep Endeavor",  cost: 150, rodLevel: 4, file: "rod-deepsea", unlocksLocation: "ocean" },
     ],
     baits: [
       { id: "worm",    name: "Garden Worm",   cost: 0,  biteSpeedMult: 1.0 },
@@ -549,6 +580,18 @@ export const CONFIG = {
       { id: "blue",    name: "Blue Bayou",   cost: 20, file: "boat-blue"   },
       { id: "leaf",    name: "Lily Pad",     cost: 40, file: "boat-leaf"   },
       { id: "purple",  name: "Purple Reign", cost: 60, file: "boat-purple" },
+    ],
+    // R7: cosmetic only, and named the same way rods are — `hat-straw` plus the
+    // pose. The free default paints NOTHING: R4 drew all three anglers
+    // bare-headed on purpose so hats could be drawn against those paintings, so
+    // "Just Hair" is the state the game has always shipped in and also the way
+    // to take a hat back off. It carries no `file` for exactly that reason.
+    hats: [
+      { id: "none",      name: "Just Hair",   cost: 0                          },
+      { id: "straw",     name: "Straw Poll",  cost: 15, file: "hat-straw"      },
+      { id: "bucket",    name: "Bucket List", cost: 30, file: "hat-bucket"     },
+      { id: "beanie",    name: "Bean There",  cost: 50, file: "hat-beanie"     },
+      { id: "souwester", name: "Rain Check",  cost: 75, file: "hat-souwester"  },
     ],
   },
 

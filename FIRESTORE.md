@@ -28,9 +28,13 @@ cheap and the offline/localStorage fallback trivial (the doc IS the save file).
   stage: 3,                        // derived from totalCatches + config, but
                                    // stored so the UI never recomputes wrong
   coins: 37,
-  // equipped + everything bought (owned gates re-purchase in the shop)
-  upgrades: { rod: "bamboo", bait: "worm",
-              owned: { rod: ["stick", "bamboo"], bait: ["worm"] } },
+  // equipped + everything bought (owned gates re-purchase in the shop).
+  // One key per shop kind. `boat` arrived with the boat shop and `hat` with R7;
+  // both are back-filled on load (activateProfile) rather than migrated in a
+  // pass, so an older document syncs down and opens without a rewrite.
+  upgrades: { rod: "bamboo", bait: "worm", boat: "classic", hat: "none",
+              owned: { rod: ["stick", "bamboo"], bait: ["worm"],
+                       boat: ["classic"], hat: ["none"] } },
 
   // collection: fishId → count (silhouette = key absent)
   collection: { bluegill: 12, carp: 3, walleye: 1 },

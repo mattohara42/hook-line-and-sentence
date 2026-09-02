@@ -81,6 +81,25 @@ export function overallAccuracy(letters) {
   return { pct: n + e ? n / (n + e) : 0, keys: n + e };
 }
 
+// R7: which painting a rig layer actually shows.
+//
+// A layer with no `gear` is fixed art and shows its own `file`. A gear layer
+// shows the EQUIPPED item of that kind, named <the item's file stem>-<pose> —
+// but only when that painting exists in `gearArt`. Otherwise it falls back to
+// the layer's own `file`, and a layer with neither shows nothing at all.
+//
+// The fallback is the point. Without it, equipping a rod whose art for the
+// current pose has not been painted yet asks for a PNG that isn't there and
+// hands a kid an invisible rod mid-cast. With it, they get the pose's own
+// painted rod until the real one lands — the same "wrong shirt rather than no
+// angler" trade R4 made for poses and R6 made for fish.
+export function gearFile(layer, poseName, equippedId, items, gearArt) {
+  if (!layer.gear) return layer.file ?? null;
+  const item = items?.find(i => i.id === equippedId);
+  const stem = item?.file ? `${item.file}-${poseName}` : null;
+  return (stem && gearArt.includes(stem)) ? stem : (layer.file ?? null);
+}
+
 // Which locations a profile has unlocked, derived from the rods it owns (like
 // letters derive from catches). tiers[0].location is the always-open home spot.
 // Tiers are an ordered curriculum, so this is *cumulative*: owning a rod that

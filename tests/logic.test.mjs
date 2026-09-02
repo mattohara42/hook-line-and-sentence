@@ -11,6 +11,7 @@ import {
   computeWpm, isPersonalBestWpm, isEvenCadence, pickDistinct, segmentsForTier,
   rankForProfile, earnsPrestige, speedTestPool, typingAccuracy,
   castArcPoint, lineSagPx, lineControlPoint, stepTug, rotateAboutPivot, easeIn, easeOut,
+  gearFile,
 } from "../logic.js";
 
 const TIER_ORDER = ["legendary", "rare", "uncommon", "common"];   // hardest → easiest
@@ -450,4 +451,48 @@ test("the cast easings are clamped and end where they should", () => {
   }
   assert.ok(easeIn(0.5) < 0.5);    // slow to load
   assert.ok(easeOut(0.5) > 0.5);   // decays into the landing
+});
+
+// R7: the gear shop swaps a rod or a hat into the angler's layer stack, and the
+// grid of <item> x <pose> paintings is filled in one delivery at a time. So the
+// interesting cases are all the MISSING ones: what a kid sees between buying a
+// rod and that rod being painted for the water they're standing in. Getting
+// this wrong doesn't throw — it 404s into an invisible rod mid-cast, which is
+// the failure R4 refused to ship for poses and R6 for fish.
+test("a gear layer falls back rather than pointing at a painting that isn't there", () => {
+  const rods = [
+    { id: "stick",  file: "rod-stick"  },
+    { id: "bamboo", file: "rod-bamboo" },
+  ];
+  const hats = [
+    { id: "none" },                        // the free default paints nothing, on purpose
+    { id: "straw", file: "hat-straw" },
+  ];
+  const art = ["rod-stick-pond", "rod-bamboo-stream", "hat-straw-pond"];
+  const rodLayer = { id: "rod", gear: "rod", file: "rod-stick-pond" };
+  const hatLayer = { id: "hat", gear: "hat" };
+  const fixed    = { id: "body", file: "angler-pond-body" };
+
+  // fixed art ignores every gear argument
+  assert.equal(gearFile(fixed, "pond", "bamboo", rods, art), "angler-pond-body");
+  assert.equal(gearFile(fixed, "ocean", null, null, []), "angler-pond-body");
+
+  // the equipped rod, where its art for this pose exists
+  assert.equal(gearFile(rodLayer, "stream", "bamboo", rods, art), "rod-bamboo-stream");
+  assert.equal(gearFile(rodLayer, "pond", "stick", rods, art), "rod-stick-pond");
+
+  // …and the pose's own painted rod where it doesn't. This is the case that
+  // matters: bamboo is bought and equipped, but nobody has painted it for the
+  // Pond yet, so the kid keeps holding the Pond's stick rather than nothing.
+  assert.equal(gearFile(rodLayer, "pond", "bamboo", rods, art), "rod-stick-pond");
+
+  // a hat slot has no fallback art, so it correctly resolves to nothing
+  assert.equal(gearFile(hatLayer, "pond", "straw", hats, art), "hat-straw-pond");
+  assert.equal(gearFile(hatLayer, "stream", "straw", hats, art), null,  "no straw hat painted for the Stream yet");
+  assert.equal(gearFile(hatLayer, "pond", "none", hats, art), null,     "Just Hair is a bare head, not a missing file");
+
+  // and nothing here throws on a save that predates the slot, or a bad id
+  assert.equal(gearFile(hatLayer, "pond", undefined, hats, art), null);
+  assert.equal(gearFile(rodLayer, "pond", "nosuchrod", rods, art), "rod-stick-pond");
+  assert.equal(gearFile(rodLayer, "pond", "bamboo", undefined, art), "rod-stick-pond");
 });

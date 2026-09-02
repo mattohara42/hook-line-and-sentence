@@ -177,6 +177,35 @@ direction.
 
 ## Open art requests
 
+### R7 — gear, per pose (the wiring landed 2026-09-02; the prompts are not written yet)
+
+**Read this before delivering any gear PNG.** R7's code half is in, so a gear
+painting is now a two-step delivery rather than one, and skipping the second
+step looks exactly like the art never arriving:
+
+1. Cut it against the pose it was drawn for, on that pose's canvas — the
+   same-canvas rule, so it registers by construction and its layer box is the
+   pose's box. Save it as `assets/<stem>-<pose>.png`, where `<stem>` is the shop
+   item's `file` (`rod-carbon`, `hat-straw`) and `<pose>` is `pond`, `stream` or
+   `ocean`.
+2. **Add that filename to `CONFIG.rig.gearArt`.** It is the registry that
+   decides whether the shop's item shows up at all — the same switch
+   `CONFIG.fish.species` is for fish. A PNG that is on disk but not in `gearArt`
+   is silently never drawn, and a data test will tell you if you name a pose or
+   an item that doesn't exist.
+
+Until a stem is registered, the game falls back: a rod shows the pose's own
+painted gate rod, and a hat shows nothing. That is deliberate, so the shop can
+sell the whole grid before any of it is painted, and it means **no gear delivery
+is ever urgent and none of them have to arrive together.**
+
+The grid is 4 rods × 3 poses and 4 hats × 3 poses, minus R4's diagonal
+(`rod-stick-pond`, `rod-bamboo-stream`, `rod-deepsea-ocean` already exist), so
+21 paintings. **Ask for them in sheets** — R6's hardest-won lesson is that a
+sheet is the only way to *ask for* a difference rather than describe one, and
+four hats in one pass come back as four different hats where four passes come
+back as one hat four times.
+
 ### ✅ R6 wave 1 — the Pond's ten fish (all three sheets landed 2026-09-02)
 
 > **✅ Sheet A landed and is wired — and the experiment succeeded, first attempt.**

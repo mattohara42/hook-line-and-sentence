@@ -10,7 +10,9 @@ shipped 2026-08-22, epic complete.**
 The current epic is the **Art & Animation Refresh** —
 `BUILD_PLAN_REFRESH.md` (R1–R7, opened 2026-08-31; **R1–R6 shipped — all three
 anglers are painted, cut and rigged, both vessels are cut and wired under them,
-and all 33 fish have their own art; R7, the gear, is the last one**). It is a
+and all 33 fish have their own art. R7, the gear, is the last one and its code
+half is in: the shop sells rods and hats already, and each painting that lands
+is one `CONFIG.rig.gearArt` line**). It is a
 significant piece of work: the whole visual layer is being restarted under two
 new source-of-truth docs, **`ART_DIRECTION.md`** (warm painterly, Ghibli-
 anchored, no pure black) and **`ANIMATION.md`** (the cast/line/reel motion the

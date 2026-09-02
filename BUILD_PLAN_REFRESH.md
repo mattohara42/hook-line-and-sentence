@@ -535,22 +535,61 @@ against the placeholder while the art is being made, and the cut tool is written
 against the first delivered painting rather than guessed at — which is how
 `cut-angler.py` and `cut-vessel.py` were both built, and why their detectors work.
 
-### R7 — Gear in the new style
+### R7 — Gear in the new style (code half done 2026-09-02; art outstanding)
 
 Hats and rods re-cut for the shop, in the new direction, drawn against each
 pose. Was V5; the shop code (`renderShopList`) already generalizes, so this is
 mostly content.
+
+**The code half is in, against no new art at all.** The shop sells four rods and
+five hats, equipping either rebuilds the rig, and both persist. What is left is
+the grid of paintings.
+
+Three things carry it, and the third is the one worth remembering:
+
+- **`shop.hats` exists**, five items, and its free default `none` ("Just Hair")
+  carries no `file` — it resolves to nothing, which is the bare head R4 painted
+  on purpose. That is also how you take a hat off.
+- **`shop.rods` carry a `file` stem** the way boats do, and a pose layer can
+  name a `gear` slot instead of fixed art. `renderRig` resolves
+  `<stem>-<pose>`, so one convention covers both kinds.
+- **`rig.gearArt` is the registry, and it is the same switch as
+  `CONFIG.fish.species` and `CONFIG.rig.poses`** — the third time this epic has
+  reached for it. A stem listed there is drawn; a stem absent from it falls back
+  to the layer's own `file`. So equipping Bamboo Beauty and then fishing the
+  Pond hands the kid the Pond's painted stick rather than 404ing into an
+  invisible rod mid-cast. **The whole grid is sellable before any of it is
+  painted**, and each delivery is one line in `gearArt`.
+
+The resolution itself is `logic.gearFile`, pure and unit-tested, with `app.js`
+holding the thin wrapper that supplies the live CONFIG and save — the shape
+`logic.js`'s own header asks for. Five data tests cover the config's new shape,
+and each was checked by breaking the invariant it guards.
+
+**Verified in a browser**, not just by assertion: a deliberately pre-R7 save
+(no `upgrades.hat` at all) migrates on load, the shop shows a HATS section,
+equipping Bamboo Beauty at the Pond keeps the painted stick while the same rod
+at the Stream becomes `rod-bamboo-stream`, a hat layer paints in front of the
+body, and all of it survives a reload with no 404s anywhere in the run.
 
 - One PNG per gear item **per pose** — a hat drawn for the seated pose won't sit
   on the standing one. Start each item at the Pond pose; add the other two once
   it is proven. **R4 already delivers the diagonal of that grid**: each pose is
   drawn holding its own gate rod, so `stick`/Pond, `bamboo`/Stream and
   `deepsea`/Ocean exist before R7 starts.
-- `shop.rods` needs a `file` naming convention of `rod-<id>-<pose>`, which R4
-  established.
-- `config.js`: `shop.hats`, and `file` on `shop.rods` the way boats already have.
+- ~~`shop.rods` needs a `file` naming convention of `rod-<id>-<pose>`~~ ✅
+- ~~`config.js`: `shop.hats`, and `file` on `shop.rods`~~ ✅
+- **Every gear painting is a cut of the pose it is drawn against**, on that
+  pose's own canvas — the same-canvas rule R4 set and R6 leaned on for 33 fish.
+  A hat is not positioned by numbers in `config.js`; it registers by
+  construction, and its layer box is the pose's box.
+- **R6's other lesson applies here too:** a sheet is the only way to *ask for* a
+  difference rather than describe one. Four hats on one canvas come back as four
+  different hats; four separate generations come back as one hat four times.
 - **Done when:** buying and equipping a hat changes the angler everywhere and
-  persists, and the rod you bought is the rod in your hand.
+  persists, and the rod you bought is the rod in your hand. **The second clause
+  is met** (`rod-bamboo-stream` is in a kid's hand the moment they buy it); the
+  first needs one hat painted.
 
 ---
 
@@ -564,7 +603,7 @@ mostly content.
 | R4 | per pose: head, torso, arm, rod + a fingers overlay — all on one canvas, drawn from the torso |
 | R5 | ~~rowboat, Whaler + fighting chair, and a near-side layer for each~~ ✅ — four shop hull repaints outstanding |
 | R6 | ~~33 species × body/tail, in waves by biome~~ ✅ — 33 of 33, in eight sheets and nine generations |
-| R7 | one PNG per gear item per pose |
+| R7 | one PNG per gear item per pose — **the wiring is done and waiting**; each delivery is one `rig.gearArt` line |
 
 ## Open questions
 
