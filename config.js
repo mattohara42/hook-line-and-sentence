@@ -364,6 +364,17 @@ export const CONFIG = {
       pumpkinseed: { w: 54, h: 39, mouth: { x: 0, y: 22 }, tail: { x: 42, y: 20 },
                      layers: [{ id: "tail", file: "fish-pumpkinseed-tail" },
                               { id: "body", file: "fish-pumpkinseed-body" }] },
+      // sheet B: the three uncommons, a row of three on one canvas. Same cut,
+      // and a rank up means a 64px box rather than the commons' 54.
+      carp:        { w: 64, h: 36, mouth: { x: 0, y: 21 }, tail: { x: 51, y: 18 },
+                     layers: [{ id: "tail", file: "fish-carp-tail" },
+                              { id: "body", file: "fish-carp-body" }] },
+      bass:        { w: 64, h: 31, mouth: { x: 0, y: 16 }, tail: { x: 49, y: 15 },
+                     layers: [{ id: "tail", file: "fish-bass-tail" },
+                              { id: "body", file: "fish-bass-body" }] },
+      trout:       { w: 64, h: 28, mouth: { x: 0, y: 16 }, tail: { x: 50, y: 14 },
+                     layers: [{ id: "tail", file: "fish-trout-tail" },
+                              { id: "body", file: "fish-trout-body" }] },
     },
   },
 

@@ -480,8 +480,9 @@ and wired**, and the sheet experiment paid off first attempt — four fish on on
 canvas, four clean components, consistent treatment across the set. So the
 roster is **~11 generations rather than 33**, and `GEMINI_NOTES.md` now carries
 the rule. `tools/cut-fish.py` was written against that sheet and owns the method;
-its recomposite check is 0 px on all four. Six Pond species to go (sheets B and
-C), then the Stream and the Ocean.
+its recomposite check is 0 px on all four. Sheet B (the three uncommons) followed on
+2026-09-02, also first attempt and in the other layout — a row of three. Three
+Pond species to go (sheet C), then the Stream and the Ocean.
 
 **Landed so far, and the rest of it is code (2026-09-01):** the scoping and the
 wave-1 request (#101) · the fish rig itself, with the tier placeholder as the

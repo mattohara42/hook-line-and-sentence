@@ -208,7 +208,22 @@ direction.
 > blob for *uncaught* species, so it shows on a silhouette or not at all. Worth a
 > cheap re-pass toward the paintings when the Pond wave is complete.
 
-### R6 wave 1 — the rest of the Pond (open — the active milestone)
+> **✅ Sheet B landed and is wired (2026-09-02), first attempt again.** The row
+> of three works as well as the 2×2: canvas 1552×688 against the asked 1800×800,
+> ratio 2.256 vs 2.25. Three of three components, nothing touching a canvas edge,
+> **0 px** of enclosed pockets; magenta-carrying pixels 100% within 8px of an
+> edge and only 6px deep at worst (better than sheet A's 11.7); 0 pure-black px
+> and 0.039% darker than umber, warm at `(61,31,14)`; peduncles 77–79% back with
+> a 2.19–2.31× rise; recomposite **0 px differ** on all three.
+>
+> Two deviations from the prompt, neither worth a reroll: **the bass and trout
+> came back mouth-open** where the prompt said closed — a largemouth bass's mouth
+> is the species' whole idiom, which is `GEMINI_NOTES.md`'s "excluding part of an
+> object's own idiom" case, and it reads better for recognition. And the carp's
+> tonal stdev is 22.4, just under the accepted band's 26 floor, which is what a
+> heavy smooth-flanked carp actually looks like rather than a flat render.
+
+### R6 wave 1 — sheet C, and the rest of the Pond (open — the active milestone)
 
 Ten species, and **the first generation is an experiment as much as an asset.**
 33 fish one at a time is 33 round trips; if four fish share a canvas and still

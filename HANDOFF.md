@@ -11,7 +11,7 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R6 — fish, a rig per species**, `BUILD_PLAN_REFRESH.md` |
 | **Done when** | every species in `data/fish.json` has its own art, the collection screen reads as 33 different fish, and the landing has a visible moment — wave by wave, Pond first |
-| **State** | **4 of 33 species are painted, cut and wired** (the Pond's commons). The code is all in; what remains is generations. |
+| **State** | **7 of 33 species are painted, cut and wired** (the Pond's commons and uncommons). The code is all in; what remains is generations. |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 86/86 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
@@ -19,11 +19,12 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**Generate sheets B and C** — `ART.md` → *R6 wave 1*, the species clauses are
-written. Sheet A proved the format on the first attempt (four fish, one canvas,
-four clean components, consistent treatment), so **the whole roster is ~11
-generations rather than 33** and the Stream and Ocean follow the same pattern.
-The rule is in `GEMINI_NOTES.md` → *Several subjects on one sheet*.
+**Generate sheet C** — `ART.md` → *R6 wave 1*, the prompt is written out and
+`pond-rare` is already registered in the cut tool. Pike, walleye and the Koi
+finish the Pond. Sheets A and B both landed first attempt, in both layouts (2×2
+and a row of three), so **the whole roster is ~11 generations rather than 33**
+and the Stream and Ocean follow the same pattern. The rule is in
+`GEMINI_NOTES.md` → *Several subjects on one sheet*.
 
 **Then cut and wire, which is now two commands and a paste:**
 
