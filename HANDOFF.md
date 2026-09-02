@@ -40,12 +40,9 @@ a prompt recorded as "that one with the block swapped" is not something anyone
 can paste, and the eight substitutions include the canvas size, which is per
 pose and costs a generation when wrong.
 
-**Not R7, but it landed on 2026-09-02 and changes how the reel feels:** the fish
-now *swims* between words instead of jumping, and stays an unnamed shape until
-it is close (#135). The reel's per-frame exponential is gone; every fish move is
-a tween in `CONFIG.fish.pull`, and `CONFIG.fish.reveal` decides how late the
-species arrives. `ANIMATION.md` owns the reasoning. **Worth an eye test** — the
-feel numbers were picked from measurement, not from watching a kid play.
+**Not R7, and already landed:** the reel now animates and the fish keeps its
+name back until it is close (#135) — `ANIMATION.md` owns it, and it wants an
+eye test (below).
 
 **Before your first cut in a fresh container:** `pip install Pillow numpy scipy`,
 and for `spot-check.mjs`, `cd /tmp && npm install playwright`. `tools/README.md`
@@ -68,6 +65,12 @@ and an unregistered one looks exactly like art that never arrived.
 
 ## Waiting on Matt (none of it blocks R7)
 
+- **The new reel feel wants an eye test** (#135). The fish now tweens between
+  words instead of jumping, and stays an unnamed shape until it is reeled close.
+  Every number was picked from measurement, never from watching a kid play:
+  `CONFIG.fish.pull` is the four durations, `CONFIG.fish.reveal` is how late the
+  species arrives (`startAt` 0.3 was a judgement call about what "gradual"
+  means). Each is one line. Netlify is manual, so this is not live.
 - **Close PR #55 unmerged.** Verified 2026-09-01: it is a strict *subset* of
   `main` — merging it would delete 3463 lines including R1, R2 and the whole
   refresh epic. Full evidence in PR #60. Its branch
