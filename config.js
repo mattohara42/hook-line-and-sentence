@@ -349,42 +349,43 @@ export const CONFIG = {
     // printed by tools/cut-fish.py off the delivered sheet; none of it was tuned
     // in the browser, and re-running the tool reproduces it exactly.
     species: {
-      // R6 wave 1, sheet A: the Pond's four commons, painted on one canvas and
-      // cut apart as connected components, then each split at its own peduncle.
-      // Body and tail share one crop per species, so their offsets are zero.
-      bluegill:    { w: 54, h: 39, mouth: { x: 0, y: 21 }, tail: { x: 42, y: 19 },
+      // ---- the Pond ----
+      // Wave 1, sheet A: the four commons, painted on one canvas and cut apart
+      // as connected components, then each split at its own peduncle. Body and
+      // tail share one crop per species, so their offsets are zero.
+      bluegill:      { w: 54, h: 39, mouth: { x: 0, y: 20 }, tail: { x: 42, y: 19 },
                      layers: [{ id: "tail", file: "fish-bluegill-tail" },
                               { id: "body", file: "fish-bluegill-body" }] },
-      perch:       { w: 54, h: 30, mouth: { x: 0, y: 17 }, tail: { x: 43, y: 15 },
+      perch:         { w: 54, h: 30, mouth: { x: 0, y: 16 }, tail: { x: 43, y: 15 },
                      layers: [{ id: "tail", file: "fish-perch-tail" },
                               { id: "body", file: "fish-perch-body" }] },
-      minnow:      { w: 54, h: 21, mouth: { x: 0, y: 12 }, tail: { x: 40, y: 11 },
+      minnow:        { w: 54, h: 21, mouth: { x: 0, y: 12 }, tail: { x: 40, y: 11 },
                      layers: [{ id: "tail", file: "fish-minnow-tail" },
                               { id: "body", file: "fish-minnow-body" }] },
-      pumpkinseed: { w: 54, h: 39, mouth: { x: 0, y: 22 }, tail: { x: 42, y: 20 },
+      pumpkinseed:   { w: 54, h: 39, mouth: { x: 0, y: 20 }, tail: { x: 42, y: 20 },
                      layers: [{ id: "tail", file: "fish-pumpkinseed-tail" },
                               { id: "body", file: "fish-pumpkinseed-body" }] },
-      // sheet B: the three uncommons, a row of three on one canvas. Same cut,
-      // and a rank up means a 64px box rather than the commons' 54.
-      carp:        { w: 64, h: 36, mouth: { x: 0, y: 21 }, tail: { x: 51, y: 18 },
+      // sheet B: the three uncommons. A rank up means a 64px box rather than
+      // the commons' 54.
+      carp:          { w: 64, h: 36, mouth: { x: 0, y: 20 }, tail: { x: 51, y: 18 },
                      layers: [{ id: "tail", file: "fish-carp-tail" },
                               { id: "body", file: "fish-carp-body" }] },
-      bass:        { w: 64, h: 31, mouth: { x: 0, y: 16 }, tail: { x: 49, y: 15 },
+      bass:          { w: 64, h: 31, mouth: { x: 0, y: 16 }, tail: { x: 49, y: 15 },
                      layers: [{ id: "tail", file: "fish-bass-tail" },
                               { id: "body", file: "fish-bass-body" }] },
-      trout:       { w: 64, h: 28, mouth: { x: 0, y: 16 }, tail: { x: 50, y: 14 },
+      trout:         { w: 64, h: 28, mouth: { x: 0, y: 15 }, tail: { x: 50, y: 14 },
                      layers: [{ id: "tail", file: "fish-trout-tail" },
                               { id: "body", file: "fish-trout-body" }] },
       // sheet C: the two rares at 78px and the Pond's legendary at 96 — the koi
-      // is the biggest fish in the game and the first one whose seam needed the
+      // is the biggest fish in the game and the first whose seam needed the
       // overlap computed rather than assumed (see tools/cut-fish.py).
-      pike:        { w: 78, h: 25, mouth: { x: 0, y: 13 }, tail: { x: 63, y: 11 },
+      pike:          { w: 78, h: 25, mouth: { x: 0, y: 13 }, tail: { x: 63, y: 11 },
                      layers: [{ id: "tail", file: "fish-pike-tail" },
                               { id: "body", file: "fish-pike-body" }] },
-      walleye:     { w: 78, h: 35, mouth: { x: 0, y: 19 }, tail: { x: 59, y: 18 },
+      walleye:       { w: 78, h: 35, mouth: { x: 0, y: 19 }, tail: { x: 59, y: 18 },
                      layers: [{ id: "tail", file: "fish-walleye-tail" },
                               { id: "body", file: "fish-walleye-body" }] },
-      koi:         { w: 96, h: 58, mouth: { x: 0, y: 31 }, tail: { x: 68, y: 32 },
+      koi:           { w: 96, h: 58, mouth: { x: 0, y: 29 }, tail: { x: 68, y: 32 },
                      layers: [{ id: "tail", file: "fish-koi-tail" },
                               { id: "body", file: "fish-koi-body" }] },
 
@@ -393,18 +394,42 @@ export const CONFIG = {
       // fathead minnow on purpose — same rank, same 54px box, nearly the same
       // colour in fish.json — so it carries a rosy blush and a crisper band, and
       // the two are told apart at game size rather than in the data.
-      dace:        { w: 54, h: 23, mouth: { x: 0, y: 13 }, tail: { x: 41, y: 12 },
+      dace:          { w: 54, h: 23, mouth: { x: 0, y: 13 }, tail: { x: 41, y: 12 },
                      layers: [{ id: "tail", file: "fish-dace-tail" },
                               { id: "body", file: "fish-dace-body" }] },
-      chub:        { w: 54, h: 25, mouth: { x: 0, y: 14 }, tail: { x: 42, y: 13 },
+      chub:          { w: 54, h: 25, mouth: { x: 0, y: 13 }, tail: { x: 42, y: 13 },
                      layers: [{ id: "tail", file: "fish-chub-tail" },
                               { id: "body", file: "fish-chub-body" }] },
-      stickleback: { w: 54, h: 21, mouth: { x: 0, y: 12 }, tail: { x: 44, y: 11 },
+      stickleback:   { w: 54, h: 21, mouth: { x: 0, y: 12 }, tail: { x: 44, y: 11 },
                      layers: [{ id: "tail", file: "fish-stickleback-tail" },
                               { id: "body", file: "fish-stickleback-body" }] },
-      sculpin:     { w: 54, h: 23, mouth: { x: 0, y: 12 }, tail: { x: 42, y: 11 },
+      sculpin:       { w: 54, h: 23, mouth: { x: 0, y: 12 }, tail: { x: 42, y: 11 },
                      layers: [{ id: "tail", file: "fish-sculpin-tail" },
                               { id: "body", file: "fish-sculpin-body" }] },
+      // The trout sheet: six on one canvas rather than the two rows of three the
+      // prompt asked for, which was the better call — the rainbow and the
+      // steelhead are the pair hardest to tell apart, and this drew them against
+      // each other in one pass. Ranks still sort themselves, because a box comes
+      // from fish.json's tier and never from the sheet: 64px uncommons against
+      // 78px rares, mixed together on the canvas.
+      rainbowtrout:  { w: 64, h: 25, mouth: { x: 0, y: 14 }, tail: { x: 50, y: 12 },
+                     layers: [{ id: "tail", file: "fish-rainbowtrout-tail" },
+                              { id: "body", file: "fish-rainbowtrout-body" }] },
+      browntrout:    { w: 64, h: 23, mouth: { x: 0, y: 13 }, tail: { x: 51, y: 12 },
+                     layers: [{ id: "tail", file: "fish-browntrout-tail" },
+                              { id: "body", file: "fish-browntrout-body" }] },
+      grayling:      { w: 64, h: 28, mouth: { x: 0, y: 16 }, tail: { x: 51, y: 15 },
+                     layers: [{ id: "tail", file: "fish-grayling-tail" },
+                              { id: "body", file: "fish-grayling-body" }] },
+      steelhead:     { w: 78, h: 28, mouth: { x: 0, y: 15 }, tail: { x: 62, y: 14 },
+                     layers: [{ id: "tail", file: "fish-steelhead-tail" },
+                              { id: "body", file: "fish-steelhead-body" }] },
+      salmon:        { w: 78, h: 29, mouth: { x: 0, y: 15 }, tail: { x: 63, y: 15 },
+                     layers: [{ id: "tail", file: "fish-salmon-tail" },
+                              { id: "body", file: "fish-salmon-body" }] },
+      catfish:       { w: 78, h: 30, mouth: { x: 0, y: 17 }, tail: { x: 60, y: 15 },
+                     layers: [{ id: "tail", file: "fish-catfish-tail" },
+                              { id: "body", file: "fish-catfish-body" }] },
     },
   },
 

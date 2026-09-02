@@ -62,9 +62,17 @@ Scope note, so the docs don't drift into each other:
 
 ## Several subjects on one sheet: it works, and it is cheaper (R6)
 
-**Three sheets, three first attempts, in two layouts** — a 2×2 of four and two
-rows of three. Every one passed every check with no reroll, which is the
-strongest result this project has had from any prompt shape.
+**Five sheets, five first attempts, in three layouts** — a 2×2 of four, a row of
+three, and a 3×2 of six. Every one passed every check with no reroll, which is
+the strongest result this project has had from any prompt shape.
+
+**Put the two subjects hardest to tell apart on the SAME sheet.** R6's Stream
+wave was written to keep a rainbow trout and a steelhead on separate sheets,
+since they are the same species and the prompt could only describe the contrast
+in words. Delivered as one sheet of six instead, the generator drew them against
+each other and separated them properly first time — colourful-and-spotted beside
+chrome-and-clean. A sheet is not merely a saving: **it is the only way to ask for
+a difference rather than describe one.**
 
 **Tested first on R6's sheet A, and it passed every check on the first
 attempt.** Four different fish asked for in one 4:3 canvas, one per quadrant,

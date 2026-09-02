@@ -261,7 +261,40 @@ direction.
 > running far back). The peduncle detector put the line exactly at the tail
 > anyway, leaving both rear fins on the body where they belong.
 
-### R6 wave 2 — sheets B and C, the Stream's trout (open — the active milestone)
+> **✅ The trout landed as ONE sheet of six (2026-09-02), and the Stream is
+> complete — 20 of 33.** Matt merged sheets B and C into a single 3×2 canvas,
+> which was the better call and is now the rule: **the rainbow and the steelhead
+> are the pair hardest to tell apart, and one canvas drew them against each other
+> instead of in two separate passes.** The prompt had been written to work around
+> exactly that, with the steelhead's clause carrying the comparison in words —
+> unnecessary, as it turned out.
+>
+> Six of six components, nothing on a canvas edge, 0 px enclosed pockets;
+> peduncles 77–80% back at 2.40–2.90×; recomposite **0 px differ** on all six.
+> **Ranks still sort themselves** even with two tiers mixed on one canvas, because
+> a box comes from `fish.json`'s tier and never from the sheet: 64px uncommons
+> beside 78px rares.
+>
+> At game size all seven trout-shaped fish in the game now read apart — brook,
+> rainbow, brown, grayling, steelhead, Chinook and catfish. The closest remaining
+> pair is the **Pond's brook trout against the Stream's rainbow**, both rose-
+> flanked; they sit in different biome sections of the journal, which is what
+> keeps them separable, and it is worth knowing before the Ocean adds more.
+>
+> **The catfish found a bug in the mouth measurement.** Its leftmost pixel is the
+> tip of a *barbel*, not its mouth, so the "leftmost column at its vertical
+> centre" rule attached the fishing line to its forehead, 7 design px high. The
+> mouth is now the alpha-weighted centre of the leading 15% of the fish, which
+> gives a whisker almost no say and a head all of it. Across the other nineteen
+> species it moved the attach point by at most 2px, and onto the head rather than
+> onto whatever extremity reached furthest forward.
+
+### R6 wave 3 — the Ocean's thirteen fish (open — the active milestone)
+
+Not written yet, and the biggest wave: **13 species**, including the muskie,
+whose A8 hero sprite and its 96px CSS special case both retire when it lands.
+Sheets of six now being proven, the whole wave is likely **two or three
+generations**.
 
 Same three-sheet shape as the Pond, in the two layouts sheets A–C proved: four
 commons in a 2×2, then two rows of three. All three Pond sheets landed first
