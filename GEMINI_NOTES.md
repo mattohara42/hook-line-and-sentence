@@ -160,9 +160,11 @@ something to get right and becomes something you *have*: the pixels that did not
 change are the reference's own. It also means a piece can be found by
 difference rather than keyed out of a fresh canvas.
 
-**Confirmed on a second delivery** (the same hat for the standing Stream
-angler): same result, another faithful edit, with only 591 px of the reference
-missing from the return. The one difference worth noting is the backdrop, which
+**Confirmed on the second and third deliveries** (the same hat for the standing
+Stream angler and the braced Ocean one): three for three, every one a faithful
+edit, with 591 and 1092 px of the reference missing from the returns. The Ocean's
+also did what only it was asked to do, tilting the brim back to follow a head
+that is not upright, so the instruction lands rather than being averaged away. The one difference worth noting is the backdrop, which
 came back at a border stdev of 10/20/10 against the first delivery's 2/4/3. Still
 flat enough to key, and it is the reminder the convention already carries:
 measure the backdrop, never assume it.

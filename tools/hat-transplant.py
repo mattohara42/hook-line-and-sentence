@@ -19,15 +19,25 @@ them. The transform is found by maximising agreement between the two poses' own
 above-the-neck silhouettes, and the tool refuses if they do not actually
 correspond.
 
-Measured on the straw hat, Pond to Stream: the two heads register at IoU 0.904
-under a uniform scale of 0.672, and the transplanted hat against the separately
-generated one is IoU 0.62 with the same area to 10%. At the 18 design px a head
-occupies on screen the two are indistinguishable, so a hat costs one generation
-for three poses rather than three.
+Measured on the straw hat against real generations at both other poses, which is
+the only reason to believe any of it:
 
-The open half is the OCEAN, whose head is the one that is not upright: it tilts
-back, and this transform carries no rotation. Check that one against a real
-generation before trusting it, which is what the Ocean straw hat is for.
+  Pond -> Stream   heads register at IoU 0.904 (uniform scale 0.672). The
+                   transplanted hat against the separately generated one is IoU
+                   0.62 with the same area to 10%, and at the 18 design px a head
+                   occupies on screen they are indistinguishable. USE IT.
+  Pond -> Ocean    heads register at 0.837, and the tool refuses. Forced through
+                   anyway it lands IoU 0.712 against the real one and the hat sits
+                   PERCHED: too high and too far back, forehead and fringe
+                   exposed, still visible at 54px. The Ocean's head is the only
+                   one that is not upright and this transform carries no rotation.
+                   GENERATE IT.
+
+So MIN_HEAD_IOU sits between the two real cases rather than at a round number
+someone liked. It has two data points, which is enough to separate the case that
+works from the case that does not and not enough to be a law: if a third pose
+ever lands between 0.84 and 0.90, look at the result before trusting either side
+of the line.
 """
 import os
 import sys

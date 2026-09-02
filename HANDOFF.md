@@ -11,7 +11,7 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. The last one in the epic. |
 | **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
-| **State** | **2 of 21 painted, 2026-09-02.** The straw hat is on the Pond and Stream anglers, cut, wired and on screen. **The transplant question is half answered: a hat painted once at the Pond lands on the Stream head indistinguishably, so the Ocean decides whether the remaining nine hats cost three generations or six.** |
+| **State** | **3 of 21 painted, 2026-09-02, all first attempt.** The straw hat is on all three anglers, so **R7's first done-when clause is met** and both clauses now are. What is left is the rest of the grid: 9 hats (six generations, three transplants) and 9 rods. |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 89/89 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
@@ -19,23 +19,24 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**Generate `hat-straw-ocean`.** It is the last open question in the epic, not
-just the next square: the Ocean's head is the only one that is not upright, and
-`tools/hat-transplant.py` carries no rotation. If a transplanted Pond hat matches
-a real Ocean generation the way it matched the Stream's, the remaining nine hats
-are **three** generations (bucket, beanie, souwester, at the Pond) and six free
-transplants. If it does not, they are six generations and three transplants.
-The prompt and the reference are in `ART.md` under *R7*.
+**Decide whether R7 closes here or fills the grid.** Both done-when clauses are
+met: the straw hat changes the angler at every spot and persists, and the rod you
+buy is the rod in your hand. What remains is 18 more paintings of a shop that
+already works, and every open question in front of them is answered.
 
-**Two deliveries in, the shape is settled.** The generator returns an edit rather
-than a redraw (`GEMINI_NOTES.md` → *Editing a delivered painting*), and
-`tools/cut-gear.py` registers it by searching for the transform that best agrees
-with the unchanged part, then takes what changed. Adding a pose to it is one
-`POSES` entry.
+If it fills: the next three are `hat-bucket-pond`, `hat-beanie-pond` and
+`hat-souwester-pond`, each then transplanted to the Stream with
+`python3 tools/hat-transplant.py <stem> pond stream` and generated again for the
+Ocean. Prompts and the per-hat clauses are in `ART.md` under *R7*; references
+come from `python3 tools/gear-ref.py`. Then the nine rods, which go through
+`cut-angler.py` rather than `cut-gear.py`.
 
-**Hats before rods.** An unregistered rod falls back to the pose's own painted
-gate rod, which nobody can tell from the real thing. An unregistered hat falls
-back to nothing, so it is a purchase that visibly does nothing.
+**Three deliveries in, nothing about the method is open.** The generator returns
+an edit rather than a redraw (`GEMINI_NOTES.md` → *Editing a delivered
+painting*), `tools/cut-gear.py` registers it and takes what changed, and
+`tools/hat-transplant.py` lands a Pond hat on the Stream but refuses the Ocean,
+whose head tilts back. Both refusal and acceptance were checked against real
+generations.
 
 **A delivered PNG is not live until it is registered** in `CONFIG.rig.gearArt`,
 and an unregistered one looks exactly like art that never arrived
