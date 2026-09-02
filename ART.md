@@ -414,31 +414,34 @@ The Pond was re-cut with the corrected fit (IoU 0.898, unchanged; its piece now
 carries a little more of the hair under the brim, which the hat layer should
 paint anyway).
 
-#### The transplant is answered for the Stream, and it works
+#### ✅ `hat-straw-ocean` landed first attempt, and the transplant is answered
 
-The question these two paintings were sent to settle: can a hat painted once at
-the Pond be landed on another pose's head instead of generated again?
+Third delivery, third faithful edit: agreement below the neck 0.975, IoU 0.896,
+1092 px of the reference the return does not carry, and the brim genuinely tilts
+back with the head, which is what this pose was asked for. 0 pure-black px and
+2.0% darker than umber, warm at `(79,17,4)` — higher than the other two, and it
+is the shadow the brim throws on the brow rather than a palette drift. The straw
+hat is now on all three anglers, wired and verified in Chromium at each spot.
 
-**For the Stream, yes.** The two poses' above-the-neck silhouettes register at
-**IoU 0.904** under a uniform scale of 0.672, which is the R4 finding restated
-(one character at three scales, related by the head). Landing the Pond hat on
-that transform and comparing it against the separately generated Stream hat:
-**IoU 0.62 with the areas within 10%**, and at the 18 design px a head actually
-occupies they are indistinguishable. The generated one sits a touch deeper and
-shades the brow; the transplant sits a touch high. Nothing a player can see.
+**The transplant question is settled, and the answer is different at each pose.**
+Can a hat painted once at the Pond be *landed* on another pose's head instead of
+generated again?
 
-`tools/hat-transplant.py` does it, and it **refuses below a head IoU of 0.85**
-rather than landing a hat on a head that does not correspond. This is not the
-offset-tweak rule being bent: the transform is measured off the two paintings,
-not nudged by eye, and the tool checks its own premise.
+| | heads register at | transplant vs the real hat | verdict |
+|---|---|---|---|
+| Pond → Stream | **0.904** (uniform scale 0.672) | IoU 0.62, areas within 10%, indistinguishable at 54px | **transplant** |
+| Pond → Ocean | **0.837** | IoU 0.712, and it sits *perched*: too high, too far back, forehead and fringe exposed, visible at 54px | **generate** |
 
-**The Ocean is the open half**, and it is the one that matters, because its head
-is the only one that is not upright. It tilts back, and this transform carries no
-rotation. `hat-straw-ocean` is still worth generating for exactly that reason.
+The Ocean is the pose whose head is not upright, and the transform carries scale
+and translation but no rotation, so this is the failure it was predicted to have.
+`tools/hat-transplant.py` refused it on its own threshold before anything was
+rendered, which is the check earning its keep: the number that separates the two
+cases was set from the Stream and the Ocean fell the right side of it without
+being told to.
 
-**So the remaining nine hats are three generations plus two transplants each, or
-six generations plus three transplants** if the Ocean turns out to need its own
-paintings. Matt's call, and the cheap half of it is proven either way.
+**So the remaining nine hats are six generations rather than nine**: three at the
+Pond (`bucket`, `beanie`, `souwester`), three free transplants to the Stream,
+and three at the Ocean. The rods are unaffected, since a rod is not cut this way.
 
 #### The hats
 

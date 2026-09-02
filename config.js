@@ -167,7 +167,7 @@ export const CONFIG = {
     // gate rod. Add a stem here the moment its PNG lands.
     gearArt: [
       "rod-stick-pond", "rod-bamboo-stream", "rod-deepsea-ocean",
-      "hat-straw-pond", "hat-straw-stream",
+      "hat-straw-pond", "hat-straw-stream", "hat-straw-ocean",
     ],
     poses: {
       // R4's painted angler. Both layers are cuts of ONE delivered painting
@@ -308,7 +308,9 @@ export const CONFIG = {
           { id: "rod",  gear: "rod", file: "rod-deepsea-ocean",  x: 38, y: -48, w: 71, h: 82 },
           { id: "arm",              file: "angler-ocean-arm",   x: 38, y: -48, w: 71, h: 82 },
           { id: "body",             file: "angler-ocean-body",  x: 38, y: -48, w: 71, h: 82 },
-          { id: "hat",  gear: "hat",                            x: 38, y: -48, w: 71, h: 82 },
+          // the pose's whole painted canvas, not the angler's crop — see the
+          // Pond's hat layer for why. Written by tools/cut-gear.py.
+          { id: "hat",  gear: "hat",                            x: 33.3, y: -48.4, w: 76.3, h: 84.4 },
         ],
         rodPivot:   { x: 68, y:   3 },
         lineOrigin: { x: 109, y: -48 },
