@@ -242,11 +242,153 @@ direction.
 
 ### R6 wave 2 — the Stream's ten fish (open — the active milestone)
 
-Not written yet. Same three-sheet shape as the Pond: four commons, three
-uncommons, three rares, in the layouts sheets A–C proved. `data/fish.json` has
-the roster (dace, chub, stickleback, sculpin · rainbow trout, brown trout,
-grayling · steelhead, salmon, catfish), and **the four trout-shaped species are
-the test the Pond's bluegill-versus-pumpkinseed pair was a rehearsal for.**
+Same three-sheet shape as the Pond, in the two layouts sheets A–C proved: four
+commons in a 2×2, then two rows of three. All three Pond sheets landed first
+attempt, so the format is not the risk here.
+
+**The risk is that five of these ten are salmonids** — rainbow trout, brown
+trout, grayling, steelhead and Chinook salmon — and a **steelhead *is* a rainbow
+trout**, the sea-run form of the same species. Add the Pond's brook trout and
+the game has six trout-shaped fish. The Pond's bluegill-versus-pumpkinseed pair
+was the rehearsal; this is the real thing, and the species clauses below spend
+their weight on the field marks that separate them rather than on the shape they
+share:
+
+| species | what makes it itself, at 64–78px |
+|---|---|
+| rainbow trout | the **colourful** freshwater form: a bright rose band down the flank, heavy black speckling over back *and* tail |
+| brown trout | buttery gold-brown, big dark spots each **ringed with a pale halo**, plus red-orange spots; a square, unspotted tail |
+| grayling | separates itself by **silhouette** — an enormous sail-like dorsal fin, which is why it needs no colour argument |
+| steelhead | the **chrome** form: silver flank with the rose band faint or gone, steel-blue back, sparser spots. Its clause names the contrast with the rainbow explicitly |
+| Chinook salmon | **bigger and deeper-bodied**, olive-bronze, spots on the back and on *both* tail lobes, a slightly hooked jaw and a dark mouth |
+
+**Rainbow and steelhead deliberately land on different sheets** (they fall that
+way by rank), so the two hardest to separate are never drawn side by side and
+have to be told apart in the collection grid instead — which is why the
+steelhead's clause carries the comparison in words.
+
+Two further collisions worth knowing before they bite:
+
+- **The dace against the Pond's fathead minnow.** Both are small, plain and
+  pale (`#a9c6cf` against `#9db7b8`). The dace's clause gives it a rosy blush at
+  the cheek and fin bases and a crisper dark band; if it still reads as the same
+  fish at 54px, that is a reroll of the dace, not a config tweak.
+- **The dace against the chub**, which are both minnow-family. The chub gets a
+  blunt heavy head and brassy-olive colour against the dace's slender silver.
+
+**Check with the names covered, at game size, before accepting a sheet** — the
+Pond proved that is the check that matters, and two bugs this milestone were
+only ever visible in a rendered picture.
+
+```
+ART NEEDED: R6 wave 2, sheet A — the Stream's four common fish
+Prompt:   [STYLE]
+          Soft painterly storybook illustration, warm muted color palette, gentle
+          diffused lighting, thin warm brown outlines rather than black, cozy and
+          inviting mood, no harsh shadows, no neon or saturated colours. Soft
+          two-tone shading with blended edges. NOT pixel art, NOT flat vector art
+          with even line weight, NOT thick black cartoon linework, NOT a glossy
+          3D render, NOT a photograph.
+
+          [LAYOUT]
+          Four different fish on one canvas, one in each quarter of the image:
+          top-left, top-right, bottom-left, bottom-right. Every fish is fully
+          separated from every other by a wide band of empty background — no fish
+          touches, overlaps or crowds another, and none touches the edge of the
+          canvas. Each fish is drawn at a comfortable size within its own quarter.
+
+          [POSE — every fish]
+          Exact side view, facing LEFT: the head at the left of its own quarter
+          and the tail at the right, level and horizontal as if swimming straight
+          across. One calm friendly eye. Fins spread and clearly separate from the
+          body, the dorsal fin standing up and the tail fan open. A gentle
+          storybook fish, NOT a googly-eyed grinning cartoon.
+
+          [TELL THEM APART]
+          These are four DIFFERENT species and the point of the picture is that a
+          child could tell them apart. Draw the features named below as the most
+          obvious thing about each fish. Do not draw four versions of the same
+          fish in four colours.
+
+          [THE FOUR FISH]
+          Top-left — a common dace: a small slender silver-blue river fish with a
+          crisp dark band running along the flank, a soft rosy blush at the cheek
+          and at the base of the fins, and a small neat mouth.
+          Top-right — a creek chub: a stockier fish with a noticeably blunt heavy
+          head and a larger mouth, big visible scales, brassy olive-tan colour and
+          a dark stripe along the side.
+          Bottom-left — a three-spined stickleback: a tiny slim fish whose most
+          obvious feature is THREE separate sharp spines standing up along its
+          back where a dorsal fin would normally be, with bony plates along the
+          side, olive-green above and a pale belly.
+          Bottom-right — a river sculpin: a bottom-dwelling fish with a broad
+          flattened head, a wide mouth, very large fan-shaped pectoral fins spread
+          out to the sides, a body tapering to the tail, and mottled brown
+          camouflage markings.
+
+          [CRITICAL: nothing but the fish]
+          Draw NO water of any kind. No bubbles, no splash, no ripples, no waves,
+          no weeds, no sand, no rocks, no coral, no bowl, no tank, no net, no
+          hook, no fishing line, no scenery, no plants, no other animals. No drop
+          shadow or reflection under any fish. No text, no labels, no names, no
+          watermark, no border, no frame, no grid lines, no panel dividers between
+          the fish.
+
+          [BACKDROP]
+          Every part of the canvas that is not a fish is one completely flat, even
+          magenta #FF00FF, edge to edge and into all four corners. A single flat
+          colour: no gradient, no texture, no vignette, no pattern.
+
+          [CANVAS]
+          The image is 1600 by 1200 pixels, aspect ratio 4:3. Output as PNG.
+Save as:  assets/Gemini_fish-stream-common.jpg
+Size:     4:3, flat magenta backdrop, four separated subjects
+Wired in: `python3 tools/cut-fish.py stream-common` — already registered in SHEETS
+```
+
+Sheets **B** and **C** are that prompt with the layout, the species and the
+canvas swapped, exactly as the Pond's were: *"Three different fish on one canvas,
+side by side in a single row: one on the left, one in the middle, one on the
+right…"*, "its own third" in place of "its own quarter", and **1800 by 800
+pixels, aspect ratio 2.25:1**.
+
+```
+          [THE THREE FISH — sheet B, the uncommons]
+          Left — a rainbow trout: the colourful freshwater form. An olive-green
+          back covered in small black speckles, a BRIGHT ROSE-PINK BAND running
+          the length of the flank, a pale belly, and black speckling carried onto
+          the tail fin as well as the back.
+          Middle — a brown trout: buttery gold-brown along the flank, covered in
+          large dark spots that are each RINGED WITH A PALE HALO, with a scatter
+          of red-orange spots among them, and a squared-off tail that carries no
+          spots at all.
+          Right — an Arctic grayling: its most obvious feature by far is an
+          ENORMOUS SAIL-LIKE DORSAL FIN standing tall along its back, far bigger
+          than any other fin, softly spotted and edged. A small neat mouth, a
+          slender body, and a silver flank with a faint lilac and blue sheen.
+
+          [THE THREE FISH — sheet C, the rares]
+          Left — a steelhead: this is a SEA-RUN RAINBOW TROUT and it must look
+          different from a freshwater rainbow trout — CHROME SILVER along the
+          whole flank with the pink band very faint or absent altogether, a
+          steel-blue back, only sparse fine speckling, and a sleek streamlined
+          body built for travelling.
+          Middle — a Chinook salmon: the biggest and deepest-bodied fish on this
+          canvas, olive-bronze along the back fading to a pale flank, black spots
+          scattered over the back AND over BOTH lobes of the tail, with a slightly
+          hooked lower jaw and a dark mouth line.
+          Right — a channel catfish: unmistakable and nothing like the other two —
+          smooth skin with no visible scales, LONG WHISKER-LIKE BARBELS around a
+          wide flat mouth, a broad flattened head, a deeply FORKED tail, and a
+          soft mottled grey-brown body.
+```
+
+**When they land, in this order:** count the components first (four, then three,
+then three — a short count means two fish are touching and that is a reroll, not
+a cut problem) · check nothing sits on a canvas edge · then cut, wire, and
+**look at the collection screen with the names covered.** The pairs to stare at
+are rainbow-versus-steelhead across sheets B and C, and dace-versus-chub within
+sheet A — and the dace against the Pond's fathead minnow one row up.
 
 Ten species, and **the first generation is an experiment as much as an asset.**
 33 fish one at a time is 33 round trips; if four fish share a canvas and still

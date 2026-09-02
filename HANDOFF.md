@@ -19,24 +19,29 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**Write and generate the Stream's three sheets** — `ART.md` → *R6 wave 2*, which
-names the roster but has no prompts yet. Copy the Pond's structure: four commons
-in a 2×2, then two rows of three. All three Pond sheets landed **first attempt**
-in both layouts, so the format is settled; `GEMINI_NOTES.md` → *Several subjects
-on one sheet* has the rules.
+**Generate the Stream's three sheets** — `ART.md` → *R6 wave 2*. All three
+prompts are written out and all three are pre-registered in `tools/cut-fish.py`,
+so each one is paste, save, and one command. Same shapes the Pond proved: four
+commons in a 2×2 at 4:3, then two rows of three at 2.25:1.
 
-**The Stream's hard part is named in advance:** four of its ten are trout-shaped
-(rainbow, brown, steelhead, salmon), which is the test the Pond's
-bluegill-versus-pumpkinseed pair was a rehearsal for. Spend the species clauses
-on the field marks that separate them, and check them at 54–78px with the names
-covered before accepting the sheet.
+**The Stream's risk is named in the prompts, not left to be discovered.** Five of
+its ten are salmonids and a **steelhead *is* a rainbow trout**, so the species
+clauses spend their weight on field marks rather than on the shape they share —
+the rainbow is the colourful form, the steelhead the chrome one, the grayling
+separates itself by its sail of a dorsal fin. Rainbow and steelhead fall on
+different sheets by rank, so they are never drawn side by side; the steelhead's
+clause carries the comparison in words instead. Two more to watch: the dace
+against the chub, and the dace against the **Pond's** fathead minnow one row up
+in the journal.
 
-**Cutting is one command per sheet** once it is saved: add it to `SHEETS` in
-`tools/cut-fish.py` (species in reading order), run
-`python3 tools/cut-fish.py <sheet>`, paste the printed block into
-`CONFIG.fish.species`, and run `npm test` — the three traps catch a bad entry.
-The seam overlap is derived per fish now, so a deep-peduncled legendary needs no
-special handling.
+**Cutting is one command per sheet:** `python3 tools/cut-fish.py stream-common`
+(or `-uncommon` / `-rare`), paste the printed block into `CONFIG.fish.species`,
+`npm test`. The three traps catch a bad entry and the seam overlap is derived per
+fish, so a deep-peduncled species needs no special handling.
+
+**Then look at the collection screen with the names covered.** Two bugs this
+milestone — the eye dot painting over the sprites, and every fish rendering
+without its tail — were invisible to assertions and obvious in a screenshot.
 
 **One cosmetic item, cheap, best done when the Pond is complete:** the painted
 bodies run darker and duller than `data/fish.json`'s per-species `color` (green

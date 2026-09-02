@@ -49,6 +49,25 @@ SHEETS = {
         layout=["pike", "walleye", "koi"],
         alpha="unmix", rear=(0.60, 0.88),
     ),
+    # Wave 2, registered ahead of the art so cutting a delivered sheet is one
+    # command. The grayling is the one to watch: its sail-like dorsal fin is the
+    # tallest thing on any fish in the game, so if `rear` ever needs widening for
+    # a species, it will be that one.
+    "stream-common": dict(
+        src="assets/Gemini_fish-stream-common.jpg",
+        layout=["dace", "chub", "stickleback", "sculpin"],
+        alpha="unmix", rear=(0.60, 0.88),
+    ),
+    "stream-uncommon": dict(
+        src="assets/Gemini_fish-stream-uncommon.jpg",
+        layout=["rainbowtrout", "browntrout", "grayling"],
+        alpha="unmix", rear=(0.60, 0.88),
+    ),
+    "stream-rare": dict(
+        src="assets/Gemini_fish-stream-rare.jpg",
+        layout=["steelhead", "salmon", "catfish"],
+        alpha="unmix", rear=(0.60, 0.88),
+    ),
 }
 
 # Mirrors CONFIG.fish.lengthByTier. config.js is the source of truth and a data
