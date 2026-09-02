@@ -37,11 +37,18 @@ Scope note, so the docs don't drift into each other:
 
 - **Aspect ratio, when stated as a ratio.** Adding `Aspect ratio 2.36:1` to the
   end of a prompt produced exactly 1584×672 on **six** consecutive requests
-  across two levels. This is the single most dependable instruction in the whole
+  across two levels, and R6's eight fish sheets landed within 0.006 of their
+  asked ratio every time but one. Still the most dependable instruction in the
   set. **State the pixel dimensions in the prompt body too** — "The image is 1584
-  by 672 pixels, aspect ratio 2.36:1". The ratio alone has never missed, so this
-  is belt and braces rather than a fix, but it costs nothing and it makes the
-  prompt self-contained if it is ever pasted somewhere without its spec line.
+  by 672 pixels, aspect ratio 2.36:1"; the pixel count is routinely ignored (R6
+  asked 1600×1200 and got 1200×896 repeatedly) but the ratio holds, and it makes
+  the prompt self-contained if it is ever pasted without its spec line.
+
+  **The one miss is a useful alarm.** The Ocean's field-guide sheet came back at
+  1.833 against a 4:3 ask — and it also ignored the backdrop, added captions and
+  changed medium. When the most reliable instruction in the set misses, suspect
+  that the whole frame has been rewritten by a stronger idiom rather than that
+  this one instruction failed.
 - **Palette, when described in words rather than hex.** The R3 far layer came
   back with sky `#b7cfd0` against a `#b7cfd8` target and glow `#f9e9b7` against
   `#f7e6bd` — effectively exact, from prose alone. Hex values in the prompt are
@@ -62,9 +69,15 @@ Scope note, so the docs don't drift into each other:
 
 ## Several subjects on one sheet: it works, and it is cheaper (R6)
 
-**Five sheets, five first attempts, in three layouts** — a 2×2 of four, a row of
-three, and a 3×2 of six. Every one passed every check with no reroll, which is
-the strongest result this project has had from any prompt shape.
+**Seven sheets in eight generations, across three layouts** — a 2×2 of four, a
+row of three, and a 3×2 of six. Six landed first attempt; the one reroll was a
+prompt fault rather than a sheet fault (see *Describing fish by field marks*
+below), and even that sheet's six subjects were correctly differentiated. This
+is the strongest result this project has had from any prompt shape.
+
+**Six subjects on one canvas works as well as four.** The upper bound has not
+been found; a 3×2 of six was used three times without the layout itself failing
+once.
 
 **Put the two subjects hardest to tell apart on the SAME sheet.** R6's Stream
 wave was written to keep a rainbow trout and a steelhead on separate sheets,

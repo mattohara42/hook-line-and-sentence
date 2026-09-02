@@ -31,14 +31,29 @@ sheet C, written out in full and pre-registered as `ocean-muskie`. Then:
    and no sheet could pair them because the pike is in another biome and already
    generated. Their patterns are inverted (pike pale-on-dark, muskie
    dark-on-pale) and the clause says so.
-4. **Close R6.** Every species in `data/fish.json` will have its own art, the
-   collection will read as 33 different fish, and the landing beat shipped with
-   the code half.
+4. **Close R6**, and with it the last art-dependent milestone but one. All three
+   done-when clauses will be met: every species has its own art, the collection
+   reads as 33 different fish, and the landing beat shipped with the code half.
+   `BUILD_PLAN_REFRESH.md` carries what the milestone cost and what
+   `tools/cut-fish.py` knows, for whoever plans the next epic.
 
-**One cosmetic item, cheap, best done when the Pond is complete:** the painted
-bodies run darker and duller than `data/fish.json`'s per-species `color` (green
-off by 29–51). That field now only tints the collection blob for *uncaught*
-species, so it shows on a silhouette or not at all.
+**Then R7 is all that is left of the refresh** — gear in the new style, one PNG
+per shop item per pose. R4 already drew the diagonal of that grid (each pose
+holds its own gate rod), and `renderShopList` already generalises, so it is
+mostly content.
+
+**Two things to decide once the muskie is in, neither blocking:**
+
+- **`data/fish.json`'s per-species `color` has almost no job left.** The painted
+  bodies run darker and duller than it (green off by 29–51), and now that art
+  exists it only tints the collection blob for *uncaught* species — a silhouette.
+  Either re-pass the 33 values toward the paintings or decide the field is
+  vestigial; a data test still enforces `#rrggbb`.
+- **The two Ocean sheets are drawn tighter than the rest.** Tonal stdev 53–71
+  against the Pond and Stream's 26–45. It is the only style complaint in the
+  milestone that survived measurement — but it does not survive the downscale,
+  and at 54–78px they sit with the other twenty. `ART.md` → *R6 wave 3* has the
+  numbers. A reroll is cheap now the prompt is right.
 
 **Carried from R5, and still user-visible:** both painted vessels are
 `skinnable: false`, so equipping one of `shop.boats`' four alternate hulls does
@@ -86,6 +101,11 @@ nothing at any spot. Prompt, registration check and a cheaper CSS-tint fallback:
   and **screenshot past the startup modal**. Every R3 preview was shot through
   the profile picker's scrim and looked half as bright as the game really is.
   Measuring the right number on the wrong image is the failure mode.
+- **Draw what you measured before believing it.** R6 shipped four bugs past
+  green assertions — a CSS eye dot over the sprites, every journal fish missing
+  its tail, a line on a catfish's forehead, a line beside a unicornfish's horn
+  attached to nothing. Two were caught by screenshotting the real screen, two by
+  painting the measured coordinate onto the sprite in red. Now in `CLAUDE.md`.
 - **A piece that doesn't fit is a reroll, not an offset tweak** — G1's lesson,
   and R3's for backgrounds. But **placement is wiring, not art**: R5 seated the
   Ocean kid in a fighting chair the generator put wherever it liked, using
@@ -113,13 +133,7 @@ for the trail.
 
 ## Keeping this file cheap
 
-It reached 199 lines by accreting finished reasoning — one resolved thread alone
-ran 35 lines restating an investigation that PR #60 already recorded in full. So:
-
-- **Rewrite it, never append.** It is a snapshot, not a log.
-- **A resolved thread becomes one line, or disappears.** Point at the PR.
-- **Never restate another doc.** Link it. If a rule belongs to the generator,
-  it goes in `GEMINI_NOTES.md` and this file does not repeat it.
-- **Drop session narrative entirely.** "What happened last session" is `git
-  log`; what the next session needs is state, the next action, and what is
-  blocked on a human.
+`CLAUDE.md` owns these rules and this file should not restate them, which is
+itself one of them: **rewrite, never append** · **a resolved thread becomes one
+line or disappears** · **never restate another doc** · **no session narrative**.
+It reached 199 lines once by accreting finished investigations. It is 139 lines now.
