@@ -240,7 +240,28 @@ direction.
 > the overlap moves pixels between the two layers without touching the box, the
 > peduncle, the mouth or the pivot.
 
-### R6 wave 2 — the Stream's ten fish (open — the active milestone)
+### R6 wave 2 — the Stream's ten fish (sheet A ✅ landed 2026-09-02; B and C open)
+
+> **✅ Sheet A landed and is wired — fourth sheet, fourth first attempt.**
+> Canvas 1200×896 (ratio 1.339 vs 1.333); four of four components, nothing on a
+> canvas edge, 0 px of enclosed pockets; **the cleanest keying yet** — every
+> magenta-carrying pixel within 8px of an edge and only 4px deep at worst,
+> against sheet A of the Pond's 11.7; no pure black, 0.118% darker than umber
+> and warm at `(59,32,11)`; peduncles 77–81% back with a 2.40–3.92× rise;
+> recomposite **0 px differ** on all four.
+>
+> **The collision the wave was written around is resolved.** Composited at 54px
+> on pond water beside the Pond's fathead minnow, the dace is plainly a different
+> fish — the rosy blush at the cheek and fin bases and the crisper dark band do
+> exactly the work they were asked to do. Dace against chub is settled the same
+> way, by silver-blue against brassy gold.
+>
+> The sculpin was the cut worth checking, having the strangest silhouette in the
+> game so far (a broad flat head, huge fan-shaped pectorals, a second dorsal
+> running far back). The peduncle detector put the line exactly at the tail
+> anyway, leaving both rear fins on the body where they belong.
+
+### R6 wave 2 — sheets B and C, the Stream's trout (open — the active milestone)
 
 Same three-sheet shape as the Pond, in the two layouts sheets A–C proved: four
 commons in a 2×2, then two rows of three. All three Pond sheets landed first

@@ -387,6 +387,24 @@ export const CONFIG = {
       koi:         { w: 96, h: 58, mouth: { x: 0, y: 31 }, tail: { x: 68, y: 32 },
                      layers: [{ id: "tail", file: "fish-koi-tail" },
                               { id: "body", file: "fish-koi-body" }] },
+
+      // ---- the Stream ----
+      // Wave 2, sheet A: the four commons. The dace was drawn against the Pond's
+      // fathead minnow on purpose — same rank, same 54px box, nearly the same
+      // colour in fish.json — so it carries a rosy blush and a crisper band, and
+      // the two are told apart at game size rather than in the data.
+      dace:        { w: 54, h: 23, mouth: { x: 0, y: 13 }, tail: { x: 41, y: 12 },
+                     layers: [{ id: "tail", file: "fish-dace-tail" },
+                              { id: "body", file: "fish-dace-body" }] },
+      chub:        { w: 54, h: 25, mouth: { x: 0, y: 14 }, tail: { x: 42, y: 13 },
+                     layers: [{ id: "tail", file: "fish-chub-tail" },
+                              { id: "body", file: "fish-chub-body" }] },
+      stickleback: { w: 54, h: 21, mouth: { x: 0, y: 12 }, tail: { x: 44, y: 11 },
+                     layers: [{ id: "tail", file: "fish-stickleback-tail" },
+                              { id: "body", file: "fish-stickleback-body" }] },
+      sculpin:     { w: 54, h: 23, mouth: { x: 0, y: 12 }, tail: { x: 42, y: 11 },
+                     layers: [{ id: "tail", file: "fish-sculpin-tail" },
+                              { id: "body", file: "fish-sculpin-body" }] },
     },
   },
 
