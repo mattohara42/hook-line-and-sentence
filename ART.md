@@ -223,7 +223,30 @@ direction.
 > tonal stdev is 22.4, just under the accepted band's 26 floor, which is what a
 > heavy smooth-flanked carp actually looks like rather than a flat render.
 
-### R6 wave 1 — sheet C, and the rest of the Pond (open — the active milestone)
+> **✅ Sheet C landed and is wired (2026-09-02) — the Pond is complete, 10 of 33.**
+> Third sheet, third first attempt. Canvas 1552×688 (ratio 2.256 vs 2.25); three
+> of three components, nothing on a canvas edge, 0 px of enclosed pockets;
+> recomposite **0 px differ** on all three. The koi is the Pond's legendary and
+> renders at 96 design px, the biggest fish in the game.
+>
+> **The koi found a real bug in the cut, which is what a hero asset is for.** Its
+> peduncle is 90 source px deep — the deepest of the ten — and the tool's fixed
+> 3px seam overlap left **0.5 design px** of daylight when the tail swings to
+> ±7°, which is 2.7 device px on a retina screen. The overlap is now derived per
+> fish from its own measured peduncle and the sweep angle
+> (`ceil(depth/2 · sin 7°) + 1`), which gives 4px for the pike and 7px for the
+> koi. Re-cutting all three sheets closes the seam (enclosed holes at ±7°: koi 0
+> source px, everything else ≤1) and **the printed config is byte-identical** —
+> the overlap moves pixels between the two layers without touching the box, the
+> peduncle, the mouth or the pivot.
+
+### R6 wave 2 — the Stream's ten fish (open — the active milestone)
+
+Not written yet. Same three-sheet shape as the Pond: four commons, three
+uncommons, three rares, in the layouts sheets A–C proved. `data/fish.json` has
+the roster (dace, chub, stickleback, sculpin · rainbow trout, brown trout,
+grayling · steelhead, salmon, catfish), and **the four trout-shaped species are
+the test the Pond's bluegill-versus-pumpkinseed pair was a rehearsal for.**
 
 Ten species, and **the first generation is an experiment as much as an asset.**
 33 fish one at a time is 33 round trips; if four fish share a canvas and still

@@ -11,7 +11,7 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R6 — fish, a rig per species**, `BUILD_PLAN_REFRESH.md` |
 | **Done when** | every species in `data/fish.json` has its own art, the collection screen reads as 33 different fish, and the landing has a visible moment — wave by wave, Pond first |
-| **State** | **7 of 33 species are painted, cut and wired** (the Pond's commons and uncommons). The code is all in; what remains is generations. |
+| **State** | **The Pond is complete — 10 of 33 species painted, cut and wired.** The code is all in; what remains is the Stream and the Ocean. |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 86/86 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
@@ -19,24 +19,24 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**Generate sheet C** — `ART.md` → *R6 wave 1*, the prompt is written out and
-`pond-rare` is already registered in the cut tool. Pike, walleye and the Koi
-finish the Pond. Sheets A and B both landed first attempt, in both layouts (2×2
-and a row of three), so **the whole roster is ~11 generations rather than 33**
-and the Stream and Ocean follow the same pattern. The rule is in
-`GEMINI_NOTES.md` → *Several subjects on one sheet*.
+**Write and generate the Stream's three sheets** — `ART.md` → *R6 wave 2*, which
+names the roster but has no prompts yet. Copy the Pond's structure: four commons
+in a 2×2, then two rows of three. All three Pond sheets landed **first attempt**
+in both layouts, so the format is settled; `GEMINI_NOTES.md` → *Several subjects
+on one sheet* has the rules.
 
-**Then cut and wire, which is now two commands and a paste:**
+**The Stream's hard part is named in advance:** four of its ten are trout-shaped
+(rainbow, brown, steelhead, salmon), which is the test the Pond's
+bluegill-versus-pumpkinseed pair was a rehearsal for. Spend the species clauses
+on the field marks that separate them, and check them at 54–78px with the names
+covered before accepting the sheet.
 
-```
-python3 tools/cut-fish.py <sheet>     # add the sheet to its SHEETS table first
-```
-
-It writes `assets/fish-<id>-{body,tail}.png` and prints the
-`CONFIG.fish.species` block, measured rather than tuned. The three data tests
-catch a bad entry (mouth on the leading half, tail pivot on the trailing half,
-box length matching the species' **rank**). Check `npm test`, then look at the
-collection screen — that is the half of the done-when the scene doesn't show.
+**Cutting is one command per sheet** once it is saved: add it to `SHEETS` in
+`tools/cut-fish.py` (species in reading order), run
+`python3 tools/cut-fish.py <sheet>`, paste the printed block into
+`CONFIG.fish.species`, and run `npm test` — the three traps catch a bad entry.
+The seam overlap is derived per fish now, so a deep-peduncled legendary needs no
+special handling.
 
 **One cosmetic item, cheap, best done when the Pond is complete:** the painted
 bodies run darker and duller than `data/fish.json`'s per-species `color` (green

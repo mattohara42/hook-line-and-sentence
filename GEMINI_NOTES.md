@@ -62,7 +62,11 @@ Scope note, so the docs don't drift into each other:
 
 ## Several subjects on one sheet: it works, and it is cheaper (R6)
 
-**Tested on R6's first fish sheet, and it passed every check on the first
+**Three sheets, three first attempts, in two layouts** — a 2×2 of four and two
+rows of three. Every one passed every check with no reroll, which is the
+strongest result this project has had from any prompt shape.
+
+**Tested first on R6's sheet A, and it passed every check on the first
 attempt.** Four different fish asked for in one 4:3 canvas, one per quadrant,
 each named separately in a `[THE FOUR FISH]` block. What came back:
 
