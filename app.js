@@ -814,9 +814,9 @@ function lineOff() {
 const fishArt = (f) => (f ? CONFIG.fish.species[f.id] : null) ?? null;
 // Where the mouth and the middle are. The placeholder's numbers are the ones
 // drawFish() and pullFishOneWord() used to hardcode, so a species without art
-// behaves exactly as it did — including the Ocean muskie, whose hero sprite is
-// 96px wide by a CSS rule and still measures its mouth from this box, as it
-// always has. That inconsistency leaves with its own wave.
+// behaves exactly as it did. Every species in fish.json now has art, so the
+// fallback serves nothing today — it stays because it is what keeps a species
+// added ahead of its painting playable rather than invisible.
 const fishBox = () => fishArt(fish) ?? CONFIG.fish.placeholder;
 
 function renderFish(f) {
@@ -824,8 +824,8 @@ function renderFish(f) {
   el.fish.querySelectorAll(".fish-layer").forEach(n => n.remove());
   el.fish.classList.toggle("rigged", !!art);
   if (!art) {
-    // let the stylesheet own the box again — the muskie's is wider than the
-    // placeholder's, and an inline width would quietly shrink it
+    // let the stylesheet own the box again — a legendary's box is wider than
+    // the placeholder's, and an inline width would quietly shrink it
     el.fish.style.removeProperty("width");
     el.fish.style.removeProperty("height");
     return;

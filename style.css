@@ -390,14 +390,6 @@ h1 {
 #fish.tier-rare { filter: drop-shadow(0 0 8px rgba(var(--gold-rgb),0.7)); }
 #fish:not(.rigged).tier-legendary { background-image: url("assets/fish-legendary.png"); }
 #fish.tier-legendary { filter: drop-shadow(0 0 12px rgba(var(--gold-rgb),0.9)); }
-/* A8: Muskie Quixote is the one Ocean fish with its own art — the Pond's
-   legendary (Koi Story) keeps the shared sprite above. The muskie is a long
-   2.9:1 predator against the shared sprites' 1.5:1, so the box widens to keep
-   it reading big; `contain` still seats its mouth at left+6 for lineToFish(). */
-#scene.loc-ocean #fish:not(.rigged).tier-legendary {
-  background-image: url("assets/fish-muskie.png");
-  width: 96px;
-}
 /* R6: before it bites, the fish is a shape in the water rather than a fish —
    dark, soft-edged and low-contrast, seen through #surface. Warm dark, never
    black (ART_DIRECTION.md): brightness on a warm sprite stays warm, which a

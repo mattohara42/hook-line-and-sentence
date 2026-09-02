@@ -3,8 +3,9 @@
 **Status: active epic, opened 2026-08-31. This is a significant new body of
 work — the largest since the Advanced Progression epic — and it replaces the
 game's entire visual layer. R1 and R2 shipped 2026-08-31, R3, R4 and R5 on
-2026-09-01; **R1–R5 shipped — the fish (R6) are the milestone in hand, and they
-are the biggest generation job in the epic.**
+2026-09-01, and **R6 closed 2026-09-02 at 33 of 33 fish. R7 — gear — is the
+last milestone in the epic**, and the shop code already generalises, so it is
+mostly content.**
 
 Two new documents are the source of truth for it:
 
@@ -427,7 +428,7 @@ and the cheaper CSS-tint fallback are both in `ART.md`.
   three. Verified in the browser past the profile modal at all three spots, with
   a cast and a fight at the Ocean.
 
-### R6 — Fish: a rig per species (the big one)
+### ✅ R6 — Fish: a rig per species (done 2026-09-02, the big one)
 
 **Matt's call: one rig per species, not shape families** (`ART_DIRECTION.md`,
 decision 3). The roster is **33 species**, currently served by four PNGs and a
@@ -511,6 +512,15 @@ over the leading 15%, measured in design px and walked along its row onto the
 silhouette — a catfish's barbel and a unicornfish's horn each broke a simpler
 rule). A future wave adds a `SHEETS` entry and runs one command.
 
+**Closed 2026-09-02 with the muskie, at 33 of 33.** Sheet C was the ninth
+delivery and the eighth first attempt, and the collision it was drawn for is
+settled: at their real 96 and 78px the muskie reads dark bars on a pale flank
+against the pike's pale spots on a dark one. All three done-when clauses are
+met — every species in `data/fish.json` has its own art, the collection screen
+reads as 33 different fish across three biome sections, and the landing beat
+shipped with the code half in #103. The A8 hero sprite `fish-muskie.png` and its
+96px CSS override went with the wave that replaced them.
+
 **Landed so far, and the rest of it is code (2026-09-01):** the scoping and the
 wave-1 request (#101) · the fish rig itself, with the tier placeholder as the
 fallback and three data tests set as traps for the first entry (#102) · both
@@ -553,7 +563,7 @@ mostly content.
 | R3 | 9 background layers (3 per level), Pond first |
 | R4 | per pose: head, torso, arm, rod + a fingers overlay — all on one canvas, drawn from the torso |
 | R5 | ~~rowboat, Whaler + fighting chair, and a near-side layer for each~~ ✅ — four shop hull repaints outstanding |
-| R6 | ~33 species × body/fin/tail, in waves by biome |
+| R6 | ~~33 species × body/tail, in waves by biome~~ ✅ — 33 of 33, in eight sheets and nine generations |
 | R7 | one PNG per gear item per pose |
 
 ## Open questions

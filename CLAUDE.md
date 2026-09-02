@@ -8,9 +8,9 @@ Progression epic** (tiers, phrases, sentences, WPM-as-goal) — **A0–A8 all
 shipped 2026-08-22, epic complete.**
 
 The current epic is the **Art & Animation Refresh** —
-`BUILD_PLAN_REFRESH.md` (R1–R7, opened 2026-08-31; **R1–R5 shipped — all three
-anglers are painted, cut and rigged, and both vessels are cut and wired under
-them; R6, the fish, is next**). It is a
+`BUILD_PLAN_REFRESH.md` (R1–R7, opened 2026-08-31; **R1–R6 shipped — all three
+anglers are painted, cut and rigged, both vessels are cut and wired under them,
+and all 33 fish have their own art; R7, the gear, is the last one**). It is a
 significant piece of work: the whole visual layer is being restarted under two
 new source-of-truth docs, **`ART_DIRECTION.md`** (warm painterly, Ghibli-
 anchored, no pure black) and **`ANIMATION.md`** (the cast/line/reel motion the
@@ -19,9 +19,9 @@ game has never had). It supersedes `BUILD_PLAN_VISUAL.md` (V2–V5) and
 V1's three-plane scene survives and is only retuned. **The engine is not being
 touched** — progression, the keyboard and the unlockables all stay as they are.
 `ART.md`'s open art requests were withdrawn with the old direction and replaced
-per milestone. **R3 is done: all nine background layers are painted, keyed and
-wired, and no scene carries a framing patch any more.** `ART.md` carries the
-palette's real hex values.
+per milestone. `ART.md` carries the palette's real hex values, and its R6
+sections carry what the fish cost: 33 species in eight sheets and nine
+generations, one reroll.
 A real kid playtest of the A7 fight beats is still outstanding (see
 `BACKLOG.md`).
 

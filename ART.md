@@ -177,7 +177,7 @@ direction.
 
 ## Open art requests
 
-### R6 wave 1 — the Pond's ten fish (sheet A ✅ landed 2026-09-02; B and C open)
+### ✅ R6 wave 1 — the Pond's ten fish (all three sheets landed 2026-09-02)
 
 > **✅ Sheet A landed and is wired — and the experiment succeeded, first attempt.**
 > Four fish on one canvas came back as four clean components in the right
@@ -240,7 +240,7 @@ direction.
 > the overlap moves pixels between the two layers without touching the box, the
 > peduncle, the mouth or the pivot.
 
-### R6 wave 2 — the Stream's ten fish (sheet A ✅ landed 2026-09-02; B and C open)
+### ✅ R6 wave 2 — the Stream's ten fish (both sheets landed 2026-09-02)
 
 > **✅ Sheet A landed and is wired — fourth sheet, fourth first attempt.**
 > Canvas 1200×896 (ratio 1.339 vs 1.333); four of four components, nothing on a
@@ -289,7 +289,7 @@ direction.
 > species it moved the attach point by at most 2px, and onto the head rather than
 > onto whatever extremity reached furthest forward.
 
-### R6 wave 3 — the Ocean's thirteen fish (open — the active milestone)
+### ✅ R6 wave 3 — the Ocean's thirteen fish (all three sheets landed 2026-09-02)
 
 The biggest wave and the last, in **three generations**: two sheets of six and
 the muskie alone. Sheets of six are proven (the Stream's trout), and the grouping
@@ -621,6 +621,22 @@ four silvers side by side at 54px with the names covered**, and **the muskie
 against the Pond's pike**, which sit in different biome sections of the journal
 but are the same fish shape. And **delete `fish-muskie.png` and its CSS rule**
 when the muskie lands.
+
+> **✅ All three landed, and the muskie closed R6 at 33 of 33 (2026-09-02).**
+> Sheet C came back first attempt like the rest, and the check it exists for
+> passes on sight: rendered beside the Pond's pike at their real 96 and 78px,
+> the pike is pale spots on a dark teal flank and the muskie dark bars on a pale
+> olive one. Inverting the pattern in the prompt was enough; the negative clause
+> ("do not draw pale spots on a dark body") never had to carry it alone.
+>
+> The cut needed no new detector — 1 component, recomposite 0 px, peduncle found
+> at 81% back with a 2.80x depth-to-fan ratio, seam overlap 7 px. **Nine sheets,
+> nine deliveries, one reroll** across the whole milestone.
+>
+> `fish-muskie.png` and the `#scene.loc-ocean #fish:not(.rigged).tier-legendary`
+> rule are both gone, and the three comments that described the muskie as a CSS
+> special case (`config.js` placeholder, `app.js` `fishBox`/`renderFish`) now say
+> what is true instead.
 
 Same three-sheet shape as the Pond, in the two layouts sheets A–C proved: four
 commons in a 2×2, then two rows of three. All three Pond sheets landed first
