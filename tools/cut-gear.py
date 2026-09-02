@@ -31,6 +31,18 @@ Three things it has to get right, and each is measured rather than assumed:
      a thin seam of unchanged pixels across the crown, so the mask is closed and
      its enclosed holes filled before the largest component is taken. Without
      the fill the crown and the brim are two components and the brim is lost.
+     THE SAME CLOSE also has to be kept away from the face: a faithful edit
+     agrees with the reference on the eyebrow, eye, nose and mouth closely but
+     not to the pixel, so a thin trace of "changed" survives there on every
+     delivery. Left in, the close is just as willing to bridge that trace into
+     a ring around the whole face interior as it is to bridge a hood to its own
+     brim, and the hole-fill then paints the ring's inside solid -- 1-3px of
+     jitter becomes thousands of px of "hat" that happens to be invisible
+     because the redrawn linework agrees with the original on colour, just not
+     on the exact pixel (sou'wester-pond, #130). So the face box's slice of the
+     diff is opened BEFORE closing ever runs: real hat material reaching the
+     face is never as thin as redrawn linework, so whatever does not survive
+     that open is jitter, not fabric.
   3. THE CANVAS. Every gear piece for a pose is written at the FULL canvas of
      that pose's painting, not cropped to its own content. A pose's layer box
      lives on the pose (CONFIG.rig.poses.<pose>.layers), so every hat that will
@@ -207,11 +219,29 @@ def largest(m):
 
 window = np.zeros((H, W), bool); window[:P["neck"]] = True
 changed = ((dist > THRESH) | (md & ~mr)) & window
+
+# The face box is the body layer's, and a piece that reaches it is normally a
+# reroll (the docstring above, and ART.md's checklist). But a faithful edit
+# agrees with the reference on the eyebrow, eye, nose and mouth CLOSELY, not to
+# the pixel, so a thin (<9px) trace of "changed" survives there even when
+# nothing hat-shaped touches the face. Left in `changed`, the CLOSE below
+# (needed to bridge a hood to its own brim) is just as willing to bridge that
+# trace into a ring around the whole face interior, and the hole-fill that the
+# same close needs for the hatband/hair case then treats the ring's inside as
+# one enclosed hole and fills it SOLID. That is how sou'wester-pond's 1-3px
+# trace became 16,230px of "hat" (#130) that reads as an untouched face in the
+# composite, because the redrawn linework agrees with the original on colour,
+# just not on the exact pixel. Open the face box's slice of `changed` before
+# closing ever runs, so the ring never forms: real hat material reaching the
+# face is never as thin as redrawn linework, so what does not survive a 9px
+# open there is jitter, not fabric.
+fx0, fy0, fx1, fy1 = P["face"]
+face = np.zeros((H, W), bool); face[fy0:fy1, fx0:fx1] = True
+changed = changed & (~face | dilate(erode(changed, 9), 9))
+
 closed = flood(erode(dilate(changed, 11), 11))
 piece = flood(dilate(largest(erode(closed, 7)), 9) & closed)
 
-fx0, fy0, fx1, fy1 = P["face"]
-face = np.zeros((H, W), bool); face[fy0:fy1, fx0:fx1] = True
 overlap = (piece & face).sum()
 x0, x1, y0, y1 = bbox(piece)
 print("piece: %d px, bbox x[%d,%d] y[%d,%d]; it covers %d px of the face box"
