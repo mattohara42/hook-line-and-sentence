@@ -442,9 +442,51 @@ Save as:  assets/Gemini_fish-ocean-shoal.jpg
 Wired in: `python3 tools/cut-fish.py ocean-shoal` — already registered in SHEETS
 ```
 
-**Sheet B** is that prompt with the species block swapped, same layout and canvas:
+**Sheet B**, in full — the same corrected frame with its own species block. The
+`[WHAT THIS IS]` and `[BACKDROP]` blocks go first for the reason sheet A proved:
+a list of field marks *is* a field guide, and the generator draws one unless the
+picture is named as something else before it starts.
 
 ```
+ART NEEDED: R6 wave 3, sheet B — the Ocean's deep water
+Prompt:   [WHAT THIS IS]
+          Six separate game sprites of fish, to be cut out and used in a
+          children's video game. This is NOT a field guide, NOT a scientific
+          specimen plate, NOT a museum illustration, NOT a poster. There is NO
+          paper of any kind: no parchment, no aged paper, no paper texture, no
+          canvas texture, no vignette, no border. There are NO captions, NO
+          labels, NO species names, NO Latin names, NO handwriting and NO text
+          anywhere in the image.
+
+          [BACKDROP]
+          The six fish float on a solid magenta screen, the way a subject stands
+          in front of a photographer's backdrop. Every part of the image that is
+          not a fish is one completely flat, even magenta #FF00FF, edge to edge
+          and into all four corners: a single flat colour, no gradient, no
+          texture, no vignette, no pattern, no shading.
+
+          [STYLE]
+          Soft painterly storybook illustration, warm muted color palette, gentle
+          diffused lighting, thin warm brown outlines rather than black, cozy and
+          inviting mood, no harsh shadows, no neon or saturated colours. Soft
+          two-tone shading with blended edges. NOT pixel art, NOT flat vector art
+          with even line weight, NOT thick black cartoon linework, NOT a glossy
+          3D render, NOT a photograph.
+
+          [LAYOUT]
+          Six different fish on one canvas, in three rows of two: top-left,
+          top-right, middle-left, middle-right, bottom-left, bottom-right. Every
+          fish is fully separated from every other by a wide band of empty
+          background — no fish touches, overlaps or crowds another, and none
+          touches the edge of the canvas.
+
+          [POSE — every fish]
+          Exact side view, facing LEFT: the head at the left of its own space and
+          the tail at the right, level and horizontal as if swimming straight
+          across. One calm friendly eye. Fins spread and clearly separate from the
+          body, the dorsal fin standing up and the tail fan open. A gentle
+          storybook fish, NOT a googly-eyed grinning cartoon.
+
           [TELL THEM APART]
           The last three fish are all big fast open-sea fish of a similar shape
           and two of them carry a long bill — they are the difficulty of this
@@ -472,18 +514,61 @@ Wired in: `python3 tools/cut-fish.py ocean-shoal` — already registered in SHEE
           round spear, it has ONE tall stiff crescent dorsal fin standing alone
           near the front and NO pelvic fins underneath at all, a very large eye,
           and a dark bronze-purple back.
+
+          [CRITICAL: nothing but the fish]
+          Draw NO water of any kind. No bubbles, no splash, no ripples, no waves,
+          no weeds, no sand, no rocks, no coral, no bowl, no tank, no net, no
+          hook, no fishing line, no scenery, no plants, no other animals. No drop
+          shadow or reflection under any fish. No text, no labels, no names, no
+          watermark, no border, no frame, no grid lines, no panel dividers between
+          the fish.
+
+          [CANVAS]
+          The image is 1600 by 1200 pixels, aspect ratio 4:3 — wider than it is
+          tall. Output as PNG.
 Save as:  assets/Gemini_fish-ocean-deep.jpg
-Wired in: `python3 tools/cut-fish.py ocean-deep`
+Wired in: `python3 tools/cut-fish.py ocean-deep` — already registered in SHEETS
 ```
 
-**Sheet C — the muskie, alone.** The game's capstone: it is the fish the Muskie
-Master rank is awarded for, and it renders at 96 design px, the largest in the
-game. One subject, the whole canvas.
+**Sheet C — the muskie, alone**, in full. The game's capstone: the fish the
+Muskie Master rank is awarded for, and the largest sprite in the game at 96
+design px. One subject, the whole canvas.
 
 ```
+ART NEEDED: R6 wave 3, sheet C — the muskellunge, the game's capstone
+Prompt:   [WHAT THIS IS]
+          A single game sprite of a fish, to be cut out and used in a children's
+          video game. This is NOT a field guide, NOT a scientific specimen plate,
+          NOT a museum illustration, NOT a poster. There is NO paper of any kind:
+          no parchment, no aged paper, no paper texture, no canvas texture, no
+          vignette, no border. There are NO captions, NO labels, NO species names,
+          NO Latin names, NO handwriting and NO text anywhere in the image.
+
+          [BACKDROP]
+          The fish floats on a solid magenta screen, the way a subject stands in
+          front of a photographer's backdrop. Every part of the image that is not
+          the fish is one completely flat, even magenta #FF00FF, edge to edge and
+          into all four corners: a single flat colour, no gradient, no texture,
+          no vignette, no pattern, no shading.
+
+          [STYLE]
+          Soft painterly storybook illustration, warm muted color palette, gentle
+          diffused lighting, thin warm brown outlines rather than black, cozy and
+          inviting mood, no harsh shadows, no neon or saturated colours. Soft
+          two-tone shading with blended edges. NOT pixel art, NOT flat vector art
+          with even line weight, NOT thick black cartoon linework, NOT a glossy
+          3D render, NOT a photograph.
+
           [LAYOUT]
           One single fish, centred, with a wide band of empty background on every
           side. It does not touch the edge of the canvas.
+
+          [POSE]
+          Exact side view, facing LEFT: the head at the left and the tail at the
+          right, level and horizontal as if swimming straight across. One calm
+          friendly eye. Fins spread and clearly separate from the body, the dorsal
+          fin standing up and the tail fan open. A gentle storybook fish, NOT a
+          googly-eyed grinning cartoon.
 
           [THE FISH]
           A muskellunge: a long lean freshwater predator with a flat duck-bill
@@ -494,10 +579,18 @@ game. One subject, the whole canvas.
           dark body. Soft muted olive and lilac-grey colour, a big calm eye, and
           the most detail of any fish in the set: this one is the prize.
 
+          [CRITICAL: nothing but the fish]
+          Draw NO water of any kind. No bubbles, no splash, no ripples, no waves,
+          no weeds, no sand, no rocks, no bowl, no tank, no net, no hook, no
+          fishing line, no scenery, no plants, no other animals. No drop shadow or
+          reflection under the fish. No text, no labels, no names, no watermark,
+          no border, no frame.
+
           [CANVAS]
-          The image is 1600 by 800 pixels, aspect ratio 2:1. Output as PNG.
+          The image is 1600 by 800 pixels, aspect ratio 2:1 — twice as wide as it
+          is tall. Output as PNG.
 Save as:  assets/Gemini_fish-ocean-muskie.jpg
-Wired in: `python3 tools/cut-fish.py ocean-muskie`
+Wired in: `python3 tools/cut-fish.py ocean-muskie` — already registered in SHEETS
 ```
 
 **When they land:** count components first (six, six, one) · nothing on a canvas
