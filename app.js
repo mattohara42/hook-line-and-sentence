@@ -51,8 +51,8 @@ function blankProfile(name, avatar) {
     unlockedLocations: [CONFIG.tiers[0].location],
     // upgrades carries owned lists too (FIRESTORE.md shows equipped only; the
     // shop needs to know what's already bought so it can't be re-purchased)
-    upgrades: { rod: "stick", bait: "worm", boat: "classic",
-                owned: { rod: ["stick"], bait: ["worm"], boat: ["classic"] } },
+    upgrades: { rod: "stick", bait: "worm", boat: "classic", hat: "none",
+                owned: { rod: ["stick"], bait: ["worm"], boat: ["classic"], hat: ["none"] } },
     collection: {},                                   // fishId → count
     records: {},                                      // fishId → { weight (lb best), wpm (best, Stream+) } (A4)
     badges: [],                                       // earned badge ids (journal)
@@ -656,13 +656,18 @@ let pose = poseFor();                       // R4: the active costume, re-read o
 
 // R4: one kid, three costumes. The pose carries its own layer stack, its own
 // grip and its own rod tip, because a standing angler in waders holds the rod
-// somewhere a seated one doesn't. A location with no pose of its own falls back
-// to the default, which is the state of the Stream and the Ocean until their
-// art lands — the wrong shirt rather than no angler at all.
-function poseFor(loc) {
-  const p = CONFIG.rig.poses;
-  return p[loc ?? save?.location] ?? p[CONFIG.rig.defaultPose];
+// somewhere a seated one doesn't. All three are painted now; a location with no
+// pose of its own would still fall back to the default rather than render an
+// empty rig — the wrong shirt rather than no angler at all.
+//
+// R7 needs the pose's KEY as well as its stack, because gear art is named
+// <stem>-<pose>. One function owns the fallback rule so the name and the object
+// can never disagree about which pose is being worn.
+function poseNameFor(loc) {
+  const key = loc ?? save?.location;
+  return CONFIG.rig.poses[key] ? key : CONFIG.rig.defaultPose;
 }
+function poseFor(loc) { return CONFIG.rig.poses[poseNameFor(loc)]; }
 
 // The rod tip in scene coords, through everything that moves it: the rod's own
 // rotation about the grip, then #rig's live CSS transform (the boat's bob).
@@ -1590,6 +1595,17 @@ function switchLocation(loc) {
   setStatus("Now fishing " + CONFIG.tiers.find(t => t.location === loc).locationName + ".");
 }
 
+// R7: which shop list each `gear` slot draws from. The layer says "hat", the
+// shop stores hats under `hats`, and the save equips one at `upgrades.hat` — a
+// data test holds all three to each other, because a typo in any of them is a
+// slot that silently never resolves.
+const GEAR_LISTS = { rod: "rods", hat: "hats" };
+// thin wrapper over logic.gearFile — supplies the live CONFIG and save
+function layerFile(L, poseName) {
+  return logic.gearFile(L, poseName, save?.upgrades?.[L.gear],
+                        CONFIG.shop[GEAR_LISTS[L.gear]], CONFIG.rig.gearArt);
+}
+
 // G1: draw the angler as layers from the active pose's stack. Called at boot,
 // again from applyScene() whenever the kid changes water (R4 — the costume
 // belongs to the location), and by the hat/rod shop (R7) on equip, which is the
@@ -1597,7 +1613,8 @@ function switchLocation(loc) {
 // SVG in scene space — and the rod layer gets the pivot it rotates about, so
 // the cast and the tug swing the rod rather than the whole angler.
 function renderRig(loc) {
-  pose = poseFor(loc);
+  const poseName = poseNameFor(loc);
+  pose = CONFIG.rig.poses[poseName];
   const rig = $("rig");
   rig.querySelectorAll(".rig-layer, .vessel").forEach(n => n.remove());
   rodLayerEl = armLayerEl = null;
@@ -1636,12 +1653,14 @@ function renderRig(loc) {
   vessel("far");
 
   for (const L of pose.layers) {
+    const file = layerFile(L, poseName);
+    if (!file) continue;                   // a gear slot with nothing to draw
     const d = document.createElement("div");
     d.className = "rig-layer";
     d.dataset.id = L.id;
     d.style.left = L.x + "px"; d.style.top = L.y + "px";
     d.style.width = L.w + "px"; d.style.height = L.h + "px";
-    d.style.backgroundImage = `url("assets/${L.file}.png")`;
+    d.style.backgroundImage = `url("assets/${file}.png")`;
     // Both swinging layers rotate about the arm's pivot when there is one, so
     // the rod's wrist turn can nest inside the arm's — see applySwing().
     if (L.id === "rod" || L.id === "arm") {
@@ -1756,19 +1775,23 @@ function baitHint(bait) {
   return pct === 0 ? "a patient wiggle" : pct + "% faster bites";
 }
 function boatHint()     { return "a fresh coat of paint"; }
+function hatHint(hat)   { return hat.file ? "just for the look of it" : "no hat at all"; }
 
-// swap the #boat sprite to the equipped skin (cosmetic; also called on load)
+// Show whatever is equipped, on the angler (also called on load).
 // R5: the vessel is a rig layer now, not a standalone #boat, so equipping a
 // skin rebuilds the rig. Poses whose vessel isn't `skinnable` ignore it — a
-// rowboat skin has no business on a Boston Whaler.
-function applyBoatSkin() { renderRig(); }
+// rowboat skin has no business on a Boston Whaler. R7 puts rods and hats
+// through the same door, which is why this is no longer applyBoatSkin(): one
+// rebuild reads every equipped slot at once.
+function applyGear() { renderRig(); }
 
 function renderShop() {
   $("shop-coin-count").textContent = save.coins;
   renderShopList(CONFIG.shop.rods,  $("shop-rods"),  "rod",  rodHint);
   renderShopList(CONFIG.shop.baits, $("shop-baits"), "bait", baitHint);
   renderShopList(CONFIG.shop.boats, $("shop-boats"), "boat", boatHint);
-  applyBoatSkin();   // reflect an equip made from this shop pass
+  renderShopList(CONFIG.shop.hats,  $("shop-hats"),  "hat",  hatHint);
+  applyGear();       // reflect an equip made from this shop pass
 }
 
 function renderShopList(items, container, kind, hint) {
@@ -2261,6 +2284,8 @@ function activateProfile(id) {
   save = doc;
   save.upgrades.boat ??= "classic";                  // back-compat: pre-boats saves
   save.upgrades.owned.boat ??= ["classic"];
+  save.upgrades.hat ??= "none";                      // back-compat: pre-R7 saves
+  save.upgrades.owned.hat ??= ["none"];
   recomputeLocations();                              // A0: derive rank/locations, migrates pre-A0 saves
   migrateRecords();                                  // A4: records number → { weight, wpm }
   localStorage.setItem(ACTIVE_KEY, id);
@@ -2273,7 +2298,7 @@ function activateProfile(id) {
   el.caught.textContent = totalCatches();
   el.escaped.textContent = save.stats.escapes ?? 0;
   $("who").textContent = save.avatar + " " + save.name;
-  applyBoatSkin();
+  applyGear();
   applyScene();                      // A3: show the biome for wherever this kid last fished
   persistSave();                     // records the new session (sessionCount/lastPlayed)
   startCast();

@@ -221,13 +221,59 @@ test("unlock stages start at 0 catches and never decrease", () => {
     assert.ok(reqs[i] >= reqs[i - 1], `stage ${i} requires fewer catches than stage ${i - 1}`);
 });
 
-test("shop items have unique ids; boats each reference a sprite file", () => {
+test("shop items have unique ids, sane file stems, and a free default each", () => {
   for (const [kind, items] of Object.entries(CONFIG.shop)) {
     const ids = items.map(i => i.id);
     assert.equal(ids.length, new Set(ids).size, `duplicate ${kind} id`);
+    // R7: a `file` becomes part of a URL, so a stray space or capital is a 404
+    // rather than an error. Baits carry no art and are exempt by having none.
+    assert.equal(offenders(items, i => i.file != null && !/^[a-z0-9-]+$/.test(i.file)), "",
+      `${kind}: bad sprite file stem`);
+    // every kind needs something a new profile can start in, at no cost
+    assert.ok(items.some(i => i.cost === 0), `${kind}: no free default`);
   }
-  assert.ok(CONFIG.shop.boats.some(b => b.cost === 0), "need a free default boat");
   for (const b of CONFIG.shop.boats) assert.ok(b.file, `boat "${b.id}" missing sprite file`);
+  // R7: a rod is always in the angler's hand, so every one of them needs art to
+  // aim at. A hat may legitimately have none — that is the bare head.
+  for (const r of CONFIG.shop.rods) assert.ok(r.file, `rod "${r.id}" missing sprite file`);
+  assert.ok(CONFIG.shop.hats.some(h => h.cost === 0 && !h.file),
+    "the free default hat has to be the bare head, so a kid can take a hat off");
+});
+
+// R7: three names have to agree for a gear slot to resolve — the layer's
+// `gear`, the shop list it draws from, and the save key it equips. app.js maps
+// them through one table (GEAR_LISTS); nothing checks the mapping at runtime,
+// and a mismatch is a slot that silently never swaps. So check the shape here.
+test("every gear slot names a shop list that exists", () => {
+  const slots = new Set(Object.values(CONFIG.rig.poses)
+    .flatMap(p => p.layers.map(l => l.gear).filter(Boolean)));
+  assert.ok(slots.size > 0, "no gear slots at all — R7's whole point is missing");
+  for (const slot of slots) {
+    // the convention app.js encodes: a "hat" slot is served by shop.hats
+    assert.ok(Array.isArray(CONFIG.shop[slot + "s"]),
+      `layer gear "${slot}" has no CONFIG.shop.${slot}s to draw from`);
+  }
+  // a rod slot must keep a fallback painting in every pose, because R1's
+  // rodPivot and lineOrigin are measured against a rod that is actually there
+  for (const [name, pose] of Object.entries(CONFIG.rig.poses)) {
+    const rod = pose.layers.find(l => l.id === "rod");
+    assert.ok(rod.file, `${name}: the rod slot has no fallback, so an unpainted rod is an invisible one`);
+  }
+});
+
+// R7: gearArt is the switch that decides whether a bought item shows up. An
+// entry that matches no item, or no pose, is art that was delivered and then
+// silently never drawn — which looks exactly like the art not arriving.
+test("every delivered gear painting names a real item and a real pose", () => {
+  const poses = Object.keys(CONFIG.rig.poses);
+  const stems = Object.values(CONFIG.shop).flat().map(i => i.file).filter(Boolean);
+  assert.equal(CONFIG.rig.gearArt.length, new Set(CONFIG.rig.gearArt).size, "duplicate gearArt entry");
+  for (const entry of CONFIG.rig.gearArt) {
+    const pose = poses.find(p => entry.endsWith("-" + p));
+    assert.ok(pose, `gearArt "${entry}" does not end in a real pose`);
+    const stem = entry.slice(0, -(pose.length + 1));
+    assert.ok(stems.includes(stem), `gearArt "${entry}" names no shop item's file`);
+  }
 });
 
 test("the 🧪 dev shortcut can never be on in production", () => {
@@ -277,7 +323,13 @@ test("every CONFIG.rig pose is a well-formed paint stack", () => {
     assert.ok(layers.some(l => l.id === "body"), `${name}: no body layer`);
     assert.ok(layers.some(l => l.id === "rod"), `${name}: no rod layer`);
     assert.equal(new Set(layers.map(l => l.id)).size, layers.length, `${name}: duplicate layer id`);
-    assert.equal(offenders(layers, l => !/^[a-z0-9-]+$/.test(l.file ?? "")), "", `${name}: bad layer filename`);
+    // R7: a GEAR layer may legitimately carry no `file` — that is a slot whose
+    // fallback is to paint nothing, which is what a bare head is. Every other
+    // layer is fixed art and must name a real one, or it paints `undefined.png`.
+    assert.equal(offenders(layers, l => l.gear ? false : !/^[a-z0-9-]+$/.test(l.file ?? "")), "",
+      `${name}: bad layer filename`);
+    assert.equal(offenders(layers, l => l.file != null && !/^[a-z0-9-]+$/.test(l.file)), "",
+      `${name}: bad gear fallback filename`);
     assert.equal(offenders(layers, l => !(l.w > 0 && l.h > 0)), "", `${name}: layer with no size`);
     assert.equal(offenders(layers, l => ![l.x, l.y].every(Number.isFinite)), "", `${name}: layer with no offset`);
   }

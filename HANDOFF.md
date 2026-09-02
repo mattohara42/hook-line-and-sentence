@@ -11,36 +11,32 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. The last one in the epic. |
 | **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
-| **State** | **R6 closed 2026-09-02 at 33 of 33 fish.** R7 has no code and no art yet. |
+| **State** | **Code half done 2026-09-02** — the shop sells four rods and five hats, equipping either rebuilds the rig, all of it persists. **The 21 paintings are the only thing left in the epic.** |
 | `origin/main` | clean, nothing unpushed |
-| Tests | 86/86 (`npm test`) |
+| Tests | 89/89 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
 | Deploys | Netlify is **manual**; merging to `main` does not go live |
 
 ## Start here
 
-**R7's code half, against placeholders, before any generation goes out** — the
-order every art milestone in this epic has used, and the reason none of them
-ever blocked on Gemini. Three things are missing and none is hard:
+**Write R7's art prompts.** It is the last thing the epic needs, and nothing in
+the code is waiting on decisions. `ART.md` → *R7* has the delivery contract and
+the grid; **`GEMINI_NOTES.md` is required reading before writing any of them.**
 
-1. **`shop.hats` does not exist** in `config.js`. `renderShopList` already
-   generalises over `(items, container, kind, hint)`, so a hats section is a
-   config block, a container in `index.html` and one call.
-2. **`shop.rods` has no `file`**, the way `shop.boats` does. R4 established the
-   `rod-<id>-<pose>` convention and drew the diagonal of the grid (each pose
-   holds its own gate rod), so the wiring is a lookup, not a redesign.
-3. **`renderRig` hardcodes the rod.** `CONFIG.rig.poses.pond.layers` names
-   `rod-stick-pond` literally; it needs to read the equipped rod the way the
-   vessel already reads the equipped boat (`app.js`, the `vessel()` helper is
-   the pattern to copy).
+Two rules carry it, both paid for by R6: **ask in sheets** (four hats on one
+canvas come back as four different hats; four passes come back as one hat four
+times), and **draw each item against the pose's own painting**, on that canvas,
+so it registers by construction.
 
-Then write the prompts. **`GEMINI_NOTES.md` before writing any of them**, and
-the grid is 4 rods × 3 poses + hats × 3 poses, minus R4's diagonal.
+**A delivered PNG is not live until it is registered** — on disk as
+`assets/<stem>-<pose>.png` *and* added to `CONFIG.rig.gearArt`. Miss the second
+step and it is silently never drawn. A data test catches a misnamed pose or
+item, not a forgotten line.
 
-**One thing R6 proved that R7 should reuse:** a sheet is the only way to *ask
-for* a difference rather than describe one. Four hats on one canvas will come
-back as four different hats; four separate generations will come back as one hat
-four times.
+Until a stem is registered the game falls back (a rod shows the pose's painted
+gate rod, a hat shows nothing), so **no gear delivery is urgent and none have to
+arrive together.** Start with one hat at the Pond pose: that single painting
+closes the first done-when clause. The second is already met.
 
 ## Waiting on Matt (none of it blocks R7)
 
@@ -88,9 +84,10 @@ four times.
 
 **Carried from R5, and still user-visible:** both painted vessels are
 `skinnable: false`, so equipping one of `shop.boats`' four alternate hulls does
-nothing at any spot. It is the closest neighbour to R7's work — same shop, same
-equip path — so it may be cheapest to fix while that code is already open.
-Prompt, registration check and a cheaper CSS-tint fallback: `ART.md` → *R5 debt*.
+nothing at any spot. R7's `gearArt` is now the pattern that would fix it —
+a hull is a gear slot with a per-pose registry, and the boat shop is the one
+shop kind still on its own older mechanism. Worth folding in rather than
+re-solving. Prompt and a cheaper CSS-tint fallback: `ART.md` → *R5 debt*.
 
 ## Rules of thumb
 
@@ -106,6 +103,12 @@ Prompt, registration check and a cheaper CSS-tint fallback: `ART.md` → *R5 deb
   green assertions. The muskie was checked by painting its configured mouth on
   the live scene next to the line's own endpoint — they coincided, which is the
   test the catfish and the unicornfish both failed. Now in `CLAUDE.md`.
+- **A new test is worth nothing until you have watched it fail.** R7's five
+  config traps were each checked by breaking the invariant they guard.
+- **A registry beats a filename convention.** `CONFIG.fish.species`,
+  `CONFIG.rig.poses` and now `CONFIG.rig.gearArt` are one idea three times: the
+  config lists what exists, anything absent falls back, and a half-finished set
+  stays playable. Reach for it again rather than inventing something.
 - **A piece that doesn't fit is a reroll, not an offset tweak** — G1's lesson,
   and R3's for backgrounds. But **placement is wiring, not art**: R5 seated the
   Ocean kid in a fighting chair the generator put wherever it liked, using
