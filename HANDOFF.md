@@ -53,10 +53,13 @@ and an unregistered one looks exactly like art that never arrived
   `claude/docs-dynamic-intent-generation-p14kbx` (a50a15c) ·
   `claude/epic-continuation-81tdvp` (69f79ea) ·
   `claude/gemini-game-asset-prompts-aeopww` (c47e021) ·
-  `claude/next-steps-0v0xeg` (98762e7) · **`g1/layered-rig`** (5e855b5 — ⚠️
-  Matt's own branch, confirm first; the parts that survived merged via #42/#43) ·
-  `claude/finish-the-art-quslrv` (carried this session's R6 and R7 work; fully
-  merged into `main`, so it needs no SHA to be safe to delete).
+  `claude/next-steps-0v0xeg` (98762e7) · `claude/fish-work-lbjzkz` (53a68f6,
+  fully contained in `main`, so it is the safe one) · **`g1/layered-rig`**
+  (5e855b5 — ⚠️ Matt's own branch, confirm first; the parts that survived merged
+  via #42/#43). Two more are older and carry commits that are **not** ancestors
+  of `main` (July, pre-squash): `claude/game-ui-visuals-wt1amv` (73f76c8, 29
+  commits) and `claude/open-this-3wbx9w` (720ca36, 10). Their work looks landed
+  by squash, but check one before deleting either.
 - **The GitHub repo description still says "pixel-art"**, which R2 removed
   game-wide. It is the first thing a stranger reads.
 - **R1's line prototype wants an eye test.** Serve the repo, open
@@ -101,16 +104,20 @@ re-solving. Prompt and a cheaper CSS-tint fallback: `ART.md` → *R5 debt*.
   every squash-merge — reusing a branch across merges makes its history diverge
   and the next PR conflicts against work that is already in.
 - **Verify visual and motion claims in a real browser**, not just unit tests —
-  and **screenshot past the startup modal**. `app.js` is an ES module, so
-  nothing is on `window`: drive the game by seeding `tf:profile:*` in
-  localStorage before load, which boots straight past the picker on the real
-  code path.
+  and **screenshot past the startup modal**. `node tools/spot-check.mjs --loc
+  ocean --hat straw --rod deepsea` does it: it seeds a profile, clicks through
+  the picker, prints the rig's layer stack and any failed asset request, and
+  saves a shot. Serve the repo first, and it needs playwright on `NODE_PATH`.
 - **Draw what you measured before believing it.** R6 shipped four bugs past
   green assertions. The muskie was checked by painting its configured mouth on
   the live scene next to the line's own endpoint — they coincided, which is the
   test the catfish and the unicornfish both failed. Now in `CLAUDE.md`.
 - **A new test is worth nothing until you have watched it fail.** R7's five
   config traps were each checked by breaking the invariant they guard.
+- **When a delivery measures like a redraw, suspect the measurement first.** The
+  Stream hat scored IoU 0.54 with 70% of the body "changed" and was a perfectly
+  faithful edit: the registration fit was keying on a landing net that had swung.
+  A plain canvas-scale comparison settled it in one command (#124).
 - **A registry beats a filename convention.** `CONFIG.fish.species`,
   `CONFIG.rig.poses` and now `CONFIG.rig.gearArt` are one idea three times: the
   config lists what exists, anything absent falls back, and a half-finished set
