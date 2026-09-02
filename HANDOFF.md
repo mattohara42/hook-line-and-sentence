@@ -19,62 +19,45 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**Decide whether R7 closes here or fills the grid.** Both done-when clauses are
-met: the straw hat changes the angler at every spot and persists, and the rod you
-buy is the rod in your hand. What remains is 18 more paintings of a shop that
-already works, and every open question in front of them is answered.
+**R7 has one thing left: the nine rods.** The hat column closed at 12 of 12 on
+2026-09-02 and every hat was verified in a real browser at every spot. Both
+done-when clauses have been met since the straw hat landed.
 
-If it fills, **the generating is the only step left in the hat column.**
-**The hats are done.** What is left of R7 is the nine rods, and they are a
-different job: a rod is cut by `cut-angler.py`'s corridor rather than by
-`cut-gear.py`'s difference, because the shaft under the hand is exactly where
-the two paintings agree. Their prompt is still a template in `ART.md` → *R7* →
-*The rods*, not written out per rod; writing the first one out whole is the
-natural next step, and `<W> by <H>` comes from the pose table above it.
+**A rod is not cut the way a hat is, and that is the whole job.** A hat is found
+by *difference* (`cut-gear.py`); a rod cannot be, because the shaft under the
+hand is exactly where the two paintings agree. A rod is cut by `cut-angler.py`'s
+fitted corridor instead — its axis, half-width, butt, hand band and reel circle
+— and every one of those numbers stays valid **only if the new rod lands on the
+same axis**, which is what the rod prompt spends its weight on. That is also the
+argument for holding the axis rather than accepting a well-drawn rod elsewhere
+on the canvas: nine freely drawn rods are nine axes to measure and nine chances
+to bite into the body.
 
-**Two things the last hat left behind.** A delivery was rejected by mistake for
-looking like the straw hat, and was a sou'wester all along — measuring the two
-silhouettes settled it in one command (back/front reach 2.44 vs 2.01). A glance
-is not a measurement, and a wrong rejection costs as much as a wrong
-acceptance. Separately, `cut-gear.py`'s neck guard truncates both sou'westers
-and no constant fixes it; it is measured, visible at game scale, and logged in
-`BACKLOG.md` rather than bodged.
-Each block carries its own attach / cut / register / transplant lines. Make the
-attachments with `python3 tools/gear-ref.py`, then take one prompt at a time and
-transplant each Pond hat to the Stream as it lands rather than in a batch, so a
-bought hat is never live at one spot only. Then the nine rods, which go through
-`cut-angler.py` rather than `cut-gear.py` and whose prompt is still a template.
+**Their prompt is still a template**, not written out per rod, in `ART.md` → *R7*
+→ *The rods*. Writing the first one out whole is the natural next step; `<W> by
+<H>` comes from the pose table above it. The hats proved that pays for itself —
+a prompt recorded as "that one with the block swapped" is not something anyone
+can paste, and the eight substitutions include the canvas size, which is per
+pose and costs a generation when wrong.
 
-**A fresh container has none of the pipeline's dependencies.** `pip install
-Pillow numpy scipy` for the cut tools, and `spot-check.mjs` wants playwright at
-`/tmp/node_modules` plus a served repo. Three minutes, but it is three minutes
-before anything can be checked.
+**Before your first cut in a fresh container:** `pip install Pillow numpy scipy`,
+and for `spot-check.mjs`, `cd /tmp && npm install playwright`. `tools/README.md`
+indexes all eight tools and what each is for.
 
-**Three deliveries in, nothing about the method is open.** The generator returns
-an edit rather than a redraw (`GEMINI_NOTES.md` → *Editing a delivered
-painting*), `tools/cut-gear.py` registers it and takes what changed, and
-`tools/hat-transplant.py` lands a Pond hat on the Stream but refuses the Ocean,
-whose head tilts back. Both refusal and acceptance were checked against real
-generations.
+**Two things the hats left behind.**
+
+- **A good delivery was rejected by mistake** for looking like the straw hat,
+  and was a sou'wester all along; measuring the two silhouettes settled it in
+  one command (reach behind vs in front, 2.44 against 2.01). A glance is not a
+  measurement, and a wrong rejection costs as much as a wrong acceptance while
+  being far harder to notice. Both hats were amber and wide-brimmed because
+  nothing in the prompts separated their *colour* — see `GEMINI_NOTES.md`.
+- **`cut-gear.py`'s neck guard truncates both sou'westers** and no constant
+  fixes it. Measured, visible at game scale, and in `BACKLOG.md` with the
+  numbers rather than bodged.
 
 **A delivered PNG is not live until it is registered** in `CONFIG.rig.gearArt`,
-and an unregistered one looks exactly like art that never arrived
-(`GEMINI_NOTES.md`'s delivery checklist, step 7).
-
-**`cut-gear.py` had a real bug, found and fixed this session (#130).** The
-closing step that bridges a hood to its own brim was just as willing to bridge
-a 1-3px trace of redrawn line art along the eyebrow/eye/nose/mouth into a ring,
-and the hole-fill the same close needs for the hatband/hair case then painted
-the ring's inside solid — 16,230px of "hat" on `hat-souwester-pond` that looked
-perfectly clean composited (the redrawn linework agrees with the original on
-colour, just not the exact pixel) but wasn't. Fixed by opening the face box's
-slice of the diff before closing runs. **Re-cut `hat-straw-pond` and
-`hat-bucket-pond` with the fix and re-transplanted every Stream hat from the
-corrected Pond source** — both changed only inside the face box (861/1109px of
-now-removed invisible jitter), confirmed unchanged by pixel diff everywhere
-else and re-verified in Chromium. Nothing about this is visible in the game;
-it is asset hygiene, not a regression fix. Full mechanism in `cut-gear.py`'s
-own docstring and the `ART.md` record.
+and an unregistered one looks exactly like art that never arrived.
 
 ## Waiting on Matt (none of it blocks R7)
 
@@ -162,7 +145,11 @@ re-solving. Prompt and a cheaper CSS-tint fallback: `ART.md` → *R5 debt*.
 - **A piece that doesn't fit is a reroll, not an offset tweak** — G1's lesson,
   and R3's for backgrounds. But **placement is wiring, not art**: R5 seated the
   Ocean kid in a fighting chair the generator put wherever it liked, using
-  `vessel.x/y` and the pose's `anchor`, and spent no reroll on it.
+  `vessel.x/y` and the pose's `anchor`, and spent no reroll on it. And **the
+  reroll decision itself is a measurement**: R7 rejected a good sou'wester for
+  looking like the straw hat, and one command comparing the two silhouettes
+  disproved it (#133). A wrong rejection costs as much as a wrong acceptance and
+  nothing downstream ever complains about it.
 - **Nothing may land in the bottom-center finger-guide panel.** It covers the
   lower third and it is the best part of the game.
 - **The keyboard is frozen and tested.** Never point `--kb-*` at a scene token.
@@ -177,6 +164,7 @@ re-solving. Prompt and a cheaper CSS-tint fallback: `ART.md` → *R5 debt*.
 | `ANIMATION.md` | how the cast, line and reel **move** |
 | `ART.md` | the art **pipeline** and the open requests |
 | `GEMINI_NOTES.md` | how the **generator** behaves, and how to salvage it |
+| `tools/README.md` | **what the pipeline tools are**, and the deps a fresh box lacks |
 | `BACKLOG.md` | everything deliberately not being done yet |
 | `FIRESTORE.md` | the sync contract |
 | this file | state and pointers, nothing else |

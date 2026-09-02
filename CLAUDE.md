@@ -10,9 +10,9 @@ shipped 2026-08-22, epic complete.**
 The current epic is the **Art & Animation Refresh** —
 `BUILD_PLAN_REFRESH.md` (R1–R7, opened 2026-08-31; **R1–R6 shipped — all three
 anglers are painted, cut and rigged, both vessels are cut and wired under them,
-and all 33 fish have their own art. R7, the gear, is the last one and its code
-half is in: the shop sells rods and hats already, and each painting that lands
-is one `CONFIG.rig.gearArt` line**). It is a
+and all 33 fish have their own art. R7, the gear, is the last one: its code half
+is in and all 12 hats landed 2026-09-02, so what remains is the nine rods. Each
+painting that lands is one `CONFIG.rig.gearArt` line**). It is a
 significant piece of work: the whole visual layer is being restarted under two
 new source-of-truth docs, **`ART_DIRECTION.md`** (warm painterly, Ghibli-
 anchored, no pure black) and **`ANIMATION.md`** (the cast/line/reel motion the
@@ -23,7 +23,10 @@ touched** — progression, the keyboard and the unlockables all stay as they are
 `ART.md`'s open art requests were withdrawn with the old direction and replaced
 per milestone. `ART.md` carries the palette's real hex values, and its R6
 sections carry what the fish cost: 33 species in eight sheets and nine
-generations, one reroll.
+generations, one reroll. Its R7 sections carry what the hats cost: 12 hats from
+six paintings, because a hat painted at the Pond transplants onto the Stream's
+head for free (`tools/hat-transplant.py`), and no reroll — though one good
+delivery was rejected by mistake and had to be measured to be believed.
 A real kid playtest of the A7 fight beats is still outstanding (see
 `BACKLOG.md`).
 
@@ -35,6 +38,9 @@ ignores, the flat-magenta backdrop convention, the alpha-salvage recipes and the
 delivery checklist). Two rules from it shape every prompt: **position by edges
 and corners, never by percentage**, and **name a flat backdrop colour rather
 than asking for transparency — then detect the colour you actually got.**
+**`tools/README.md` indexes the eight pipeline tools** — what each cuts, why the
+cutting family exists at all ("don't generate a piece you could cut"), and the
+dependencies a fresh container does not have. Read it before writing a ninth.
 
 **GitHub repo:** owner `mattohara42`, repo name `hook-line-and-sentence`.
 Renamed from `WordsPerM...` on 2026-08-31, along with the game itself (it was

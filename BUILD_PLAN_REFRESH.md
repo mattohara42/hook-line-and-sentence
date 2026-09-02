@@ -535,18 +535,17 @@ against the placeholder while the art is being made, and the cut tool is written
 against the first delivered painting rather than guessed at — which is how
 `cut-angler.py` and `cut-vessel.py` were both built, and why their detectors work.
 
-### R7 — Gear in the new style (code half done 2026-09-02; the prompts followed the same day)
+### R7 — Gear in the new style (code half done 2026-09-02; **all 12 hats landed the same day; the nine rods are what remains**)
 
 Hats and rods re-cut for the shop, in the new direction, drawn against each
 pose. Was V5; the shop code (`renderShopList`) already generalizes, so this is
 mostly content.
 
 **The code half is in, against no new art at all.** The shop sells four rods and
-five hats, equipping either rebuilds the rig, and both persist. What is left is
-the grid of paintings.
+five hats, equipping either rebuilds the rig, and both persist.
 
-**The 21 prompts are written (`ART.md`, the R7 request) and the epic is now
-waiting on generations only.** Two things about the shape of the ask are worth
+**All 21 prompts are written (`ART.md`, the R7 request). The 12 hats have
+landed; the nine rods are what the epic is still waiting on.** Two things about the shape of the ask are worth
 carrying past this milestone. Gear is the first art in the project asked for as
 an **edit of a delivered painting** rather than a new one: the pose's own
 painting is attached and comes back with one thing changed, so registration
@@ -615,10 +614,22 @@ body, and all of it survives a reload with no 404s anywhere in the run.
 - **R6's other lesson applies here too:** a sheet is the only way to *ask for* a
   difference rather than describe one. Four hats on one canvas come back as four
   different hats; four separate generations come back as one hat four times.
-- **Done when:** buying and equipping a hat changes the angler everywhere and
-  persists, and the rod you bought is the rod in your hand. **The second clause
-  is met** (`rod-bamboo-stream` is in a kid's hand the moment they buy it); the
-  first needs one hat painted.
+- **Done when:** ✅ **both clauses met 2026-09-02.** Buying and equipping a hat
+  changes the angler everywhere and persists — all four hats are painted for all
+  three poses, 12 of 12, verified in a real browser at every spot — and the rod
+  you bought is the rod in your hand (`rod-bamboo-stream` is in a kid's hand the
+  moment they buy it).
+- **Still open, and not part of the done-when:** the nine non-gate rods. Each
+  pose was painted holding its own gate rod, so the shop's other rods fall back
+  to that rather than 404ing, which is why this does not block. A rod is cut by
+  `cut-angler.py`'s corridor, not `cut-gear.py`'s difference — the shaft under
+  the hand is exactly where the two paintings agree.
+- **What the hats actually cost:** six generations for nine hats, because a hat
+  painted at the Pond lands on the Stream's head for free
+  (`tools/hat-transplant.py`, head IoU 0.904), plus three at the Ocean, which
+  the transplant correctly refuses because that head is not upright. No rerolls
+  — though one good delivery was rejected by mistake and took a measurement to
+  rescue. Full records in `ART.md` → *R7*.
 
 ---
 
