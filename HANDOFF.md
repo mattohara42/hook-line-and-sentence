@@ -24,6 +24,13 @@ are written out and all three are pre-registered in `tools/cut-fish.py`, so each
 is paste, save, and one command. **Every one of the 33 species is now accounted
 for by a sheet**, with no duplicates.
 
+**Sheet A has been rerolled once and its prompt is the corrected one.** The first
+attempt came back as a field-guide plate on cream paper with Latin captions — the
+prompt's own fault, since a list of field marks *is* a field guide. The corrected
+version opens by saying what the picture is not and states the backdrop as a
+place rather than a colour. The species clauses were right first time and are
+unchanged.
+
 Two sheets of six and the muskie alone, grouped so each set of look-alikes shares
 a canvas — the rule the Stream bought (`GEMINI_NOTES.md` → *Several subjects on
 one sheet*): the **four silvery pelagics** together (herring, mackerel, anchovy,
