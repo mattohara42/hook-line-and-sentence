@@ -303,8 +303,9 @@ still has it.
    out under *The hats* below, ready to paste. ~~`hat-bucket-pond`~~,
    ~~`hat-beanie-pond`~~ and ~~`hat-souwester-pond`~~ ✅ all landed first
    attempt 2026-09-02, each carrying its Stream transplant, so **the Pond and
-   the Stream are both complete columns**. Three generations remain, all at the
-   Ocean, the one pose the transplant refuses.
+   the Stream are both complete columns**. ~~`hat-bucket-ocean`~~ ✅ also
+   landed first attempt 2026-09-02, so **two generations remain**: `beanie`
+   and `souwester`, both at the Ocean.
 4. The nine rods, `stick` and `bamboo` before `carbon` and `deepsea`.
 
 **The transplant was measured before the six generations were spent**, against
@@ -443,6 +444,39 @@ being told to.
 **So the remaining nine hats are six generations rather than nine**: three at the
 Pond (`bucket`, `beanie`, `souwester`), three free transplants to the Stream,
 and three at the Ocean. The rods are unaffected, since a rod is not cut this way.
+
+#### ✅ `hat-bucket-ocean` landed first attempt (2026-09-02), and it is the tightest edit yet
+
+Seventh delivery, and the first Ocean generation of the R7 gear grid, since the
+Ocean is the one pose the transplant refuses. Best registration numbers of any
+delivery so far: agreement below the neck **0.985**, silhouette IoU **0.931**,
+only 553 px of the reference the return does not carry. Face-box coverage 109
+px, checked against the fixed `cut-gear.py` (#130), so this is a genuine small
+overlap rather than jitter.
+
+| check | this delivery | best of the six Pond/Stream hats |
+|---|---|---|
+| agreement below the neck | **0.985** | 0.991 (beanie) |
+| silhouette IoU | **0.931** | 0.939 (beanie) |
+| px the reference has and the delivery does not | **553** | 1463 (beanie) |
+| face-box coverage | 109 | 0 (beanie) |
+| aspect (0.903 asked) | 0.897 | — |
+
+**The brim tilts back with the head**, which was the one thing to watch on the
+first Ocean generation: the Ocean is the only pose whose head is not upright,
+and `hat-transplant.py` refuses it for exactly that reason (a Pond hat lands
+perched and forehead-exposed there, per the `hat-straw-ocean` record). A
+generated hat carries no such risk since the generator draws the tilt itself,
+and it did: composited and rendered at game size, the brim visibly follows the
+same backward lean as `hat-straw-ocean`'s.
+
+Darkest palette reading yet at 3.34% below umber, mean `(64,16,10)` — still
+warm, no pure black, and consistent with the Ocean's own generations running
+slightly darker than the Pond and Stream (`ART.md` → R6 wave 3 found the same
+pattern in the fish sheets).
+
+Verified in Chromium at the Ocean and a re-check of the Pond bucket hat in the
+same pass, both drawing exactly as before.
 
 #### ✅ `hat-souwester-pond` landed first attempt (2026-09-02), and it broke the cut
 
@@ -605,10 +639,10 @@ fix is the hat's colour in the prompt rather than anything downstream.
 #### The hats
 
 **Six generations close the hat column**, and all six are below, written out
-whole. Three are struck through: `hat-bucket-pond`, `hat-beanie-pond` and
+whole. Four are struck through: `hat-bucket-pond`, `hat-beanie-pond` and
 `hat-souwester-pond` all landed 2026-09-02, each carrying its Stream transplant,
-so six of the nine Pond-and-Stream hats are live and only the three Ocean
-generations remain. The Stream's three are not among them: the transplant measured above
+and `hat-bucket-ocean` landed the same day, so seven of the nine hats are live
+and two Ocean generations remain. The Stream's three are not among them: the transplant measured above
 lands a Pond hat on the Stream head for free, so the Stream is a command rather
 than a request. Order is cheapest first, and each Pond hat should be
 transplanted to the Stream as it lands rather than in a batch at the end, so
@@ -894,7 +928,9 @@ Then:     `python3 tools/hat-transplant.py hat-souwester pond stream`, and add
 Same three hats, same clauses, against the one head that is not upright. The
 transplant refuses this pose, which is why these are generations.
 
-**`hat-bucket-ocean`**: Bucket List, 30 coins.
+~~**`hat-bucket-ocean`**: Bucket List, 30 coins.~~ ✅ **Landed first attempt
+2026-09-02**, the tightest registration of any delivery so far. The prompt
+kept here is exactly what shipped.
 
 ```
 ART NEEDED: R7 gear, Bucket List for the Ocean angler

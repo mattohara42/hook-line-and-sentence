@@ -174,6 +174,7 @@ export const CONFIG = {
       "hat-bucket-pond", "hat-bucket-stream",
       "hat-beanie-pond", "hat-beanie-stream",
       "hat-souwester-pond", "hat-souwester-stream",
+      "hat-bucket-ocean",
     ],
     poses: {
       // R4's painted angler. Both layers are cuts of ONE delivered painting
