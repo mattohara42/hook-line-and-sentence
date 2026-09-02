@@ -375,6 +375,18 @@ export const CONFIG = {
       trout:       { w: 64, h: 28, mouth: { x: 0, y: 16 }, tail: { x: 50, y: 14 },
                      layers: [{ id: "tail", file: "fish-trout-tail" },
                               { id: "body", file: "fish-trout-body" }] },
+      // sheet C: the two rares at 78px and the Pond's legendary at 96 — the koi
+      // is the biggest fish in the game and the first one whose seam needed the
+      // overlap computed rather than assumed (see tools/cut-fish.py).
+      pike:        { w: 78, h: 25, mouth: { x: 0, y: 13 }, tail: { x: 63, y: 11 },
+                     layers: [{ id: "tail", file: "fish-pike-tail" },
+                              { id: "body", file: "fish-pike-body" }] },
+      walleye:     { w: 78, h: 35, mouth: { x: 0, y: 19 }, tail: { x: 59, y: 18 },
+                     layers: [{ id: "tail", file: "fish-walleye-tail" },
+                              { id: "body", file: "fish-walleye-body" }] },
+      koi:         { w: 96, h: 58, mouth: { x: 0, y: 31 }, tail: { x: 68, y: 32 },
+                     layers: [{ id: "tail", file: "fish-koi-tail" },
+                              { id: "body", file: "fish-koi-body" }] },
     },
   },
 

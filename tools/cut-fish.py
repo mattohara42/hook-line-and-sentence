@@ -22,7 +22,7 @@ keep one shared crop, so their offsets are zero by construction.
 Writes assets/fish-<id>-{body,tail}.png per species and prints the
 CONFIG.fish.species block, computed rather than tuned.
 """
-import sys, os, json
+import sys, os, json, math
 from collections import deque
 import numpy as np
 from PIL import Image
@@ -37,17 +37,17 @@ SHEETS = {
     "pond-common": dict(
         src="assets/Gemini_fish-pond-common.jpg",
         layout=["bluegill", "perch", "minnow", "pumpkinseed"],
-        alpha="unmix", rear=(0.60, 0.88), overlap=3,
+        alpha="unmix", rear=(0.60, 0.88),
     ),
     "pond-uncommon": dict(
         src="assets/Gemini_fish-pond-uncommon.jpg",
         layout=["carp", "bass", "trout"],
-        alpha="unmix", rear=(0.60, 0.88), overlap=3,
+        alpha="unmix", rear=(0.60, 0.88),
     ),
     "pond-rare": dict(
         src="assets/Gemini_fish-pond-rare.jpg",
         layout=["pike", "walleye", "koi"],
-        alpha="unmix", rear=(0.60, 0.88), overlap=3,
+        alpha="unmix", rear=(0.60, 0.88),
     ),
 }
 
@@ -57,6 +57,15 @@ SHEETS = {
 # painting: the generator draws every subject to fill its frame, so scaling from
 # the source would make a minnow and a pike the same size.
 LENGTH_BY_TIER = {"common": 54, "uncommon": 64, "rare": 78, "legendary": 96}
+
+# Mirrors CONFIG.fish.swim.tailDeg, for the same reason LENGTH_BY_TIER does. It
+# sets how far the seam has to overlap: the tail rotates about the peduncle's
+# midpoint, so each corner of the cut swings (depth/2)*sin(deg) away from the
+# body, and anything past the overlap opens as a transparent wedge. A fixed
+# overlap gets this wrong at both ends — 3px was over-generous for the pike's
+# 39px peduncle and half a design pixel short on the koi's 90px one, which is
+# 2.7 device px of daylight on a retina screen, on the biggest fish in the Pond.
+TAIL_SWEEP_DEG = 7.0
 
 TOL, LO, HI = 70.0, 55.0, 115.0
 MIN_COMPONENT = 500          # px; anything smaller is a speck, not a fish
@@ -190,9 +199,9 @@ for (n, px, x0, y0, x1, y1), fid in zip(ordered, S["layout"]):
     mouth_col = np.where(m[:, x0])[0]
     mouth = (0, (mouth_col.min() + mouth_col.max()) / 2 - y0)
 
-    # split, with a few px of overlap at the seam so a swept tail never opens a
-    # transparent wedge against the body it rotates away from
-    o = S["overlap"]
+    # split, overlapping the seam by exactly what this fish's sweep needs so the
+    # tail never opens a transparent wedge against the body it rotates away from
+    o = math.ceil((depth[cut] / 2) * math.sin(math.radians(TAIL_SWEEP_DEG))) + 1
     body = np.zeros_like(keyed); tail = np.zeros_like(keyed)
     bm = m.copy(); bm[:, x0 + cut + o:] = False
     tm = m.copy(); tm[:, :x0 + cut - o] = False
@@ -210,8 +219,8 @@ for (n, px, x0, y0, x1, y1), fid in zip(ordered, S["layout"]):
     differ = int((np.abs(out[..., :3] - keyed[..., :3]).max(axis=2) > 0)[both].sum())
 
     scale = LENGTH_BY_TIER[FISH[fid]["tier"]] / fw
-    print("    %-12s at %4d,%-4d %5d px  peduncle x=%d/%d (%.0f%% back), %d px deep against a %d px fan (%.2fx)"
-          % (fid, x0, y0, px, cut, fw, 100 * cut / fw, int(depth[cut]), fan, fan / max(depth[cut], 1)))
+    print("    %-12s at %4d,%-4d %5d px  peduncle x=%d/%d (%.0f%% back), %d px deep against a %d px fan (%.2fx), seam overlap %d px"
+          % (fid, x0, y0, px, cut, fw, 100 * cut / fw, int(depth[cut]), fan, fan / max(depth[cut], 1), o))
     print("    recomposite tail+body vs the sheet: %d px of %d differ" % (differ, int(both.sum())))
     block.append("      %s: { w: %.0f, h: %.0f, mouth: { x: %.0f, y: %.0f }, tail: { x: %.0f, y: %.0f },\n"
                  "                 layers: [{ id: \"tail\", file: \"fish-%s-tail\" }, { id: \"body\", file: \"fish-%s-body\" }] },"
