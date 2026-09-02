@@ -177,19 +177,21 @@ direction.
 
 ## Open art requests
 
-### R7 — gear, per pose (the wiring landed 2026-09-02; the prompts are not written yet)
+### R7: gear, per pose (the wiring landed 2026-09-02; the prompts are below)
 
 **Read this before delivering any gear PNG.** R7's code half is in, so a gear
-painting is now a two-step delivery rather than one, and skipping the second
-step looks exactly like the art never arriving:
+painting is a three-step delivery rather than one, and skipping the last step
+looks exactly like the art never arriving:
 
-1. Cut it against the pose it was drawn for, on that pose's canvas — the
-   same-canvas rule, so it registers by construction and its layer box is the
-   pose's box. Save it as `assets/<stem>-<pose>.png`, where `<stem>` is the shop
-   item's `file` (`rod-carbon`, `hat-straw`) and `<pose>` is `pond`, `stream` or
-   `ocean`.
-2. **Add that filename to `CONFIG.rig.gearArt`.** It is the registry that
-   decides whether the shop's item shows up at all — the same switch
+1. **Attach the pose's own painting** and ask for it back with one thing
+   changed. Not a fresh drawing of a hat or a rod: an edit. See below for why,
+   and for how to make the attachment.
+2. **Cut it against that same painting**, so it registers by construction and
+   its layer box is the pose's box. Save it as `assets/<stem>-<pose>.png`, where
+   `<stem>` is the shop item's `file` (`rod-carbon`, `hat-straw`) and `<pose>`
+   is `pond`, `stream` or `ocean`.
+3. **Add that filename to `CONFIG.rig.gearArt`.** It is the registry that
+   decides whether the shop's item shows up at all, the same switch
    `CONFIG.fish.species` is for fish. A PNG that is on disk but not in `gearArt`
    is silently never drawn, and a data test will tell you if you name a pose or
    an item that doesn't exist.
@@ -199,12 +201,341 @@ painted gate rod, and a hat shows nothing. That is deliberate, so the shop can
 sell the whole grid before any of it is painted, and it means **no gear delivery
 is ever urgent and none of them have to arrive together.**
 
-The grid is 4 rods × 3 poses and 4 hats × 3 poses, minus R4's diagonal
-(`rod-stick-pond`, `rod-bamboo-stream`, `rod-deepsea-ocean` already exist), so
-21 paintings. **Ask for them in sheets** — R6's hardest-won lesson is that a
-sheet is the only way to *ask for* a difference rather than describe one, and
-four hats in one pass come back as four different hats where four passes come
-back as one hat four times.
+#### Every gear painting is an edit of the pose, not a new painting
+
+The same-canvas rule says a piece belonging to a rig is drawn *from* the body
+and comes back on the same canvas. Gear takes that one step further, because by
+now there is a finished painting to edit rather than a body to draw from:
+**attach the pose's own painting, ask for it back with exactly one thing
+changed.** Registration then costs nothing, because the pixels that did not
+change are the reference's own.
+
+It also settles the two cuts, which are not the same cut:
+
+- **A hat is cut by difference.** The pixels that changed are the hat plus
+  whatever hair it covers, which is exactly what the hat layer should paint over
+  the body. Paint order is rod, arm, body, hat, so the hat covers everything and
+  a slightly generous diff is correct rather than a defect. The one thing the
+  diff must not reach is the face.
+- **A rod is cut by corridor**, which is `cut-angler.py`'s fitted axis,
+  half-width, butt, hand band and reel circle. Every one of those numbers stays
+  valid *if the new rod lands on the same axis*, which is what the rod prompt
+  spends its weight on. A difference cut cannot do this one: the rod paints
+  behind the hand and the occluded stretch is synthesised from the cross-section
+  above it, so the place needing the most work is the place where the two images
+  agree exactly.
+
+That second point is also the argument for holding the axis rather than
+accepting a well-drawn rod somewhere else on the canvas. Nine freely drawn rods
+are nine axes to measure and nine chances to bite into the body. One held axis
+is zero.
+
+#### It gives up R6's sheet, and takes the muskie's rule instead
+
+R6's hardest-won lesson is that a sheet is the only way to *ask for* a
+difference: four hats on one canvas come back as four different hats, four
+passes come back as one hat four times. **A sheet is not available here**, and it
+is worth saying why rather than leaving it looking like an oversight. Four hats
+on one canvas would be four hats worn by four redrawn children, which throws away
+the registration the edit is bought for, or four hats floating alone, which then
+have to be positioned by numbers in `config.js`. R7's plan forbids the second and
+G1 already paid for it.
+
+So gear takes the fallback `GEMINI_NOTES.md` records for exactly this case, the
+muskie, whose collision partner had been generated three waves earlier and could
+not share a canvas with it: **state the difference positively, then as an
+inversion of the thing already painted.** Each prompt below carries a `[NOT THE
+OTHER ONE]` clause naming the gear already delivered for that pose, and the four
+hats are specified as four different outlines rather than four different fabrics.
+If they come back samey anyway, that is a finding rather than a reroll, and the
+answer to it is the transplant below.
+
+#### What it will read as: the head is 18 design px
+
+Measured off the three cut poses rather than assumed. The head is **18.5, 18.9
+and 17.2 design px wide** at the Pond, Stream and Ocean, which the three
+paintings agree on despite being three sizes (their scales are 0.057, 0.084 and
+0.057). A hat is about 24 design px across. On a 1280px window that is roughly 40
+device px, and **anything finer than about 2 design px is not there at all.**
+
+Silhouette is the whole budget, so each hat below is given a shape a child could
+recognise as a black cut-out: a wide level brim, a small down-turned dome, a
+smooth bobbled skull, a long tail at the back. Each prompt says that to the
+generator in the picture's own terms, because "it will be shown small" is
+otherwise the kind of instruction that changes nothing.
+
+#### The attachment
+
+`assets/angler-<pose>.png` is the keyed painting, so its backdrop is alpha. An
+attachment with no magenta in it gives "keep the backdrop exactly as it is"
+nothing to hold onto, and leaves the returned backdrop to whatever the upload
+composites onto. Put the magenta back first:
+
+```
+python3 tools/gear-ref.py     # writes assets/ref-angler-{pond,stream,ocean}.png
+```
+
+Those three are gitignored on purpose: one line of derivation from a committed
+file is not game art. **Attach the ref, never the keyed PNG.**
+
+#### The grid, and the order to fill it
+
+21 paintings: 4 rods x 3 poses less R4's diagonal (9 rods), and 4 hats x 3 poses
+(12 hats). `hat-none` is not art. "Just Hair" is the bare head R4 painted on
+purpose, and it is how a hat comes back off.
+
+**Every hat before any rod**, because the two fallbacks are not equally good. An
+unregistered rod falls back to the pose's own painted gate rod, which is still a
+rod in a hand and costs a kid nothing they can see. An unregistered hat falls
+back to nothing, so it is a purchase that visibly does nothing, and it is the
+half of R7's done-when that is still open.
+
+1. **`hat-straw-pond`, the probe.** It closes the first done-when clause on its
+   own, and it answers whether an edit comes back as an edit.
+2. **`hat-straw-stream` and `hat-straw-ocean`**, which between them buy the
+   transplant answer below.
+3. The rest of the hats, cheapest first (`bucket` 30, `beanie` 50, `souwester`
+   75), Pond then Stream then Ocean.
+4. The nine rods, `stick` and `bamboo` before `carbon` and `deepsea`.
+
+**The transplant, worth measuring before spending eight more generations.** Once
+the straw hat exists at all three poses, land the *Pond* hat on the Stream and
+Ocean heads locally by matching the head box, which is the same head-match that
+set the poses' own scales in R4, and compare it against the two real
+generations at 18px. If they are indistinguishable, the remaining nine hats are
+three generations instead of nine. If the Ocean's backward head tilt shows (it
+is the one pose whose head is not upright), they are nine. This is a
+measurement, not a preference, so do not decide it in advance and do not spend
+the six generations before taking it.
+
+#### Checks on delivery, in the order that saves work
+
+The standing checklist in `GEMINI_NOTES.md` still applies. These come first,
+because they are the ones an edit can fail in a way a fresh painting cannot:
+
+1. **Did the rest of the painting survive?** Diff the return against the ref
+   with the changed region masked out (the head for a hat, the rod corridor for
+   a rod). A faithful edit leaves the body, the clothes, the hands and the boots
+   where they were. A redraw shows up as a large diff everywhere at once.
+2. **If the figure moved but was not redrawn**, register the return to the ref
+   by its head box before cutting, and say so in the commit. That is a measured
+   salvage of the kind R4 used, not an offset tweak.
+3. **If the pose changed** (a different angle, a different hand, a different
+   rod position for a hat prompt), it is a reroll.
+4. **Backdrop bled into the subject** is a reroll, as always, and is checked
+   before anything else that costs work.
+5. **A hat must not touch the face.** The eye, the nose and the mouth belong to
+   the body layer, and a hat layer that covers them cannot be fixed downstream.
+6. **A rod must be on the pose's own axis**, checked by cutting it with that
+   pose's unchanged `cut-angler.py` corridor and recompositing. If the corridor
+   misses it, the axis moved.
+7. **Palette** against the table above: no pure black, nothing darker than
+   `#33291f`.
+
+#### The hats
+
+One prompt, four hats, three poses. `<POSE LINE>` and `<W> by <H>` come from the
+table below the prompt, and `[THE HAT]`, `[SHAPE]` and `[NOT THE OTHER ONE]`
+come from the hat table under that.
+
+```
+ART NEEDED: R7 gear, <HAT NAME> for the <POSE> angler
+Reference: assets/ref-angler-<pose>.png (attach it, made with
+           `python3 tools/gear-ref.py`); ask for the SAME painting back
+Prompt:   [WHAT THIS IS]
+          I have attached a picture of a child fishing. I want the SAME picture
+          back with ONE thing added: a hat on the child's head. Everything else
+          must be identical to the picture I attached: the same child, the same
+          face, the same hair below the hat, the same pose, the same clothes, the
+          same fishing rod in the same place at the same angle, the same colours,
+          the same brushwork, the same size, the same canvas, the figure in
+          exactly the same position on it. Do not redraw the child. Do not change
+          the crop, the zoom or the framing. Change nothing below the eyebrows.
+
+          [THE HAT]
+          <THE HAT>
+
+          [HOW IT SITS]
+          <POSE LINE> The hat sits squarely on the crown and follows the tilt of
+          the head. Some of the child's hair still shows below it, at the back
+          and in front of the ear. The brim must not cover the eye, the eyebrow
+          or any part of the face.
+
+          [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
+          This hat will be shown at about the size of a fingernail: the child's
+          head is 18 pixels wide on the screen it appears on. Its SHAPE is the
+          only thing that will survive. As a plain black cut-out it must read as
+          <SHAPE>. Paint it in two or three soft tones with blended edges and a
+          thin warm brown outline. No fine texture, no small details, no
+          lettering, no badges, no logos, no pins, no feathers, no fishing flies
+          hooked into it, no dangling straps or cords.
+
+          [NOT THE OTHER ONE]
+          <NOT THE OTHER ONE>
+
+          [BACKDROP]
+          Every part of the image that is not the child is one completely flat,
+          even magenta #FF00FF, exactly as in the attached picture: edge to edge
+          and into all four corners, no gradient, no texture, no vignette, no
+          shading. No water, no ground, no scenery, no other objects, and no drop
+          shadow or reflection under the child.
+
+          [STYLE]
+          Soft painterly storybook illustration, warm muted color palette, gentle
+          diffused lighting, thin warm brown outlines rather than black, cozy and
+          inviting mood, no harsh shadows, no neon or saturated colours. Soft
+          two-tone shading with blended edges, matching the attached painting
+          exactly. NOT pixel art, NOT flat vector art with even line weight, NOT
+          thick black cartoon linework, NOT a glossy 3D render, NOT a photograph.
+
+          [CRITICAL: nothing else changes]
+          Draw NO fishing line: no thread, string or filament of any kind, not on
+          the reel, not through the guides, not trailing from the rod tip. Draw no
+          fish, no water, no text, no labels, no watermark, no border and no
+          frame.
+
+          [CANVAS]
+          Return the image at the same <W> by <H> pixels as the picture I
+          attached. Output as PNG.
+Save as:  assets/Gemini_<stem>-<pose>.png (the raw download, kept for re-cuts)
+Wired in: cut it against assets/ref-angler-<pose>.png, save the cut as
+          assets/<stem>-<pose>.png, then add "<stem>-<pose>" to CONFIG.rig.gearArt
+```
+
+| `<pose>` | `<POSE LINE>` | `<W> by <H>` |
+|---|---|---|
+| `pond` | The child is sitting with his knees drawn up, seen from the side and facing right, and his head is upright. | 1344 by 1391 |
+| `stream` | The child is standing in waders, seen from the side and facing right, and his head is upright. | 1387 by 1510 |
+| `ocean` | The child is braced back as if leaning into a fish, seen from the side and facing right, and his head is tilted slightly back and up. The hat must tilt back with it rather than sitting level. | 1324 by 1466 |
+
+| shop item | `<stem>` | `<THE HAT>` | `<SHAPE>` |
+|---|---|---|---|
+| Straw Poll (15) | `hat-straw` | A wide-brimmed straw sun hat in warm honey-oat straw, with a soft rounded crown and a broad flat brim that runs level all the way round, and a narrow band of muted warm brown cloth where the crown meets the brim. | a wide level line with a low dome above it |
+| Bucket List (30) | `hat-bucket` | A soft cotton bucket hat in muted sage green, with a squat flat-topped crown that sits close to the head and a short brim that slopes DOWN all the way round. | a small dome with its edge turned down |
+| Bean There (50) | `hat-beanie` | A knitted wool beanie in muted ember red, hugging the skull with NO brim at all, with a turned-up ribbed cuff across the forehead and a small round bobble on top. | a smooth skull with no brim and one bump on top |
+| Rain Check (75) | `hat-souwester` | A rain hat (a sou'wester) in muted amber oilskin, short and turned up at the front, sweeping DOWN and OUT at the back to cover the neck, with a chin strap. | short at the front and a long tail at the back |
+
+`<NOT THE OTHER ONE>` names the hats already delivered *for that pose*, so it
+grows as the column fills. The straw hat is first at every pose and has nothing
+to contrast against, so its clause is: *"This is the only hat in this picture."*
+After it:
+
+- **bucket**: this child already owns a wide-brimmed straw sun hat in another
+  picture, and this hat is its opposite: a small close-fitting dome with a SHORT
+  brim turned DOWN, not a wide flat brim held level. The two must not be
+  mistakable for each other at a glance.
+- **beanie**: this child already owns a wide straw sun hat and a soft bucket
+  hat. This one has NO brim of any kind: it is knitted wool pulled down over the
+  ears, a smooth curve from the forehead to the back of the neck with a bobble on
+  top. If it has a brim it is wrong.
+- **souwester**: this child already owns a wide straw sun hat, a soft bucket
+  hat and a knitted beanie. This one is not symmetrical: it is SHORT at the front
+  and LONG at the back, a stiff shiny oilskin that sheds rain, and the back brim
+  reaches the child's collar.
+
+#### The rods
+
+Nine of the twelve, since R4 painted each pose holding its own gate rod. The
+prompt holds the axis and changes the pole.
+
+```
+ART NEEDED: R7 gear, <ROD NAME> for the <POSE> angler
+Reference: assets/ref-angler-<pose>.png (attach it, made with
+           `python3 tools/gear-ref.py`); ask for the SAME painting back
+Prompt:   [WHAT THIS IS]
+          I have attached a picture of a child fishing. I want the SAME picture
+          back with ONE thing changed: the fishing rod he is holding is a
+          different rod. Everything else must be identical to the picture I
+          attached: the same child, the same face, the same hair, the same pose,
+          the same clothes, the same hands, the same colours, the same brushwork,
+          the same size, the same canvas, the figure in exactly the same position
+          on it. Do not redraw the child. Do not change the crop, the zoom or the
+          framing.
+
+          [WHERE THE ROD GOES, AND THIS IS THE IMPORTANT PART]
+          The new rod lies along EXACTLY the same line as the old one: the same
+          angle across the picture, the same straight path, the butt end stopping
+          at the same point, the tip leaving the picture at the same point on the
+          same edge, the same overall length. Think of it as the same pole
+          repainted where it lies, not a new pole placed in the picture. The
+          child's hand does not move, and his fingers still cross in FRONT of the
+          pole exactly as they do now.
+
+          [THE ROD]
+          <THE ROD>
+
+          [NOT THE OTHER ONE]
+          <NOT THE OTHER ONE>
+
+          [BACKDROP]
+          Every part of the image that is not the child and his rod is one
+          completely flat, even magenta #FF00FF, exactly as in the attached
+          picture: edge to edge and into all four corners, no gradient, no
+          texture, no vignette, no shading. No water, no ground, no scenery, and
+          no drop shadow or reflection.
+
+          [STYLE]
+          Soft painterly storybook illustration, warm muted color palette, gentle
+          diffused lighting, thin warm brown outlines rather than black, cozy and
+          inviting mood, no harsh shadows, no neon or saturated colours. Soft
+          two-tone shading with blended edges, matching the attached painting
+          exactly. NOT pixel art, NOT flat vector art with even line weight, NOT
+          thick black cartoon linework, NOT a glossy 3D render, NOT a photograph.
+
+          [CRITICAL: draw NO fishing line]
+          The rod must be completely bare. No thread, string or filament of any
+          kind: none wound on the reel, none threaded through the guides, none
+          trailing from the tip, none anywhere in the picture. A rod normally has
+          line on it and this one must not.
+
+          [ALSO NOT IN THE PICTURE]
+          No fish, no hook, no float, no lure, no landing net that is not already
+          there, no text, no labels, no watermark, no border, no frame.
+
+          [CANVAS]
+          Return the image at the same <W> by <H> pixels as the picture I
+          attached. Output as PNG.
+Save as:  assets/Gemini_<stem>-<pose>.png (the raw download, kept for re-cuts)
+Wired in: `python3 tools/cut-angler.py <pose> assets/Gemini_<stem>-<pose>.png`
+          with the pose's own unchanged corridor, save the rod layer as
+          assets/<stem>-<pose>.png, then add "<stem>-<pose>" to CONFIG.rig.gearArt
+```
+
+`<W> by <H>` is the pose's, from the hat table. The rods:
+
+| shop item | `<stem>` | `<THE ROD>` | poses still needed |
+|---|---|---|---|
+| Trusty Stick (free) | `rod-stick` | A plain cut cane pole, honey-tan and slightly knobbly, tapering evenly to a thin tip. NO reel, NO guides, NO fittings of any kind: a pole a child cut for himself, with a turn of dark cord whipped round it where his hand holds it. | stream, ocean |
+| Bamboo Beauty (25) | `rod-bamboo` | A split-cane fly rod in warm honey amber with darker bands at the nodes, a cork grip, fine wire guides along its length, and a small dark click reel on the underside just below the hand. | pond, ocean |
+| The Carp Whisperer (80) | `rod-carbon` | A modern carbon-fibre rod: a slim matte blank in warm charcoal grey (dark, but never pure black), fine gold whipping where each small guide is bound on, and a small dark spinning reel hanging BELOW the pole just under the hand. | pond, stream, ocean |
+| The Deep Endeavor (150) | `rod-deepsea` | A heavy boat rod: a thick blank in dark warm brown, a padded fore-grip above the hand, chunky guides, and a big brass multiplier reel sitting ON TOP of the pole just above the hand. | pond, stream |
+
+`<NOT THE OTHER ONE>` contrasts against the rod the pose already carries, which
+is the gate rod R4 painted and the one thing guaranteed to be in the generator's
+context because it is in the attached picture:
+
+- at the **pond**, against a bare cane pole: *"The pole in the attached picture
+  is a plain stick with no reel and no fittings. This one must be obviously
+  different at a glance: <a fly rod with a reel / a slim grey carbon rod with a
+  reel / a thick heavy boat rod with a big brass reel>."*
+- at the **stream**, against a split-cane fly rod: *"The rod in the attached
+  picture is a honey-coloured split-cane fly rod with a small dark reel. This one
+  must be obviously different at a glance: <a plain cut stick with no reel or
+  fittings at all / a slim matte grey carbon rod / a thick heavy boat rod with a
+  big brass reel>."*
+- at the **ocean**, against the deep-sea boat rod: *"The rod in the attached
+  picture is a thick dark boat rod with a big brass reel. This one must be
+  obviously different at a glance: <a plain cut stick with no reel or fittings at
+  all / a honey-coloured split-cane fly rod / a slim matte grey carbon rod>."*
+
+**One code consequence to expect on the first rod delivery, flagged rather than
+solved.** `cut-angler.py`'s corridor carries one `reel` circle per *pose*, and
+the Pond's is `None` because the painted stick has no reel. Every rod except
+`rod-stick` has one, so cutting a reeled rod at the Pond needs a reel circle for
+that pose *and item*. That is a small change to a tool that already takes a pose
+argument, and it is the kind of thing to make against the first delivered
+painting rather than guess at now, the way `cut-fish.py`'s four detectors were
+each written against a real sheet.
 
 ### ✅ R6 wave 1 — the Pond's ten fish (all three sheets landed 2026-09-02)
 
