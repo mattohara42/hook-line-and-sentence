@@ -60,6 +60,39 @@ Scope note, so the docs don't drift into each other:
   must be completely bare."* When you are excluding part of an object's own idiom,
   spend a paragraph and name every form it could take.
 
+## Several subjects on one sheet: it works, and it is cheaper (R6)
+
+**Tested on R6's first fish sheet, and it passed every check on the first
+attempt.** Four different fish asked for in one 4:3 canvas, one per quadrant,
+each named separately in a `[THE FOUR FISH]` block. What came back:
+
+- **Four clean connected components**, none touching, no enclosed key-coloured
+  pockets. So a sheet comes apart by flood-filling the backdrop and labelling —
+  no per-fish framing, no registration to get right.
+- **Consistent treatment across the four**, which is the real prize: tonal stdev
+  26–36 and saturation 0.11–0.49 across the set, sitting inside the range of the
+  separately-generated anglers and hull (29–48, 0.43–0.52). Four separate
+  generations are four chances to drift; one sheet cannot.
+- **Species read at game size.** The two hardest to tell apart (a bluegill and a
+  pumpkinseed — the same deep sunfish silhouette) were still distinct at 54px,
+  by colour and by bars-versus-freckles.
+
+**Why this is not in tension with the compositional prior.** A single small
+subject on a flat field is the case where the prior has nothing to push against
+— there is no scene to compose, so "one fish per quarter" is a layout it has no
+opinion about. Expect a sheet to work for *subjects*, and keep expecting the
+prior to win on *scenes*.
+
+**What to ask for, and what to check.** Name the quadrant for each subject
+(edges and corners again), demand "a wide band of empty background" between
+them, and forbid panel dividers and grid lines explicitly — a "sheet" invites
+them. Then count components before anything else: three where you asked for four
+means two subjects are touching, and that is a reroll rather than a cut problem.
+
+**Canvas size was ignored as usual**, and it did not matter: asked 1600×1200,
+got 1200×896, ratio 1.339 against 1.333. Each fish still arrived ~525px wide for
+something that renders at 54.
+
 ## What it reliably ignores
 
 - **Hedged positions.** This is the big one, and the evidence is sharper than it

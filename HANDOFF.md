@@ -9,9 +9,9 @@ something is the way it is, `git log` and the PR body have it in full.
 
 | | |
 |---|---|
-| **Active milestone** | **R6 — fish, a rig per species**, `BUILD_PLAN_REFRESH.md` (scoped 2026-09-01) |
+| **Active milestone** | **R6 — fish, a rig per species**, `BUILD_PLAN_REFRESH.md` |
 | **Done when** | every species in `data/fish.json` has its own art, the collection screen reads as 33 different fish, and the landing has a visible moment — wave by wave, Pond first |
-| **State** | R6 is scoped and **all of its code has landed**. It is waiting on one thing: sheet A. |
+| **State** | **4 of 33 species are painted, cut and wired** (the Pond's commons). The code is all in; what remains is generations. |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 86/86 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
@@ -19,28 +19,28 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**Generate sheet A** — `ART.md` → *R6 wave 1*. Four Pond commons on one 1600×1200
-canvas, and it is an experiment as much as an asset: if a sheet works the roster
-is ~11 generations instead of 33. **Judge it before generating B and C**; the
-species clauses work one-fish-per-canvas unchanged if it fails.
+**Generate sheets B and C** — `ART.md` → *R6 wave 1*, the species clauses are
+written. Sheet A proved the format on the first attempt (four fish, one canvas,
+four clean components, consistent treatment), so **the whole roster is ~11
+generations rather than 33** and the Stream and Ocean follow the same pattern.
+The rule is in `GEMINI_NOTES.md` → *Several subjects on one sheet*.
 
-**Everything on this side is already waiting for it** (#101 · #102 · #103):
+**Then cut and wire, which is now two commands and a paste:**
 
-- `CONFIG.fish.species` is the registry and the only switch. A species listed
-  there renders as cut layers, a species absent renders the tier placeholder.
-  It is **empty on purpose** — that is what makes a half-landed roster playable.
-- Three data tests are traps set for the first entry: a complete rig, the mouth
-  on the leading half and the tail pivot on the trailing one, and a box length
-  that matches the species' **rank** (`CONFIG.fish.lengthByTier`).
-- The collection cell already swaps the blob for the real body sprite, for a
-  species that has art **and** has been caught.
+```
+python3 tools/cut-fish.py <sheet>     # add the sheet to its SHEETS table first
+```
 
-**Then write `tools/cut-fish.py` against the delivered sheet**, not before —
-`cut-angler.py` and `cut-vessel.py` were both built that way and that is why
-their detectors work. The method is in `ART.md`; the peduncle detector was
-dry-run on the current sprite and the signal is clean (column depth bottoms out
-at a flat 154px and rises to 376 in the tail fan, so the cut is an argmin, not a
-threshold to tune).
+It writes `assets/fish-<id>-{body,tail}.png` and prints the
+`CONFIG.fish.species` block, measured rather than tuned. The three data tests
+catch a bad entry (mouth on the leading half, tail pivot on the trailing half,
+box length matching the species' **rank**). Check `npm test`, then look at the
+collection screen — that is the half of the done-when the scene doesn't show.
+
+**One cosmetic item, cheap, best done when the Pond is complete:** the painted
+bodies run darker and duller than `data/fish.json`'s per-species `color` (green
+off by 29–51). That field now only tints the collection blob for *uncaught*
+species, so it shows on a silhouette or not at all.
 
 **Carried from R5, and still user-visible:** both painted vessels are
 `skinnable: false`, so equipping one of `shop.boats`' four alternate hulls does
@@ -70,6 +70,11 @@ nothing at any spot. Prompt, registration check and a cheaper CSS-tint fallback:
 - **The bite now emerges 32px higher** (#103): at the old offset the fish
   appeared fully behind the finger panel on a 2:1 screen. Worth an eye test, and
   a one-line revert (`CONFIG.fish.approach.spawn.dy`) if you liked it deeper.
+- **Asset weight, a policy call rather than a bug.** A cut fish is ~150KB at
+  ~525px for something that renders at 54. Resampling to 320px is provably
+  invisible even at retina scene scale (mean channel diff ~1 of 255) and halves
+  it — ~2.4MB across the full roster. It would set the rule for the anglers and
+  vessels too, which is why it is a question rather than a commit.
 - **A7 fight beats have never been tested on a real kid.**
   `CONFIG.fight.clauseRunMs` (550) and `segmentRunMs` (900) were picked by feel.
 - **The Firebase blast-radius decision**, in `BACKLOG.md`.

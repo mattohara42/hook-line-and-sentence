@@ -177,7 +177,38 @@ direction.
 
 ## Open art requests
 
-### R6 wave 1 — the Pond's ten fish (open — the active milestone)
+### R6 wave 1 — the Pond's ten fish (sheet A ✅ landed 2026-09-02; B and C open)
+
+> **✅ Sheet A landed and is wired — and the experiment succeeded, first attempt.**
+> Four fish on one canvas came back as four clean components in the right
+> quadrants, with the treatment consistent across the set. The roster is
+> therefore **~11 generations, not 33**: generate B and C the same way, and the
+> Stream and Ocean by the same pattern.
+>
+> | check | result |
+> |---|---|
+> | backdrop | key `(255,76,254)`, stdev 2 — flat; floods stably from tol 60 to 90 |
+> | bleed into the subject | 99.9% of magenta-carrying px within 8px of an edge, deepest 11.7 on a fin — fringe residue, not the reroll kind |
+> | components | 4 of 4, none touching, **0 px** of enclosed key-coloured pockets |
+> | canvas | 1200×896 against the 1600×1200 asked; ratio 1.339 vs 1.333 — size ignored as always, and irrelevant at ~525px per fish |
+> | palette | 0 pure-black px; 0.055% darker than umber and those average `(55,36,16)`, warm |
+> | treatment | tonal stdev 26–36 and saturation 0.11–0.49, inside the accepted anglers' and hull's range — the "too field-guide" complaint did **not** survive measurement |
+> | the cut | peduncle found on all four, 51–72px deep against a 116–170px tail fan (2.3–2.6×); recomposite tail+body vs the sheet **0 px differ** on every fish |
+>
+> Cut with `python3 tools/cut-fish.py pond-common`, which was written against
+> this sheet and now owns the method. It uses the **`unmix`** alpha model rather
+> than the distance ramp: fins are thin enough that the generator paints backdrop
+> through them, and unmixing also leaves nothing to despill — which matters here
+> because a "blue above green is residue" rule would have eaten the pumpkinseed's
+> blue-green cheek lines.
+>
+> **One open item, cosmetic:** the painted bodies run darker and less saturated
+> than `data/fish.json`'s per-species `color` (green off by 29–51; bluegill
+> painted `#8e8c72` against `#8fbf88`). That field now only tints the collection
+> blob for *uncaught* species, so it shows on a silhouette or not at all. Worth a
+> cheap re-pass toward the paintings when the Pond wave is complete.
+
+### R6 wave 1 — the rest of the Pond (open — the active milestone)
 
 Ten species, and **the first generation is an experiment as much as an asset.**
 33 fish one at a time is 33 round trips; if four fish share a canvas and still
