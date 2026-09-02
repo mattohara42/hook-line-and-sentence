@@ -27,6 +27,56 @@ When a fish is hooked, the line curve should visibly react to tension: the contr
 
 Rod tip animates with small, irregular bounce/pull movements timed to key input events, distance between rod tip and fish position shortens progressively as the player types correctly. Each correct keystroke can trigger a small forward tug rather than a smooth continuous animation, since that better matches the typing-driven mechanic.
 
+### How the fish travels, and why it is a tween (2026-09-02)
+
+The fish moves between two things: `setFishTarget()` puts a *mark* on the reel
+path, and `startPull(ms)` sends the fish there over a real duration, eased in
+and out (`logic.easeInOut`). Timings are `CONFIG.fish.pull` — one per kind of
+move, because a word being reeled in, a hooked fish coming up out of the depths
+and a fish making a run are not the same gesture.
+
+It replaced a per-frame exponential chase, `fishX += (fishTX - fishX) * 0.08`,
+which had two faults in one line. The 0.08 was **per frame**, so the whole reel
+ran at whatever rate the monitor refreshed at. And an exponential's velocity is
+highest on its **first** frame: from a standstill the fish covered a third of a
+word's travel in ~100ms and then crept invisibly for the rest of the beat. A
+velocity that steps from zero to maximum between two frames is seen as a jump,
+which is what it was reported as. High speed is not the problem and slowing it
+down is not the fix — an ease that leaves and arrives at rest is.
+
+Two consequences worth knowing before retuning it. A pull re-anchors on the
+fish's *current* position, so one arriving mid-flight (the Stream reels a word
+on every typed space, without waiting for a pause) redirects rather than snaps.
+And `wordMs` should stay under `CONFIG.reel.wordPauseMs`, so the fish has
+settled before the next word is asked for.
+
+## Holding the species back
+
+A hooked fish is not a fish you can name. The approach silhouette used to end
+at the bite, which meant the moment a fish took the hook it was fully painted,
+fully coloured and glowing its tier — at the far end of the scene, where "what
+is it?" is the whole of the tension, and a legendary gave itself away before a
+single word was typed.
+
+`--reveal` is now written onto `#fish` every frame from how far the fish has
+been reeled, and the stylesheet's submerged filters interpolate on it: at 0 it
+is *exactly* the approach silhouette's own filter, so the shape that rose out of
+the depths carries straight through the hook; at 1 it is the through-water look
+a fish near the boat has always had. The tier glow rides the same ramp.
+`CONFIG.fish.reveal` sets where it starts and where it finishes.
+
+`fullAt` is deliberately below 1. The fish is never *drawn* at progress 1:
+`land()` fires in the same tick the last word sets that target, so the furthest
+it ever reaches is `(wordsToLand - 1) / wordsToLand` — 0.75 for a common, which
+is the binding case. A reveal that finished at 1 would never finish at all,
+which is how the first attempt landed a common fish 36% revealed.
+
+The one that gets away runs the ramp backwards: an escape is a CSS transition
+(`.fleeing`) with the reveal driven to 0, so the fish accelerates into deep
+water and goes back to being a shape. It used to be `el.fish.style.left =
+"760px"` with the swim loop already stopped, which was not an escape so much as
+a disappearance.
+
 ## Scope note
 
 None of this requires a physics engine. A tuned Bezier curve for the line and simple tween timings for the rod are enough to fix the "line just appears" problem. A full rope/verlet simulation is not needed at this stage and would be over-engineering for what the game needs.

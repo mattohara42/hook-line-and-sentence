@@ -355,6 +355,10 @@ h1 {
   position: absolute; top: 244px; width: 62px; height: 41px;
   opacity: 0;
   transition: opacity 0.3s ease;
+  /* 0 = the shape that rose out of the depths, 1 = a fish you can name. Written
+     every frame by drawFish() from how far the fish has been reeled; the
+     default of 1 is for a landed fish, which is out of the water and clear. */
+  --reveal: 1;
 }
 #fish:not(.rigged) { background: url("assets/fish-common.png") center / contain no-repeat; }
 .fish-layer { position: absolute; inset: 0; background: center / contain no-repeat; }
@@ -372,15 +376,34 @@ h1 {
    bluer, less contrasty. Removed when it's landed, so breaking the surface is
    the moment the fish snaps into focus. Written out per tier rather than
    composed from custom properties, because `filter` doesn't cascade: naming the
-   glow again is duller to read and impossible to get subtly wrong. */
-#fish.submerged { filter: saturate(0.7) brightness(0.82) contrast(0.92) blur(0.4px); }
+   glow again is duller to read and impossible to get subtly wrong.
+
+   It is also seen through DISTANCE. Each term interpolates on --reveal between
+   the approach silhouette's own value at 0 and the through-water value at 1, so
+   a hooked fish at the far end of the scene is still the shape that rose out of
+   the depths and only becomes a nameable species as it is reeled in. The gold
+   rides the same ramp: a legendary that announced itself the moment it bit gave
+   away more than its body did. CONFIG.fish.reveal.startAt sets how late this
+   begins; drawFish() writes --reveal. */
+#fish.submerged {
+  filter: saturate(calc(0.35 + 0.35 * var(--reveal)))
+          brightness(calc(0.42 + 0.4 * var(--reveal)))
+          contrast(calc(0.85 + 0.07 * var(--reveal)))
+          blur(calc(1.4px - 1px * var(--reveal)));
+}
 #fish.tier-rare.submerged {
-  filter: saturate(0.7) brightness(0.82) contrast(0.92) blur(0.4px)
-          drop-shadow(0 0 8px rgba(var(--gold-rgb),0.45));
+  filter: saturate(calc(0.35 + 0.35 * var(--reveal)))
+          brightness(calc(0.42 + 0.4 * var(--reveal)))
+          contrast(calc(0.85 + 0.07 * var(--reveal)))
+          blur(calc(1.4px - 1px * var(--reveal)))
+          drop-shadow(0 0 8px rgba(var(--gold-rgb), calc(0.45 * var(--reveal))));
 }
 #fish.tier-legendary.submerged {
-  filter: saturate(0.7) brightness(0.82) contrast(0.92) blur(0.4px)
-          drop-shadow(0 0 12px rgba(var(--gold-rgb),0.6));
+  filter: saturate(calc(0.35 + 0.35 * var(--reveal)))
+          brightness(calc(0.42 + 0.4 * var(--reveal)))
+          contrast(calc(0.85 + 0.07 * var(--reveal)))
+          blur(calc(1.4px - 1px * var(--reveal)))
+          drop-shadow(0 0 12px rgba(var(--gold-rgb), calc(0.6 * var(--reveal))));
 }
 /* uncommon shares the common sprite but hue-shifted so it reads as a
    different fish. This is a placeholder trick and nothing else — real art is
@@ -400,6 +423,12 @@ h1 {
    the opacity fade keeps its own timing — a fish that took a second to appear
    would arrive already half way across. */
 #fish.approaching { transition: left var(--drift) ease-out, top var(--drift) ease-out, opacity 0.3s ease; }
+/* the escape, and the mirror of the approach: it accelerates AWAY (ease-in,
+   where the drift in eased out) and the filter goes with it, so the reveal the
+   reel had earned drains back to a silhouette as the fish makes deep water.
+   --flee comes from CONFIG.fish.escape.ms. This is a transition rather than the
+   swim RAF because land() has already stopped that loop. */
+#fish.fleeing { transition: left var(--flee) ease-in, top var(--flee) ease-in, filter var(--flee) ease-in; }
 #fish.landing { animation: fishArc 0.7s ease forwards; }
 @keyframes fishArc {
   40% { transform: translate(-30px, -90px) rotate(-30deg); }

@@ -11,6 +11,7 @@ import {
   computeWpm, isPersonalBestWpm, isEvenCadence, pickDistinct, segmentsForTier,
   rankForProfile, earnsPrestige, speedTestPool, typingAccuracy,
   castArcPoint, lineSagPx, lineControlPoint, stepTug, rotateAboutPivot, easeIn, easeOut,
+  easeInOut, reelProgressAtX, revealAt,
   gearFile,
 } from "../logic.js";
 
@@ -495,4 +496,81 @@ test("a gear layer falls back rather than pointing at a painting that isn't ther
   assert.equal(gearFile(hatLayer, "pond", undefined, hats, art), null);
   assert.equal(gearFile(rodLayer, "pond", "nosuchrod", rods, art), "rod-stick-pond");
   assert.equal(gearFile(rodLayer, "pond", "bamboo", undefined, art), "rod-stick-pond");
+});
+
+// ---- The reel pull, and the reveal riding on it ----
+// The bug these guard: the reel used to chase its target with `fishX +=
+// (fishTX - fishX) * 0.08` once per FRAME. Two faults in one line — the speed
+// depended on the monitor's refresh rate, and an exponential's velocity peaks
+// on its first frame, so a completed word threw the fish a third of the way to
+// its new mark in ~100ms from a standstill and then crept. That is seen as a
+// jump. What makes the fix a fix is the START of the curve, not the end.
+
+test("the reel easing leaves and arrives at rest, which is what stops the jump", () => {
+  assert.equal(easeInOut(0), 0);
+  assert.equal(easeInOut(1), 1);
+  assert.equal(easeInOut(-3), 0);       // clamped like the cast easings
+  assert.equal(easeInOut(9), 1);
+  assert.equal(easeInOut(0.5), 0.5);    // symmetric about the halfway point
+  // it only ever moves forward
+  let prev = -1;
+  for (let t = 0; t <= 1.0001; t += 0.02) {
+    const k = easeInOut(t);
+    assert.ok(k >= prev, `easeInOut went backwards at t=${t}`);
+    prev = k;
+  }
+  // THE point: the first tenth of the tween covers a small fraction of the
+  // travel, where the old exponential covered ~28% of it in the same tenth.
+  assert.ok(easeInOut(0.1) < 0.05, `opens too fast (${easeInOut(0.1)}) — that reads as a jump`);
+  const exponentialInAFrame = 1 - Math.pow(1 - 0.08, 6);   // the old curve, 6 frames ≈ 100ms
+  assert.ok(easeInOut(0.1) < exponentialInAFrame / 4);
+  // …and it decelerates into the mark rather than creeping at it forever
+  assert.ok(easeInOut(0.9) > 0.95);
+});
+
+test("reel progress is read back out of the fish's own x", () => {
+  const path = CONFIG.fish.path;
+  assert.equal(reelProgressAtX(path, path.fromX), 0);   // just hooked
+  assert.equal(reelProgressAtX(path, path.toX), 1);     // at the boat
+  assert.ok(Math.abs(reelProgressAtX(path, (path.fromX + path.toX) / 2) - 0.5) < 1e-9);
+  // the fish spawns OUTSIDE the path (deep and right of it) and runs back out
+  // during a fight, so both ends have to clamp rather than go negative
+  assert.equal(reelProgressAtX(path, path.fromX + 60), 0);
+  assert.equal(reelProgressAtX(path, path.toX - 60), 1);
+  assert.equal(reelProgressAtX({ fromX: 100, toX: 100 }, 100), 1);   // degenerate path
+});
+
+test("the species stays a shape until the fish is close", () => {
+  const { startAt: s, fullAt: f } = CONFIG.fish.reveal;
+  assert.ok(s > 0 && s < f && f <= 1, "the ramp needs room for both a murk and a reveal");
+  assert.equal(revealAt(0, s, f), 0);         // at the bite: the approach silhouette
+  assert.equal(revealAt(s, s, f), 0);         // still nothing at the threshold
+  assert.equal(revealAt(f, s, f), 1);         // and a nameable fish by fullAt
+  assert.equal(revealAt(s / 2, s, f), 0, "nothing may clear before startAt");
+  const mid = revealAt((s + f) / 2, s, f);
+  assert.ok(mid > 0.49 && mid < 0.51);
+  // clamped at both ends
+  assert.equal(revealAt(-1, s, f), 0);
+  assert.equal(revealAt(9, s, f), 1);
+  // 1 is a plain linear reveal across the whole reel; an inverted or collapsed
+  // range degrades to a hard switch at fullAt rather than dividing by zero
+  assert.equal(revealAt(0.5, 0, 1), 0.5);
+  assert.equal(revealAt(0.69, 0.7, 0.7), 0);
+  assert.equal(revealAt(0.7, 0.7, 0.7), 1);
+  assert.equal(revealAt(0.9, 0.8, 0.2), 1);
+});
+
+// The reveal has to COMPLETE, and it is not the reel that decides where it
+// stops. land() fires in the same tick the last word sets its target, so the
+// fish is never drawn at progress 1 — the furthest it reaches is one word
+// short of the boat, and the cheapest tier reaches the least. Setting fullAt
+// to 1 left a common fish 36% revealed when it broke the surface, which is
+// what this catches.
+test("every tier is fully revealed before it is landed", () => {
+  const { startAt, fullAt } = CONFIG.fish.reveal;
+  for (const [tier, words] of Object.entries(CONFIG.reel.wordsToLandByTier)) {
+    const furthestDrawn = (words - 1) / words;
+    assert.equal(revealAt(furthestDrawn, startAt, fullAt), 1,
+      `a ${tier} (${words} words) is only ${revealAt(furthestDrawn, startAt, fullAt)} revealed when it lands`);
+  }
 });

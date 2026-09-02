@@ -319,3 +319,42 @@ export function rotateAboutPivot(point, pivot, deg) {
 // into its landing rather than arriving at full speed).
 export function easeIn(t)  { const k = Math.min(1, Math.max(0, t)); return k * k; }
 export function easeOut(t) { const k = Math.min(1, Math.max(0, t)); return 1 - (1 - k) * (1 - k); }
+
+// `easeInOut` is for a move that both STARTS and ENDS at rest, which is what a
+// reeled fish does between words. It exists because the reel used to chase its
+// target with a per-frame exponential (`x += (target - x) * 0.08`), and an
+// exponential's velocity is highest on its very first frame: from a standstill
+// the fish covered a third of the word's travel in ~100ms and then crept, which
+// the eye reads as a jump rather than a swim. Quadratic in and out of the
+// halfway point, so the fish gathers, swims and settles.
+export function easeInOut(t) {
+  const k = Math.min(1, Math.max(0, t));
+  return k < 0.5 ? 2 * k * k : 1 - 2 * (1 - k) * (1 - k);
+}
+
+// Where along the reel the fish is, read back out of its x. The reel path is a
+// straight run from `fromX` (deep and right, where it bites) to `toX` (the
+// boat), so the fish's own position IS the progress — no second counter to
+// keep in step with `wordsLeft`, and it moves smoothly because the fish does.
+export function reelProgressAtX(path, x) {
+  const span = path.toX - path.fromX;
+  if (!span) return 1;
+  return Math.min(1, Math.max(0, (x - path.fromX) / span));
+}
+
+// How much of the fish that progress has revealed. 0 is the murk it bites in,
+// 1 is a fish you can name; nothing clears before `startAt` and it is fully
+// itself by `fullAt`, so the first part of the fight is a shape in the water
+// and the species arrives before the landing does.
+//
+// `fullAt` is below 1 on purpose. The fish never renders at progress 1: the
+// last word calls land() in the same tick it sets that target, which stops the
+// swim and hands over to the landing arc, so the furthest it is ever DRAWN is
+// (wordsToLand - 1) / wordsToLand — 0.75 for a common, 0.875 for a legendary.
+// A reveal that finished at 1 would therefore never finish at all.
+export function revealAt(progress, startAt, fullAt = 1) {
+  const s = Math.min(1, Math.max(0, startAt ?? 0));
+  const f = Math.min(1, Math.max(0, fullAt));
+  if (f <= s) return progress >= f ? 1 : 0;
+  return Math.min(1, Math.max(0, (progress - s) / (f - s)));
+}
