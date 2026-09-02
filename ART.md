@@ -303,9 +303,9 @@ still has it.
    out under *The hats* below, ready to paste. ~~`hat-bucket-pond`~~,
    ~~`hat-beanie-pond`~~ and ~~`hat-souwester-pond`~~ ✅ all landed first
    attempt 2026-09-02, each carrying its Stream transplant, so **the Pond and
-   the Stream are both complete columns**. ~~`hat-bucket-ocean`~~ ✅ also
-   landed first attempt 2026-09-02, so **two generations remain**: `beanie`
-   and `souwester`, both at the Ocean.
+   the Stream are both complete columns**. ~~`hat-bucket-ocean`~~ and
+   ~~`hat-beanie-ocean`~~ ✅ both also landed first attempt 2026-09-02, so
+   **one generation closes the entire hat column**: `hat-souwester-ocean`.
 4. The nine rods, `stick` and `bamboo` before `carbon` and `deepsea`.
 
 **The transplant was measured before the six generations were spent**, against
@@ -444,6 +444,34 @@ being told to.
 **So the remaining nine hats are six generations rather than nine**: three at the
 Pond (`bucket`, `beanie`, `souwester`), three free transplants to the Stream,
 and three at the Ocean. The rods are unaffected, since a rod is not cut this way.
+
+#### ✅ `hat-beanie-ocean` landed first attempt (2026-09-02), and it is the best delivery of the grid
+
+Eighth delivery, and the tightest of all eight on both registration numbers at
+once: agreement below the neck **0.986**, silhouette IoU **0.939**, tied with
+`hat-beanie-pond` for the highest IoU in the set and ahead of it below the
+neck. Face-box coverage **0 px**, the second beanie in a row to touch nothing
+there, which is starting to look like the shape rather than a coincidence: no
+brim means nothing is ever asked to reach toward the eyebrow.
+
+| check | this delivery | `hat-beanie-pond` | `hat-bucket-ocean` |
+|---|---|---|---|
+| agreement below the neck | **0.986** | 0.991 | 0.985 |
+| silhouette IoU | **0.939** | 0.939 | 0.931 |
+| face-box coverage | **0** | 0 | 109 |
+| aspect (0.903 asked) | 0.897 | — | 0.897 |
+| palette | 0 black, 4.27% darker than umber, `(88,6,3)` | 0, 2.34% | 0, 3.34% |
+
+Highest darker-than-umber reading of any hat, 4.27%, and it is the same story
+as the Pond beanie: ember red is dark and saturated, so more of its own pixels
+sit under the threshold. Mean `(88,6,3)` is warm and there is no pure black.
+
+The tilt held again: composited and at game size, the whole knitted dome
+follows the head's backward lean rather than sitting level, matching
+`hat-bucket-ocean` and `hat-straw-ocean` before it.
+
+Verified in Chromium at the Ocean, plus a re-check of the Ocean bucket hat in
+the same pass. One hat remains in the entire grid: `hat-souwester-ocean`.
 
 #### ✅ `hat-bucket-ocean` landed first attempt (2026-09-02), and it is the tightest edit yet
 
@@ -639,10 +667,10 @@ fix is the hat's colour in the prompt rather than anything downstream.
 #### The hats
 
 **Six generations close the hat column**, and all six are below, written out
-whole. Four are struck through: `hat-bucket-pond`, `hat-beanie-pond` and
+whole. Five are struck through: `hat-bucket-pond`, `hat-beanie-pond` and
 `hat-souwester-pond` all landed 2026-09-02, each carrying its Stream transplant,
-and `hat-bucket-ocean` landed the same day, so seven of the nine hats are live
-and two Ocean generations remain. The Stream's three are not among them: the transplant measured above
+and `hat-bucket-ocean` and `hat-beanie-ocean` landed the same day, so eight of
+the nine hats are live and one Ocean generation remains. The Stream's three are not among them: the transplant measured above
 lands a Pond hat on the Stream head for free, so the Stream is a command rather
 than a request. Order is cheapest first, and each Pond hat should be
 transplanted to the Stream as it lands rather than in a batch at the end, so
@@ -1008,7 +1036,9 @@ Wired in: `python3 tools/cut-gear.py ocean hat-bucket assets/Gemini_hat-bucket-o
           then add "hat-bucket-ocean" to CONFIG.rig.gearArt
 ```
 
-**`hat-beanie-ocean`**: Bean There, 50 coins.
+~~**`hat-beanie-ocean`**: Bean There, 50 coins.~~ ✅ **Landed first attempt
+2026-09-02**, the best registration of the whole grid on both agreement and IoU
+at once. The prompt kept here is exactly what shipped.
 
 ```
 ART NEEDED: R7 gear, Bean There for the Ocean angler

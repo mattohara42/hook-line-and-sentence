@@ -11,7 +11,7 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. The last one in the epic. |
 | **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
-| **State** | **10 of 21 painted, 2026-09-02, all first attempt.** The Pond and Stream hat columns are both complete (six paintings, six hats via the transplant), and the first Ocean hat is generated and registered. Both done-when clauses are met. Left: 2 hats (`beanie`, `souwester`, both Ocean generations) and 9 rods. **Every remaining hat prompt is written out whole in `ART.md`, ready to paste.** |
+| **State** | **11 of 21 painted, 2026-09-02, all first attempt.** Both Ocean hats generated so far scored the best registration numbers in the whole grid. Both done-when clauses are met. Left: **1 hat** (`hat-souwester-ocean` — closes the entire hat column) and 9 rods. **Its prompt is written out whole in `ART.md`, ready to paste.** |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 89/89 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
@@ -25,12 +25,12 @@ buy is the rod in your hand. What remains is 18 more paintings of a shop that
 already works, and every open question in front of them is answered.
 
 If it fills, **the generating is the only step left in the hat column.**
-`ART.md` → *R7* → *The hats* holds every prompt written out whole. Two
-remain, both at the Ocean: `hat-beanie-ocean`, `hat-souwester-ocean` — the last
-two generations the hat column needs. `hat-bucket-ocean` landed first attempt
-with the best registration numbers of any delivery yet (agreement below the
-neck 0.985), confirming a generated Ocean hat carries the head's backward tilt
-correctly without the transplant's risk.
+`ART.md` → *R7* → *The hats* holds the last prompt written out whole:
+`hat-souwester-ocean`, one generation from closing the entire hat column.
+`hat-bucket-ocean` and `hat-beanie-ocean` both landed first attempt with the
+best registration numbers of any deliveries yet (agreement below the neck
+0.985-0.986, IoU up to 0.939), confirming a generated Ocean hat carries the
+head's backward tilt correctly without the transplant's risk.
 Each block carries its own attach / cut / register / transplant lines. Make the
 attachments with `python3 tools/gear-ref.py`, then take one prompt at a time and
 transplant each Pond hat to the Stream as it lands rather than in a batch, so a
