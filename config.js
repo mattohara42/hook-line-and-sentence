@@ -302,8 +302,9 @@ export const CONFIG = {
   fish: {
     // What a species with no art renders as: the tier sprite, in the box #fish
     // has always had, with the mouth drawFish() used to hardcode as left+6/+20.
-    // The Ocean muskie's A8 hero sprite is 96px wide by a CSS special case and
-    // still uses this mouth — as it does today — until its own wave lands.
+    // Nothing reaches it now that all 33 species are painted; it is the net for
+    // a species added ahead of its art, which is what kept the roster playable
+    // through eight waves of R6.
     placeholder: { w: 62, h: 41, mouth: { x: 6, y: 20 } },
     // A species' length comes from its RANK, not from its painting. The
     // generator draws every subject to fill its frame, so a minnow and a pike
@@ -462,6 +463,17 @@ export const CONFIG = {
       swordfish:     { w: 78, h: 32, mouth: { x: 0, y: 18 }, tail: { x: 66, y: 18 },
                      layers: [{ id: "tail", file: "fish-swordfish-tail" },
                               { id: "body", file: "fish-swordfish-body" }] },
+      // The last fish in the game, and the only one that needed a whole canvas
+      // to itself: the fish it must not resemble is the Pond's northern pike,
+      // which lives in another biome and was generated three waves earlier, so
+      // no sheet could put the two of them together. The prompt inverted the
+      // pattern instead — dark bars on a pale flank against the pike's pale
+      // spots on a dark one — and at 96px beside the pike's 78 they read as
+      // different fish. Retires the A8 hero sprite: fish-muskie.png and its
+      // CSS width override are gone with this entry.
+      muskie:        { w: 96, h: 28, mouth: { x: 2, y: 14 }, tail: { x: 78, y: 14 },
+                     layers: [{ id: "tail", file: "fish-muskie-tail" },
+                              { id: "body", file: "fish-muskie-body" }] },
     },
   },
 
