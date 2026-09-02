@@ -490,6 +490,27 @@ delivered on one canvas, which is what finally separated the rainbow from the
 steelhead. Five sheets, five first attempts. The Ocean's thirteen are all that
 remain.
 
+**What it cost, for the next epic's planning.** 33 species in **eight sheets and
+nine generations** — one reroll, on the Ocean's first sheet. The estimate this
+milestone opened with was ~99 generated pieces; the estimate after scoping was
+~11 generations; the actual was nine. Two decisions did all of that work: *don't
+generate a piece you could cut* (R4's rule, which made a species one generation
+instead of three) and *put several subjects on one canvas* (which made a wave
+one generation instead of four, and turned out to be the only way to ask for a
+difference rather than describe one).
+
+**`tools/cut-fish.py` is the artefact worth keeping.** Every number in
+`CONFIG.fish.species` is printed by it and none was tuned in a browser, and it
+now carries four detectors that were each paid for by a real delivery: the
+**peduncle** (the narrowest column in the rear third, found not traced), the
+**seam overlap** (derived per fish from that peduncle's depth and the sweep
+angle — the koi needed 7px where the pike needed 4), the **component selection**
+(the N largest, with the separation proved — a captioned sheet made a flat size
+threshold call seventeen word fragments fish), and the **mouth** (alpha-weighted
+over the leading 15%, measured in design px and walked along its row onto the
+silhouette — a catfish's barbel and a unicornfish's horn each broke a simpler
+rule). A future wave adds a `SHEETS` entry and runs one command.
+
 **Landed so far, and the rest of it is code (2026-09-01):** the scoping and the
 wave-1 request (#101) · the fish rig itself, with the tier placeholder as the
 fallback and three data tests set as traps for the first entry (#102) · both

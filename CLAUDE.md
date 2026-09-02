@@ -115,6 +115,15 @@ older still and is load-bearing for the pre-profiles migration.
   created, so a screenshot taken on load is a picture of a scrim, not the game.
   Every R3 background preview was shot that way and read half as bright as the
   game really is.
+- **An assertion proves the code ran, not that the picture is right — so draw
+  the thing you measured.** R6 shipped four bugs past green assertions, and
+  every one was obvious the moment something was rendered: a CSS eye dot
+  painting over real sprites, every fish in the journal drawn without its tail,
+  a fishing line attached to a catfish's forehead, and another attached to
+  nothing at all beside a unicornfish's horn. Two were caught by screenshotting
+  the actual screen; two by painting the measured coordinate onto the sprite in
+  red. When a number describes a position, colour or shape, render it before
+  believing it.
 - **Art that doesn't fit is a reroll, not an offset tweak.** Sprite pieces are
   generated from a reference image and returned on the same canvas so they
   register by construction (see `ART.md`).
