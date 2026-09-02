@@ -11,7 +11,7 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. The last one in the epic. |
 | **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
-| **State** | **7 of 21 painted, 2026-09-02, all first attempt.** Bucket and beanie were each painted once at the Pond and transplanted to the Stream, so four paintings bought four hats. Both done-when clauses are met. Left: 5 hats (four generations, one transplant) and 9 rods. **Every remaining hat prompt is written out whole in `ART.md`, ready to paste.** |
+| **State** | **9 of 21 painted, 2026-09-02, all first attempt.** Bucket, beanie and souwester were each painted once at the Pond and transplanted to the Stream, so six paintings bought six hats — the Pond and Stream hat columns are both complete. Both done-when clauses are met. Left: 3 hats (all at the Ocean, all generations) and 9 rods. **Every remaining hat prompt is written out whole in `ART.md`, ready to paste. `tools/cut-gear.py` had a real bug this session (below) — pull before your next cut.** |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 89/89 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
@@ -25,8 +25,10 @@ buy is the rod in your hand. What remains is 18 more paintings of a shop that
 already works, and every open question in front of them is answered.
 
 If it fills, **the generating is the only step left in the hat column.**
-`ART.md` → *R7* → *The hats* holds every prompt written out whole. Four remain,
-in order: `hat-souwester-pond`, then all three at the Ocean.
+`ART.md` → *R7* → *The hats* holds every prompt written out whole. Three
+remain, all at the Ocean: `hat-bucket-ocean`, `hat-beanie-ocean`,
+`hat-souwester-ocean`. The Ocean is the one pose `hat-transplant.py` refuses, so
+these are the last three generations the hat column needs.
 Each block carries its own attach / cut / register / transplant lines. Make the
 attachments with `python3 tools/gear-ref.py`, then take one prompt at a time and
 transplant each Pond hat to the Stream as it lands rather than in a batch, so a
@@ -48,6 +50,21 @@ generations.
 **A delivered PNG is not live until it is registered** in `CONFIG.rig.gearArt`,
 and an unregistered one looks exactly like art that never arrived
 (`GEMINI_NOTES.md`'s delivery checklist, step 7).
+
+**`cut-gear.py` had a real bug, found and fixed this session (#130).** The
+closing step that bridges a hood to its own brim was just as willing to bridge
+a 1-3px trace of redrawn line art along the eyebrow/eye/nose/mouth into a ring,
+and the hole-fill the same close needs for the hatband/hair case then painted
+the ring's inside solid — 16,230px of "hat" on `hat-souwester-pond` that looked
+perfectly clean composited (the redrawn linework agrees with the original on
+colour, just not the exact pixel) but wasn't. Fixed by opening the face box's
+slice of the diff before closing runs. **Re-cut `hat-straw-pond` and
+`hat-bucket-pond` with the fix and re-transplanted every Stream hat from the
+corrected Pond source** — both changed only inside the face box (861/1109px of
+now-removed invisible jitter), confirmed unchanged by pixel diff everywhere
+else and re-verified in Chromium. Nothing about this is visible in the game;
+it is asset hygiene, not a regression fix. Full mechanism in `cut-gear.py`'s
+own docstring and the `ART.md` record.
 
 ## Waiting on Matt (none of it blocks R7)
 
