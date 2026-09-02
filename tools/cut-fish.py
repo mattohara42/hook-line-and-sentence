@@ -63,6 +63,26 @@ SHEETS = {
     # steelhead are the pair hardest to tell apart, and putting them on one
     # canvas means the generator drew them against each other instead of in two
     # separate passes. Three rows of two, so reading order pairs them by row.
+    # Wave 3, the Ocean, grouped so that each set of look-alikes shares a canvas:
+    # the four silver pelagics on one, the three billfish-shaped rares on the
+    # other. The muskie goes alone because the fish it must not resemble — the
+    # Pond's northern pike — is in another biome and already generated, so no
+    # sheet can put them together.
+    "ocean-shoal": dict(
+        src="assets/Gemini_fish-ocean-shoal.jpg",
+        layout=["herring", "mackerel", "anchovy", "sardine", "mahi", "snapper"],
+        alpha="unmix", rear=(0.60, 0.88),
+    ),
+    "ocean-deep": dict(
+        src="assets/Gemini_fish-ocean-deep.jpg",
+        layout=["cod", "grouper", "unicornfish", "marlin", "tuna", "swordfish"],
+        alpha="unmix", rear=(0.60, 0.88),
+    ),
+    "ocean-muskie": dict(
+        src="assets/Gemini_fish-ocean-muskie.jpg",
+        layout=["muskie"],
+        alpha="unmix", rear=(0.60, 0.88),
+    ),
     "stream-trout": dict(
         src="assets/Gemini_fish-stream-trout.jpg",
         layout=["rainbowtrout", "browntrout", "steelhead", "grayling", "salmon", "catfish"],

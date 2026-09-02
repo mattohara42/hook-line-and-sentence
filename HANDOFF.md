@@ -19,32 +19,36 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**Write and generate the Ocean's sheets** — `ART.md` → *R6 wave 3*, which has no
-prompts yet. Thirteen species, the biggest wave, and **sheets of six are now
-proven**, so it is likely two or three generations rather than four.
+**Generate the Ocean's three sheets** — `ART.md` → *R6 wave 3*. All three prompts
+are written out and all three are pre-registered in `tools/cut-fish.py`, so each
+is paste, save, and one command. **Every one of the 33 species is now accounted
+for by a sheet**, with no duplicates.
 
-**Copy the Pond and Stream structure, with one rule learned the hard way:** put
-the species hardest to tell apart *on the same sheet*. The Stream's prompts were
-written to keep a rainbow trout and a steelhead apart, and delivering them on one
-canvas separated them better than any wording could — see `GEMINI_NOTES.md` →
-*Several subjects on one sheet*.
+Two sheets of six and the muskie alone, grouped so each set of look-alikes shares
+a canvas — the rule the Stream bought (`GEMINI_NOTES.md` → *Several subjects on
+one sheet*): the **four silvery pelagics** together (herring, mackerel, anchovy,
+sardine — the worst group in the game, worse than the trout) and the **three
+billfish-shaped rares** together (marlin, tuna, swordfish).
 
-**The muskie is the one with consequences.** It is the Ocean's legendary, it
-already has an A8 hero sprite (`fish-muskie.png`) and a 96px CSS special case in
-`style.css` (`#scene.loc-ocean #fish:not(.rigged).tier-legendary`), and **both
-retire when its R6 art lands.** Don't leave them behind.
+**The muskie is the one that needs care, for two reasons.** Its look-alike is the
+Pond's northern pike — same family, same silhouette — and no sheet can pair them,
+because the pike is in another biome and already generated. Their patterns are
+*inverted* (pike: pale spots on dark; muskie: dark bars on pale) and the clause
+says so; attaching `assets/Gemini_fish-pond-rare.jpg` as a reference is worth
+trying. And when it lands, **delete `fish-muskie.png` and the
+`#scene.loc-ocean #fish:not(.rigged).tier-legendary` rule in `style.css`** — the
+A8 hero sprite and its 96px override are both dead the moment the species has a
+real entry.
 
-**Cutting is one command per sheet:** add it to `SHEETS` in `tools/cut-fish.py`
-(species in reading order — rows are found automatically), run
-`python3 tools/cut-fish.py <sheet>`, paste the printed block into
+**Cutting is one command per sheet:** `python3 tools/cut-fish.py ocean-shoal`
+(or `ocean-deep` / `ocean-muskie`), paste the printed block into
 `CONFIG.fish.species`, `npm test`. The seam overlap and the mouth are both
-derived per fish now, so a deep-peduncled legendary or a whiskered oddity needs
-no special handling.
+derived per fish, so nothing needs special handling.
 
 **Then look at the collection screen with the names covered.** Three bugs this
 milestone — the eye dot over the sprites, every fish rendering tailless, and a
 line attached to a catfish's forehead — were invisible to assertions and obvious
-in a picture.
+in a picture. **R6 closes when this wave lands.**
 
 **One cosmetic item, cheap, best done when the Pond is complete:** the painted
 bodies run darker and duller than `data/fish.json`'s per-species `color` (green
