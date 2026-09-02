@@ -301,8 +301,39 @@ Wired in: not yet — `tools/cut-fish.py` (to be written against this sheet) spl
           block exists; until then all four keep the tier placeholder, on purpose.
 ```
 
-Sheets **B** and **C** are the same prompt with the layout and species clauses
-swapped — three fish in a row, left / middle / right, and:
+Sheets **B** and **C** are the same prompt with three blocks swapped: the layout,
+the species, and the canvas. **A row of three gets a 2.25:1 canvas rather than
+4:3**, so each fish still lands ~600px wide instead of being squeezed into a
+narrow column — ratios are the most reliable instruction the generator takes
+(`GEMINI_NOTES.md`), and the pixel count does not matter downstream because a
+species' length comes from its rank.
+
+```
+          [LAYOUT]
+          Three different fish on one canvas, side by side in a single row: one
+          on the left, one in the middle, one on the right. Every fish is fully
+          separated from the others by a wide band of empty background — no fish
+          touches, overlaps or crowds another, and none touches the edge of the
+          canvas. Each fish is drawn as large as it comfortably can be within its
+          own third.
+
+          [POSE — every fish]
+          ... unchanged from sheet A, except "its own quarter" becomes "its own
+          third" ...
+
+          [CANVAS]
+          The image is 1800 by 800 pixels, aspect ratio 2.25:1. Output as PNG.
+```
+
+Save as `assets/Gemini_fish-pond-uncommon.jpg` (B) and
+`assets/Gemini_fish-pond-rare.jpg` (C), then add each to `SHEETS` in
+`tools/cut-fish.py` with `layout={"left": ..., "middle": ..., "right": ...}`.
+**Both sheets are already in the tool's `SHEETS` table**, so cutting them is one
+command once the file is saved. It names species in *reading order* and finds the
+rows itself, which is why a 2×2 sheet and a row of three need no different
+handling.
+
+The species clauses:
 
 ```
           [THE THREE FISH — sheet B]

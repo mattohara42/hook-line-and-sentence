@@ -29,14 +29,24 @@ from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Which species are on which sheet, and where. The layout keys are the quadrant
-# the PROMPT asked each fish to be drawn in (ART.md → R6 wave 1), so this table
-# is the prompt's own layout written down, not a measurement.
+# Which species are on which sheet, in READING ORDER — rows top to bottom, and
+# left to right within a row. That is the prompt's own layout written down, and
+# it is deliberately not a grid of quadrant names: sheet A is 2x2 and sheet B is
+# a row of three, and a list covers both without the table knowing which.
 SHEETS = {
     "pond-common": dict(
         src="assets/Gemini_fish-pond-common.jpg",
-        layout={"top-left": "bluegill", "top-right": "perch",
-                "bottom-left": "minnow", "bottom-right": "pumpkinseed"},
+        layout=["bluegill", "perch", "minnow", "pumpkinseed"],
+        alpha="unmix", rear=(0.60, 0.88), overlap=3,
+    ),
+    "pond-uncommon": dict(
+        src="assets/Gemini_fish-pond-uncommon.jpg",
+        layout=["carp", "bass", "trout"],
+        alpha="unmix", rear=(0.60, 0.88), overlap=3,
+    ),
+    "pond-rare": dict(
+        src="assets/Gemini_fish-pond-rare.jpg",
+        layout=["pike", "walleye", "koi"],
         alpha="unmix", rear=(0.60, 0.88), overlap=3,
     ),
 }
@@ -139,16 +149,29 @@ print("found %d fish-sized components (expected %d)" % (len(comps), want))
 if len(comps) != want:
     sys.exit("  ✗ the sheet did not separate: fix the generation, not the tool")
 
-def quadrant(x0, y0, x1, y1):
-    return ("top" if (y0 + y1) / 2 < H / 2 else "bottom") + "-" + \
-           ("left" if (x0 + x1) / 2 < W / 2 else "right")
+# Put the components into reading order so the layout list can name them. Rows
+# are found rather than assumed — cluster the centres by y, splitting wherever
+# the gap exceeds half the median fish height — so a 2x2 sheet and a row of
+# three both come out in the order the prompt listed them.
+def reading_order(comps):
+    heights = sorted(y1 - y0 + 1 for _, _, _, y0, _, y1 in comps)
+    gap = heights[len(heights) // 2] / 2
+    rows, rest = [], sorted(comps, key=lambda c: (c[3] + c[5]) / 2)
+    for c in rest:
+        cy = (c[3] + c[5]) / 2
+        if rows and cy - (rows[-1][-1][3] + rows[-1][-1][5]) / 2 <= gap:
+            rows[-1].append(c)
+        else:
+            rows.append([c])
+    return [c for row in rows for c in sorted(row, key=lambda c: (c[2] + c[4]) / 2)]
+
+ordered = reading_order(comps)
+print("reading order: %d row(s)" % (1 + sum(
+    1 for a_, b_ in zip(ordered, ordered[1:])
+    if (b_[3] + b_[5]) / 2 - (a_[3] + a_[5]) / 2 > (a_[5] - a_[3]) / 2)))
 
 block = []
-for n, px, x0, y0, x1, y1 in comps:
-    quad = quadrant(x0, y0, x1, y1)
-    fid = S["layout"].get(quad)
-    if not fid:
-        sys.exit("  ✗ a fish landed in %s, which the prompt did not ask for" % quad)
+for (n, px, x0, y0, x1, y1), fid in zip(ordered, S["layout"]):
     m = lab == n
     fw, fh = x1 - x0 + 1, y1 - y0 + 1
 
@@ -187,15 +210,13 @@ for n, px, x0, y0, x1, y1 in comps:
     differ = int((np.abs(out[..., :3] - keyed[..., :3]).max(axis=2) > 0)[both].sum())
 
     scale = LENGTH_BY_TIER[FISH[fid]["tier"]] / fw
-    print("    %-12s %-13s %5d px  peduncle x=%d/%d (%.0f%% back), %d px deep against a %d px fan (%.2fx)"
-          % (fid, quad, px, cut, fw, 100 * cut / fw, int(depth[cut]), fan, fan / max(depth[cut], 1)))
+    print("    %-12s at %4d,%-4d %5d px  peduncle x=%d/%d (%.0f%% back), %d px deep against a %d px fan (%.2fx)"
+          % (fid, x0, y0, px, cut, fw, 100 * cut / fw, int(depth[cut]), fan, fan / max(depth[cut], 1)))
     print("    recomposite tail+body vs the sheet: %d px of %d differ" % (differ, int(both.sum())))
     block.append("      %s: { w: %.0f, h: %.0f, mouth: { x: %.0f, y: %.0f }, tail: { x: %.0f, y: %.0f },\n"
                  "                 layers: [{ id: \"tail\", file: \"fish-%s-tail\" }, { id: \"body\", file: \"fish-%s-body\" }] },"
                  % (fid, fw * scale, fh * scale, mouth[0] * scale, mouth[1] * scale,
                     pivot[0] * scale, pivot[1] * scale, fid, fid))
 
-order = list(S["layout"].values())
-block.sort(key=lambda line: order.index(line.split(":")[0].strip()))
 print("\n  CONFIG.fish.species — measured, not tuned\n")
 print("\n".join(block))
