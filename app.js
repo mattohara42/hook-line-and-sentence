@@ -1710,10 +1710,16 @@ function renderCollection() {
       // this is the half of "reads as 33 different fish" that isn't the scene.
       // An uncaught one keeps the tinted blob however much art exists: the
       // silhouette is the tease, and the grid would spoil every fish otherwise.
-      const body = count ? CONFIG.fish.species[f.id]?.layers.find(L => L.id === "body") : null;
-      if (body) {
+      // ALL of its layers, not just the body — the tail is a separate cut and a
+      // fish without one is a fish with its tail chopped off. CSS paints the
+      // first background-image in the list on top, so the pose's paint order
+      // (tail first, body over it) is the list reversed. Both cuts share one
+      // crop, so `contain` registers them exactly the way the scene does.
+      const art = count ? CONFIG.fish.species[f.id] : null;
+      if (art) {
         shape.classList.add("art");
-        shape.style.backgroundImage = `url("assets/${body.file}.png")`;
+        shape.style.backgroundImage = art.layers
+          .map(L => `url("assets/${L.file}.png")`).reverse().join(", ");
       }
       const name = document.createElement("div");
       name.className = "cname";
