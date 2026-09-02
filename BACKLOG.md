@@ -324,6 +324,21 @@ times.
   between any unlocked location; the Pond never re-locks, so remedial practice
   is already free, and the 🧪 dev shortcut already covers testing.
 
+- **`cut-gear.py`'s neck guard truncates a sou'wester, and no constant fixes
+  it (R7, #133).** `neck` is a per-pose row below which nothing can be part of
+  a hat. Right for eleven hats; wrong for the one whose defining feature is
+  sweeping down over the neck. Both sou'westers ship clipped, ending 1 px above
+  their pose's line on a flat run with no taper. It is visible: 212 px of a
+  152x168 sprite differ by >30 at true game scale against an unclipped cut.
+  Lowering the row does **not** fix it — swept to 900/960/1000 the piece's
+  bottom lands at exactly `neck - 1` every time and keeps growing, because that
+  delivery differs from the reference across the whole body (22.3% below the
+  neck) so "changed" runs to the canvas floor; at 900 the flat edge just
+  relocates to a seam across the shoulder and vest, which looks worse. The fix
+  is shape-aware rather than a row: below the neck keep only what is connected
+  to the brim above it AND distinguishable from the body underneath. Full
+  measurements in `ART.md` → the `hat-souwester-ocean` record.
+
 ### Nice-to-haves noticed along the way
 
 - Animate the vessel swap (rowboat → waders → bigger boat) into the existing
