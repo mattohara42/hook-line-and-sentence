@@ -11,7 +11,7 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R6 — fish, a rig per species**, `BUILD_PLAN_REFRESH.md` |
 | **Done when** | every species in `data/fish.json` has its own art, the collection screen reads as 33 different fish, and the landing has a visible moment — wave by wave, Pond first |
-| **State** | **14 of 33 species painted, cut and wired** — the Pond, and the Stream's four commons. Four sheets, four first attempts. |
+| **State** | **The Pond and the Stream are complete — 20 of 33 painted, cut and wired.** Five sheets, five first attempts. Only the Ocean remains. |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 86/86 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
@@ -19,29 +19,32 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**Generate the Stream's sheets B and C** — `ART.md` → *R6 wave 2*. Both prompts
-are written out and both are pre-registered in `tools/cut-fish.py`, so each is
-paste, save, and one command. Rows of three at 2.25:1, the layout sheets B and C
-of the Pond proved.
+**Write and generate the Ocean's sheets** — `ART.md` → *R6 wave 3*, which has no
+prompts yet. Thirteen species, the biggest wave, and **sheets of six are now
+proven**, so it is likely two or three generations rather than four.
 
-**The remaining risk is the salmonids, and it is all in these two sheets.** Five
-of the Stream's ten are salmonids and a **steelhead *is* a rainbow trout**, so
-the species clauses spend their weight on field marks rather than the shape they
-share — the rainbow is the colourful form, the steelhead the chrome one, the
-grayling separates itself by its sail of a dorsal fin. Rainbow (sheet B) and
-steelhead (sheet C) are never drawn side by side, so **check them against each
-other in the journal**, not on the sheet. Sheet A's equivalent worry (the dace
-against the Pond's minnow) came out fine, which is some evidence the approach
-works.
+**Copy the Pond and Stream structure, with one rule learned the hard way:** put
+the species hardest to tell apart *on the same sheet*. The Stream's prompts were
+written to keep a rainbow trout and a steelhead apart, and delivering them on one
+canvas separated them better than any wording could — see `GEMINI_NOTES.md` →
+*Several subjects on one sheet*.
 
-**Cutting is one command per sheet:** `python3 tools/cut-fish.py stream-common`
-(or `-uncommon` / `-rare`), paste the printed block into `CONFIG.fish.species`,
-`npm test`. The three traps catch a bad entry and the seam overlap is derived per
-fish, so a deep-peduncled species needs no special handling.
+**The muskie is the one with consequences.** It is the Ocean's legendary, it
+already has an A8 hero sprite (`fish-muskie.png`) and a 96px CSS special case in
+`style.css` (`#scene.loc-ocean #fish:not(.rigged).tier-legendary`), and **both
+retire when its R6 art lands.** Don't leave them behind.
 
-**Then look at the collection screen with the names covered.** Two bugs this
-milestone — the eye dot painting over the sprites, and every fish rendering
-without its tail — were invisible to assertions and obvious in a screenshot.
+**Cutting is one command per sheet:** add it to `SHEETS` in `tools/cut-fish.py`
+(species in reading order — rows are found automatically), run
+`python3 tools/cut-fish.py <sheet>`, paste the printed block into
+`CONFIG.fish.species`, `npm test`. The seam overlap and the mouth are both
+derived per fish now, so a deep-peduncled legendary or a whiskered oddity needs
+no special handling.
+
+**Then look at the collection screen with the names covered.** Three bugs this
+milestone — the eye dot over the sprites, every fish rendering tailless, and a
+line attached to a catfish's forehead — were invisible to assertions and obvious
+in a picture.
 
 **One cosmetic item, cheap, best done when the Pond is complete:** the painted
 bodies run darker and duller than `data/fish.json`'s per-species `color` (green
