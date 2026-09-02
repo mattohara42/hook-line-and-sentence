@@ -288,27 +288,24 @@ purpose, and it is how a hat comes back off.
 **Every hat before any rod**, because the two fallbacks are not equally good. An
 unregistered rod falls back to the pose's own painted gate rod, which is still a
 rod in a hand and costs a kid nothing they can see. An unregistered hat falls
-back to nothing, so it is a purchase that visibly does nothing, and it is the
-half of R7's done-when that is still open.
+back to nothing, so it is a purchase that visibly does nothing. That was the
+half of R7's done-when the straw hat closed, and every unpainted hat in the shop
+still has it.
 
 1. ~~**`hat-straw-pond`, the probe.**~~ ✅ landed first attempt 2026-09-02; the
    edit comes back as an edit. See the record below.
-2. ~~**`hat-straw-stream`**~~ ✅ landed first attempt 2026-09-02, and the
-   transplant is answered for that pose. **`hat-straw-ocean`** is still open and
-   is the half that decides the rest.
+2. ~~**`hat-straw-stream`** and **`hat-straw-ocean`**~~ ✅ both landed first
+   attempt 2026-09-02, and the transplant is answered at both poses: the Stream
+   takes a landed Pond hat, the Ocean does not.
 3. The rest of the hats, cheapest first (`bucket` 30, `beanie` 50, `souwester`
-   75), Pond then Stream then Ocean.
+   75). **Six generations, not nine**: Pond and Ocean are painted, the Stream is
+   transplanted from the Pond hat as each one lands. All six prompts are written
+   out under *The hats* below, ready to paste.
 4. The nine rods, `stick` and `bamboo` before `carbon` and `deepsea`.
 
-**The transplant, worth measuring before spending eight more generations.** Once
-the straw hat exists at all three poses, land the *Pond* hat on the Stream and
-Ocean heads locally by matching the head box, which is the same head-match that
-set the poses' own scales in R4, and compare it against the two real
-generations at 18px. If they are indistinguishable, the remaining nine hats are
-three generations instead of nine. If the Ocean's backward head tilt shows (it
-is the one pose whose head is not upright), they are nine. This is a
-measurement, not a preference, so do not decide it in advance and do not spend
-the six generations before taking it.
+**The transplant was measured before the six generations were spent**, against
+the straw hat at all three poses, and it saved three of them. The numbers and
+the tool are in the `hat-straw-ocean` record below.
 
 #### Checks on delivery, in the order that saves work
 
@@ -445,74 +442,32 @@ and three at the Ocean. The rods are unaffected, since a rod is not cut this way
 
 #### The hats
 
-One prompt, four hats, three poses. `<POSE LINE>` and `<W> by <H>` come from the
-table below the prompt, and `[THE HAT]`, `[SHAPE]` and `[NOT THE OTHER ONE]`
-come from the hat table under that.
+**Six generations close the hat column**, and all six are below, written out
+whole. The Stream's three are not among them: the transplant measured above
+lands a Pond hat on the Stream head for free, so the Stream is a command rather
+than a request. Order is cheapest first, and each Pond hat should be
+transplanted to the Stream as it lands rather than in a batch at the end, so
+that a hat is either absent everywhere or present at two spots and never a
+purchase that works at only one.
 
-```
-ART NEEDED: R7 gear, <HAT NAME> for the <POSE> angler
-Reference: assets/ref-angler-<pose>.png (attach it, made with
-           `python3 tools/gear-ref.py`); ask for the SAME painting back
-Prompt:   [WHAT THIS IS]
-          I have attached a picture of a child fishing. I want the SAME picture
-          back with ONE thing added: a hat on the child's head. Everything else
-          must be identical to the picture I attached: the same child, the same
-          face, the same hair below the hat, the same pose, the same clothes, the
-          same fishing rod in the same place at the same angle, the same colours,
-          the same brushwork, the same size, the same canvas, the figure in
-          exactly the same position on it. Do not redraw the child. Do not change
-          the crop, the zoom or the framing. Change nothing below the eyebrows.
+They are written out rather than left as a template plus a substitution table,
+because "that prompt with the hat block swapped" is not something anyone can
+paste, and R6 paid for that lesson twice. The eight substitutions include the
+canvas size, which is per pose, and getting it wrong costs a generation.
 
-          [THE HAT]
-          <THE HAT>
+**Nothing in the frame has moved.** Every word outside `[THE HAT]`, `[HOW IT
+SITS]`, `[SHAPE]` and `[NOT THE OTHER ONE]` is the straw prompt's, which landed
+three times out of three on the first attempt. That includes one thing it is
+tempting to improve: the prompt states the canvas in pixels but never as a
+ratio, and `GEMINI_NOTES.md` calls the ratio the most dependable instruction in
+the set. The aspect drifted on all three straw deliveries (0.955 against 0.966)
+and the per-axis fit in `cut-gear.py` absorbed it every time, so the drift is a
+solved problem and the frame is a 3-for-3 one. Changing it would put all six of
+these on a frame nothing has tested.
 
-          [HOW IT SITS]
-          <POSE LINE> The hat sits squarely on the crown and follows the tilt of
-          the head. Some of the child's hair still shows below it, at the back
-          and in front of the ear. The brim must not cover the eye, the eyebrow
-          or any part of the face.
-
-          [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
-          This hat will be shown at about the size of a fingernail: the child's
-          head is 18 pixels wide on the screen it appears on. Its SHAPE is the
-          only thing that will survive. As a plain black cut-out it must read as
-          <SHAPE>. Paint it in two or three soft tones with blended edges and a
-          thin warm brown outline. No fine texture, no small details, no
-          lettering, no badges, no logos, no pins, no feathers, no fishing flies
-          hooked into it, no dangling straps or cords.
-
-          [NOT THE OTHER ONE]
-          <NOT THE OTHER ONE>
-
-          [BACKDROP]
-          Every part of the image that is not the child is one completely flat,
-          even magenta #FF00FF, exactly as in the attached picture: edge to edge
-          and into all four corners, no gradient, no texture, no vignette, no
-          shading. No water, no ground, no scenery, no other objects, and no drop
-          shadow or reflection under the child.
-
-          [STYLE]
-          Soft painterly storybook illustration, warm muted color palette, gentle
-          diffused lighting, thin warm brown outlines rather than black, cozy and
-          inviting mood, no harsh shadows, no neon or saturated colours. Soft
-          two-tone shading with blended edges, matching the attached painting
-          exactly. NOT pixel art, NOT flat vector art with even line weight, NOT
-          thick black cartoon linework, NOT a glossy 3D render, NOT a photograph.
-
-          [CRITICAL: nothing else changes]
-          Draw NO fishing line: no thread, string or filament of any kind, not on
-          the reel, not through the guides, not trailing from the rod tip. Draw no
-          fish, no water, no text, no labels, no watermark, no border and no
-          frame.
-
-          [CANVAS]
-          Return the image at the same <W> by <H> pixels as the picture I
-          attached. Output as PNG.
-Save as:  assets/Gemini_<stem>-<pose>.jpg (the raw download, whatever extension
-          it arrives with, kept so the cut can be re-run)
-Wired in: `python3 tools/cut-gear.py <pose> <stem> assets/Gemini_<stem>-<pose>.jpg`,
-          then add "<stem>-<pose>" to CONFIG.rig.gearArt
-```
+The canvas sizes below are read off `assets/angler-<pose>.png`, and the pose
+lines are baked into the prompts. The rods section still substitutes from this
+table.
 
 | `<pose>` | `<POSE LINE>` | `<W> by <H>` |
 |---|---|---|
@@ -520,30 +475,485 @@ Wired in: `python3 tools/cut-gear.py <pose> <stem> assets/Gemini_<stem>-<pose>.j
 | `stream` | The child is standing in waders, seen from the side and facing right, and his head is upright. | 1387 by 1510 |
 | `ocean` | The child is braced back as if leaning into a fish, seen from the side and facing right, and his head is tilted slightly back and up. The hat must tilt back with it rather than sitting level. | 1324 by 1466 |
 
-| shop item | `<stem>` | `<THE HAT>` | `<SHAPE>` |
-|---|---|---|---|
-| Straw Poll (15) | `hat-straw` | A wide-brimmed straw sun hat in warm honey-oat straw, with a soft rounded crown and a broad flat brim that runs level all the way round, and a narrow band of muted warm brown cloth where the crown meets the brim. | a wide level line with a low dome above it |
-| Bucket List (30) | `hat-bucket` | A soft cotton bucket hat in muted sage green, with a squat flat-topped crown that sits close to the head and a short brim that slopes DOWN all the way round. | a small dome with its edge turned down |
-| Bean There (50) | `hat-beanie` | A knitted wool beanie in muted ember red, hugging the skull with NO brim at all, with a turned-up ribbed cuff across the forehead and a small round bobble on top. | a smooth skull with no brim and one bump on top |
-| Rain Check (75) | `hat-souwester` | A rain hat (a sou'wester) in muted amber oilskin, short and turned up at the front, sweeping DOWN and OUT at the back to cover the neck, with a chin strap. | short at the front and a long tail at the back |
+The `[NOT THE OTHER ONE]` clause names the hats already delivered *for that
+pose*, so it grows down the column. Straw is delivered at every pose, so the
+Pond and Ocean prompts for a given hat carry the same clause.
 
-`<NOT THE OTHER ONE>` names the hats already delivered *for that pose*, so it
-grows as the column fills. The straw hat is first at every pose and has nothing
-to contrast against, so its clause is: *"This is the only hat in this picture."*
-After it:
+##### At the Pond
 
-- **bucket**: this child already owns a wide-brimmed straw sun hat in another
-  picture, and this hat is its opposite: a small close-fitting dome with a SHORT
-  brim turned DOWN, not a wide flat brim held level. The two must not be
-  mistakable for each other at a glance.
-- **beanie**: this child already owns a wide straw sun hat and a soft bucket
-  hat. This one has NO brim of any kind: it is knitted wool pulled down over the
-  ears, a smooth curve from the forehead to the back of the neck with a bobble on
-  top. If it has a brim it is wrong.
-- **souwester**: this child already owns a wide straw sun hat, a soft bucket
-  hat and a knitted beanie. This one is not symmetrical: it is SHORT at the front
-  and LONG at the back, a stiff shiny oilskin that sheds rain, and the back brim
-  reaches the child's collar.
+**`hat-bucket-pond`**: Bucket List, 30 coins.
+
+```
+ART NEEDED: R7 gear, Bucket List for the Pond angler
+Reference: assets/ref-angler-pond.png (attach it, made with
+           `python3 tools/gear-ref.py`); ask for the SAME painting back
+Prompt:   [WHAT THIS IS]
+          I have attached a picture of a child fishing. I want the SAME picture
+          back with ONE thing added: a hat on the child's head. Everything else
+          must be identical to the picture I attached: the same child, the same
+          face, the same hair below the hat, the same pose, the same clothes,
+          the same fishing rod in the same place at the same angle, the same
+          colours, the same brushwork, the same size, the same canvas, the
+          figure in exactly the same position on it. Do not redraw the child.
+          Do not change the crop, the zoom or the framing. Change nothing below
+          the eyebrows.
+
+          [THE HAT]
+          A soft cotton bucket hat in muted sage green, with a squat
+          flat-topped crown that sits close to the head and a short brim that
+          slopes DOWN all the way round.
+
+          [HOW IT SITS]
+          The child is sitting with his knees drawn up, seen from the side and
+          facing right, and his head is upright. The hat sits squarely on the
+          crown and follows the tilt of the head. Some of the child's hair
+          still shows below it, at the back and in front of the ear. The brim
+          must not cover the eye, the eyebrow or any part of the face.
+
+          [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
+          This hat will be shown at about the size of a fingernail: the child's
+          head is 18 pixels wide on the screen it appears on. Its SHAPE is the
+          only thing that will survive. As a plain black cut-out it must read
+          as a small dome with its edge turned down. Paint it in two or three
+          soft tones with blended edges and a thin warm brown outline. No fine
+          texture, no small details, no lettering, no badges, no logos, no
+          pins, no feathers, no fishing flies hooked into it, no dangling
+          straps or cords.
+
+          [NOT THE OTHER ONE]
+          This child already owns a wide-brimmed straw sun hat in another
+          picture, and this hat is its opposite: a small close-fitting dome
+          with a SHORT brim turned DOWN, not a wide flat brim held level. The
+          two must not be mistakable for each other at a glance.
+
+          [BACKDROP]
+          Every part of the image that is not the child is one completely flat,
+          even magenta #FF00FF, exactly as in the attached picture: edge to
+          edge and into all four corners, no gradient, no texture, no vignette,
+          no shading. No water, no ground, no scenery, no other objects, and no
+          drop shadow or reflection under the child.
+
+          [STYLE]
+          Soft painterly storybook illustration, warm muted color palette,
+          gentle diffused lighting, thin warm brown outlines rather than black,
+          cozy and inviting mood, no harsh shadows, no neon or saturated
+          colours. Soft two-tone shading with blended edges, matching the
+          attached painting exactly. NOT pixel art, NOT flat vector art with
+          even line weight, NOT thick black cartoon linework, NOT a glossy 3D
+          render, NOT a photograph.
+
+          [CRITICAL: nothing else changes]
+          Draw NO fishing line: no thread, string or filament of any kind, not
+          on the reel, not through the guides, not trailing from the rod tip.
+          Draw no fish, no water, no text, no labels, no watermark, no border
+          and no frame.
+
+          [CANVAS]
+          Return the image at the same 1344 by 1391 pixels as the picture I
+          attached. Output as PNG.
+Save as:  assets/Gemini_hat-bucket-pond.jpg (the raw download, whatever extension
+          it arrives with, kept so the cut can be re-run)
+Wired in: `python3 tools/cut-gear.py pond hat-bucket assets/Gemini_hat-bucket-pond.jpg`,
+          then add "hat-bucket-pond" to CONFIG.rig.gearArt
+Then:     `python3 tools/hat-transplant.py hat-bucket pond stream`, and add
+          "hat-bucket-stream" to CONFIG.rig.gearArt as well
+```
+
+**`hat-beanie-pond`**: Bean There, 50 coins.
+
+```
+ART NEEDED: R7 gear, Bean There for the Pond angler
+Reference: assets/ref-angler-pond.png (attach it, made with
+           `python3 tools/gear-ref.py`); ask for the SAME painting back
+Prompt:   [WHAT THIS IS]
+          I have attached a picture of a child fishing. I want the SAME picture
+          back with ONE thing added: a hat on the child's head. Everything else
+          must be identical to the picture I attached: the same child, the same
+          face, the same hair below the hat, the same pose, the same clothes,
+          the same fishing rod in the same place at the same angle, the same
+          colours, the same brushwork, the same size, the same canvas, the
+          figure in exactly the same position on it. Do not redraw the child.
+          Do not change the crop, the zoom or the framing. Change nothing below
+          the eyebrows.
+
+          [THE HAT]
+          A knitted wool beanie in muted ember red, hugging the skull with NO
+          brim at all, with a turned-up ribbed cuff across the forehead and a
+          small round bobble on top.
+
+          [HOW IT SITS]
+          The child is sitting with his knees drawn up, seen from the side and
+          facing right, and his head is upright. The hat sits squarely on the
+          crown and follows the tilt of the head. Some of the child's hair
+          still shows below it, at the back and in front of the ear. The brim
+          must not cover the eye, the eyebrow or any part of the face.
+
+          [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
+          This hat will be shown at about the size of a fingernail: the child's
+          head is 18 pixels wide on the screen it appears on. Its SHAPE is the
+          only thing that will survive. As a plain black cut-out it must read
+          as a smooth skull with no brim and one bump on top. Paint it in two
+          or three soft tones with blended edges and a thin warm brown outline.
+          No fine texture, no small details, no lettering, no badges, no logos,
+          no pins, no feathers, no fishing flies hooked into it, no dangling
+          straps or cords.
+
+          [NOT THE OTHER ONE]
+          This child already owns a wide straw sun hat and a soft bucket hat.
+          This one has NO brim of any kind: it is knitted wool pulled down over
+          the ears, a smooth curve from the forehead to the back of the neck
+          with a bobble on top. If it has a brim it is wrong.
+
+          [BACKDROP]
+          Every part of the image that is not the child is one completely flat,
+          even magenta #FF00FF, exactly as in the attached picture: edge to
+          edge and into all four corners, no gradient, no texture, no vignette,
+          no shading. No water, no ground, no scenery, no other objects, and no
+          drop shadow or reflection under the child.
+
+          [STYLE]
+          Soft painterly storybook illustration, warm muted color palette,
+          gentle diffused lighting, thin warm brown outlines rather than black,
+          cozy and inviting mood, no harsh shadows, no neon or saturated
+          colours. Soft two-tone shading with blended edges, matching the
+          attached painting exactly. NOT pixel art, NOT flat vector art with
+          even line weight, NOT thick black cartoon linework, NOT a glossy 3D
+          render, NOT a photograph.
+
+          [CRITICAL: nothing else changes]
+          Draw NO fishing line: no thread, string or filament of any kind, not
+          on the reel, not through the guides, not trailing from the rod tip.
+          Draw no fish, no water, no text, no labels, no watermark, no border
+          and no frame.
+
+          [CANVAS]
+          Return the image at the same 1344 by 1391 pixels as the picture I
+          attached. Output as PNG.
+Save as:  assets/Gemini_hat-beanie-pond.jpg (the raw download, whatever extension
+          it arrives with, kept so the cut can be re-run)
+Wired in: `python3 tools/cut-gear.py pond hat-beanie assets/Gemini_hat-beanie-pond.jpg`,
+          then add "hat-beanie-pond" to CONFIG.rig.gearArt
+Then:     `python3 tools/hat-transplant.py hat-beanie pond stream`, and add
+          "hat-beanie-stream" to CONFIG.rig.gearArt as well
+```
+
+**`hat-souwester-pond`**: Rain Check, 75 coins.
+
+```
+ART NEEDED: R7 gear, Rain Check for the Pond angler
+Reference: assets/ref-angler-pond.png (attach it, made with
+           `python3 tools/gear-ref.py`); ask for the SAME painting back
+Prompt:   [WHAT THIS IS]
+          I have attached a picture of a child fishing. I want the SAME picture
+          back with ONE thing added: a hat on the child's head. Everything else
+          must be identical to the picture I attached: the same child, the same
+          face, the same hair below the hat, the same pose, the same clothes,
+          the same fishing rod in the same place at the same angle, the same
+          colours, the same brushwork, the same size, the same canvas, the
+          figure in exactly the same position on it. Do not redraw the child.
+          Do not change the crop, the zoom or the framing. Change nothing below
+          the eyebrows.
+
+          [THE HAT]
+          A rain hat (a sou'wester) in muted amber oilskin, short and turned up
+          at the front, sweeping DOWN and OUT at the back to cover the neck,
+          with a chin strap.
+
+          [HOW IT SITS]
+          The child is sitting with his knees drawn up, seen from the side and
+          facing right, and his head is upright. The hat sits squarely on the
+          crown and follows the tilt of the head. Some of the child's hair
+          still shows below it, at the back and in front of the ear. The brim
+          must not cover the eye, the eyebrow or any part of the face.
+
+          [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
+          This hat will be shown at about the size of a fingernail: the child's
+          head is 18 pixels wide on the screen it appears on. Its SHAPE is the
+          only thing that will survive. As a plain black cut-out it must read
+          as short at the front and a long tail at the back. Paint it in two or
+          three soft tones with blended edges and a thin warm brown outline. No
+          fine texture, no small details, no lettering, no badges, no logos, no
+          pins, no feathers, no fishing flies hooked into it, no dangling
+          straps or cords.
+
+          [NOT THE OTHER ONE]
+          This child already owns a wide straw sun hat, a soft bucket hat and a
+          knitted beanie. This one is not symmetrical: it is SHORT at the front
+          and LONG at the back, a stiff shiny oilskin that sheds rain, and the
+          back brim reaches the child's collar.
+
+          [BACKDROP]
+          Every part of the image that is not the child is one completely flat,
+          even magenta #FF00FF, exactly as in the attached picture: edge to
+          edge and into all four corners, no gradient, no texture, no vignette,
+          no shading. No water, no ground, no scenery, no other objects, and no
+          drop shadow or reflection under the child.
+
+          [STYLE]
+          Soft painterly storybook illustration, warm muted color palette,
+          gentle diffused lighting, thin warm brown outlines rather than black,
+          cozy and inviting mood, no harsh shadows, no neon or saturated
+          colours. Soft two-tone shading with blended edges, matching the
+          attached painting exactly. NOT pixel art, NOT flat vector art with
+          even line weight, NOT thick black cartoon linework, NOT a glossy 3D
+          render, NOT a photograph.
+
+          [CRITICAL: nothing else changes]
+          Draw NO fishing line: no thread, string or filament of any kind, not
+          on the reel, not through the guides, not trailing from the rod tip.
+          Draw no fish, no water, no text, no labels, no watermark, no border
+          and no frame.
+
+          [CANVAS]
+          Return the image at the same 1344 by 1391 pixels as the picture I
+          attached. Output as PNG.
+Save as:  assets/Gemini_hat-souwester-pond.jpg (the raw download, whatever extension
+          it arrives with, kept so the cut can be re-run)
+Wired in: `python3 tools/cut-gear.py pond hat-souwester assets/Gemini_hat-souwester-pond.jpg`,
+          then add "hat-souwester-pond" to CONFIG.rig.gearArt
+Then:     `python3 tools/hat-transplant.py hat-souwester pond stream`, and add
+          "hat-souwester-stream" to CONFIG.rig.gearArt as well
+```
+
+
+##### At the Ocean
+
+Same three hats, same clauses, against the one head that is not upright. The
+transplant refuses this pose, which is why these are generations.
+
+**`hat-bucket-ocean`**: Bucket List, 30 coins.
+
+```
+ART NEEDED: R7 gear, Bucket List for the Ocean angler
+Reference: assets/ref-angler-ocean.png (attach it, made with
+           `python3 tools/gear-ref.py`); ask for the SAME painting back
+Prompt:   [WHAT THIS IS]
+          I have attached a picture of a child fishing. I want the SAME picture
+          back with ONE thing added: a hat on the child's head. Everything else
+          must be identical to the picture I attached: the same child, the same
+          face, the same hair below the hat, the same pose, the same clothes,
+          the same fishing rod in the same place at the same angle, the same
+          colours, the same brushwork, the same size, the same canvas, the
+          figure in exactly the same position on it. Do not redraw the child.
+          Do not change the crop, the zoom or the framing. Change nothing below
+          the eyebrows.
+
+          [THE HAT]
+          A soft cotton bucket hat in muted sage green, with a squat
+          flat-topped crown that sits close to the head and a short brim that
+          slopes DOWN all the way round.
+
+          [HOW IT SITS]
+          The child is braced back as if leaning into a fish, seen from the
+          side and facing right, and his head is tilted slightly back and up.
+          The hat must tilt back with it rather than sitting level. The hat
+          sits squarely on the crown and follows the tilt of the head. Some of
+          the child's hair still shows below it, at the back and in front of
+          the ear. The brim must not cover the eye, the eyebrow or any part of
+          the face.
+
+          [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
+          This hat will be shown at about the size of a fingernail: the child's
+          head is 18 pixels wide on the screen it appears on. Its SHAPE is the
+          only thing that will survive. As a plain black cut-out it must read
+          as a small dome with its edge turned down. Paint it in two or three
+          soft tones with blended edges and a thin warm brown outline. No fine
+          texture, no small details, no lettering, no badges, no logos, no
+          pins, no feathers, no fishing flies hooked into it, no dangling
+          straps or cords.
+
+          [NOT THE OTHER ONE]
+          This child already owns a wide-brimmed straw sun hat in another
+          picture, and this hat is its opposite: a small close-fitting dome
+          with a SHORT brim turned DOWN, not a wide flat brim held level. The
+          two must not be mistakable for each other at a glance.
+
+          [BACKDROP]
+          Every part of the image that is not the child is one completely flat,
+          even magenta #FF00FF, exactly as in the attached picture: edge to
+          edge and into all four corners, no gradient, no texture, no vignette,
+          no shading. No water, no ground, no scenery, no other objects, and no
+          drop shadow or reflection under the child.
+
+          [STYLE]
+          Soft painterly storybook illustration, warm muted color palette,
+          gentle diffused lighting, thin warm brown outlines rather than black,
+          cozy and inviting mood, no harsh shadows, no neon or saturated
+          colours. Soft two-tone shading with blended edges, matching the
+          attached painting exactly. NOT pixel art, NOT flat vector art with
+          even line weight, NOT thick black cartoon linework, NOT a glossy 3D
+          render, NOT a photograph.
+
+          [CRITICAL: nothing else changes]
+          Draw NO fishing line: no thread, string or filament of any kind, not
+          on the reel, not through the guides, not trailing from the rod tip.
+          Draw no fish, no water, no text, no labels, no watermark, no border
+          and no frame.
+
+          [CANVAS]
+          Return the image at the same 1324 by 1466 pixels as the picture I
+          attached. Output as PNG.
+Save as:  assets/Gemini_hat-bucket-ocean.jpg (the raw download, whatever extension
+          it arrives with, kept so the cut can be re-run)
+Wired in: `python3 tools/cut-gear.py ocean hat-bucket assets/Gemini_hat-bucket-ocean.jpg`,
+          then add "hat-bucket-ocean" to CONFIG.rig.gearArt
+```
+
+**`hat-beanie-ocean`**: Bean There, 50 coins.
+
+```
+ART NEEDED: R7 gear, Bean There for the Ocean angler
+Reference: assets/ref-angler-ocean.png (attach it, made with
+           `python3 tools/gear-ref.py`); ask for the SAME painting back
+Prompt:   [WHAT THIS IS]
+          I have attached a picture of a child fishing. I want the SAME picture
+          back with ONE thing added: a hat on the child's head. Everything else
+          must be identical to the picture I attached: the same child, the same
+          face, the same hair below the hat, the same pose, the same clothes,
+          the same fishing rod in the same place at the same angle, the same
+          colours, the same brushwork, the same size, the same canvas, the
+          figure in exactly the same position on it. Do not redraw the child.
+          Do not change the crop, the zoom or the framing. Change nothing below
+          the eyebrows.
+
+          [THE HAT]
+          A knitted wool beanie in muted ember red, hugging the skull with NO
+          brim at all, with a turned-up ribbed cuff across the forehead and a
+          small round bobble on top.
+
+          [HOW IT SITS]
+          The child is braced back as if leaning into a fish, seen from the
+          side and facing right, and his head is tilted slightly back and up.
+          The hat must tilt back with it rather than sitting level. The hat
+          sits squarely on the crown and follows the tilt of the head. Some of
+          the child's hair still shows below it, at the back and in front of
+          the ear. The brim must not cover the eye, the eyebrow or any part of
+          the face.
+
+          [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
+          This hat will be shown at about the size of a fingernail: the child's
+          head is 18 pixels wide on the screen it appears on. Its SHAPE is the
+          only thing that will survive. As a plain black cut-out it must read
+          as a smooth skull with no brim and one bump on top. Paint it in two
+          or three soft tones with blended edges and a thin warm brown outline.
+          No fine texture, no small details, no lettering, no badges, no logos,
+          no pins, no feathers, no fishing flies hooked into it, no dangling
+          straps or cords.
+
+          [NOT THE OTHER ONE]
+          This child already owns a wide straw sun hat and a soft bucket hat.
+          This one has NO brim of any kind: it is knitted wool pulled down over
+          the ears, a smooth curve from the forehead to the back of the neck
+          with a bobble on top. If it has a brim it is wrong.
+
+          [BACKDROP]
+          Every part of the image that is not the child is one completely flat,
+          even magenta #FF00FF, exactly as in the attached picture: edge to
+          edge and into all four corners, no gradient, no texture, no vignette,
+          no shading. No water, no ground, no scenery, no other objects, and no
+          drop shadow or reflection under the child.
+
+          [STYLE]
+          Soft painterly storybook illustration, warm muted color palette,
+          gentle diffused lighting, thin warm brown outlines rather than black,
+          cozy and inviting mood, no harsh shadows, no neon or saturated
+          colours. Soft two-tone shading with blended edges, matching the
+          attached painting exactly. NOT pixel art, NOT flat vector art with
+          even line weight, NOT thick black cartoon linework, NOT a glossy 3D
+          render, NOT a photograph.
+
+          [CRITICAL: nothing else changes]
+          Draw NO fishing line: no thread, string or filament of any kind, not
+          on the reel, not through the guides, not trailing from the rod tip.
+          Draw no fish, no water, no text, no labels, no watermark, no border
+          and no frame.
+
+          [CANVAS]
+          Return the image at the same 1324 by 1466 pixels as the picture I
+          attached. Output as PNG.
+Save as:  assets/Gemini_hat-beanie-ocean.jpg (the raw download, whatever extension
+          it arrives with, kept so the cut can be re-run)
+Wired in: `python3 tools/cut-gear.py ocean hat-beanie assets/Gemini_hat-beanie-ocean.jpg`,
+          then add "hat-beanie-ocean" to CONFIG.rig.gearArt
+```
+
+**`hat-souwester-ocean`**: Rain Check, 75 coins.
+
+```
+ART NEEDED: R7 gear, Rain Check for the Ocean angler
+Reference: assets/ref-angler-ocean.png (attach it, made with
+           `python3 tools/gear-ref.py`); ask for the SAME painting back
+Prompt:   [WHAT THIS IS]
+          I have attached a picture of a child fishing. I want the SAME picture
+          back with ONE thing added: a hat on the child's head. Everything else
+          must be identical to the picture I attached: the same child, the same
+          face, the same hair below the hat, the same pose, the same clothes,
+          the same fishing rod in the same place at the same angle, the same
+          colours, the same brushwork, the same size, the same canvas, the
+          figure in exactly the same position on it. Do not redraw the child.
+          Do not change the crop, the zoom or the framing. Change nothing below
+          the eyebrows.
+
+          [THE HAT]
+          A rain hat (a sou'wester) in muted amber oilskin, short and turned up
+          at the front, sweeping DOWN and OUT at the back to cover the neck,
+          with a chin strap.
+
+          [HOW IT SITS]
+          The child is braced back as if leaning into a fish, seen from the
+          side and facing right, and his head is tilted slightly back and up.
+          The hat must tilt back with it rather than sitting level. The hat
+          sits squarely on the crown and follows the tilt of the head. Some of
+          the child's hair still shows below it, at the back and in front of
+          the ear. The brim must not cover the eye, the eyebrow or any part of
+          the face.
+
+          [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
+          This hat will be shown at about the size of a fingernail: the child's
+          head is 18 pixels wide on the screen it appears on. Its SHAPE is the
+          only thing that will survive. As a plain black cut-out it must read
+          as short at the front and a long tail at the back. Paint it in two or
+          three soft tones with blended edges and a thin warm brown outline. No
+          fine texture, no small details, no lettering, no badges, no logos, no
+          pins, no feathers, no fishing flies hooked into it, no dangling
+          straps or cords.
+
+          [NOT THE OTHER ONE]
+          This child already owns a wide straw sun hat, a soft bucket hat and a
+          knitted beanie. This one is not symmetrical: it is SHORT at the front
+          and LONG at the back, a stiff shiny oilskin that sheds rain, and the
+          back brim reaches the child's collar.
+
+          [BACKDROP]
+          Every part of the image that is not the child is one completely flat,
+          even magenta #FF00FF, exactly as in the attached picture: edge to
+          edge and into all four corners, no gradient, no texture, no vignette,
+          no shading. No water, no ground, no scenery, no other objects, and no
+          drop shadow or reflection under the child.
+
+          [STYLE]
+          Soft painterly storybook illustration, warm muted color palette,
+          gentle diffused lighting, thin warm brown outlines rather than black,
+          cozy and inviting mood, no harsh shadows, no neon or saturated
+          colours. Soft two-tone shading with blended edges, matching the
+          attached painting exactly. NOT pixel art, NOT flat vector art with
+          even line weight, NOT thick black cartoon linework, NOT a glossy 3D
+          render, NOT a photograph.
+
+          [CRITICAL: nothing else changes]
+          Draw NO fishing line: no thread, string or filament of any kind, not
+          on the reel, not through the guides, not trailing from the rod tip.
+          Draw no fish, no water, no text, no labels, no watermark, no border
+          and no frame.
+
+          [CANVAS]
+          Return the image at the same 1324 by 1466 pixels as the picture I
+          attached. Output as PNG.
+Save as:  assets/Gemini_hat-souwester-ocean.jpg (the raw download, whatever extension
+          it arrives with, kept so the cut can be re-run)
+Wired in: `python3 tools/cut-gear.py ocean hat-souwester assets/Gemini_hat-souwester-ocean.jpg`,
+          then add "hat-souwester-ocean" to CONFIG.rig.gearArt
+```
 
 #### The rods
 
