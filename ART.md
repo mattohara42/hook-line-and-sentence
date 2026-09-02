@@ -300,10 +300,10 @@ still has it.
 3. The rest of the hats, cheapest first (`bucket` 30, `beanie` 50, `souwester`
    75). **Six generations, not nine**: Pond and Ocean are painted, the Stream is
    transplanted from the Pond hat as each one lands. All six prompts are written
-   out under *The hats* below, ready to paste. ~~`hat-bucket-pond`~~ ✅ landed
-   first attempt 2026-09-02 and took `hat-bucket-stream` with it, so **five
-   generations remain**: `beanie` and `souwester` at the Pond, then all three at
-   the Ocean.
+   out under *The hats* below, ready to paste. ~~`hat-bucket-pond`~~ and
+   ~~`hat-beanie-pond`~~ ✅ both landed first attempt 2026-09-02, each carrying
+   its Stream transplant, so **four generations remain**: `souwester` at the
+   Pond, then all three at the Ocean.
 4. The nine rods, `stick` and `bamboo` before `carbon` and `deepsea`.
 
 **The transplant was measured before the six generations were spent**, against
@@ -443,6 +443,49 @@ being told to.
 Pond (`bucket`, `beanie`, `souwester`), three free transplants to the Stream,
 and three at the Ocean. The rods are unaffected, since a rod is not cut this way.
 
+#### ✅ `hat-beanie-pond` landed first attempt (2026-09-02), the cleanest edit yet
+
+Fifth delivery, and it leads on every registration number the tool prints.
+Transplanted to the Stream at the same head IoU 0.904 as the other two, which is
+a property of the two heads rather than of the hat, so it should be 0.904 every
+time from here.
+
+| check | beanie | bucket | straw |
+|---|---|---|---|
+| agreement below the neck | **0.991** | 0.966 | 0.982 |
+| silhouette IoU | **0.939** | 0.925 | 0.898 |
+| body differing by >40 | **7.9%** | 14.3% | 11.8% |
+| px the reference has and the delivery does not | **1463** | 6726 | 3194 |
+| face-box coverage | **0** | 1137 | 935 |
+| backdrop border stdev | 2.2 / 4.1 / 3.5 | 15.8 / 32.4 / 15.4 | 2.3 / 4.2 / 3.4 |
+| aspect (0.966 asked) | 0.955 | 0.967 | 0.955 |
+| palette | 0 black, 2.34% darker than umber, `(93,6,4)` | 0, 1.48% | 0, 1.19% |
+
+**The zero is the prompt change earning its keep.** The shared frame says "The
+brim must not cover the eye, the eyebrow or any part of the face", which
+contradicts this hat's own "if it has a brim it is wrong" and could be read as
+licence to draw one. For the two beanie prompts only, that sentence is now "No
+part of the hat may cover the eye, the eyebrow or any part of the face". The
+souwester keeps the original wording because it genuinely has a brim. First
+delivery to touch the face box not at all.
+
+**The aspect went back to 0.955**, exactly the straw's drift, so the bucket's
+0.967 was one generation and not a trend. #127 declined to add a ratio
+instruction to a working frame on the grounds that the per-axis fit absorbs the
+drift; that reasoning stands, and the bucket is no longer evidence for either
+side.
+
+Highest "darker than umber" figure of the five at 2.34%, and it is the colour
+rather than a palette drift: ember red is a dark saturated hue, so more of its
+pixels sit below the threshold. Mean `(93,6,4)` is warm and there is no pure
+black.
+
+Verified in Chromium at all three spots (`--hat beanie`): drawn at the Pond and
+the Stream, hat layer absent from the Ocean's stack, no failed asset request.
+**And it answers #128's contrast note** — ember red reads hard against the
+Stream's green forest where sage green went quiet. The low-contrast pairing was
+that hat's colour, not a property of the Stream.
+
 #### ✅ `hat-bucket-pond` landed first attempt (2026-09-02), and the Stream came free
 
 Fourth delivery, fourth faithful edit, and the first one to use the transplant
@@ -466,11 +509,17 @@ comes back byte-identical to what is in the repo, so it costs one command and
 proves the tool has not drifted either. Every number above lands in the straw
 hat's band. Do this before deciding a delivery is bad.
 
-The one genuine difference is the backdrop, an order of magnitude noisier. This
-PNG arrived through a chat upload rather than a direct download, so it carries a
-second JPEG pass. The unmix did not care: 38 rim px despilled of 5791, against
-the straw's 4 of 8538, and no violet anywhere in the composite. **A noisy
-backdrop is not the reroll condition; backdrop bled into the subject is.**
+The one genuine difference is the backdrop, an order of magnitude noisier. The
+unmix did not care: 38 rim px despilled of 5791, against the straw's 4 of 8538,
+and no violet anywhere in the composite. **A noisy backdrop is not the reroll
+condition; backdrop bled into the subject is.**
+
+**This was first written up as an artefact of the delivery path** (this PNG came
+through a chat upload rather than a direct download, so a second JPEG pass). The
+beanie arrived by the identical route, within 300 bytes of the same file size,
+with a backdrop 8x cleaner. The explanation does not survive that, so the honest
+reading is that backdrop flatness varies per generation and the unmix absorbs
+the range. Do not use it to infer how a file reached you.
 
 Verified in Chromium past the profile modal at all three spots
 (`node tools/spot-check.mjs --loc <spot> --hat bucket`): the hat draws at the
@@ -485,8 +534,8 @@ fix is the hat's colour in the prompt rather than anything downstream.
 #### The hats
 
 **Six generations close the hat column**, and all six are below, written out
-whole. One is struck through: `hat-bucket-pond` landed 2026-09-02 and carried
-the Stream with it, so five are live. The Stream's three are not among them: the transplant measured above
+whole. Two are struck through: `hat-bucket-pond` and `hat-beanie-pond` landed
+2026-09-02, each carrying its Stream transplant, so four are live. The Stream's three are not among them: the transplant measured above
 lands a Pond hat on the Stream head for free, so the Stream is a command rather
 than a request. Order is cheapest first, and each Pond hat should be
 transplanted to the Stream as it lands rather than in a batch at the end, so
@@ -604,7 +653,10 @@ Then:     `python3 tools/hat-transplant.py hat-bucket pond stream`, and add
           "hat-bucket-stream" to CONFIG.rig.gearArt as well
 ```
 
-**`hat-beanie-pond`**: Bean There, 50 coins.
+~~**`hat-beanie-pond`**: Bean There, 50 coins.~~ ✅ **Landed first attempt
+2026-09-02**, and `hat-beanie-stream` was transplanted from it. The prompt is
+kept below, with its corrected face clause, because it is what a reroll would
+ask for again.
 
 ```
 ART NEEDED: R7 gear, Bean There for the Pond angler
@@ -630,8 +682,8 @@ Prompt:   [WHAT THIS IS]
           The child is sitting with his knees drawn up, seen from the side and
           facing right, and his head is upright. The hat sits squarely on the
           crown and follows the tilt of the head. Some of the child's hair
-          still shows below it, at the back and in front of the ear. The brim
-          must not cover the eye, the eyebrow or any part of the face.
+          still shows below it, at the back and in front of the ear. No part
+          of the hat may cover the eye, the eyebrow or any part of the face.
 
           [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
           This hat will be shown at about the size of a fingernail: the child's
@@ -872,8 +924,8 @@ Prompt:   [WHAT THIS IS]
           The hat must tilt back with it rather than sitting level. The hat
           sits squarely on the crown and follows the tilt of the head. Some of
           the child's hair still shows below it, at the back and in front of
-          the ear. The brim must not cover the eye, the eyebrow or any part of
-          the face.
+          the ear. No part of the hat may cover the eye, the eyebrow or any part
+          of the face.
 
           [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
           This hat will be shown at about the size of a fingernail: the child's
