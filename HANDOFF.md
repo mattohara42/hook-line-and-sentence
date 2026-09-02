@@ -11,7 +11,7 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. The last one in the epic. |
 | **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
-| **State** | **3 of 21 painted, 2026-09-02, all first attempt.** The straw hat is on all three anglers, so **R7's first done-when clause is met** and both clauses now are. What is left is the rest of the grid: 9 hats (six generations, three transplants) and 9 rods. **The six hat prompts are now written out whole in `ART.md`, ready to paste** — nothing to substitute, nothing to decide. |
+| **State** | **5 of 21 painted, 2026-09-02, all first attempt**, and the last two cost one generation: the bucket hat was painted at the Pond and transplanted to the Stream. Both done-when clauses are met. Left: 7 hats (five generations, two transplants) and 9 rods. **Every remaining hat prompt is written out whole in `ART.md`, ready to paste.** |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 89/89 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
@@ -24,16 +24,19 @@ met: the straw hat changes the angler at every spot and persists, and the rod yo
 buy is the rod in your hand. What remains is 18 more paintings of a shop that
 already works, and every open question in front of them is answered.
 
-If it fills, **the generating is now the only step left in the hat column.**
-`ART.md` → *R7* → *The hats* holds all six prompts written out whole, in order:
-`hat-bucket-pond`, `hat-beanie-pond`, `hat-souwester-pond`, then the same three
-at the Ocean. Each block carries its own attach / cut / register / transplant
-lines. Make the attachments once with `python3 tools/gear-ref.py` (it needs
-Pillow, and it writes the three gitignored `assets/ref-angler-*.png`), then take
-one prompt at a time. Transplant each Pond hat to the Stream as it lands rather
-than in a batch, so a bought hat is never live at one spot only. Then the nine
-rods, which go through `cut-angler.py` rather than `cut-gear.py` and whose
-prompt is still a template.
+If it fills, **the generating is the only step left in the hat column.**
+`ART.md` → *R7* → *The hats* holds every prompt written out whole. Five remain,
+in order: `hat-beanie-pond`, `hat-souwester-pond`, then all three at the Ocean.
+Each block carries its own attach / cut / register / transplant lines. Make the
+attachments with `python3 tools/gear-ref.py`, then take one prompt at a time and
+transplant each Pond hat to the Stream as it lands rather than in a batch, so a
+bought hat is never live at one spot only. Then the nine rods, which go through
+`cut-angler.py` rather than `cut-gear.py` and whose prompt is still a template.
+
+**A fresh container has none of the pipeline's dependencies.** `pip install
+Pillow numpy scipy` for the cut tools, and `spot-check.mjs` wants playwright at
+`/tmp/node_modules` plus a served repo. Three minutes, but it is three minutes
+before anything can be checked.
 
 **Three deliveries in, nothing about the method is open.** The generator returns
 an edit rather than a redraw (`GEMINI_NOTES.md` → *Editing a delivered
@@ -118,10 +121,13 @@ re-solving. Prompt and a cheaper CSS-tint fallback: `ART.md` → *R5 debt*.
   test the catfish and the unicornfish both failed. Now in `CLAUDE.md`.
 - **A new test is worth nothing until you have watched it fail.** R7's five
   config traps were each checked by breaking the invariant they guard.
-- **When a delivery measures like a redraw, suspect the measurement first.** The
-  Stream hat scored IoU 0.54 with 70% of the body "changed" and was a perfectly
-  faithful edit: the registration fit was keying on a landing net that had swung.
-  A plain canvas-scale comparison settled it in one command (#124).
+- **When a delivery measures like a redraw, suspect the measurement first**, and
+  **get a control before you judge one.** `cut-gear.py` prints raw numbers with
+  no thresholds, so re-cut a committed delivery and compare: it is one command,
+  it comes back byte-identical, and it turns "14.3% of the body differs" from an
+  alarm into a normal reading (#128). The Stream hat cost a scare for want of
+  this: IoU 0.54 with 70% "changed", and a perfectly faithful edit whose fit was
+  keying on a landing net that had swung (#124).
 - **A registry beats a filename convention.** `CONFIG.fish.species`,
   `CONFIG.rig.poses` and now `CONFIG.rig.gearArt` are one idea three times: the
   config lists what exists, anything absent falls back, and a half-finished set
