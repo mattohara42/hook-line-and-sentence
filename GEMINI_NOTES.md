@@ -160,7 +160,14 @@ something to get right and becomes something you *have*: the pixels that did not
 change are the reference's own. It also means a piece can be found by
 difference rather than keyed out of a fresh canvas.
 
-**Two cautions, both from the same delivery:**
+**Confirmed on a second delivery** (the same hat for the standing Stream
+angler): same result, another faithful edit, with only 591 px of the reference
+missing from the return. The one difference worth noting is the backdrop, which
+came back at a border stdev of 10/20/10 against the first delivery's 2/4/3. Still
+flat enough to key, and it is the reminder the convention already carries:
+measure the backdrop, never assume it.
+
+**Two cautions, both from the first delivery:**
 
 - **The canvas comes back its own size, and the ASPECT drifts too.** Asked
   1344x1391, got 1008x1056: 0.955 against 0.966. Size being ignored is the old

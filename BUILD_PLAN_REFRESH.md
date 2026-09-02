@@ -561,13 +561,14 @@ Whether that holds is the probe's job.
 unregistered rod shows the pose's own painted rod and nobody can tell, while an
 unregistered hat shows nothing and is a purchase that does not work.
 
-**`hat-straw-pond` landed first attempt on 2026-09-02 and is wired**, so the
-shape is proven rather than assumed: the generator returned an edit, not a
-redraw (silhouette IoU 0.898 against the reference, the pose below the neck
-identical to within JPEG noise), and `tools/cut-gear.py` now owns the cut. The
-Pond kid wears a straw hat in the game, it persists, and the same hat at the
-Stream still falls back to nothing with no failed request. **20 paintings left,
-and none of them is a new question.**
+**The straw hat landed at the Pond and the Stream on 2026-09-02, both first
+attempt**, so the shape is proven rather than assumed: the generator returns an
+edit, not a redraw, and `tools/cut-gear.py` owns the cut. **19 paintings left,
+and the transplant may take most of them off the list** — a hat painted once at
+the Pond lands on the Stream's head indistinguishably at game size
+(`tools/hat-transplant.py`, head IoU 0.904). The Ocean's head is the only one
+that is not upright, so `hat-straw-ocean` decides whether the remaining nine hats
+cost three generations or six.
 
 Three things carry it, and the third is the one worth remembering:
 

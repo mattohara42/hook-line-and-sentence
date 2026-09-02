@@ -293,8 +293,9 @@ half of R7's done-when that is still open.
 
 1. ~~**`hat-straw-pond`, the probe.**~~ ✅ landed first attempt 2026-09-02; the
    edit comes back as an edit. See the record below.
-2. **`hat-straw-stream` and `hat-straw-ocean`**, which between them buy the
-   transplant answer below.
+2. ~~**`hat-straw-stream`**~~ ✅ landed first attempt 2026-09-02, and the
+   transplant is answered for that pose. **`hat-straw-ocean`** is still open and
+   is the half that decides the rest.
 3. The rest of the hats, cheapest first (`bucket` 30, `beanie` 50, `souwester`
    75), Pond then Stream then Ocean.
 4. The nine rods, `stick` and `bamboo` before `carbon` and `deepsea`.
@@ -381,6 +382,63 @@ Cut with `python3 tools/cut-gear.py pond hat-straw assets/Gemini_hat-straw-pond.
 Verified in Chromium past the profile modal: the hat is on the kid's head in the
 rowboat, it survives a reload, and at the Stream the same equipped hat falls back
 to nothing with no failed request anywhere in the run.
+
+#### ✅ `hat-straw-stream` landed first attempt (2026-09-02), and it found the fit
+
+Second delivery, second faithful edit: agreement below the neck 0.974, only
+**591 px** of the reference the return does not carry, and the pose's clothes,
+hands, net and rod all the same paint. 0 pure-black px, 0.73% darker than umber
+and warm. Wired, and verified in Chromium at the Stream.
+
+**It broke the registration fit, and the fix is the lesson.** The first version
+matched bounding boxes of the lower 45% of the figure, which is stable for a
+seated kid in a boat and not for a kid holding a **landing net on a string**: the
+net hangs differently in the return, and one moved extremity skewed the box fit
+to a scale of 1.204 x 1.399 for a figure whose proportions had not changed at
+all. Every downstream number then looked like a redraw (IoU 0.54, 70% of the
+body "changed"), which is exactly the false alarm that costs a reroll.
+
+Two changes, both in `tools/cut-gear.py`:
+
+- **Fit by searching, not by boxes.** Maximise silhouette agreement over
+  everything outside a box a hat could occupy, which keeps the **rod** in the
+  objective. A long thin diagonal across half the canvas pins scale and offset
+  far harder than a seated child's blob does, and no hat touches it.
+- **Pivot the search about the two figures' centroids.** With scale and offset
+  measured from the canvas origin they trade off, so every single-parameter step
+  from the seed is worse than the seed even when a diagonal step is better: the
+  search sat on its seed, 0.02 of IoU short. Pivoting about the centroid
+  decouples them and it converges.
+
+The Pond was re-cut with the corrected fit (IoU 0.898, unchanged; its piece now
+carries a little more of the hair under the brim, which the hat layer should
+paint anyway).
+
+#### The transplant is answered for the Stream, and it works
+
+The question these two paintings were sent to settle: can a hat painted once at
+the Pond be landed on another pose's head instead of generated again?
+
+**For the Stream, yes.** The two poses' above-the-neck silhouettes register at
+**IoU 0.904** under a uniform scale of 0.672, which is the R4 finding restated
+(one character at three scales, related by the head). Landing the Pond hat on
+that transform and comparing it against the separately generated Stream hat:
+**IoU 0.62 with the areas within 10%**, and at the 18 design px a head actually
+occupies they are indistinguishable. The generated one sits a touch deeper and
+shades the brow; the transplant sits a touch high. Nothing a player can see.
+
+`tools/hat-transplant.py` does it, and it **refuses below a head IoU of 0.85**
+rather than landing a hat on a head that does not correspond. This is not the
+offset-tweak rule being bent: the transform is measured off the two paintings,
+not nudged by eye, and the tool checks its own premise.
+
+**The Ocean is the open half**, and it is the one that matters, because its head
+is the only one that is not upright. It tilts back, and this transform carries no
+rotation. `hat-straw-ocean` is still worth generating for exactly that reason.
+
+**So the remaining nine hats are three generations plus two transplants each, or
+six generations plus three transplants** if the Ocean turns out to need its own
+paintings. Matt's call, and the cheap half of it is proven either way.
 
 #### The hats
 
