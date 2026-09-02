@@ -107,7 +107,14 @@ LENGTH_BY_TIER = {"common": 54, "uncommon": 64, "rare": 78, "legendary": 96}
 TAIL_SWEEP_DEG = 7.0
 
 TOL, LO, HI = 70.0, 55.0, 115.0
-MIN_COMPONENT = 500          # px; anything smaller is a speck, not a fish
+# A sheet may carry things that are not fish. The Ocean's first sheet came back
+# captioned with species names, and a flat size threshold called seventeen word
+# fragments fish. So take the N LARGEST components instead, where N is the
+# layout's length, and prove the separation rather than assume it: the smallest
+# fish kept must be this many times the largest thing dropped. On that sheet the
+# real gap was 33x (35,115 px against 1,048), so anything under 4x means two
+# fish have merged or a subject is missing, and the tool should stop.
+MIN_SIZE_RATIO = 4.0
 
 name = sys.argv[1] if len(sys.argv) > 1 else "pond-common"
 S = SHEETS[name]
@@ -188,14 +195,23 @@ for sy in range(H):
                 for nx, ny in ((x+1, y), (x-1, y), (x, y+1), (x, y-1)):
                     if 0 <= nx < W and 0 <= ny < H and solid[ny, nx] and lab[ny, nx] == 0:
                         lab[ny, nx] = n; stack.append((nx, ny))
-            if len(xs) >= MIN_COMPONENT:
-                comps.append((n, len(xs), min(xs), min(ys), max(xs), max(ys)))
-            else:
-                lab[ys, xs] = 0
+            comps.append((n, len(xs), min(xs), min(ys), max(xs), max(ys)))
 want = len(S["layout"])
-print("found %d fish-sized components (expected %d)" % (len(comps), want))
-if len(comps) != want:
-    sys.exit("  ✗ the sheet did not separate: fix the generation, not the tool")
+if len(comps) < want:
+    sys.exit("  ✗ only %d components for %d species: two subjects have merged" % (len(comps), want))
+comps.sort(key=lambda c: -c[1])
+kept, dropped = comps[:want], comps[want:]
+ratio = kept[-1][1] / dropped[0][1] if dropped else float("inf")
+print("found %d components; keeping the %d largest (%d..%d px), dropping %d "
+      "(largest %d px) — separation %.1fx"
+      % (len(comps), want, kept[-1][1], kept[0][1], len(dropped),
+         dropped[0][1] if dropped else 0, ratio))
+if ratio < MIN_SIZE_RATIO:
+    sys.exit("  ✗ the smallest fish is only %.1fx the largest non-fish: too close to call"
+             % ratio)
+for c in dropped:                      # captions, specks — never reach a sprite
+    lab[lab == c[0]] = 0
+comps = kept
 
 # Put the components into reading order so the layout list can name them. Rows
 # are found rather than assumed — cluster the centres by y, splitting wherever

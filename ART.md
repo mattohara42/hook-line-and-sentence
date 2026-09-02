@@ -323,6 +323,26 @@ and the `#scene.loc-ocean #fish:not(.rigged).tier-legendary` rule in
 `style.css`** (a 96px width override). Both are dead the moment the species has
 a real entry, and leaving them is how a stale sprite outlives its replacement.
 
+> **✅ Sheet A landed on the second attempt and is wired — 26 of 33.** The
+> corrected prompt fixed the backdrop (flat magenta, key `(249,46,247)`, stdev
+> 2–3) but **the captions came back anyway**, and that turned out not to matter:
+> the six fish are 35,115–67,750 px and the largest caption fragment is 983, a
+> **35.7× separation**, so the cut drops the text and no sprite ever sees it.
+> `cut-fish.py` now takes the N largest components rather than everything over a
+> fixed size, and refuses if the smallest fish is less than 4× the largest thing
+> it drops. Six of six, 0 interior holes, recomposite **0 px differ** on all six.
+>
+> **One thing to know, and it is a judgment call rather than a defect.** The
+> naturalist treatment survived the reroll: the sheet's tonal stdev is 53–71
+> (mean 62) against the accepted Pond/Stream art's 26–45 (mean 36). This is the
+> first time a style complaint has survived measurement in this milestone — but
+> it does not survive the *downscale*: at the 54–64px these render, the contrast
+> averages out and they sit with the other twenty. Composited side by side with
+> the minnow, dace, sculpin and carp, they read as one set. Worth a look, and a
+> reroll of the sheet is cheap now that the prompt is right.
+>
+> <details><summary>The first attempt, and why it was rerolled</summary>
+>
 > **⚠️ Sheet A was rerolled once (2026-09-02) — the first reroll in the
 > milestone, and the prompt below is the corrected one.** The first attempt came
 > back as a **scientific field-guide plate**: six specimens on aged cream paper,
@@ -336,6 +356,8 @@ a real entry, and leaving them is how a stale sprite outlives its replacement.
 > differentiation worked first time. What is added below is a paragraph
 > forbidding the field-guide idiom by name (the same treatment R4's rod needed
 > for "no fishing line"), and a backdrop stated as a *place* rather than a colour.
+>
+> </details>
 
 ```
 ART NEEDED: R6 wave 3, sheet A — the Ocean's four silver commons, plus two

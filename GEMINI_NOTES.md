@@ -274,6 +274,15 @@ silver herring's belly on cream paper cannot be told from the paper.
 perfectly first time — the plain herring, the barred mackerel, the big-mouthed
 anchovy, the spotted sardine — so the reroll changes only the frame.
 
+**The reroll fixed half of it, and the half it missed did not matter.** Naming
+the backdrop as a place — "the fish float on a solid magenta screen, the way a
+subject stands in front of a photographer's backdrop" — worked: flat magenta,
+stdev 2–3. **The captions came back anyway**, which is worth knowing before
+spending a third generation on them: text on a flat backdrop is *separable*. The
+six fish were 35,115–67,750 px against a largest caption fragment of 983 — a
+**35.7× separation** — so a cut that takes the N largest components drops every
+word without touching a sprite. Forbid the text, but do not reroll for it alone.
+
 **The fix is to forbid the idiom by name, the way R4's rod had to forbid a
 fishing line.** A field guide is what a list of field marks *is*, so excluding it
 needs its own paragraph naming every form it takes: no plate, no specimen chart,
