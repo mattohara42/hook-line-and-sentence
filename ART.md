@@ -442,6 +442,28 @@ Save as:  assets/Gemini_fish-ocean-shoal.jpg
 Wired in: `python3 tools/cut-fish.py ocean-shoal` — already registered in SHEETS
 ```
 
+> **✅ Sheet B landed first attempt with the corrected frame — 32 of 33.** Flat
+> magenta (key `(249,39,254)`, stdev 2–4), **no captions this time**, no paper,
+> ratio 1.339 against the 4:3 asked, nothing on a canvas edge, six of six
+> components with nothing to drop, recomposite **0 px differ** on all six. The
+> `[WHAT THIS IS]` block did the whole job on its second outing.
+>
+> **Marlin against swordfish separated**, which is what the sheet existed for:
+> a round spear and a long dorsal ridge on a blue barred flank, against a flat
+> broad sword and one tall lone fin on a bronze-purple one. At 78px they are
+> plainly two fish.
+>
+> **The unicornfish found the last bug in the mouth measurement.** It leads with
+> a *horn* above its snout, so even the alpha-weighted centre landed 3.2 design
+> px off the fish — in the gap between horn and snout, where the line would
+> attach to nothing. Two things were wrong: the rule snapped to the nearest
+> painted pixel (which is the horn tip, the wrong end of the head), and it
+> measured in source pixels then rounded into design ones — and half a design px
+> is four source px, exactly the width of that gap. The mouth is now measured in
+> the box the game actually draws, and holds its height while walking right to
+> the first painted column. All 32 attach points now land on their fish (within
+> the 1px the alpha edge allows), against one 3.2px outlier before.
+
 **Sheet B**, in full — the same corrected frame with its own species block. The
 `[WHAT THIS IS]` and `[BACKDROP]` blocks go first for the reason sheet A proved:
 a list of field marks *is* a field guide, and the generator draws one unless the

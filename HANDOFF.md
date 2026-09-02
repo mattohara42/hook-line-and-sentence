@@ -11,7 +11,7 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R6 — fish, a rig per species**, `BUILD_PLAN_REFRESH.md` |
 | **Done when** | every species in `data/fish.json` has its own art, the collection screen reads as 33 different fish, and the landing has a visible moment — wave by wave, Pond first |
-| **State** | **26 of 33 painted, cut and wired** — the Pond, the Stream, and the Ocean's first sheet. Seven species left: sheet B's six and the muskie. |
+| **State** | **32 of 33 painted, cut and wired.** One species left: the muskie. R6 closes when it lands. |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 86/86 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
@@ -19,46 +19,21 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**Generate the Ocean's three sheets** — `ART.md` → *R6 wave 3*. All three prompts
-are written out and all three are pre-registered in `tools/cut-fish.py`, so each
-is paste, save, and one command. **Every one of the 33 species is now accounted
-for by a sheet**, with no duplicates.
+**Generate the muskie — the last fish in the game.** `ART.md` → *R6 wave 3*,
+sheet C, written out in full and pre-registered as `ocean-muskie`. Then:
 
-**Sheet A is done** (it took two attempts — the first was a field-guide plate on
-cream paper, the prompt's own fault). **Sheets B and the muskie use the same
-corrected prompt shape**, so open with the `[WHAT THIS IS]` block: a list of
-field marks *is* a field guide, and the generator will draw one given the chance.
-
-**Captions are not worth a reroll on their own.** Sheet A's second attempt still
-came back captioned; the text is 35× smaller than any fish, so the cut drops it.
-`cut-fish.py` takes the N largest components and refuses if the margin is under
-4×.
-
-Two sheets of six and the muskie alone, grouped so each set of look-alikes shares
-a canvas — the rule the Stream bought (`GEMINI_NOTES.md` → *Several subjects on
-one sheet*): the **four silvery pelagics** together (herring, mackerel, anchovy,
-sardine — the worst group in the game, worse than the trout) and the **three
-billfish-shaped rares** together (marlin, tuna, swordfish).
-
-**The muskie is the one that needs care, for two reasons.** Its look-alike is the
-Pond's northern pike — same family, same silhouette — and no sheet can pair them,
-because the pike is in another biome and already generated. Their patterns are
-*inverted* (pike: pale spots on dark; muskie: dark bars on pale) and the clause
-says so; attaching `assets/Gemini_fish-pond-rare.jpg` as a reference is worth
-trying. And when it lands, **delete `fish-muskie.png` and the
-`#scene.loc-ocean #fish:not(.rigged).tier-legendary` rule in `style.css`** — the
-A8 hero sprite and its 96px override are both dead the moment the species has a
-real entry.
-
-**Cutting is one command per sheet:** `python3 tools/cut-fish.py ocean-shoal`
-(or `ocean-deep` / `ocean-muskie`), paste the printed block into
-`CONFIG.fish.species`, `npm test`. The seam overlap and the mouth are both
-derived per fish, so nothing needs special handling.
-
-**Then look at the collection screen with the names covered.** Three bugs this
-milestone — the eye dot over the sprites, every fish rendering tailless, and a
-line attached to a catfish's forehead — were invisible to assertions and obvious
-in a picture. **R6 closes when this wave lands.**
+1. `python3 tools/cut-fish.py ocean-muskie`, paste the printed block into
+   `CONFIG.fish.species`, `npm test`.
+2. **Delete `fish-muskie.png` and the `#scene.loc-ocean
+   #fish:not(.rigged).tier-legendary` rule in `style.css`** — the A8 hero sprite
+   and its 96px width override are both dead once the species has a real entry.
+3. Check it against the **Pond's northern pike**: same family, same silhouette,
+   and no sheet could pair them because the pike is in another biome and already
+   generated. Their patterns are inverted (pike pale-on-dark, muskie
+   dark-on-pale) and the clause says so.
+4. **Close R6.** Every species in `data/fish.json` will have its own art, the
+   collection will read as 33 different fish, and the landing beat shipped with
+   the code half.
 
 **One cosmetic item, cheap, best done when the Pond is complete:** the painted
 bodies run darker and duller than `data/fish.json`'s per-species `color` (green
