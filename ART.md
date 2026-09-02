@@ -186,10 +186,11 @@ looks exactly like the art never arriving:
 1. **Attach the pose's own painting** and ask for it back with one thing
    changed. Not a fresh drawing of a hat or a rod: an edit. See below for why,
    and for how to make the attachment.
-2. **Cut it against that same painting**, so it registers by construction and
-   its layer box is the pose's box. Save it as `assets/<stem>-<pose>.png`, where
-   `<stem>` is the shop item's `file` (`rod-carbon`, `hat-straw`) and `<pose>`
-   is `pond`, `stream` or `ocean`.
+2. **Cut it against that same painting** with `python3 tools/cut-gear.py <pose>
+   <stem> <download>`, which registers the return, takes what changed and writes
+   `assets/<stem>-<pose>.png` at the pose's whole canvas. `<stem>` is the shop
+   item's `file` (`rod-carbon`, `hat-straw`) and `<pose>` is `pond`, `stream` or
+   `ocean`. It prints every check below as it goes.
 3. **Add that filename to `CONFIG.rig.gearArt`.** It is the registry that
    decides whether the shop's item shows up at all, the same switch
    `CONFIG.fish.species` is for fish. A PNG that is on disk but not in `gearArt`
@@ -290,8 +291,8 @@ rod in a hand and costs a kid nothing they can see. An unregistered hat falls
 back to nothing, so it is a purchase that visibly does nothing, and it is the
 half of R7's done-when that is still open.
 
-1. **`hat-straw-pond`, the probe.** It closes the first done-when clause on its
-   own, and it answers whether an edit comes back as an edit.
+1. ~~**`hat-straw-pond`, the probe.**~~ ✅ landed first attempt 2026-09-02; the
+   edit comes back as an edit. See the record below.
 2. **`hat-straw-stream` and `hat-straw-ocean`**, which between them buy the
    transplant answer below.
 3. The rest of the hats, cheapest first (`bucket` 30, `beanie` 50, `souwester`
@@ -331,6 +332,55 @@ because they are the ones an edit can fail in a way a fresh painting cannot:
    misses it, the axis moved.
 7. **Palette** against the table above: no pure black, nothing darker than
    `#33291f`.
+
+#### ✅ `hat-straw-pond` landed first attempt (2026-09-02), and the edit shape holds
+
+The probe answered its question. **The generator returned an edit, not a
+redraw.** The figure did not move, the pose did not change, the rod stayed on
+its axis, and the only new paint on the canvas is the hat.
+
+| check | result |
+|---|---|
+| canvas | 1008x1056 against the 1344x1391 asked. Size ignored as always, **and the aspect drifted too**: 0.955 against 0.966, which is why the fit is per-axis |
+| registration | silhouette IoU **0.898** after the fit, and only **1080 px** of the reference the delivery does not carry (the hair the brim pushed in) |
+| the pose below the neck | median colour distance **8.1**, 9.3% over 40, which is JPEG and resampling. The clothes, hands, boots and rod are the same paint |
+| backdrop | flat, key `(251,2,244)`, stdev 2-4 |
+| the piece | 76,080 px, bbox 570x306, one component after the fill |
+| the face | untouched: the brim crosses the forehead and stops above the eyebrow |
+| palette | 0 pure-black px, 0.30% darker than umber and warm at `(80,26,2)` |
+
+**Three things the cut had to learn, each paid for by this one delivery**, and
+all three are in `tools/cut-gear.py` now:
+
+- **A hat arrives as two components, not one.** The hatband is pale where the
+  hair beneath it is pale, so a thin seam across the crown reads as unchanged
+  and splits the crown from the brim. Take the largest component before filling
+  the enclosed holes and you keep the crown and lose the brim, which is the
+  bigger half of the silhouette. Close, fill, then take the largest.
+- **Unmix, never the distance ramp.** The ramp calls a half-magenta edge pixel
+  0.9 opaque and leaves a pink rim all round the brim, because a JPEG's ringing
+  against a saturated key is not a linear mix. `gap = min(R,B) - G` is, and it
+  clips to fully opaque on every warm or neutral colour in this palette, greys
+  included. Residual key after unmixing: **0.000%**.
+- **Do not force alpha to 1 where the piece covers the pose.** It looks safe,
+  since the body layer carries what is underneath, but a brim pushes the hair
+  silhouette *in*, and along that seam the delivery is backdrop where the
+  reference was hair. Forcing it painted a violet blotch at the temple. Unmixing
+  everywhere has no such case.
+
+**And one thing the request had wrong.** A gear piece is written at the pose's
+**whole painted canvas**, not cropped to its own content: the layer box lives on
+the pose (`CONFIG.rig.poses.<pose>.layers`), so every hat that pose will ever
+wear has to share one box, and this brim already reaches 47 source px further
+left than the angler's own crop does. The canvas is the box they can all share
+and it costs nothing, since transparent PNG rows compress away (148 KB). The
+Pond's hat box is `x: 32.4, y: -44.5, w: 76.9, h: 79.6`, printed by the tool
+from the pose's own numbers rather than tuned, and **it will not move again**.
+
+Cut with `python3 tools/cut-gear.py pond hat-straw assets/Gemini_hat-straw-pond.jpg`.
+Verified in Chromium past the profile modal: the hat is on the kid's head in the
+rowboat, it survives a reload, and at the Stream the same equipped hat falls back
+to nothing with no failed request anywhere in the run.
 
 #### The hats
 
@@ -397,9 +447,10 @@ Prompt:   [WHAT THIS IS]
           [CANVAS]
           Return the image at the same <W> by <H> pixels as the picture I
           attached. Output as PNG.
-Save as:  assets/Gemini_<stem>-<pose>.png (the raw download, kept for re-cuts)
-Wired in: cut it against assets/ref-angler-<pose>.png, save the cut as
-          assets/<stem>-<pose>.png, then add "<stem>-<pose>" to CONFIG.rig.gearArt
+Save as:  assets/Gemini_<stem>-<pose>.jpg (the raw download, whatever extension
+          it arrives with, kept so the cut can be re-run)
+Wired in: `python3 tools/cut-gear.py <pose> <stem> assets/Gemini_<stem>-<pose>.jpg`,
+          then add "<stem>-<pose>" to CONFIG.rig.gearArt
 ```
 
 | `<pose>` | `<POSE LINE>` | `<W> by <H>` |
@@ -495,9 +546,12 @@ Prompt:   [WHAT THIS IS]
           [CANVAS]
           Return the image at the same <W> by <H> pixels as the picture I
           attached. Output as PNG.
-Save as:  assets/Gemini_<stem>-<pose>.png (the raw download, kept for re-cuts)
-Wired in: `python3 tools/cut-angler.py <pose> assets/Gemini_<stem>-<pose>.png`
-          with the pose's own unchanged corridor, save the rod layer as
+Save as:  assets/Gemini_<stem>-<pose>.jpg (the raw download, whatever extension
+          it arrives with, kept so the cut can be re-run)
+Wired in: a rod is the one gear piece cut-gear.py's difference cannot take (the
+          shaft under the hand is where the two paintings agree), so cut it with
+          `python3 tools/cut-angler.py <pose> assets/Gemini_<stem>-<pose>.jpg`
+          and the pose's own unchanged corridor, save the rod layer as
           assets/<stem>-<pose>.png, then add "<stem>-<pose>" to CONFIG.rig.gearArt
 ```
 

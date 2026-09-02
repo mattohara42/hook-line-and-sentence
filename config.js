@@ -167,6 +167,7 @@ export const CONFIG = {
     // gate rod. Add a stem here the moment its PNG lands.
     gearArt: [
       "rod-stick-pond", "rod-bamboo-stream", "rod-deepsea-ocean",
+      "hat-straw-pond",
     ],
     poses: {
       // R4's painted angler. Both layers are cuts of ONE delivered painting
@@ -217,7 +218,12 @@ export const CONFIG = {
           { id: "rod",  gear: "rod", file: "rod-stick-pond",   x: 39, y: -44, w: 70, h: 76 },
           { id: "arm",              file: "angler-pond-arm",  x: 39, y: -44, w: 70, h: 76 },
           { id: "body",             file: "angler-pond-body", x: 39, y: -44, w: 70, h: 76 },
-          { id: "hat",  gear: "hat",                          x: 39, y: -44, w: 70, h: 76 },
+          // A hat's box is the pose's whole PAINTED CANVAS rather than the
+          // angler's crop, because every hat drawn for this pose has to share
+          // one box (the box lives here, not on the shop item) and a straw brim
+          // reaches 47 source px further left than the kid does. Written by
+          // tools/cut-gear.py off that canvas, never tuned here.
+          { id: "hat",  gear: "hat",                          x: 32.4, y: -44.5, w: 76.9, h: 79.6 },
         ],
         // Measured off the canvas, not tuned in the browser: the grip is where
         // the hand closes on the pole and the tip is the rod's point, both

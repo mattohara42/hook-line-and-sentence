@@ -11,7 +11,7 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. The last one in the epic. |
 | **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
-| **State** | **Code half done and the prompts written, 2026-09-02.** The shop sells four rods and five hats, equipping either rebuilds the rig, all of it persists. **The 21 paintings are the only thing left in the epic, and they are now a generation queue rather than a writing job.** |
+| **State** | **The first gear painting is in, 2026-09-02.** `hat-straw-pond` landed first attempt and is cut, wired and on screen; the shop, the equip and the persistence were already done. **20 paintings to go and no open questions in front of them.** |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 89/89 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
@@ -19,20 +19,22 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**Generate `hat-straw-pond`.** Everything else in the epic is waiting on that
-one painting to prove the shape of the ask, and it closes R7's first done-when
-clause by itself. The prompt, the attachment, the checks and the order for the
-other twenty are all in `ART.md` under *R7*.
+**Generate `hat-straw-stream` and `hat-straw-ocean`**, in that order. The prompt
+table, the attachment and the checks are in `ART.md` under *R7*; the two
+references come from `python3 tools/gear-ref.py`.
 
-Two things about the request are new, and `ART.md` argues both:
+Those two are worth doing before the other nine hats, because they buy an answer
+rather than just filling squares: with the straw hat at all three poses, land the
+*Pond* hat on the other two heads locally by head-box match and compare. If it is
+indistinguishable at 18px, the remaining hats are three generations rather than
+nine. The Ocean's head tilts back, which is the reason it might not be.
 
-- **A gear painting is an edit of the pose, not a new painting.** Attach the
-  pose's own painting (`python3 tools/gear-ref.py` makes the copy to upload)
-  and ask for it back with one thing changed, so registration is free and a
-  swapped rod stays on the axis `cut-angler.py` already has.
-- **R6's sheet is not available here**, so gear falls back on the muskie's rule.
-  Whether that holds is what the straw hat at all three poses buys, and the
-  answer decides six later generations.
+**The shape is proven.** The generator returns an edit rather than a redraw
+(`GEMINI_NOTES.md` → *Editing a delivered painting*), and `tools/cut-gear.py`
+owns the cut: it registers the return per-axis on the lower 45% of the figure,
+takes what changed, and writes the piece at the pose's whole canvas. Adding a
+pose to it is one `POSES` entry: the layer crop and design box `cut-angler.py`
+printed, a neck row, and a face box.
 
 **Hats before rods.** An unregistered rod falls back to the pose's own painted
 gate rod, which nobody can tell from the real thing. An unregistered hat falls
