@@ -345,9 +345,26 @@ export const CONFIG = {
     // starts at (55% of the 360px canvas) — a splash under the water is what
     // this used to be, and it read as nothing at all.
     surface: { y: 198, splashParticles: 18 },
-    // Filled a wave at a time, Pond first — see ART.md. Empty is the correct
-    // state until art lands, not a missing config.
-    species: {},
+    // Filled a wave at a time, Pond first — see ART.md. Every entry below was
+    // printed by tools/cut-fish.py off the delivered sheet; none of it was tuned
+    // in the browser, and re-running the tool reproduces it exactly.
+    species: {
+      // R6 wave 1, sheet A: the Pond's four commons, painted on one canvas and
+      // cut apart as connected components, then each split at its own peduncle.
+      // Body and tail share one crop per species, so their offsets are zero.
+      bluegill:    { w: 54, h: 39, mouth: { x: 0, y: 21 }, tail: { x: 42, y: 19 },
+                     layers: [{ id: "tail", file: "fish-bluegill-tail" },
+                              { id: "body", file: "fish-bluegill-body" }] },
+      perch:       { w: 54, h: 30, mouth: { x: 0, y: 17 }, tail: { x: 43, y: 15 },
+                     layers: [{ id: "tail", file: "fish-perch-tail" },
+                              { id: "body", file: "fish-perch-body" }] },
+      minnow:      { w: 54, h: 21, mouth: { x: 0, y: 12 }, tail: { x: 40, y: 11 },
+                     layers: [{ id: "tail", file: "fish-minnow-tail" },
+                              { id: "body", file: "fish-minnow-body" }] },
+      pumpkinseed: { w: 54, h: 39, mouth: { x: 0, y: 22 }, tail: { x: 42, y: 20 },
+                     layers: [{ id: "tail", file: "fish-pumpkinseed-tail" },
+                              { id: "body", file: "fish-pumpkinseed-body" }] },
+    },
   },
 
   // R1 (ANIMATION.md): the cast, the line and the reel now move. Every number

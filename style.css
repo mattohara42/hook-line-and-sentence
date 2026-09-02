@@ -725,7 +725,10 @@ h1 {
   background: center / contain no-repeat;
   border-radius: 0;
 }
-.cfish.art::after, .cfish.art::before { content: none; }
+/* the blob's tail and its drawn-on eye both have to go: a painted fish has
+   its own. The eye rule needs the extra class to outrank
+   `.cell:not(.unknown) .cfish::before` on specificity rather than on order. */
+.cfish.art::after, .cell:not(.unknown) .cfish.art::before { content: none; }
 .cname { font-family: var(--display); font-size: 10px; color: var(--ink); min-height: 24px; }
 .cell.unknown .cname { color: var(--dim); }
 .csub { font-size: 10px; color: var(--dim); margin-top: 2px; }
