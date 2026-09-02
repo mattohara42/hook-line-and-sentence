@@ -11,7 +11,7 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R6 — fish, a rig per species**, `BUILD_PLAN_REFRESH.md` |
 | **Done when** | every species in `data/fish.json` has its own art, the collection screen reads as 33 different fish, and the landing has a visible moment — wave by wave, Pond first |
-| **State** | **The Pond is complete — 10 of 33 species painted, cut and wired.** The code is all in; what remains is the Stream and the Ocean. |
+| **State** | **14 of 33 species painted, cut and wired** — the Pond, and the Stream's four commons. Four sheets, four first attempts. |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 86/86 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
@@ -19,20 +19,20 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**Generate the Stream's three sheets** — `ART.md` → *R6 wave 2*. All three
-prompts are written out and all three are pre-registered in `tools/cut-fish.py`,
-so each one is paste, save, and one command. Same shapes the Pond proved: four
-commons in a 2×2 at 4:3, then two rows of three at 2.25:1.
+**Generate the Stream's sheets B and C** — `ART.md` → *R6 wave 2*. Both prompts
+are written out and both are pre-registered in `tools/cut-fish.py`, so each is
+paste, save, and one command. Rows of three at 2.25:1, the layout sheets B and C
+of the Pond proved.
 
-**The Stream's risk is named in the prompts, not left to be discovered.** Five of
-its ten are salmonids and a **steelhead *is* a rainbow trout**, so the species
-clauses spend their weight on field marks rather than on the shape they share —
-the rainbow is the colourful form, the steelhead the chrome one, the grayling
-separates itself by its sail of a dorsal fin. Rainbow and steelhead fall on
-different sheets by rank, so they are never drawn side by side; the steelhead's
-clause carries the comparison in words instead. Two more to watch: the dace
-against the chub, and the dace against the **Pond's** fathead minnow one row up
-in the journal.
+**The remaining risk is the salmonids, and it is all in these two sheets.** Five
+of the Stream's ten are salmonids and a **steelhead *is* a rainbow trout**, so
+the species clauses spend their weight on field marks rather than the shape they
+share — the rainbow is the colourful form, the steelhead the chrome one, the
+grayling separates itself by its sail of a dorsal fin. Rainbow (sheet B) and
+steelhead (sheet C) are never drawn side by side, so **check them against each
+other in the journal**, not on the sheet. Sheet A's equivalent worry (the dace
+against the Pond's minnow) came out fine, which is some evidence the approach
+works.
 
 **Cutting is one command per sheet:** `python3 tools/cut-fish.py stream-common`
 (or `-uncommon` / `-rare`), paste the printed block into `CONFIG.fish.species`,
