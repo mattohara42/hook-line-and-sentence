@@ -63,6 +63,11 @@ SHEETS = {
     # steelhead are the pair hardest to tell apart, and putting them on one
     # canvas means the generator drew them against each other instead of in two
     # separate passes. Three rows of two, so reading order pairs them by row.
+    "stream-trout": dict(
+        src="assets/Gemini_fish-stream-trout.jpg",
+        layout=["rainbowtrout", "browntrout", "steelhead", "grayling", "salmon", "catfish"],
+        alpha="unmix", rear=(0.60, 0.88),
+    ),
     # Wave 3, the Ocean, grouped so that each set of look-alikes shares a canvas:
     # the four silver pelagics on one, the three billfish-shaped rares on the
     # other. The muskie goes alone because the fish it must not resemble — the
@@ -81,11 +86,6 @@ SHEETS = {
     "ocean-muskie": dict(
         src="assets/Gemini_fish-ocean-muskie.jpg",
         layout=["muskie"],
-        alpha="unmix", rear=(0.60, 0.88),
-    ),
-    "stream-trout": dict(
-        src="assets/Gemini_fish-stream-trout.jpg",
-        layout=["rainbowtrout", "browntrout", "steelhead", "grayling", "salmon", "catfish"],
         alpha="unmix", rear=(0.60, 0.88),
     ),
 }
@@ -238,6 +238,10 @@ block = []
 for (n, px, x0, y0, x1, y1), fid in zip(ordered, S["layout"]):
     m = lab == n
     fw, fh = x1 - x0 + 1, y1 - y0 + 1
+    # a species' length comes from its RANK, so the design box is known before
+    # anything is measured — and the mouth is measured in that box, not in
+    # source pixels then rounded into it
+    scale = LENGTH_BY_TIER[FISH[fid]["tier"]] / fw
 
     # the peduncle: the narrowest vertical section in the rear of the fish. Found,
     # not traced — and the depth either side of it is printed so a sheet whose
@@ -249,16 +253,36 @@ for (n, px, x0, y0, x1, y1), fid in zip(ordered, S["layout"]):
     col = np.where(m[:, x0 + cut])[0]
     pivot = (cut, (col.min() + col.max()) / 2 - y0)
 
-    # the mouth: the leading edge, at the vertical centre of the HEAD'S MASS
-    # rather than of the leftmost column. A catfish's leftmost pixel is the tip
-    # of a barbel, so the column rule attached the line to its forehead, 7 design
-    # px above its mouth. Weighting the leading 15% of the fish by alpha gives a
-    # whisker almost no say and a head all of it; across the twenty species this
-    # moved the other nineteen by at most 2px, onto the head instead of onto
-    # whatever extremity happened to reach furthest forward.
-    lead = m[:, x0:x0 + max(1, int(fw * 0.15))].astype(float)
-    rows = np.arange(y0, y1 + 1)
-    mouth = (0, (lead[y0:y1 + 1].sum(axis=1) * rows).sum() / max(lead.sum(), 1) - y0)
+    # the mouth, measured in DESIGN pixels — the unit the config stores and the
+    # game draws in. Two things defeated simpler rules here, and both were found
+    # by drawing the measured point onto the sprite rather than by reading the
+    # number:
+    #
+    #   a catfish's leftmost pixel is the tip of a BARBEL, so "leftmost column at
+    #   its vertical centre" attached the line to its forehead, 7 design px high.
+    #   Weighting the leading 15% by alpha gives a whisker almost no say and a
+    #   head all of it, which fixes that.
+    #
+    #   a unicornfish leads with a HORN above its snout, so even the weighted
+    #   centre lands in open water between the two — 3.2 design px off the fish,
+    #   where the line would attach to nothing. Holding that height and walking
+    #   right to the first painted column finds the snout.
+    #
+    # And measuring in source px and rounding afterwards was wrong by
+    # construction: half a design px is four source px, which is exactly the
+    # width of that gap. So the mask is reduced to the box the game draws before
+    # anything is measured, and the answer is on the silhouette by construction.
+    dw, dh = int(round(fw * scale)), int(round(fh * scale))
+    small = np.asarray(Image.fromarray((m[y0:y1 + 1, x0:x1 + 1] * 255).astype(np.uint8))
+                       .resize((dw, dh), Image.LANCZOS)) > 100
+    band = max(1, int(dw * 0.15))
+    lead = small[:, :band].astype(float)
+    wy = (lead.sum(axis=1) * np.arange(dh)).sum() / max(lead.sum(), 1)
+    painted = np.where(small.any(axis=1))[0]
+    row = min(max(int(round(wy)), 0), dh - 1)
+    if not small[row].any():
+        row = int(painted[np.argmin(np.abs(painted - row))])
+    mouth_d = (int(np.where(small[row])[0][0]), row)
 
     # split, overlapping the seam by exactly what this fish's sweep needs so the
     # tail never opens a transparent wedge against the body it rotates away from
@@ -279,13 +303,12 @@ for (n, px, x0, y0, x1, y1), fid in zip(ordered, S["layout"]):
     both = (out[..., 3] > 30) & (keyed[..., 3] > 30) & m[..., None][..., 0]
     differ = int((np.abs(out[..., :3] - keyed[..., :3]).max(axis=2) > 0)[both].sum())
 
-    scale = LENGTH_BY_TIER[FISH[fid]["tier"]] / fw
     print("    %-12s at %4d,%-4d %5d px  peduncle x=%d/%d (%.0f%% back), %d px deep against a %d px fan (%.2fx), seam overlap %d px"
           % (fid, x0, y0, px, cut, fw, 100 * cut / fw, int(depth[cut]), fan, fan / max(depth[cut], 1), o))
     print("    recomposite tail+body vs the sheet: %d px of %d differ" % (differ, int(both.sum())))
     block.append("      %s: { w: %.0f, h: %.0f, mouth: { x: %.0f, y: %.0f }, tail: { x: %.0f, y: %.0f },\n"
                  "                 layers: [{ id: \"tail\", file: \"fish-%s-tail\" }, { id: \"body\", file: \"fish-%s-body\" }] },"
-                 % (fid, fw * scale, fh * scale, mouth[0] * scale, mouth[1] * scale,
+                 % (fid, fw * scale, fh * scale, mouth_d[0], mouth_d[1],
                     pivot[0] * scale, pivot[1] * scale, fid, fid))
 
 print("\n  CONFIG.fish.species — measured, not tuned\n")
