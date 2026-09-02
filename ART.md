@@ -291,10 +291,173 @@ direction.
 
 ### R6 wave 3 — the Ocean's thirteen fish (open — the active milestone)
 
-Not written yet, and the biggest wave: **13 species**, including the muskie,
-whose A8 hero sprite and its 96px CSS special case both retire when it lands.
-Sheets of six now being proven, the whole wave is likely **two or three
-generations**.
+The biggest wave and the last, in **three generations**: two sheets of six and
+the muskie alone. Sheets of six are proven (the Stream's trout), and the grouping
+below is not arbitrary — it follows the rule that wave bought:
+`GEMINI_NOTES.md` → **put the subjects hardest to tell apart on the same sheet**,
+because a sheet is the only way to *ask for* a difference rather than describe
+one.
+
+The Ocean has two collision groups, and each gets one canvas:
+
+| group | why it collides | sheet |
+|---|---|---|
+| herring · mackerel · anchovy · sardine | **four small silvery pelagics** — the worst group in the game, worse than the trout, because all four are the same silver fish to a glance | A, all together |
+| marlin · tuna · swordfish | three big torpedoes, two of them billed | B, all together |
+
+And one collision that **cannot** be solved by a sheet, because the other half of
+it is already generated and lives in another biome:
+
+> **The muskie against the Pond's northern pike.** Same family, same silhouette,
+> same duck-bill snout. The field mark is that their patterns are *inverted* — a
+> pike is **pale bean-shaped spots on a darker flank**, a muskie is **dark bars
+> and spots on a paler flank** — and the muskie's clause below says so in those
+> words. If Gemini accepts a reference image, attaching
+> `assets/Gemini_fish-pond-rare.jpg` and naming the leftmost fish as the one it
+> must *not* resemble is worth doing; it is the same reference trick `ART.md`
+> already uses for the R5 hull repaints.
+
+**The muskie also has consequences in code.** It is the Ocean's legendary and it
+already has an A8 hero sprite: when its R6 art lands, **delete `fish-muskie.png`
+and the `#scene.loc-ocean #fish:not(.rigged).tier-legendary` rule in
+`style.css`** (a 96px width override). Both are dead the moment the species has
+a real entry, and leaving them is how a stale sprite outlives its replacement.
+
+```
+ART NEEDED: R6 wave 3, sheet A — the Ocean's four silver commons, plus two
+Prompt:   [STYLE]
+          Soft painterly storybook illustration, warm muted color palette, gentle
+          diffused lighting, thin warm brown outlines rather than black, cozy and
+          inviting mood, no harsh shadows, no neon or saturated colours. Soft
+          two-tone shading with blended edges. NOT pixel art, NOT flat vector art
+          with even line weight, NOT thick black cartoon linework, NOT a glossy
+          3D render, NOT a photograph.
+
+          [LAYOUT]
+          Six different fish on one canvas, in three rows of two: top-left,
+          top-right, middle-left, middle-right, bottom-left, bottom-right. Every
+          fish is fully separated from every other by a wide band of empty
+          background — no fish touches, overlaps or crowds another, and none
+          touches the edge of the canvas.
+
+          [POSE — every fish]
+          Exact side view, facing LEFT: the head at the left of its own space and
+          the tail at the right, level and horizontal as if swimming straight
+          across. One calm friendly eye. Fins spread and clearly separate from the
+          body, the dorsal fin standing up and the tail fan open. A gentle
+          storybook fish, NOT a googly-eyed grinning cartoon.
+
+          [TELL THEM APART]
+          The first four fish are all small silvery sea fish and they are the
+          whole difficulty of this picture: a child must be able to tell them
+          apart at a glance. Draw the named feature of each as the most obvious
+          thing about it. Do NOT draw four versions of the same silver fish.
+
+          [THE SIX FISH]
+          Top-left — an Atlantic herring: a deep-bodied little silver fish with a
+          blue-green back, a bright plain silver flank with NO spots and NO
+          stripes, large soft scales, one small dorsal fin set halfway along the
+          back, and a deeply forked tail.
+          Top-right — an Atlantic mackerel: its whole flank is covered in DARK
+          WAVY TIGER-STRIPE BARS running down from a steel-blue back over a silver
+          belly, and there is a row of small separate FINLETS between its dorsal
+          fin and its tail.
+          Middle-left — a European anchovy: very slender and small, with an
+          ENORMOUS MOUTH that opens back well past its huge eye, a pointed snout
+          that overhangs the lower jaw, and one bright silver stripe running the
+          length of the flank.
+          Middle-right — a Pacific sardine: slimmer than the herring, with a ROW
+          OF DARK ROUND SPOTS along the upper flank and fine dark oblique lines on
+          the gill cover.
+          Bottom-left — a mahi-mahi: a blunt steep FOREHEAD like a bull's, a long
+          dorsal fin running almost the entire length of the back, a deeply forked
+          tail, and green-gold colour with soft blue flecks.
+          Bottom-right — a red snapper: a rosy-red fish with a pointed snout, a
+          spiny dorsal fin, a slightly forked tail and a red eye.
+
+          [CRITICAL: nothing but the fish]
+          Draw NO water of any kind. No bubbles, no splash, no ripples, no waves,
+          no weeds, no sand, no rocks, no coral, no bowl, no tank, no net, no
+          hook, no fishing line, no scenery, no plants, no other animals. No drop
+          shadow or reflection under any fish. No text, no labels, no names, no
+          watermark, no border, no frame, no grid lines, no panel dividers between
+          the fish.
+
+          [BACKDROP]
+          Every part of the canvas that is not a fish is one completely flat, even
+          magenta #FF00FF, edge to edge and into all four corners. A single flat
+          colour: no gradient, no texture, no vignette, no pattern.
+
+          [CANVAS]
+          The image is 1600 by 1200 pixels, aspect ratio 4:3. Output as PNG.
+Save as:  assets/Gemini_fish-ocean-shoal.jpg
+Wired in: `python3 tools/cut-fish.py ocean-shoal` — already registered in SHEETS
+```
+
+**Sheet B** is that prompt with the species block swapped, same layout and canvas:
+
+```
+          [TELL THEM APART]
+          The last three fish are all big fast open-sea fish of a similar shape
+          and two of them carry a long bill — they are the difficulty of this
+          picture. Draw the named feature of each as the most obvious thing about
+          it.
+
+          [THE SIX FISH]
+          Top-left — an Atlantic cod: THREE separate dorsal fins along its back, a
+          single WHISKER-LIKE BARBEL hanging from its chin, a pale curved line
+          along the flank, and mottled olive-brown colour.
+          Top-right — a grouper: a heavy stocky fish with a very large mouth and a
+          jutting lower jaw, a broad ROUNDED tail rather than a forked one, and
+          soft dark blotches over a muted green-brown body.
+          Middle-left — a unicornfish: a reef fish with a single HORN projecting
+          forward from its forehead in front of the eye, a tall oval body flattened
+          side to side, a small mouth, and soft dusty lilac-pink colour.
+          Middle-right — a blue marlin: a long ROUND SPEAR-LIKE BILL, a tall
+          pointed dorsal fin at the front of a long ridge, pale vertical bars down
+          a cobalt-blue flank, slender pelvic fins beneath, and a stiff crescent
+          tail.
+          Bottom-left — a bluefin tuna: NO BILL AT ALL — a smooth pointed snout on
+          a fat torpedo body, a metallic dark blue back, a silver belly, a row of
+          small finlets before a stiff crescent tail, and short pectoral fins.
+          Bottom-right — a swordfish: its bill is a LONG FLAT BROAD SWORD, not a
+          round spear, it has ONE tall stiff crescent dorsal fin standing alone
+          near the front and NO pelvic fins underneath at all, a very large eye,
+          and a dark bronze-purple back.
+Save as:  assets/Gemini_fish-ocean-deep.jpg
+Wired in: `python3 tools/cut-fish.py ocean-deep`
+```
+
+**Sheet C — the muskie, alone.** The game's capstone: it is the fish the Muskie
+Master rank is awarded for, and it renders at 96 design px, the largest in the
+game. One subject, the whole canvas.
+
+```
+          [LAYOUT]
+          One single fish, centred, with a wide band of empty background on every
+          side. It does not touch the edge of the canvas.
+
+          [THE FISH]
+          A muskellunge: a long lean freshwater predator with a flat duck-bill
+          snout and a large jaw, its dorsal fin set far back near the tail, and a
+          deeply forked tail. Its markings are the important part: DARK vertical
+          bars and dark spots on a PALE flank. This is the opposite of a northern
+          pike, which has PALE spots on a DARK flank — do not draw pale spots on a
+          dark body. Soft muted olive and lilac-grey colour, a big calm eye, and
+          the most detail of any fish in the set: this one is the prize.
+
+          [CANVAS]
+          The image is 1600 by 800 pixels, aspect ratio 2:1. Output as PNG.
+Save as:  assets/Gemini_fish-ocean-muskie.jpg
+Wired in: `python3 tools/cut-fish.py ocean-muskie`
+```
+
+**When they land:** count components first (six, six, one) · nothing on a canvas
+edge · cut, wire, `npm test` · then the two checks this wave exists for — **the
+four silvers side by side at 54px with the names covered**, and **the muskie
+against the Pond's pike**, which sit in different biome sections of the journal
+but are the same fish shape. And **delete `fish-muskie.png` and its CSS rule**
+when the muskie lands.
 
 Same three-sheet shape as the Pond, in the two layouts sheets A–C proved: four
 commons in a 2×2, then two rows of three. All three Pond sheets landed first
