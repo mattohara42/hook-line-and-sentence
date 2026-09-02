@@ -13,7 +13,7 @@ something is the way it is, `git log` and the PR body have it in full.
 | **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
 | **State** | **12 of 21 painted, 2026-09-02. The hat column is COMPLETE, 12 of 12**, from six paintings (each Pond hat transplanted to the Stream for free). All twelve verified in Chromium at all three spots in one sweep. Both done-when clauses are met. Left: **the 9 rods only.** |
 | `origin/main` | clean, nothing unpushed |
-| Tests | 89/89 (`npm test`) |
+| Tests | 93/93 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
 | Deploys | Netlify is **manual**; merging to `main` does not go live |
 
@@ -39,6 +39,13 @@ to bite into the body.
 a prompt recorded as "that one with the block swapped" is not something anyone
 can paste, and the eight substitutions include the canvas size, which is per
 pose and costs a generation when wrong.
+
+**Not R7, but it landed on 2026-09-02 and changes how the reel feels:** the fish
+now *swims* between words instead of jumping, and stays an unnamed shape until
+it is close (#135). The reel's per-frame exponential is gone; every fish move is
+a tween in `CONFIG.fish.pull`, and `CONFIG.fish.reveal` decides how late the
+species arrives. `ANIMATION.md` owns the reasoning. **Worth an eye test** — the
+feel numbers were picked from measurement, not from watching a kid play.
 
 **Before your first cut in a fresh container:** `pip install Pillow numpy scipy`,
 and for `spot-check.mjs`, `cd /tmp && npm install playwright`. `tools/README.md`
