@@ -28,15 +28,13 @@ canvas come back as four different hats; four passes come back as one hat four
 times), and **draw each item against the pose's own painting**, on that canvas,
 so it registers by construction.
 
-**A delivered PNG is not live until it is registered** — on disk as
-`assets/<stem>-<pose>.png` *and* added to `CONFIG.rig.gearArt`. Miss the second
-step and it is silently never drawn. A data test catches a misnamed pose or
-item, not a forgotten line.
-
-Until a stem is registered the game falls back (a rod shows the pose's painted
-gate rod, a hat shows nothing), so **no gear delivery is urgent and none have to
-arrive together.** Start with one hat at the Pond pose: that single painting
-closes the first done-when clause. The second is already met.
+**A delivered PNG is not live until it is registered** in `CONFIG.rig.gearArt`,
+and an unregistered one looks exactly like art that never arrived —
+`GEMINI_NOTES.md`'s delivery checklist, step 7. Until a stem is registered the
+game falls back (a rod shows the pose's painted gate rod, a hat shows nothing),
+so **no gear delivery is urgent and none have to arrive together.** Start with
+one hat at the Pond pose: that single painting closes the first done-when
+clause. The second is already met.
 
 ## Waiting on Matt (none of it blocks R7)
 
@@ -50,7 +48,9 @@ closes the first done-when clause. The second is already met.
   `claude/epic-continuation-81tdvp` (69f79ea) ·
   `claude/gemini-game-asset-prompts-aeopww` (c47e021) ·
   `claude/next-steps-0v0xeg` (98762e7) · **`g1/layered-rig`** (5e855b5 — ⚠️
-  Matt's own branch, confirm first; the parts that survived merged via #42/#43).
+  Matt's own branch, confirm first; the parts that survived merged via #42/#43) ·
+  `claude/finish-the-art-quslrv` (carried this session's R6 and R7 work; fully
+  merged into `main`, so it needs no SHA to be safe to delete).
 - **The GitHub repo description still says "pixel-art"**, which R2 removed
   game-wide. It is the first thing a stranger reads.
 - **R1's line prototype wants an eye test.** Serve the repo, open

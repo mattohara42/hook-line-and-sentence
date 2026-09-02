@@ -69,11 +69,13 @@ Scope note, so the docs don't drift into each other:
 
 ## Several subjects on one sheet: it works, and it is cheaper (R6)
 
-**Seven sheets in eight generations, across three layouts** — a 2×2 of four, a
-row of three, and a 3×2 of six. Six landed first attempt; the one reroll was a
-prompt fault rather than a sheet fault (see *Describing fish by field marks*
-below), and even that sheet's six subjects were correctly differentiated. This
-is the strongest result this project has had from any prompt shape.
+**R6's final tally: eight sheets in nine generations, across four layouts** — a
+2×2 of four, a row of three, a 3×2 of six, and one subject alone. Seven landed
+first attempt; the one reroll was a prompt fault rather than a sheet fault (see
+*Describing fish by field marks* below), and even that sheet's six subjects were
+correctly differentiated. This is the strongest result this project has had from
+any prompt shape: 33 species where the opening estimate was ~99 generated
+pieces.
 
 **Six subjects on one canvas works as well as four.** The upper bound has not
 been found; a 3×2 of six was used three times without the layout itself failing
@@ -86,6 +88,24 @@ in words. Delivered as one sheet of six instead, the generator drew them against
 each other and separated them properly first time — colourful-and-spotted beside
 chrome-and-clean. A sheet is not merely a saving: **it is the only way to ask for
 a difference rather than describe one.**
+
+**When a sheet can't hold both halves, invert the pattern instead of forbidding
+it.** R6's last fish was the exception that proves the rule. A muskellunge and a
+northern pike are the same family, the same silhouette and the same duck-bill
+snout, but the pike had been generated three waves earlier and lives in another
+biome, so no sheet could put them together. The clause that worked stated the
+muskie's marks **positively and as an inversion** — "DARK vertical bars and dark
+spots on a PALE flank" — and only then added the negation as backup ("this is
+the opposite of a northern pike, which has PALE spots on a DARK flank"). It came
+back right first attempt, and at their real 96 and 78px they read as different
+fish.
+
+The ordering is the lesson, and it is the general rule one level down: **a
+negation needs something positive to attach to.** "Do not draw pale spots on a
+dark body" alone leaves the generator holding only a thing to avoid, which is
+the same failure the backdrop convention exists to prevent — name the place, not
+the absence. A single subject on its own canvas is otherwise unremarkable: it
+keyed and cut like any sheet, one component, recomposite 0 px.
 
 **Tested first on R6's sheet A, and it passed every check on the first
 attempt.** Four different fish asked for in one 4:3 canvas, one per quadrant,
@@ -523,3 +543,11 @@ checking them first saves the work of the later ones.
 6. **Then** key it, and **composite locally at game scale before wiring
    anything.** This is the standing habit and it is how G1's misregistration got
    caught late instead of early.
+7. **Register it.** Cutting and committing a PNG does not switch it on. The game
+   decides what to draw from a registry in `config.js` — `fish.species` for a
+   fish, `rig.gearArt` for a rod or a hat, `rig.poses` for an angler — and
+   anything absent from one falls back silently. That fallback is deliberate (it
+   is what keeps a half-finished set playable) and it is exactly what makes the
+   omission hard to see: **art that is on disk but unregistered looks identical
+   to art that never arrived.** Data tests catch a misspelt pose or species, not
+   a forgotten line.
