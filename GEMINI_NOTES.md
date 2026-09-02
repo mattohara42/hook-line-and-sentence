@@ -30,6 +30,8 @@ Scope note, so the docs don't drift into each other:
    reroll.**
 6. **Check for backdrop colour bled *into* the subject first** — that one is
    never fixable downstream.
+7. **Ask for an edit when there is already a painting to edit.** Attach it, name
+   the one thing that changes, and registration comes free (R7).
 
 ---
 
@@ -137,6 +139,52 @@ means two subjects are touching, and that is a reroll rather than a cut problem.
 **Canvas size was ignored as usual**, and it did not matter: asked 1600×1200,
 got 1200×896, ratio 1.339 against 1.333. Each fish still arrived ~525px wide for
 something that renders at 54.
+
+## Editing a delivered painting works, and it is a different tool (R7)
+
+**Asked to return an attached painting with one thing added, it does exactly
+that.** R7's first gear prompt attached the Pond angler and asked for a straw
+hat on his head with everything else identical. What came back was an edit: the
+figure in the same place at the same size, the same clothes, the same hands, the
+same rod on the same axis, and a hat.
+
+| check | result |
+|---|---|
+| silhouette IoU against the reference, after fitting | **0.898**, and all of the difference is hat |
+| the figure below the neck | median colour distance **8.1** of 255, which is JPEG noise |
+| what the reference has and the return does not | **1080 px**, the hair the brim pushed in |
+| backdrop | flat magenta, stdev 2-4, as asked |
+
+This is worth more than the generation it cost. Registration stops being
+something to get right and becomes something you *have*: the pixels that did not
+change are the reference's own. It also means a piece can be found by
+difference rather than keyed out of a fresh canvas.
+
+**Two cautions, both from the same delivery:**
+
+- **The canvas comes back its own size, and the ASPECT drifts too.** Asked
+  1344x1391, got 1008x1056: 0.955 against 0.966. Size being ignored is the old
+  rule, but the aspect moving means a single scale cannot register the return.
+  Fit per-axis, and fit on a part of the figure the edit cannot touch (the lower
+  45%, for a hat or a rod). One scale would have left the head a pixel or two
+  out.
+- **An added piece can arrive as two components.** A pale hatband over pale hair
+  leaves a seam of genuinely unchanged pixels across the crown, so the changed
+  region is a crown and a brim rather than a hat. Close and fill the enclosed
+  holes *before* taking the largest component, or you keep the crown and lose
+  the brim.
+
+**Use the unmix alpha model on the result, never the distance ramp.** The ramp
+reads a half-magenta edge pixel as 0.9 opaque and leaves a pink rim, because a
+JPEG's ringing around a saturated key is not a linear mix. `gap = min(R,B) - G`
+is, and it clips to opaque on every warm or neutral colour in this palette.
+Residual key after unmixing measured 0.000%. This is the third asset kind to
+land on unmix rather than the ramp, after the Whaler's glass and R6's fins.
+
+**Do not force alpha to 1 where the new piece covers the old subject**, however
+safe it looks. A brim pushes the hair silhouette *in*, so along that seam the
+return is backdrop where the reference was paint, and forcing opacity paints the
+backdrop over the head. Unmix everywhere instead.
 
 ## What it reliably ignores
 

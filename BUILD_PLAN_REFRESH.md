@@ -559,8 +559,15 @@ Whether that holds is the probe's job.
 
 **Hats before rods**, because the fallbacks are not equally good: an
 unregistered rod shows the pose's own painted rod and nobody can tell, while an
-unregistered hat shows nothing and is a purchase that does not work. The first
-painting is `hat-straw-pond`, which closes the first done-when clause by itself.
+unregistered hat shows nothing and is a purchase that does not work.
+
+**`hat-straw-pond` landed first attempt on 2026-09-02 and is wired**, so the
+shape is proven rather than assumed: the generator returned an edit, not a
+redraw (silhouette IoU 0.898 against the reference, the pose below the neck
+identical to within JPEG noise), and `tools/cut-gear.py` now owns the cut. The
+Pond kid wears a straw hat in the game, it persists, and the same hat at the
+Stream still falls back to nothing with no failed request. **20 paintings left,
+and none of them is a new question.**
 
 Three things carry it, and the third is the one worth remembering:
 
@@ -620,7 +627,7 @@ body, and all of it survives a reload with no 404s anywhere in the run.
 | R4 | per pose: head, torso, arm, rod + a fingers overlay — all on one canvas, drawn from the torso |
 | R5 | ~~rowboat, Whaler + fighting chair, and a near-side layer for each~~ ✅ — four shop hull repaints outstanding |
 | R6 | ~~33 species × body/tail, in waves by biome~~ ✅ — 33 of 33, in eight sheets and nine generations |
-| R7 | 21 paintings, one per gear item per pose, each an **edit of that pose's own painting** (`ART.md` has the prompts). The wiring is done and waiting: each delivery is one `rig.gearArt` line. Hats first |
+| R7 | 21 paintings, one per gear item per pose, each an **edit of that pose's own painting** (`ART.md` has the prompts). **1 landed, 20 to go**; each delivery is one `tools/cut-gear.py` run and one `rig.gearArt` line. Hats first |
 
 ## Open questions
 
