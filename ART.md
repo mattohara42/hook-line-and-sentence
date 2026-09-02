@@ -300,7 +300,10 @@ still has it.
 3. The rest of the hats, cheapest first (`bucket` 30, `beanie` 50, `souwester`
    75). **Six generations, not nine**: Pond and Ocean are painted, the Stream is
    transplanted from the Pond hat as each one lands. All six prompts are written
-   out under *The hats* below, ready to paste.
+   out under *The hats* below, ready to paste. ~~`hat-bucket-pond`~~ ✅ landed
+   first attempt 2026-09-02 and took `hat-bucket-stream` with it, so **five
+   generations remain**: `beanie` and `souwester` at the Pond, then all three at
+   the Ocean.
 4. The nine rods, `stick` and `bamboo` before `carbon` and `deepsea`.
 
 **The transplant was measured before the six generations were spent**, against
@@ -440,10 +443,50 @@ being told to.
 Pond (`bucket`, `beanie`, `souwester`), three free transplants to the Stream,
 and three at the Ocean. The rods are unaffected, since a rod is not cut this way.
 
+#### ✅ `hat-bucket-pond` landed first attempt (2026-09-02), and the Stream came free
+
+Fourth delivery, fourth faithful edit, and the first one to use the transplant
+for a shipped asset: one generation put the bucket hat on two anglers.
+
+| check | result | the straw hat, re-cut as a control |
+|---|---|---|
+| canvas | 1008x1042 against 1344x1391 asked, **aspect 0.967 against 0.966** | 0.955 against 0.966 |
+| registration | silhouette IoU **0.925**, agreement below the neck 0.966 | 0.898, 0.982 |
+| the pose below the neck | median colour distance 7.3, 14.3% over 40 | 8.4, 11.8% |
+| the piece | 78,675 px, bbox 396x385, and it covers 1137 px of the face box | 93,405 px, 935 px |
+| backdrop | key `(251,2,249)`, border stdev **15.8 / 32.4 / 15.4** | 2.3 / 4.2 / 3.4 |
+| palette | 0 pure-black px, 1.48% darker than umber, warm at `(72,17,6)` | 0 px, 1.19% |
+| transplant to the Stream | heads register at **0.904**, uniform scale 0.672 | 0.904, 0.672 |
+
+**The third column is the finding.** `cut-gear.py` prints raw numbers and no
+thresholds, so "14.3% differs by >40 (a redraw shows here)" and "covers 1137 px
+of the face box" both read as alarms on a first delivery when they are in fact
+normal. **Re-cutting a committed delivery gives you a control for free** and it
+comes back byte-identical to what is in the repo, so it costs one command and
+proves the tool has not drifted either. Every number above lands in the straw
+hat's band. Do this before deciding a delivery is bad.
+
+The one genuine difference is the backdrop, an order of magnitude noisier. This
+PNG arrived through a chat upload rather than a direct download, so it carries a
+second JPEG pass. The unmix did not care: 38 rim px despilled of 5791, against
+the straw's 4 of 8538, and no violet anywhere in the composite. **A noisy
+backdrop is not the reroll condition; backdrop bled into the subject is.**
+
+Verified in Chromium past the profile modal at all three spots
+(`node tools/spot-check.mjs --loc <spot> --hat bucket`): the hat draws at the
+Pond and the Stream, the Ocean falls back to the bare head with the hat layer
+absent from the stack rather than 404ing, and no asset request failed anywhere.
+
+**One thing for the eye rather than the tool.** Sage green on the Stream's green
+forest is the lowest-contrast hat-against-background pairing in the game so far.
+It reads, and the Pond and the Ocean are unaffected, but if it bothers you the
+fix is the hat's colour in the prompt rather than anything downstream.
+
 #### The hats
 
 **Six generations close the hat column**, and all six are below, written out
-whole. The Stream's three are not among them: the transplant measured above
+whole. One is struck through: `hat-bucket-pond` landed 2026-09-02 and carried
+the Stream with it, so five are live. The Stream's three are not among them: the transplant measured above
 lands a Pond hat on the Stream head for free, so the Stream is a command rather
 than a request. Order is cheapest first, and each Pond hat should be
 transplanted to the Stream as it lands rather than in a batch at the end, so
@@ -481,7 +524,9 @@ Pond and Ocean prompts for a given hat carry the same clause.
 
 ##### At the Pond
 
-**`hat-bucket-pond`**: Bucket List, 30 coins.
+~~**`hat-bucket-pond`**: Bucket List, 30 coins.~~ ✅ **Landed first attempt
+2026-09-02**, and `hat-bucket-stream` was transplanted from it. The prompt is kept
+below because it is what a reroll would ask for again.
 
 ```
 ART NEEDED: R7 gear, Bucket List for the Pond angler
