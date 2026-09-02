@@ -11,7 +11,7 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. The last one in the epic. |
 | **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
-| **State** | **11 of 21 painted, 2026-09-02, all first attempt.** Both Ocean hats generated so far scored the best registration numbers in the whole grid. Both done-when clauses are met. Left: **1 hat** (`hat-souwester-ocean` — closes the entire hat column) and 9 rods. **Its prompt is written out whole in `ART.md`, ready to paste.** |
+| **State** | **12 of 21 painted, 2026-09-02. The hat column is COMPLETE, 12 of 12**, from six paintings (each Pond hat transplanted to the Stream for free). All twelve verified in Chromium at all three spots in one sweep. Both done-when clauses are met. Left: **the 9 rods only.** |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 89/89 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
@@ -25,12 +25,20 @@ buy is the rod in your hand. What remains is 18 more paintings of a shop that
 already works, and every open question in front of them is answered.
 
 If it fills, **the generating is the only step left in the hat column.**
-`ART.md` → *R7* → *The hats* holds the last prompt written out whole:
-`hat-souwester-ocean`, one generation from closing the entire hat column.
-`hat-bucket-ocean` and `hat-beanie-ocean` both landed first attempt with the
-best registration numbers of any deliveries yet (agreement below the neck
-0.985-0.986, IoU up to 0.939), confirming a generated Ocean hat carries the
-head's backward tilt correctly without the transplant's risk.
+**The hats are done.** What is left of R7 is the nine rods, and they are a
+different job: a rod is cut by `cut-angler.py`'s corridor rather than by
+`cut-gear.py`'s difference, because the shaft under the hand is exactly where
+the two paintings agree. Their prompt is still a template in `ART.md` → *R7* →
+*The rods*, not written out per rod; writing the first one out whole is the
+natural next step, and `<W> by <H>` comes from the pose table above it.
+
+**Two things the last hat left behind.** A delivery was rejected by mistake for
+looking like the straw hat, and was a sou'wester all along — measuring the two
+silhouettes settled it in one command (back/front reach 2.44 vs 2.01). A glance
+is not a measurement, and a wrong rejection costs as much as a wrong
+acceptance. Separately, `cut-gear.py`'s neck guard truncates both sou'westers
+and no constant fixes it; it is measured, visible at game scale, and logged in
+`BACKLOG.md` rather than bodged.
 Each block carries its own attach / cut / register / transplant lines. Make the
 attachments with `python3 tools/gear-ref.py`, then take one prompt at a time and
 transplant each Pond hat to the Stream as it lands rather than in a batch, so a

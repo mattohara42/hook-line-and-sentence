@@ -168,13 +168,13 @@ export const CONFIG = {
     gearArt: [
       "rod-stick-pond", "rod-bamboo-stream", "rod-deepsea-ocean",
       "hat-straw-pond", "hat-straw-stream", "hat-straw-ocean",
-      // hat-bucket-stream is the Pond painting landed on the Stream head by
-      // tools/hat-transplant.py, not its own generation. The Ocean's head tilts
-      // back and the tool refuses it, so hat-bucket-ocean is still a request.
-      "hat-bucket-pond", "hat-bucket-stream",
-      "hat-beanie-pond", "hat-beanie-stream",
-      "hat-souwester-pond", "hat-souwester-stream",
-      "hat-bucket-ocean", "hat-beanie-ocean",
+      // All 12 hats, complete. Every *-stream entry below is the Pond painting
+      // landed on the Stream head by tools/hat-transplant.py rather than its own
+      // generation; the Ocean's head tilts back and the tool refuses it, so each
+      // *-ocean entry was generated against that pose. Six paintings, nine hats.
+      "hat-bucket-pond", "hat-bucket-stream", "hat-bucket-ocean",
+      "hat-beanie-pond", "hat-beanie-stream", "hat-beanie-ocean",
+      "hat-souwester-pond", "hat-souwester-stream", "hat-souwester-ocean",
     ],
     poses: {
       // R4's painted angler. Both layers are cuts of ONE delivered painting

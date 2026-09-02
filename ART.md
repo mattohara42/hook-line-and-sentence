@@ -300,12 +300,10 @@ still has it.
 3. The rest of the hats, cheapest first (`bucket` 30, `beanie` 50, `souwester`
    75). **Six generations, not nine**: Pond and Ocean are painted, the Stream is
    transplanted from the Pond hat as each one lands. All six prompts are written
-   out under *The hats* below, ready to paste. ~~`hat-bucket-pond`~~,
-   ~~`hat-beanie-pond`~~ and ~~`hat-souwester-pond`~~ ✅ all landed first
-   attempt 2026-09-02, each carrying its Stream transplant, so **the Pond and
-   the Stream are both complete columns**. ~~`hat-bucket-ocean`~~ and
-   ~~`hat-beanie-ocean`~~ ✅ both also landed first attempt 2026-09-02, so
-   **one generation closes the entire hat column**: `hat-souwester-ocean`.
+   out under *The hats* below. ~~All nine landed 2026-09-02~~ ✅ — the three
+   Pond generations each carried a free Stream transplant, and the three Ocean
+   hats were generated against that pose. **The hat column is complete, 12 of
+   12, from six paintings.** Every hat verified in Chromium at every spot.
 4. The nine rods, `stick` and `bamboo` before `carbon` and `deepsea`.
 
 **The transplant was measured before the six generations were spent**, against
@@ -444,6 +442,68 @@ being told to.
 **So the remaining nine hats are six generations rather than nine**: three at the
 Pond (`bucket`, `beanie`, `souwester`), three free transplants to the Stream,
 and three at the Ocean. The rods are unaffected, since a rod is not cut this way.
+
+#### ✅ `hat-souwester-ocean` landed (2026-09-02) — the hat column is complete, 12 of 12
+
+Ninth delivery, and the last hat in the grid. It also cost a wrong call and
+turned up a limitation worth writing down.
+
+**It was rejected once, wrongly.** The first read called it "the straw hat
+again" off a glance at a wide tan brim, and asked for a reroll. It is a
+sou'wester, and measuring the two silhouettes on the same canvas says so:
+
+| | reach in front | reach behind | back/front | back brim below front |
+|---|---|---|---|---|
+| `hat-souwester-ocean` | 105 px | 256 px | **2.44** | **152 px** |
+| `hat-straw-ocean` | 173 px | 348 px | 2.01 | 103 px |
+
+Short at the front, sweeping long and low behind, with a chin strap the straw
+hat does not have. **The lesson is the one `CLAUDE.md` already carries and this
+session broke anyway: a glance is not a measurement.** Two hats can share a
+palette and a rough outline and still be different objects, and the check that
+separates them costs one command. Rejecting a good delivery is as expensive as
+accepting a bad one, and harder to notice.
+
+**The real finding: the neck guard truncates this hat, and no constant fixes
+it.** `cut-gear.py`'s `neck` is a per-pose row below which nothing can be part
+of a hat — a guard that is right for eleven hats and wrong for the one whose
+defining feature is sweeping down over the neck. Both sou'westers hit it:
+
+| | lowest row | its pose's `neck` | clear | last-row taper |
+|---|---|---|---|---|
+| `hat-souwester-ocean` | 819 | 820 | 1 px | **0.98** (flat = cut) |
+| `hat-souwester-pond` | 799 | 800 | 1 px | 0.92 |
+| `hat-beanie-ocean` | 805 | 820 | 15 px | — |
+| `hat-bucket-ocean` | 781 | 820 | 39 px | — |
+| `hat-straw-ocean` | 791 | 820 | 29 px | — |
+
+It is visible: against a cut taken at `neck=900`, **212 px of a 152x168 sprite
+differ by more than 30 at true game scale**, all of it the missing sweep behind
+the neck.
+
+**And lowering the guard does not fix it — it moves the flat edge somewhere
+worse.** Sweeping `neck` to 900, 960 and 1000, the piece's bounding box bottom
+lands at exactly `neck - 1` every time and the piece keeps growing: the diff
+never finds a natural brim edge, because this delivery differs from the
+reference across the whole body (22.3% below the neck, the highest of the nine)
+so "changed" runs to the bottom of the canvas. At 900 the brim does reach its
+taper, but the cut then lands as a straight horizontal seam across the shoulder
+and life vest, which reads worse at full resolution than a truncation tucked
+against the jaw. **Shipped as the unmodified tool cuts it**, and the tool was
+restored byte-identical after the experiment.
+
+A proper fix is shape-aware rather than a row: below the neck, keep only what is
+connected to the brim above it AND distinguishable from the body underneath.
+That is real work and it belongs to whoever wants it, not to this delivery.
+Logged in `BACKLOG.md`.
+
+Registration is otherwise the loosest of the nine (agreement below the neck
+0.945, IoU 0.901), which is the same body-wide difference showing up. Face-box
+coverage 461 px, backdrop stdev 3.0/4.7/4.2, 0 pure-black px, 2.06% darker than
+umber at `(85,13,4)`.
+
+**All twelve hats verified in Chromium at all three spots** in one sweep, every
+one drawing its own art with no failed asset request.
 
 #### ✅ `hat-beanie-ocean` landed first attempt (2026-09-02), and it is the best delivery of the grid
 
@@ -667,10 +727,10 @@ fix is the hat's colour in the prompt rather than anything downstream.
 #### The hats
 
 **Six generations close the hat column**, and all six are below, written out
-whole. Five are struck through: `hat-bucket-pond`, `hat-beanie-pond` and
-`hat-souwester-pond` all landed 2026-09-02, each carrying its Stream transplant,
-and `hat-bucket-ocean` and `hat-beanie-ocean` landed the same day, so eight of
-the nine hats are live and one Ocean generation remains. The Stream's three are not among them: the transplant measured above
+whole, and **all six are struck through: the hat column is finished, 12 of 12,
+2026-09-02.** Six paintings bought nine hats, because each Pond hat transplanted
+to the Stream for free. The prompts are kept below because they are what a
+reroll would ask for again. The Stream's three are not among them: the transplant measured above
 lands a Pond hat on the Stream head for free, so the Stream is a command rather
 than a request. Order is cheapest first, and each Pond hat should be
 transplanted to the Stream as it lands rather than in a batch at the end, so
@@ -1116,7 +1176,9 @@ Wired in: `python3 tools/cut-gear.py ocean hat-beanie assets/Gemini_hat-beanie-o
           then add "hat-beanie-ocean" to CONFIG.rig.gearArt
 ```
 
-**`hat-souwester-ocean`**: Rain Check, 75 coins.
+~~**`hat-souwester-ocean`**: Rain Check, 75 coins.~~ ✅ **Landed 2026-09-02**, the
+last hat in the grid. Rejected once by mistake before it was measured — see the
+record below, and the neck-guard limitation it exposed.
 
 ```
 ART NEEDED: R7 gear, Rain Check for the Ocean angler
