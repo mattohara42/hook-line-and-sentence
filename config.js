@@ -172,6 +172,7 @@ export const CONFIG = {
       // tools/hat-transplant.py, not its own generation. The Ocean's head tilts
       // back and the tool refuses it, so hat-bucket-ocean is still a request.
       "hat-bucket-pond", "hat-bucket-stream",
+      "hat-beanie-pond", "hat-beanie-stream",
     ],
     poses: {
       // R4's painted angler. Both layers are cuts of ONE delivered painting

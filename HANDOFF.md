@@ -11,7 +11,7 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. The last one in the epic. |
 | **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
-| **State** | **5 of 21 painted, 2026-09-02, all first attempt**, and the last two cost one generation: the bucket hat was painted at the Pond and transplanted to the Stream. Both done-when clauses are met. Left: 7 hats (five generations, two transplants) and 9 rods. **Every remaining hat prompt is written out whole in `ART.md`, ready to paste.** |
+| **State** | **7 of 21 painted, 2026-09-02, all first attempt.** Bucket and beanie were each painted once at the Pond and transplanted to the Stream, so four paintings bought four hats. Both done-when clauses are met. Left: 5 hats (four generations, one transplant) and 9 rods. **Every remaining hat prompt is written out whole in `ART.md`, ready to paste.** |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 89/89 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
@@ -25,8 +25,8 @@ buy is the rod in your hand. What remains is 18 more paintings of a shop that
 already works, and every open question in front of them is answered.
 
 If it fills, **the generating is the only step left in the hat column.**
-`ART.md` → *R7* → *The hats* holds every prompt written out whole. Five remain,
-in order: `hat-beanie-pond`, `hat-souwester-pond`, then all three at the Ocean.
+`ART.md` → *R7* → *The hats* holds every prompt written out whole. Four remain,
+in order: `hat-souwester-pond`, then all three at the Ocean.
 Each block carries its own attach / cut / register / transplant lines. Make the
 attachments with `python3 tools/gear-ref.py`, then take one prompt at a time and
 transplant each Pond hat to the Stream as it lands rather than in a batch, so a
