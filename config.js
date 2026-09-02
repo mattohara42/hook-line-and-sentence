@@ -357,6 +357,51 @@ export const CONFIG = {
     // back cycle takes. Small on purpose — a fish at 60px reads as swimming from
     // a few degrees, and more looks like a fish in trouble.
     swim: { tailDeg: 7, tailPeriodMs: 1100 },
+    // The reel path: where a hooked fish starts and where it is landed, in
+    // design px on the 720x360 canvas. It runs deep-and-right to up-and-in, so
+    // reeling pulls the fish toward the boat AND toward the surface. These four
+    // were hardcoded inside app.js's setFishTarget; they are here because the
+    // reveal below reads the fish's progress back out of them.
+    path: { fromX: 430, toX: 150, fromY: 232, toY: 216 },
+    // Every move the fish makes is a tween with a real duration, eased in and
+    // out (logic.easeInOut). It used to CHASE its target with a per-frame
+    // exponential instead — `fishX += (fishTX - fishX) * 0.08` — which was both
+    // frame-rate dependent (that 0.08 is per frame, so a 120Hz screen reeled
+    // twice as fast) and, worse, fastest on its very first frame: a word
+    // completing threw the fish a third of the way to its new mark in ~100ms
+    // and then crept. That is seen as a jump, not a swim.
+    pull: {
+      wordMs: 420,    // one word reeled in — inside reel.wordPauseMs (450), so it settles before the next word
+      biteMs: 520,    // the hook: up out of the depths to the reel's first mark
+      runOutMs: 300,  // A7's fish run darting away; its return home uses wordMs
+    },
+    // The idle sway laid over that tween, so a fish being reeled is still
+    // swimming rather than sliding. Two sines on y at rates that don't divide
+    // into each other, so the loop never visibly repeats.
+    wobble: { xPx: 5, xHz: 0.9, yPx: 7, yHz: 1.6, y2Px: 2, y2Hz: 3.7 },
+    // How late the fish becomes recognisable. The approach silhouette used to
+    // end at the bite, so the moment a fish took the hook it was fully painted,
+    // fully coloured and glowing its tier — at the far end of the scene, where
+    // "what is it?" is the whole of the tension. Now the murk carries through
+    // the hook and clears as the fish is reeled in.
+    //
+    // `startAt` is the reel progress the clearing begins at (below it the fish
+    // is the same shape that rose out of the depths) and `fullAt` is where it
+    // is done. fullAt is below 1 because the fish is never DRAWN at 1: the last
+    // word lands the catch in the tick that sets that target, so the furthest
+    // it ever gets is (wordsToLand - 1) / wordsToLand, which is 0.75 for a
+    // common — the cheapest tier and therefore the binding one. At 0.3/0.7 a
+    // common is a shape for its first word, resolving over its third; a
+    // legendary gets two words of shape and three of clearing.
+    reveal: { startAt: 0.3, fullAt: 0.7 },
+    // And the one that gets away. This used to be `el.fish.style.left = "760px"`
+    // in land(): with the swim RAF already stopped and no transition on left,
+    // the fish did not escape so much as cease to exist. `toX` is off the right
+    // edge of the 720-wide canvas, and the flee is a CSS transition (the same
+    // way the approach drifts) because the JS loop is gone by then. The reveal
+    // rides back down to 0 with it — a fish disappearing into deep water goes
+    // back to being a shape, and you never do find out what it was.
+    escape: { toX: 760, ms: 700 },
     // R6: the fish is SEEN before it bites. It drifts up out of the depths as a
     // dark silhouette behind #surface, which is the front plane V1 built for
     // exactly this, and the bite is then the moment it becomes a real fish

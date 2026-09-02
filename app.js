@@ -621,14 +621,29 @@ function setStatus(t) { el.status.textContent = t; }
 const REDUCE_MOTION = matchMedia("(prefers-reduced-motion: reduce)").matches;
 let swimRAF = null, swimStart = 0;
 let fishX = 0, fishY = 0, fishTX = 0, fishTY = 0;   // current + target fish position
+// the tween carrying it from one to the other: where it left, when, and for how
+// long. See CONFIG.fish.pull — this replaced a per-frame exponential chase.
+let pullFrom = { x: 0, y: 0 }, pullT0 = 0, pullMs = 1;
 
 // target for the current reel progress: starts deep-and-right, ends near the
-// boat at the surface, so reeling pulls the fish up and in
+// boat at the surface, so reeling pulls the fish up and in. Pure — it moves
+// nothing; startPull() is what makes the fish travel to it.
 function setFishTarget(progress = 1 - wordsLeft / wordsToLand) {   // 0 at bite, 1 at land
-  fishTX = 430 - progress * 280;                  // 430 -> 150 (toward the boat)
+  const p = CONFIG.fish.path;
+  fishTX = p.fromX + progress * (p.toX - p.fromX);
   // kept above the bottom-center ghost-hands panel so the fish stays visible
   // while it's reeled across; the "up from the depths" dip is the spawn offset
-  fishTY = 232 - progress * 16;                    // 232 -> 216 (near the surface)
+  fishTY = p.fromY + progress * (p.toY - p.fromY);
+}
+
+// Send the fish to wherever setFishTarget just put the mark, over `ms`, easing
+// out of rest and back into it. Re-anchoring on the fish's CURRENT position is
+// what lets a pull interrupt one already in flight (the Stream's spaces reel a
+// word without waiting for a pause) without ever snapping.
+function startPull(ms) {
+  pullFrom = { x: fishX, y: fishY };
+  pullT0 = performance.now();
+  pullMs = Math.max(1, ms);
 }
 
 // ---- R1: the cast, the line and the reel actually move (ANIMATION.md) ----
@@ -854,10 +869,21 @@ function renderFish(f) {
   }
 }
 
+// How far the species has resolved out of the murk, written onto #fish as
+// --reveal for the stylesheet's submerged filters to interpolate. Read from the
+// fish's own x rather than from wordsLeft, so it clears with the swim instead
+// of stepping once per word.
+function setReveal(x) {
+  const rv = CONFIG.fish.reveal;
+  const r = logic.revealAt(logic.reelProgressAtX(CONFIG.fish.path, x), rv.startAt, rv.fullAt);
+  el.fish.style.setProperty("--reveal", r.toFixed(3));
+}
+
 // the fish's mouth (left edge; the art faces left) is where the line attaches
 function drawFish(x, y) {
   el.fish.style.left = x + "px";
   el.fish.style.top = y + "px";
+  setReveal(x);
   const m = fishBox().mouth;
   lineEnd = { x: x + m.x, y: y + m.y };
   if (REDUCE_MOTION) drawLine();
@@ -867,13 +893,17 @@ function startSwim() {
   startLineLoop();                     // R1: the line follows the fish and the rod
   if (REDUCE_MOTION) { fishX = fishTX; fishY = fishTY; drawFish(fishTX, fishTY); return; }
   swimStart = performance.now();
+  const W = CONFIG.fish.wobble;
   const step = (now) => {
     if (phase !== "reel") return;
-    fishX += (fishTX - fishX) * 0.08;   // ease toward the target each frame
-    fishY += (fishTY - fishY) * 0.08;
+    // a real tween on a clock, not a per-frame chase: same speed on any
+    // monitor, and it leaves and arrives at rest so a pull reads as a pull
+    const k = logic.easeInOut((now - pullT0) / pullMs);
+    fishX = pullFrom.x + (fishTX - pullFrom.x) * k;
+    fishY = pullFrom.y + (fishTY - pullFrom.y) * k;
     const t = (now - swimStart) / 1000;
-    const wobX = Math.sin(t * 0.9) * 5;
-    const wobY = Math.sin(t * 1.6) * 7 + Math.sin(t * 3.7) * 2;
+    const wobX = Math.sin(t * W.xHz) * W.xPx;
+    const wobY = Math.sin(t * W.yHz) * W.yPx + Math.sin(t * W.y2Hz) * W.y2Px;
     drawFish(fishX + wobX, fishY + wobY);
     swimRAF = requestAnimationFrame(step);
   };
@@ -882,6 +912,19 @@ function startSwim() {
 function stopSwim() {
   if (swimRAF) cancelAnimationFrame(swimRAF);
   swimRAF = null;
+}
+
+// The one that got away, darting off into deep water. land() has already
+// stopped the swim RAF by the time this runs, so the move is handed to a CSS
+// transition — the same way the approach drifts in — rather than being set
+// straight onto `left`, which is what used to make an escape a disappearance.
+function fleeOffscreen() {
+  const esc = CONFIG.fish.escape;
+  el.fish.style.setProperty("--flee", esc.ms + "ms");
+  el.fish.classList.add("fleeing");
+  void el.fish.offsetWidth;             // commit the current position to transition FROM
+  el.fish.style.left = esc.toX + "px";
+  el.fish.style.setProperty("--reveal", "0");   // …and back to a shape as it goes
 }
 
 // ---- Phases ----
@@ -900,6 +943,8 @@ function startCast() {
   el.fish.style.removeProperty("background-image");   // clear a junk sprite swap
   renderFish(null);                                   // R6: and any species layers with it
   el.fish.style.removeProperty("--drift");
+  el.fish.style.removeProperty("--reveal");           // …and the next catch is a shape again
+  el.fish.style.removeProperty("--flee");
   fish = junk = null;                                 // the next approach rolls its own
   setStatus(pick(PUNS.cast));
   renderWord();
@@ -1018,6 +1063,10 @@ function bite() {
   // the point the silhouette has just drifted to, from the same config
   fishX = fishTX + CONFIG.fish.approach.spawn.dx;
   fishY = fishTY + CONFIG.fish.approach.spawn.dy;
+  startPull(CONFIG.fish.pull.biteMs);
+  // the murk the silhouette rose in carries straight through the hook, so the
+  // bite doesn't hand the species over the moment the fish is caught
+  setReveal(fishX);
   el.dist.textContent = wordsLeft + " words";
   shakeScene();
   burst(410, 200, 10);
@@ -1036,8 +1085,9 @@ function pullFishOneWord() {
   wordsLeft--;
   el.dist.textContent = wordsLeft > 0 ? wordsLeft + " words" : "landing…";
   setFishTarget();
+  startPull(CONFIG.fish.pull.wordMs);  // …and it swims there rather than arriving there
   rodTug(A.tug.wordImpulse);           // R1: the rod bends to the pull
-  if (REDUCE_MOTION) drawFish(fishTX, fishTY);
+  if (REDUCE_MOTION) { fishX = fishTX; fishY = fishTY; drawFish(fishTX, fishTY); }
   const mid = parseInt(el.fish.style.left) + fishBox().w / 2;   // R6: a species' box is its own
   burst(mid, 258, 4);
   ripple(mid, 262);
@@ -1072,19 +1122,21 @@ function reelComplete() {
 
 // A7: the fish makes a run. Pure theatre — it darts back on screen and the reel
 // beats for a moment, but `wordsLeft` is untouched, so **no progress is lost**
-// and tension never moves. The swim RAF already eases fishX toward fishTX, so
+// and tension never moves. The swim RAF already tweens fishX toward fishTX, so
 // nudging the target outward and restoring it afterwards is the whole animation.
 function fishRun(ms, then) {
   inputLocked = true;
   updateGuide(null);                      // hands rest through the beat, like the word pause
   fishTX += CONFIG.fight.runSurgePx;      // dart away…
-  if (REDUCE_MOTION) drawFish(fishTX, fishTY);
+  startPull(CONFIG.fish.pull.runOutMs);   // …faster than it is reeled back in
+  if (REDUCE_MOTION) { fishX = fishTX; fishY = fishTY; drawFish(fishTX, fishTY); }
   shakeScene();
   sfxBite();
   setStatus(pick(PUNS.fishRun));
   later(() => {
     setFishTarget();                      // …and back to where the kid actually reeled it to
-    if (REDUCE_MOTION) drawFish(fishTX, fishTY);
+    startPull(CONFIG.fish.pull.wordMs);
+    if (REDUCE_MOTION) { fishX = fishTX; fishY = fishTY; drawFish(fishTX, fishTY); }
     then?.();
     inputLocked = false;
     renderWord();                         // repaints the word and restores the finger guide
@@ -1219,7 +1271,7 @@ function land(success) {
     save.stats.escapes = (save.stats.escapes ?? 0) + 1;
     persistSave();                              // flush accumulated stats on escape
     el.escaped.textContent = save.stats.escapes;
-    el.fish.style.left = "760px";
+    fleeOffscreen();
     sfxEscape();
     setStatus(pick(PUNS.escape));
   }
