@@ -11,7 +11,7 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. The last one in the epic. |
 | **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
-| **State** | **3 of 21 painted, 2026-09-02, all first attempt.** The straw hat is on all three anglers, so **R7's first done-when clause is met** and both clauses now are. What is left is the rest of the grid: 9 hats (six generations, three transplants) and 9 rods. |
+| **State** | **3 of 21 painted, 2026-09-02, all first attempt.** The straw hat is on all three anglers, so **R7's first done-when clause is met** and both clauses now are. What is left is the rest of the grid: 9 hats (six generations, three transplants) and 9 rods. **The six hat prompts are now written out whole in `ART.md`, ready to paste** — nothing to substitute, nothing to decide. |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 89/89 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
@@ -24,12 +24,16 @@ met: the straw hat changes the angler at every spot and persists, and the rod yo
 buy is the rod in your hand. What remains is 18 more paintings of a shop that
 already works, and every open question in front of them is answered.
 
-If it fills: the next three are `hat-bucket-pond`, `hat-beanie-pond` and
-`hat-souwester-pond`, each then transplanted to the Stream with
-`python3 tools/hat-transplant.py <stem> pond stream` and generated again for the
-Ocean. Prompts and the per-hat clauses are in `ART.md` under *R7*; references
-come from `python3 tools/gear-ref.py`. Then the nine rods, which go through
-`cut-angler.py` rather than `cut-gear.py`.
+If it fills, **the generating is now the only step left in the hat column.**
+`ART.md` → *R7* → *The hats* holds all six prompts written out whole, in order:
+`hat-bucket-pond`, `hat-beanie-pond`, `hat-souwester-pond`, then the same three
+at the Ocean. Each block carries its own attach / cut / register / transplant
+lines. Make the attachments once with `python3 tools/gear-ref.py` (it needs
+Pillow, and it writes the three gitignored `assets/ref-angler-*.png`), then take
+one prompt at a time. Transplant each Pond hat to the Stream as it lands rather
+than in a batch, so a bought hat is never live at one spot only. Then the nine
+rods, which go through `cut-angler.py` rather than `cut-gear.py` and whose
+prompt is still a template.
 
 **Three deliveries in, nothing about the method is open.** The generator returns
 an edit rather than a redraw (`GEMINI_NOTES.md` → *Editing a delivered
