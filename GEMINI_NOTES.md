@@ -160,14 +160,94 @@ something to get right and becomes something you *have*: the pixels that did not
 change are the reference's own. It also means a piece can be found by
 difference rather than keyed out of a fresh canvas.
 
-**Confirmed on the second and third deliveries** (the same hat for the standing
-Stream angler and the braced Ocean one): three for three, every one a faithful
-edit, with 591 and 1092 px of the reference missing from the returns. The Ocean's
-also did what only it was asked to do, tilting the brim back to follow a head
-that is not upright, so the instruction lands rather than being averaged away. The one difference worth noting is the backdrop, which
-came back at a border stdev of 10/20/10 against the first delivery's 2/4/3. Still
-flat enough to key, and it is the reminder the convention already carries:
-measure the backdrop, never assume it.
+**Nine for nine.** The whole R7 hat grid is in: four hat styles across three
+poses, six of them generated and three landed by transplant. **Every generation
+came back a faithful edit** — no redraw, no reframe, no pose change, not once.
+This is now the most reliable thing in this file after aspect-as-a-ratio.
+
+| delivery | agreement below the neck | silhouette IoU | ref px the return lacks |
+|---|---|---|---|
+| straw · pond | 0.982 | 0.898 | 3194 |
+| straw · stream | 0.974 | — | 591 |
+| straw · ocean | 0.975 | 0.896 | 1092 |
+| bucket · pond | 0.966 | 0.925 | 6726 |
+| beanie · pond | **0.991** | **0.939** | 1463 |
+| souwester · pond | 0.974 | 0.902 | 2066 |
+| bucket · ocean | 0.985 | 0.931 | **553** |
+| beanie · ocean | 0.986 | **0.939** | 2829 |
+| souwester · ocean | 0.945 | 0.901 | 5882 |
+
+**The tilt instruction lands, three for three.** The Ocean is the one pose whose
+head is not upright, and every hat generated against it tilted the brim back to
+follow. A specific geometric instruction attached to a specific feature is *not*
+averaged away, which is worth contrasting with the hedged-position failures
+below: the difference is that this one describes the subject rather than a
+position on the canvas.
+
+**The aspect drift is repeatable per reference, not random per generation.**
+This matters because it is what makes the per-axis fit safe.
+
+| pose | asked | returned |
+|---|---|---|
+| pond | 0.966 | 0.955, 0.955, 0.955 (and one 0.967) |
+| ocean | 0.903 | 0.897, 0.897, 0.897 |
+
+Same attachment, same drift. So the fit is correcting a stable property of the
+round-trip rather than chasing noise, and there is **no trend to read into a
+single tighter or looser return.** One delivery came back at 0.967 against a
+0.966 ask and briefly looked like the generator was improving; the next three
+were 0.955 and 0.897. Do not tune a prompt on one aspect reading.
+
+**Backdrop flatness varies per generation, and says nothing about anything
+else.** Border stdev across the nine ranged from 2/4/3 to **16/32/15**, on the
+same prompt and the same attachment. One noisy return was written up as an
+artefact of how the file reached the machine (a chat upload rather than a direct
+download, so a second JPEG pass); the next delivery arrived by the identical
+route, within 300 bytes of the same file size, **8x cleaner**. The explanation
+did not survive, and the honest reading is that it simply varies. The unmix
+absorbs the whole range — 4 to 67 rim px despilled, no violet anywhere — so
+**a noisy backdrop is not the reroll condition. Backdrop bled into the *subject*
+still is.**
+
+**A faithful edit agrees with the reference on the untouched linework closely,
+but never to the pixel.** The generator repaints the whole canvas rather than
+compositing onto yours, so an eyebrow, an eye, a nose and a mouth it was told
+not to change come back within a few px of where they were, in the same ink —
+visually identical, and a 1-3px trace of "changed" in any difference-based cut.
+That is a property of the round-trip, not a defect, and **anything reading the
+diff has to expect it.** It cost R7 a real bug: the morphological close that
+bridges a hood to its own brim happily bridged that trace into a ring around the
+face, and the hole-fill then painted the ring's inside solid — thousands of px
+of "hat" that composited invisibly because the redrawn linework matched what it
+covered. Full mechanism in `tools/cut-gear.py`'s docstring.
+
+**The inversion clause works on shape, and does not police colour.** Each hat's
+prompt named the hats already delivered for that pose and stated the difference
+as an opposite (`[NOT THE OTHER ONE]`, the muskie's rule). It delivered: four
+genuinely different silhouettes, and the two most alike are still measurably
+apart — the sou'wester reaches 2.44x further behind the head than in front
+against the straw hat's 2.01, and sits 152px lower at the back against 103.
+
+**But measurably distinct is not the same as distinct at a glance, and that cost
+a wrongly-rejected delivery.** Both hats came back wide-brimmed in the same
+amber-tan family, because nothing in the prompt separated their *colour* — the
+straw hat asked for "honey-oat straw", the sou'wester for "muted amber oilskin",
+which are the same instruction to a painter. The review took one look and called
+the sou'wester a duplicate straw hat. It was not, and one command comparing the
+two silhouettes proved it. **So when two items in a set share a palette, give
+the inversion clause a colour to work with as well as a shape**, and check a
+suspected duplicate by measuring before spending a reroll on it. Rejecting a
+good generation costs exactly as much as accepting a bad one and is much harder
+to notice afterwards.
+
+**A shared frame can contradict the item it is wrapping.** The hat prompts all
+carried "the brim must not cover the eye, the eyebrow or any part of the face".
+For a beanie, whose own block says "it has NO brim of any kind — if it has a
+brim it is wrong", that sentence quietly reads as permission to draw one. It was
+changed to "no part of the hat may cover…" for the two beanie prompts only, and
+both came back the **only two deliveries of the nine to touch the face box at
+all — zero px.** When a template is filled per item, re-read the boilerplate
+against each item rather than only the block that changed.
 
 **Two cautions, both from the first delivery:**
 
