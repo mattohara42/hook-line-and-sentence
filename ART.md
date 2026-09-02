@@ -323,9 +323,39 @@ and the `#scene.loc-ocean #fish:not(.rigged).tier-legendary` rule in
 `style.css`** (a 96px width override). Both are dead the moment the species has
 a real entry, and leaving them is how a stale sprite outlives its replacement.
 
+> **⚠️ Sheet A was rerolled once (2026-09-02) — the first reroll in the
+> milestone, and the prompt below is the corrected one.** The first attempt came
+> back as a **scientific field-guide plate**: six specimens on aged cream paper,
+> each captioned with its Latin binomial. Cream backdrop `(249,237,210)` with
+> **0.00%** magenta anywhere, aspect 1.833 against the 4:3 asked (the project's
+> first aspect miss), and paper at luminance 241 against the palest fish tones at
+> 211 — 30 apart, unkeyable. Full write-up in `GEMINI_NOTES.md` → *Describing
+> fish by field marks makes it draw a field guide*.
+>
+> **The species clauses were not the problem and are unchanged** — the
+> differentiation worked first time. What is added below is a paragraph
+> forbidding the field-guide idiom by name (the same treatment R4's rod needed
+> for "no fishing line"), and a backdrop stated as a *place* rather than a colour.
+
 ```
 ART NEEDED: R6 wave 3, sheet A — the Ocean's four silver commons, plus two
-Prompt:   [STYLE]
+Prompt:   [WHAT THIS IS]
+          Six separate game sprites of fish, to be cut out and used in a
+          children's video game. This is NOT a field guide, NOT a scientific
+          specimen plate, NOT a museum illustration, NOT a poster. There is NO
+          paper of any kind: no parchment, no aged paper, no paper texture, no
+          canvas texture, no vignette, no border. There are NO captions, NO
+          labels, NO species names, NO Latin names, NO handwriting and NO text
+          anywhere in the image.
+
+          [BACKDROP]
+          The six fish float on a solid magenta screen, the way a subject stands
+          in front of a photographer's backdrop. Every part of the image that is
+          not a fish is one completely flat, even magenta #FF00FF, edge to edge
+          and into all four corners: a single flat colour, no gradient, no
+          texture, no vignette, no pattern, no shading.
+
+          [STYLE]
           Soft painterly storybook illustration, warm muted color palette, gentle
           diffused lighting, thin warm brown outlines rather than black, cozy and
           inviting mood, no harsh shadows, no neon or saturated colours. Soft
@@ -383,13 +413,9 @@ Prompt:   [STYLE]
           watermark, no border, no frame, no grid lines, no panel dividers between
           the fish.
 
-          [BACKDROP]
-          Every part of the canvas that is not a fish is one completely flat, even
-          magenta #FF00FF, edge to edge and into all four corners. A single flat
-          colour: no gradient, no texture, no vignette, no pattern.
-
           [CANVAS]
-          The image is 1600 by 1200 pixels, aspect ratio 4:3. Output as PNG.
+          The image is 1600 by 1200 pixels, aspect ratio 4:3 — wider than it is
+          tall. Output as PNG.
 Save as:  assets/Gemini_fish-ocean-shoal.jpg
 Wired in: `python3 tools/cut-fish.py ocean-shoal` — already registered in SHEETS
 ```

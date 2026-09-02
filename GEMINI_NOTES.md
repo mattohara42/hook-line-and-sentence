@@ -244,6 +244,44 @@ kind of problem you have before deciding what a reroll is worth.
   `(248,88,242)` with a stdev of **14.6**, a faint gradient across the magenta.
   Still floods fine at tolerance 70, but the convention is not a guarantee.
 
+## Describing fish by field marks makes it draw a field guide (R6)
+
+**The one sheet in R6 that had to be rerolled, and the prompt caused it.** The
+Ocean's first sheet asked for six species described by their distinguishing
+marks — "a row of dark round spots along the upper flank", "three separate dorsal
+fins", "a whisker-like barbel" — with the species named. That is the register of
+a **scientific field-guide plate**, and the generator drew one: six specimens on
+**aged cream paper**, each with a **caption and its Latin binomial**, in fine
+naturalist linework.
+
+Everything about the frame was wrong at once, which is how you know it was the
+idiom and not the wording:
+
+| asked | got |
+|---|---|
+| flat magenta `#FF00FF` backdrop | cream parchment `(249,237,210)`, and **0.00%** of the canvas carried any magenta at all |
+| aspect ratio 4:3 | **1.833** — the first aspect miss in the project, after it had been exact on every previous sheet |
+| "no text, no labels, no names" | a caption and a Latin binomial under all six |
+| storybook painterly | naturalist plate, on textured paper with a vignette |
+
+**It is not salvageable, and the numbers say why the magenta convention exists.**
+The paper sits at luminance 241 and the palest fish tones at 211 — **30 apart**,
+against a backdrop whose own stdev reaches 10 from the paper grain. Every sheet
+that worked keyed at stdev 1–2 with the subject 100+ away in colour space. A
+silver herring's belly on cream paper cannot be told from the paper.
+
+**What the species clauses got right, keep.** The differentiation itself worked
+perfectly first time — the plain herring, the barred mackerel, the big-mouthed
+anchovy, the spotted sardine — so the reroll changes only the frame.
+
+**The fix is to forbid the idiom by name, the way R4's rod had to forbid a
+fishing line.** A field guide is what a list of field marks *is*, so excluding it
+needs its own paragraph naming every form it takes: no plate, no specimen chart,
+no captions, no species names, no Latin names, no paper, no parchment, no paper
+texture, no vignette. And state the backdrop as a *place* rather than a colour —
+"the fish float on a solid magenta screen, like a photographer's backdrop" — so
+it has something to draw instead of something to avoid.
+
 ## The backdrop convention (use this instead of asking for transparency)
 
 **Ask for a flat magenta `#FF00FF` backdrop, not a transparent one, and not a
