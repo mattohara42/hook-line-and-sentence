@@ -57,11 +57,11 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #         covers them cannot be fixed downstream and is a reroll
 POSES = {
     "pond":   dict(crop=(115, 8, 1222, 1331), design=(39, -44, 70,  76),
-                   neck=800, face=(400, 625, 570, 790)),
+                   neck=800, face=(400, 625, 570, 790), hatbox=(0, 300, 750, 830)),
     "stream": dict(crop=(331, 8, 1048, 1466), design=(38, -70, 88, 123),
-                   neck=810, face=(470, 650, 610, 800)),
+                   neck=810, face=(470, 650, 610, 800), hatbox=(150, 420, 790, 830)),
     "ocean":  dict(crop=(81,  7, 1237, 1419), design=(38, -48, 71,  82),
-                   neck=820, face=(300, 650, 410, 800)),
+                   neck=820, face=(300, 650, 410, 800), hatbox=(60, 340, 580, 860)),
 }
 THRESH = 45
 
@@ -96,23 +96,66 @@ def bbox(m):
     ys, xs = np.where(m)
     return xs.min(), xs.max(), ys.min(), ys.max()
 
-def lower(m):
-    x0, x1, y0, y1 = bbox(m)
-    mm = m.copy(); mm[:y0 + int(0.55 * (y1 - y0))] = False
-    return bbox(mm)
+# Fit by maximising silhouette agreement BELOW THE NECK, where no hat can reach
+# and a rod swap moves nothing. Matching bounding boxes there was the obvious
+# first try and it broke on the second delivery: the Stream angler dangles a
+# landing net, the net hangs differently in the return, and one moved extremity
+# is enough to skew a box fit (it gave 1.204 x 1.399 for a figure that had not
+# changed shape at all). A search over the whole overlap cannot be misled by one
+# limb, and it optimises the quantity actually wanted.
+# The transform is parameterised about the two figures' CENTROIDS rather than
+# the canvas origin, so a change of scale does not also shift the figure. With
+# scale and offset coupled the search cannot move at all: every single-parameter
+# step from the seed is worse than the seed, even though a diagonal step is
+# better, and it sat on its seed 0.02 of IoU short of the answer.
+cs = np.array([np.where(ms)[1].mean(), np.where(ms)[0].mean()])
+cr = np.array([np.where(mr)[1].mean(), np.where(mr)[0].mean()])
 
-ls, lr = lower(ms), lower(mr)
-sx = (lr[1] - lr[0]) / (ls[1] - ls[0])
-sy = (lr[3] - lr[2]) / (ls[3] - ls[2])
-tx, ty = lr[0] - ls[0] * sx, lr[2] - ls[2] * sy
-aff = (1 / sx, 0, -tx / sx, 0, 1 / sy, -ty / sy)
+def affine(sx, sy, tx, ty):
+    return (1 / sx, 0, cs[0] - (cr[0] + tx) / sx,
+            0, 1 / sy, cs[1] - (cr[1] + ty) / sy)
+
+def warp_mask(sx, sy, tx, ty):
+    return np.asarray(Image.fromarray((ms * 255).astype(np.uint8)).transform(
+        (W, H), Image.AFFINE, affine(sx, sy, tx, ty), Image.BILINEAR, fillcolor=0)) > 128
+
+# Everything OUTSIDE the box a hat could occupy, which keeps the rod in the
+# objective. That matters more than it sounds: the rod is a long thin diagonal
+# across half the canvas and no hat touches it, so it pins the scale and the
+# offset far harder than a seated child's below-the-neck blob does.
+hx0, hy0, hx1, hy1 = P["hatbox"]
+outside = np.ones((H, W), bool); outside[hy0:hy1, hx0:hx1] = False
+ref_out = mr & outside
+
+def agree(sx, sy, tx, ty):
+    w = warp_mask(sx, sy, tx, ty) & outside
+    return (w & ref_out).sum() / max((w | ref_out).sum(), 1)
+
+sx, sy, tx, ty = W / src.width, H / src.height, 0.0, 0.0
+step = [0.03 * sx, 0.03 * sy, 24.0, 24.0]
+best = agree(sx, sy, tx, ty)
+for _ in range(7):
+    for i in range(4):
+        while True:
+            moved = False
+            for d in (+1, -1):
+                cand = [sx, sy, tx, ty]; cand[i] += d * step[i]
+                v = agree(*cand)
+                if v > best + 1e-5:
+                    best, (sx, sy, tx, ty), moved = v, cand, True
+                    break
+            if not moved:
+                break
+    step = [v / 2 for v in step]
+aff = affine(sx, sy, tx, ty)
 D = np.asarray(src.transform((W, H), Image.AFFINE, aff, Image.BICUBIC,
                              fillcolor=tuple(KEY.astype(int))), dtype=float)
 md = np.asarray(Image.fromarray((ms * 255).astype(np.uint8))
                 .transform((W, H), Image.AFFINE, aff, Image.BICUBIC, fillcolor=0)) > 128
 iou = (md & mr).sum() / (md | mr).sum()
-print("fit: scale (%.4f, %.4f) offset (%.1f, %.1f) -> silhouette IoU %.4f, "
-      "%d px the reference has and the delivery does not" % (sx, sy, tx, ty, iou, (mr & ~md).sum()))
+print("fit: scale (%.4f, %.4f) offset (%.1f, %.1f), agreement below the neck %.4f"
+      " -> silhouette IoU %.4f, %d px the reference has and the delivery does not"
+      % (sx, sy, tx, ty, best, iou, (mr & ~md).sum()))
 
 # The reference is keyed, so its backdrop is alpha over black. Flatten it back
 # onto the delivery's own key colour first, or every backdrop pixel reads as a
