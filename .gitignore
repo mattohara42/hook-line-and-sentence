@@ -2,3 +2,7 @@ node_modules/
 .env
 .netlify/
 .DS_Store
+
+# R7: gear prompt attachments, derived from assets/angler-<pose>.png by
+# tools/gear-ref.py. Regenerated on demand, never committed.
+assets/ref-angler-*.png

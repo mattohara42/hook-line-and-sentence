@@ -11,7 +11,7 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. The last one in the epic. |
 | **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
-| **State** | **Code half done 2026-09-02** — the shop sells four rods and five hats, equipping either rebuilds the rig, all of it persists. **The 21 paintings are the only thing left in the epic.** |
+| **State** | **Code half done and the prompts written, 2026-09-02.** The shop sells four rods and five hats, equipping either rebuilds the rig, all of it persists. **The 21 paintings are the only thing left in the epic, and they are now a generation queue rather than a writing job.** |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 89/89 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
@@ -19,22 +19,28 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**Write R7's art prompts.** It is the last thing the epic needs, and nothing in
-the code is waiting on decisions. `ART.md` → *R7* has the delivery contract and
-the grid; **`GEMINI_NOTES.md` is required reading before writing any of them.**
+**Generate `hat-straw-pond`.** Everything else in the epic is waiting on that
+one painting to prove the shape of the ask, and it closes R7's first done-when
+clause by itself. The prompt, the attachment, the checks and the order for the
+other twenty are all in `ART.md` under *R7*.
 
-Two rules carry it, both paid for by R6: **ask in sheets** (four hats on one
-canvas come back as four different hats; four passes come back as one hat four
-times), and **draw each item against the pose's own painting**, on that canvas,
-so it registers by construction.
+Two things about the request are new, and `ART.md` argues both:
+
+- **A gear painting is an edit of the pose, not a new painting.** Attach the
+  pose's own painting (`python3 tools/gear-ref.py` makes the copy to upload)
+  and ask for it back with one thing changed, so registration is free and a
+  swapped rod stays on the axis `cut-angler.py` already has.
+- **R6's sheet is not available here**, so gear falls back on the muskie's rule.
+  Whether that holds is what the straw hat at all three poses buys, and the
+  answer decides six later generations.
+
+**Hats before rods.** An unregistered rod falls back to the pose's own painted
+gate rod, which nobody can tell from the real thing. An unregistered hat falls
+back to nothing, so it is a purchase that visibly does nothing.
 
 **A delivered PNG is not live until it is registered** in `CONFIG.rig.gearArt`,
-and an unregistered one looks exactly like art that never arrived —
-`GEMINI_NOTES.md`'s delivery checklist, step 7. Until a stem is registered the
-game falls back (a rod shows the pose's painted gate rod, a hat shows nothing),
-so **no gear delivery is urgent and none have to arrive together.** Start with
-one hat at the Pond pose: that single painting closes the first done-when
-clause. The second is already met.
+and an unregistered one looks exactly like art that never arrived
+(`GEMINI_NOTES.md`'s delivery checklist, step 7).
 
 ## Waiting on Matt (none of it blocks R7)
 
