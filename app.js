@@ -253,6 +253,21 @@ const PUNS = {
     "Type the word to cast. Let's get kraken",
     "Type the word to cast — any fin is possible",
   ],
+  // F4: the wiggle prompt is an INSTRUCTION, so like the cast prompts it always
+  // keeps the literal thing to do in it (CLAUDE.md). A kid who has never seen a
+  // wiggle cast before has to be able to read one line and know what to press.
+  wiggle: [
+    "Nothing's biting — type to wiggle the bait",
+    "Give it a wiggle: type the word",
+    "Type the word to jiggle the bait and look tasty",
+    "Wiggle wiggle — type to twitch the line",
+  ],
+  wiggleDone: [
+    "Ooh — something noticed…",
+    "That got its attention",
+    "Nice wiggling. Here it comes…",
+    "Somebody down there is interested now",
+  ],
   wait: [
     "Something's fishy down there…",
     "Waiting… just for the halibut",
@@ -585,9 +600,9 @@ function bobberOut(plunge) {
   if (plunge) {
     el.bobber.classList.add("plunge");
     ripple(A.cast.landing.x, A.cast.landing.y);
-    setTimeout(() => el.bobber.classList.remove("on", "plunge"), 400);
+    setTimeout(() => el.bobber.classList.remove("on", "plunge", "twitch"), 400);
   } else {
-    el.bobber.classList.remove("on", "plunge");
+    el.bobber.classList.remove("on", "plunge", "twitch");   // F4: and any wiggle left on it
   }
 }
 
@@ -966,12 +981,72 @@ function startWait() {
     ripple(A.cast.landing.x, A.cast.landing.y);
     sfxSplash();
     bobberIn();
-    // R6: the fish shows itself before it bites. A fast bait shortens the tease
-    // rather than losing it — the approach never starts before the cast lands.
-    const wait = rand(...CONFIG.bite.delayMsRange) * equippedBait().biteSpeedMult;
-    later(approach, Math.max(0, wait - CONFIG.fish.approach.leadMs));
-    later(bite, wait);
+    // F4: some casts land the bait on an uninterested pond. Rolled here rather
+    // than at the cast, so it is the water that is quiet and not the throw.
+    if (Math.random() < CONFIG.wiggle.chance) startWiggle();
+    else armBite(CONFIG.bite.delayMsRange);
   });
+}
+
+// R6: the fish shows itself before it bites. A fast bait shortens the tease
+// rather than losing it — the approach never starts before the cast lands.
+// F4 pulled this out of startWait because the end of a wiggle arms a bite the
+// same way, just from a much shorter range.
+function armBite(range) {
+  const wait = rand(...range) * equippedBait().biteSpeedMult;
+  later(approach, Math.max(0, wait - CONFIG.fish.approach.leadMs));
+  later(bite, wait);
+}
+
+// ---- F4: the wiggle ----
+// The wait used to be locked input and nothing to do. On a wiggle cast the kid
+// types a couple of short words to twitch the bait, and the fish comes when
+// they finish — no wiggle, no bite (Matt's call; the reasoning and why it does
+// not break the cozy guardrail are on CONFIG.wiggle).
+//
+// It is deliberately the plainest possible use of the machinery already here:
+// a phase, a target word, and the same keydown handler. Nothing about tension,
+// timing or scoring is touched, so a wiggle cannot cost a kid anything.
+let wigglesLeft = 0;
+
+function startWiggle() {
+  phase = "wiggle"; inputLocked = false;
+  const [lo, hi] = CONFIG.wiggle.wordsRange;
+  wigglesLeft = lo + Math.floor(Math.random() * (hi - lo + 1));   // inclusive both ends
+  setStatus(pick(PUNS.wiggle));
+  nextWiggleWord();
+}
+
+// Short words only — a twitch, not a cast. Falls back to the whole unlocked
+// pool if a stage somehow has none: stage 1 is 37 home-row words and a filter
+// that comes back empty must never be able to strand the cast.
+function nextWiggleWord() {
+  const short = WORDS.filter(e => e.w.length <= CONFIG.wiggle.maxWordLen);
+  target = pick(short.length ? short : WORDS).w;
+  typed = 0; lastKeyTime = 0;
+  renderWord();
+}
+
+function wiggleComplete() {
+  twitchBait();
+  if (--wigglesLeft > 0) { nextWiggleWord(); return; }
+  phase = "wait"; inputLocked = true;
+  el.word.textContent = "";
+  updateGuide(null);
+  setStatus(pick(PUNS.wiggleDone));
+  armBite(CONFIG.wiggle.biteDelayMsRange);
+}
+
+// One word's worth of twitch. The whole mechanic rests on a kid being able to
+// SEE their typing move something in the water, so every word moves the bobber,
+// rings the surface and pulls the rod — the same three things a reeled word
+// already does, aimed at the bait instead of at a fish.
+function twitchBait() {
+  el.bobber.classList.remove("twitch"); void el.bobber.offsetWidth;
+  el.bobber.classList.add("twitch");
+  ripple(A.cast.landing.x, A.cast.landing.y);
+  rodTug(A.tug.wordImpulse);
+  sfxWordTick();
 }
 
 // What is on its way up. Rolled at the START of the approach rather than at the
@@ -1196,6 +1271,7 @@ function fightWater() { return CONFIG.fight.fromLocations.includes(save.location
 function finishReelUnit() {
   save.stats.wordsTyped++;
   if (phase === "cast") startWait();
+  else if (phase === "wiggle") wiggleComplete();
   else if (phase === "reel") reelComplete();
 }
 
