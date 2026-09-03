@@ -98,9 +98,10 @@ question 1.)
    candidates into the real game on the same beat and looking: **weight decided
    it**, because type here is laid straight over a painting with no panel behind
    it and a light face disappears at 11px. It is **self-hosted** in `assets/`
-   (SIL OFL 1.1) rather than linked from Google Fonts, which removes the game's
-   last third-party request and means a CDN it cannot reach can no longer make
-   the game silently render in fallback monospace. `.key` carries no
+   (SIL OFL 1.1) rather than linked from Google Fonts, which takes a third-party
+   request off every page load and means a CDN it cannot reach can no longer
+   make the game silently render in fallback monospace. (One fewer, not zero —
+   the Firebase SDK still loads from gstatic while cloud saves are configured.) `.key` carries no
    `font-family` at all and so the frozen keyboard is untouched — never point a
    `.key` rule at `--display`.
 

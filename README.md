@@ -7,9 +7,13 @@ like practice.
 **Status:** built and playable. The core game (M1–M10) and the Advanced
 Progression epic (A0–A8) are both done — four ranks, three fishing spots, words
 → phrases → punctuated sentences. Current work is the **Art & Animation
-Refresh** (`BUILD_PLAN_REFRESH.md`): the whole visual layer is being restarted
-in a warm painterly style (`ART_DIRECTION.md`), and the cast, line and reel are
-getting real motion (`ANIMATION.md`). The engine underneath — progression, the
+Refresh** (`BUILD_PLAN_REFRESH.md`): the whole visual layer has been restarted
+in a warm painterly style (`ART_DIRECTION.md`), and the cast, line and reel have
+real motion (`ANIMATION.md`). R1–R6 have landed; R7 (the gear) has its nine rods
+left. The **Catch Feel** epic (`BUILD_PLAN_FEEL.md`) shipped alongside it and
+fixed the moment of the catch — where the line lands, what rises out of the
+water, a trophy card that waits for you instead of a message that vanishes, and
+a wait you can do something in. The engine underneath — progression, the
 ghost-hands keyboard, the unlockables — isn't changing. Hosted on Netlify —
 pushes to `main` are promoted to production manually.
 
@@ -27,8 +31,10 @@ pushes to `main` are promoted to production manually.
 | `BUILD_PLAN.md` | v1 milestone order (M1–M10, all done) with done-criteria |
 | `BUILD_PLAN_ADVANCED.md` | Post-v1 Advanced Progression epic — tiers (Minnow→Muskie), phrases/sentences, WPM-as-goal; phased A0–A8 (done) |
 | `BUILD_PLAN_REFRESH.md` | **Current epic** — the Art & Animation Refresh, R1–R7: motion, palette, painted backgrounds, one rigged angler, vessels, a rig per fish, gear |
+| `BUILD_PLAN_FEEL.md` | The Catch Feel epic, F1–F5 (shipped) — the moment of the catch, and what each milestone measured |
 | `ART_DIRECTION.md` | How the game looks — warm painterly storybook; governs every visual choice, generated or CSS-drawn |
-| `ANIMATION.md` | How the cast, line and reel move — the R1 spec |
+| `ANIMATION.md` | How the cast, line and reel move — the R1 spec, plus where the lure lands and how the catch card arrives |
+| `GEMINI_NOTES.md` | How the image generator actually behaves — required reading before writing an art prompt |
 | `BUILD_PLAN_VISUAL.md` | Superseded by the refresh (V1 shipped and survives); kept for the reasoning trail |
 | `BUILD_PLAN_GRAPHICS.md` | Superseded twice over; kept for the reasoning trail |
 | `CLAUDE.md` | Instructions for Claude Code sessions |
@@ -40,16 +46,21 @@ pushes to `main` are promoted to production manually.
 | `data/phrases.json` | Stream content — multi-word phrases (hand-curated) |
 | `data/sentences.json` | Ocean content — punctuated sentences (hand-curated) |
 | `data/fish.json` | The roster — say hi to Muskie Quixote |
-| `prototype/` | Playable design artifacts: feel test + visual mockup |
-| `tools/generate-words.mjs` | Regenerates `data/words.json` |
+| `prototype/` | Playable design artifacts, kept as a reasoning trail: the reel feel test, the R1 line-animation prototype, and the V1 visual mockup (still in the retired pixel style) |
+| `tools/README.md` | The nine pipeline tools — what each cuts, the two browser checks, and the deps a fresh box lacks |
 
 ## How it plays
 
-Type the word on screen to cast. A fish bites, and reeling it in is
-word-at-a-time typing with a beat between words. **Tension only reacts to
-mistakes, never to speed** — a slow, careful typist always lands the fish. A
-ghost-hands keyboard under the scene shows which finger to use, and new letters
-unlock as catches add up, starting from the home row.
+Type the word on screen to cast. Sometimes the pond isn't interested and you
+type a couple of short words to **wiggle the bait** first — no wiggle, no bite,
+though the words can be typed as slowly as you like. Then a fish bites, and
+reeling it in is word-at-a-time typing with a beat between words. **Tension only
+reacts to mistakes, never to speed** — a slow, careful typist always lands the
+fish. Landing one raises a card with the fish on it, its weight and a bad pun,
+and a gold plaque if it's a new species or a personal best; the card has no
+timer and waits until you start the next word. A ghost-hands keyboard under the
+scene shows which finger to use, and new letters unlock as catches add up,
+starting from the home row.
 
 Four ranks open three spots: the Pond (single words, lowercase only), the
 Stream (multi-word phrases, spacebar and capitals), and the Ocean (full
@@ -75,7 +86,11 @@ It sits deliberately outside the game:
 
 ## Play the prototypes
 
-Open `prototype/visual-mockup.html` in a browser. No server needed.
+Open `prototype/visual-mockup.html` in a browser. No server needed. It is a
+frozen record of what V1 validated and is still drawn in the retired pixel
+style, so it is a reasoning trail rather than a picture of the game today.
+`prototype/line-animation.html` is the R1 cast-and-tension prototype and does
+run the shipped maths and numbers.
 
 ## Dev
 
@@ -113,12 +128,18 @@ Zero dependencies — Node's built-in runner.
 
 - `tests/data.test.mjs` validates the hand-edited content and tuning knobs
   (`data/*.json` and `config.js`): word invariants, fish roster, tier-odds sums,
-  unlock ordering, shop/junk config. Catches the bug class where a bad merge or
-  manual edit silently corrupts the data.
+  unlock ordering, shop/junk config, the art direction's no-pure-black rule and
+  the keyboard's exemption from it, and the wiggle's config and content limits.
+  Catches the bug class where a bad merge or manual edit silently corrupts the
+  data.
 - `tests/logic.test.mjs` covers the pure game math in `logic.js` — tier rolls,
   weight/lunker classification, stage gating, and the reel-pool fallback — with
   RNG injected so the tests are deterministic.
 
 `logic.js` holds the pure, DOM-free math; `app.js` keeps thin wrappers that feed
 it the live `CONFIG`, equipped rod, and word pool. Everything else in `app.js`
-is DOM/state-bound and verified by hand in the browser.
+is DOM/state-bound and verified in a real browser: `tools/spot-check.mjs` takes
+one still of a fishing spot with its layer stack printed, and
+`tools/play-check.mjs` plays a whole catch and screenshots every beat of it.
+That second one exists because some bugs are only wrong for three frames and
+would never fail an assertion — see `tools/README.md`.
