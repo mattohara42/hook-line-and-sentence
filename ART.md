@@ -304,7 +304,10 @@ still has it.
    Pond generations each carried a free Stream transplant, and the three Ocean
    hats were generated against that pose. **The hat column is complete, 12 of
    12, from six paintings.** Every hat verified in Chromium at every spot.
-4. The nine rods, `stick` and `bamboo` before `carbon` and `deepsea`.
+4. The nine rods, `stick` and `bamboo` before `carbon` and `deepsea`. **All
+   nine prompts are written out under *The rods* below**, in the order to send
+   them, and a rod is cut by `cut-angler.py`'s corridor rather than
+   `cut-gear.py`'s difference.
 
 **The transplant was measured before the six generations were spent**, against
 the straw hat at all three poses, and it saved three of them. The numbers and
@@ -753,8 +756,9 @@ solved problem and the frame is a 3-for-3 one. Changing it would put all six of
 these on a frame nothing has tested.
 
 The canvas sizes below are read off `assets/angler-<pose>.png`, and the pose
-lines are baked into the prompts. The rods section still substitutes from this
-table.
+lines are baked into the prompts. The rods section bakes them in too, so this
+table is now the record of where those numbers came from rather than something
+a prompt still substitutes from.
 
 | `<pose>` | `<POSE LINE>` | `<W> by <H>` |
 |---|---|---|
@@ -1258,110 +1262,965 @@ Wired in: `python3 tools/cut-gear.py ocean hat-souwester assets/Gemini_hat-souwe
 
 #### The rods
 
-Nine of the twelve, since R4 painted each pose holding its own gate rod. The
-prompt holds the axis and changes the pole.
+Nine of the twelve, since R4 painted each pose holding its own gate rod. Every
+prompt below holds the axis and changes the pole, and every one is **written out
+whole**, for the reason the hats are: "that prompt with the rod block swapped"
+is not something anyone can paste, and the substitutions include the canvas
+size, which is per pose and costs a generation when it is wrong.
+
+**Nothing in the frame has moved.** Every word outside `[HOW HE HOLDS IT]`,
+`[THE ROD]`, `[NOT THE OTHER ONE]` and the one number in `[SHAPE]` is the hat
+frame's, which landed six times out of six on the first attempt. Three blocks
+are new because a rod needs them, and two of the three are about the reel the
+*attachment* already has. `[WHERE THE ROD GOES]` is the whole point of the
+request. `[THE REEL IS GONE]` is carried by the two `rod-stick` prompts only: the Stream
+and Ocean gate rods both have a reel and the stick has none, so the space it
+vacates has to be named or it comes back as a floating reel. `[THE REEL MOVES TO
+THE OTHER SIDE]` is the same problem one step milder, and three prompts carry it
+— `rod-deepsea-stream` moves the reel from below the hand to above it, and
+`rod-bamboo-ocean` and `rod-carbon-ocean` move it the other way. Left unsaid,
+"add a reel below" against a picture with a reel above is the kind of gap that
+returns both — untested here, but it is the same gap that made the sou'wester
+look like the straw hat (#133), where nothing in the prompts separated the two.
+
+`[SHAPE]` quotes the rod's real rendered length from `cut-angler.py`'s
+`rod_len`: **65 design px at the Pond and the Ocean, 95 at the Stream.** At that
+size a rod is a two- or three-pixel stroke with one blob near the hand, so which
+side of the pole the reel sits on is doing more work than anything else in the
+painting.
+
+**The order to fill them** is `stick` and `bamboo` before `carbon` and
+`deepsea`, and within a rod, the poses in the order below. `[NOT THE OTHER ONE]`
+names the rods already delivered *for that pose* as well as the gate rod in the
+attachment, so it grows down each pose's column the way the hats' did.
+Delivering out of order is not wrong; it just leaves a clause naming a rod that
+does not exist yet.
+
+**Three of the corridor's numbers turn out to be per rod, not per pose.**
+Flagged rather than solved, and it is a bigger flag than the one this section
+carried before the prompts were written. `cut-angler.py`'s `POSES` dict was
+measured off each pose's own painted gate rod, and three of its entries describe
+*that rod* rather than that pose:
+
+- **`reel`**, the off-axis circle a straight corridor would otherwise miss.
+  The Pond's is `None` because the painted stick has no reel, the Stream's sits
+  below the hand (a fly reel) and the Ocean's above it (a multiplier). Seven of
+  the nine rods below carry a reel and each puts it where its own design says,
+  not where that pose's gate rod put it. Cut `rod-bamboo-ocean` with the Ocean's
+  circle and the reel is simply not in the layer.
+- **`half`**, half the shaft's width: 16 / 15 / 22 source px at the Pond, Stream
+  and Ocean, and the Ocean's is the outlier because a boat rod is thick.
+  `rod-deepsea-pond` is a thick rod on a corridor fitted to a cane.
+- **`rod_xmin`**, the Stream's hard left bound, which exists because that pose's
+  butt passes close to the waders. A rod whose butt stops elsewhere may not need
+  it, or may need it somewhere else.
+
+The cheap shape, and the one to try first, is a per-**item** table read through
+each pose's own axis and grip, rather than nine hand-measured circles: a reel is
+*how far along the rod from the grip, which side, how big*, and the axis turns
+that into a circle at any pose. `half` is one number per item. Four rows, not a
+grid of nine.
+
+It is deliberately not written yet. `cut-fish.py`'s four detectors were each
+written against a real sheet, and the same applies here — the first delivered
+rod is what says whether a generated reel lands where the geometry predicts.
+
+##### Trusty Stick (`rod-stick`), at the Stream and the Ocean
+
+R4 painted the Pond's angler holding it, so only the Stream and the Ocean still
+need one.
+
+**`rod-stick-stream`.**
 
 ```
-ART NEEDED: R7 gear, <ROD NAME> for the <POSE> angler
-Reference: assets/ref-angler-<pose>.png (attach it, made with
+ART NEEDED: R7 gear, Trusty Stick for the Stream angler
+Reference: assets/ref-angler-stream.png (attach it, made with
            `python3 tools/gear-ref.py`); ask for the SAME painting back
 Prompt:   [WHAT THIS IS]
           I have attached a picture of a child fishing. I want the SAME picture
           back with ONE thing changed: the fishing rod he is holding is a
           different rod. Everything else must be identical to the picture I
-          attached: the same child, the same face, the same hair, the same pose,
-          the same clothes, the same hands, the same colours, the same brushwork,
-          the same size, the same canvas, the figure in exactly the same position
-          on it. Do not redraw the child. Do not change the crop, the zoom or the
-          framing.
+          attached: the same child, the same face, the same hair, the same
+          pose, the same clothes, the same hands, the same colours, the same
+          brushwork, the same size, the same canvas, the figure in exactly the
+          same position on it. Do not redraw the child. Do not change the crop,
+          the zoom or the framing.
 
           [WHERE THE ROD GOES, AND THIS IS THE IMPORTANT PART]
           The new rod lies along EXACTLY the same line as the old one: the same
-          angle across the picture, the same straight path, the butt end stopping
-          at the same point, the tip leaving the picture at the same point on the
-          same edge, the same overall length. Think of it as the same pole
-          repainted where it lies, not a new pole placed in the picture. The
-          child's hand does not move, and his fingers still cross in FRONT of the
-          pole exactly as they do now.
+          angle across the picture, the same straight path, the butt end
+          stopping at the same point, the tip leaving the picture at the same
+          point on the same edge, the same overall length. Think of it as the
+          same pole repainted where it lies, not a new pole placed in the
+          picture. The child's hand does not move, and his fingers still cross
+          in FRONT of the pole exactly as they do now.
+
+          [HOW HE HOLDS IT]
+          The child is standing in waders, seen from the side and facing right,
+          and he holds the rod in his near hand at about chin height, with his
+          whole near arm held clear of his chest. His far arm hangs at his
+          other side and the landing net on its cord stays exactly where it
+          hangs. Nothing about the arm, the hand, the net or the clothes
+          changes.
 
           [THE ROD]
-          <THE ROD>
+          A plain cut cane pole, honey-tan and slightly knobbly, tapering
+          evenly to a thin tip. It has NO reel, NO line guides and NO fittings
+          of any kind: a pole a child cut for himself, with a single turn of
+          dark cord whipped round it where his hand holds it.
+
+          [THE REEL IS GONE]
+          The rod in the attached picture has a reel on it. This one does not.
+          Where that reel was there must now be nothing at all but the flat
+          magenta backdrop: no reel, no reel seat, no stub of one, no shadow of
+          one.
 
           [NOT THE OTHER ONE]
-          <NOT THE OTHER ONE>
+          The rod in the attached picture is a honey-coloured split-cane fly
+          rod with a small dark reel. This one must be obviously different at a
+          glance: a plain cut stick with no reel, no guides and no fittings at
+          all.
+
+          [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
+          This rod will be shown about 95 pixels long and only two or three
+          pixels thick. Its overall thickness, its colour and the blob of its
+          reel are the only things that will survive. Paint the guides and the
+          thread whipping as soft suggestions rather than fine detail, and keep
+          the reel a clear simple round shape. No lettering, no logos, no brand
+          names, no maker's marks, no tiny mechanical detail.
 
           [BACKDROP]
           Every part of the image that is not the child and his rod is one
           completely flat, even magenta #FF00FF, exactly as in the attached
           picture: edge to edge and into all four corners, no gradient, no
-          texture, no vignette, no shading. No water, no ground, no scenery, and
-          no drop shadow or reflection.
+          texture, no vignette, no shading. No water, no ground, no scenery,
+          and no drop shadow or reflection.
 
           [STYLE]
-          Soft painterly storybook illustration, warm muted color palette, gentle
-          diffused lighting, thin warm brown outlines rather than black, cozy and
-          inviting mood, no harsh shadows, no neon or saturated colours. Soft
-          two-tone shading with blended edges, matching the attached painting
-          exactly. NOT pixel art, NOT flat vector art with even line weight, NOT
-          thick black cartoon linework, NOT a glossy 3D render, NOT a photograph.
+          Soft painterly storybook illustration, warm muted color palette,
+          gentle diffused lighting, thin warm brown outlines rather than black,
+          cozy and inviting mood, no harsh shadows, no neon or saturated
+          colours. Soft two-tone shading with blended edges, matching the
+          attached painting exactly. NOT pixel art, NOT flat vector art with
+          even line weight, NOT thick black cartoon linework, NOT a glossy 3D
+          render, NOT a photograph.
 
           [CRITICAL: draw NO fishing line]
           The rod must be completely bare. No thread, string or filament of any
           kind: none wound on the reel, none threaded through the guides, none
-          trailing from the tip, none anywhere in the picture. A rod normally has
-          line on it and this one must not.
+          trailing from the tip, none anywhere in the picture. A rod normally
+          has line on it and this one must not.
 
           [ALSO NOT IN THE PICTURE]
-          No fish, no hook, no float, no lure, no landing net that is not already
-          there, no text, no labels, no watermark, no border, no frame.
+          No fish, no hook, no float, no lure, no hat, no landing net that is
+          not already there, no text, no labels, no watermark, no border, no
+          frame.
 
           [CANVAS]
-          Return the image at the same <W> by <H> pixels as the picture I
+          Return the image at the same 1387 by 1510 pixels as the picture I
           attached. Output as PNG.
-Save as:  assets/Gemini_<stem>-<pose>.jpg (the raw download, whatever extension
-          it arrives with, kept so the cut can be re-run)
-Wired in: a rod is the one gear piece cut-gear.py's difference cannot take (the
-          shaft under the hand is where the two paintings agree), so cut it with
-          `python3 tools/cut-angler.py <pose> assets/Gemini_<stem>-<pose>.jpg`
-          and the pose's own unchanged corridor, save the rod layer as
-          assets/<stem>-<pose>.png, then add "<stem>-<pose>" to CONFIG.rig.gearArt
+Save as:  assets/Gemini_rod-stick-stream.jpg (the raw download, whatever
+          extension it arrives with, kept so the cut can be re-run)
+Wired in: check the corridor's reel circle and half-width against THIS
+          rod first (see the note above), then
+          `python3 tools/cut-angler.py stream \
+              assets/Gemini_rod-stick-stream.jpg`,
+          save the rod layer as assets/rod-stick-stream.png, then add
+          "rod-stick-stream" to CONFIG.rig.gearArt
 ```
 
-`<W> by <H>` is the pose's, from the hat table. The rods:
+**`rod-stick-ocean`.**
 
-| shop item | `<stem>` | `<THE ROD>` | poses still needed |
-|---|---|---|---|
-| Trusty Stick (free) | `rod-stick` | A plain cut cane pole, honey-tan and slightly knobbly, tapering evenly to a thin tip. NO reel, NO guides, NO fittings of any kind: a pole a child cut for himself, with a turn of dark cord whipped round it where his hand holds it. | stream, ocean |
-| Bamboo Beauty (25) | `rod-bamboo` | A split-cane fly rod in warm honey amber with darker bands at the nodes, a cork grip, fine wire guides along its length, and a small dark click reel on the underside just below the hand. | pond, ocean |
-| The Carp Whisperer (80) | `rod-carbon` | A modern carbon-fibre rod: a slim matte blank in warm charcoal grey (dark, but never pure black), fine gold whipping where each small guide is bound on, and a small dark spinning reel hanging BELOW the pole just under the hand. | pond, stream, ocean |
-| The Deep Endeavor (150) | `rod-deepsea` | A heavy boat rod: a thick blank in dark warm brown, a padded fore-grip above the hand, chunky guides, and a big brass multiplier reel sitting ON TOP of the pole just above the hand. | pond, stream |
+```
+ART NEEDED: R7 gear, Trusty Stick for the Ocean angler
+Reference: assets/ref-angler-ocean.png (attach it, made with
+           `python3 tools/gear-ref.py`); ask for the SAME painting back
+Prompt:   [WHAT THIS IS]
+          I have attached a picture of a child fishing. I want the SAME picture
+          back with ONE thing changed: the fishing rod he is holding is a
+          different rod. Everything else must be identical to the picture I
+          attached: the same child, the same face, the same hair, the same
+          pose, the same clothes, the same hands, the same colours, the same
+          brushwork, the same size, the same canvas, the figure in exactly the
+          same position on it. Do not redraw the child. Do not change the crop,
+          the zoom or the framing.
 
-`<NOT THE OTHER ONE>` contrasts against the rod the pose already carries, which
-is the gate rod R4 painted and the one thing guaranteed to be in the generator's
-context because it is in the attached picture:
+          [WHERE THE ROD GOES, AND THIS IS THE IMPORTANT PART]
+          The new rod lies along EXACTLY the same line as the old one: the same
+          angle across the picture, the same straight path, the butt end
+          stopping at the same point, the tip leaving the picture at the same
+          point on the same edge, the same overall length. Think of it as the
+          same pole repainted where it lies, not a new pole placed in the
+          picture. The child's hand does not move, and his fingers still cross
+          in FRONT of the pole exactly as they do now.
 
-- at the **pond**, against a bare cane pole: *"The pole in the attached picture
-  is a plain stick with no reel and no fittings. This one must be obviously
-  different at a glance: <a fly rod with a reel / a slim grey carbon rod with a
-  reel / a thick heavy boat rod with a big brass reel>."*
-- at the **stream**, against a split-cane fly rod: *"The rod in the attached
-  picture is a honey-coloured split-cane fly rod with a small dark reel. This one
-  must be obviously different at a glance: <a plain cut stick with no reel or
-  fittings at all / a slim matte grey carbon rod / a thick heavy boat rod with a
-  big brass reel>."*
-- at the **ocean**, against the deep-sea boat rod: *"The rod in the attached
-  picture is a thick dark boat rod with a big brass reel. This one must be
-  obviously different at a glance: <a plain cut stick with no reel or fittings at
-  all / a honey-coloured split-cane fly rod / a slim matte grey carbon rod>."*
+          [HOW HE HOLDS IT]
+          The child is braced back as if leaning into a fish, seen from the
+          side and facing right, and he holds the rod in his near hand at about
+          chin height, with his whole near arm held clear of his chest. His far
+          arm stays resting along his far thigh. Nothing about the arms, the
+          hands or the clothes changes.
 
-**One code consequence to expect on the first rod delivery, flagged rather than
-solved.** `cut-angler.py`'s corridor carries one `reel` circle per *pose*, and
-the Pond's is `None` because the painted stick has no reel. Every rod except
-`rod-stick` has one, so cutting a reeled rod at the Pond needs a reel circle for
-that pose *and item*. That is a small change to a tool that already takes a pose
-argument, and it is the kind of thing to make against the first delivered
-painting rather than guess at now, the way `cut-fish.py`'s four detectors were
-each written against a real sheet.
+          [THE ROD]
+          A plain cut cane pole, honey-tan and slightly knobbly, tapering
+          evenly to a thin tip. It has NO reel, NO line guides and NO fittings
+          of any kind: a pole a child cut for himself, with a single turn of
+          dark cord whipped round it where his hand holds it.
+
+          [THE REEL IS GONE]
+          The rod in the attached picture has a reel on it. This one does not.
+          Where that reel was there must now be nothing at all but the flat
+          magenta backdrop: no reel, no reel seat, no stub of one, no shadow of
+          one.
+
+          [NOT THE OTHER ONE]
+          The rod in the attached picture is a thick dark boat rod with a big
+          brass reel. This one must be obviously different at a glance: a plain
+          cut stick, much thinner, with no reel, no guides and no fittings at
+          all.
+
+          [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
+          This rod will be shown about 65 pixels long and only two or three
+          pixels thick. Its overall thickness, its colour and the blob of its
+          reel are the only things that will survive. Paint the guides and the
+          thread whipping as soft suggestions rather than fine detail, and keep
+          the reel a clear simple round shape. No lettering, no logos, no brand
+          names, no maker's marks, no tiny mechanical detail.
+
+          [BACKDROP]
+          Every part of the image that is not the child and his rod is one
+          completely flat, even magenta #FF00FF, exactly as in the attached
+          picture: edge to edge and into all four corners, no gradient, no
+          texture, no vignette, no shading. No water, no ground, no scenery,
+          and no drop shadow or reflection.
+
+          [STYLE]
+          Soft painterly storybook illustration, warm muted color palette,
+          gentle diffused lighting, thin warm brown outlines rather than black,
+          cozy and inviting mood, no harsh shadows, no neon or saturated
+          colours. Soft two-tone shading with blended edges, matching the
+          attached painting exactly. NOT pixel art, NOT flat vector art with
+          even line weight, NOT thick black cartoon linework, NOT a glossy 3D
+          render, NOT a photograph.
+
+          [CRITICAL: draw NO fishing line]
+          The rod must be completely bare. No thread, string or filament of any
+          kind: none wound on the reel, none threaded through the guides, none
+          trailing from the tip, none anywhere in the picture. A rod normally
+          has line on it and this one must not.
+
+          [ALSO NOT IN THE PICTURE]
+          No fish, no hook, no float, no lure, no hat, no landing net that is
+          not already there, no text, no labels, no watermark, no border, no
+          frame.
+
+          [CANVAS]
+          Return the image at the same 1324 by 1466 pixels as the picture I
+          attached. Output as PNG.
+Save as:  assets/Gemini_rod-stick-ocean.jpg (the raw download, whatever
+          extension it arrives with, kept so the cut can be re-run)
+Wired in: check the corridor's reel circle and half-width against THIS
+          rod first (see the note above), then
+          `python3 tools/cut-angler.py ocean \
+              assets/Gemini_rod-stick-ocean.jpg`,
+          save the rod layer as assets/rod-stick-ocean.png, then add
+          "rod-stick-ocean" to CONFIG.rig.gearArt
+```
+
+##### Bamboo Beauty (`rod-bamboo`), at the Pond and the Ocean
+
+R4 painted the Stream's angler holding it, so only the Pond and the Ocean still
+need one.
+
+**`rod-bamboo-pond`.**
+
+```
+ART NEEDED: R7 gear, Bamboo Beauty for the Pond angler
+Reference: assets/ref-angler-pond.png (attach it, made with
+           `python3 tools/gear-ref.py`); ask for the SAME painting back
+Prompt:   [WHAT THIS IS]
+          I have attached a picture of a child fishing. I want the SAME picture
+          back with ONE thing changed: the fishing rod he is holding is a
+          different rod. Everything else must be identical to the picture I
+          attached: the same child, the same face, the same hair, the same
+          pose, the same clothes, the same hands, the same colours, the same
+          brushwork, the same size, the same canvas, the figure in exactly the
+          same position on it. Do not redraw the child. Do not change the crop,
+          the zoom or the framing.
+
+          [WHERE THE ROD GOES, AND THIS IS THE IMPORTANT PART]
+          The new rod lies along EXACTLY the same line as the old one: the same
+          angle across the picture, the same straight path, the butt end
+          stopping at the same point, the tip leaving the picture at the same
+          point on the same edge, the same overall length. Think of it as the
+          same pole repainted where it lies, not a new pole placed in the
+          picture. The child's hand does not move, and his fingers still cross
+          in FRONT of the pole exactly as they do now.
+
+          [HOW HE HOLDS IT]
+          The child is sitting with his knees drawn up, seen from the side and
+          facing right, and he holds the rod in his near hand at about chin
+          height. The butt of the pole tucks in behind his raised knee and his
+          far arm stays resting on that knee. Nothing about the arm, the hand,
+          the knee or the clothes changes.
+
+          [THE ROD]
+          A split-cane fly rod in warm honey amber with slightly darker bands
+          at the nodes, a pale cork grip where his hand holds it, fine wire
+          line guides spaced along its length, and a small round dark-bronze
+          click reel mounted on the UNDERSIDE of the pole just BELOW his hand.
+
+          [NOT THE OTHER ONE]
+          The pole in the attached picture is a plain stick with no reel and no
+          fittings. This one must be obviously different at a glance: a honey-
+          amber split-cane fly rod with a cork grip, wire guides along it and a
+          small dark reel below the hand. Do not paint another bare pole.
+
+          [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
+          This rod will be shown about 65 pixels long and only two or three
+          pixels thick. Its overall thickness, its colour and the blob of its
+          reel are the only things that will survive. Paint the guides and the
+          thread whipping as soft suggestions rather than fine detail, and keep
+          the reel a clear simple round shape. No lettering, no logos, no brand
+          names, no maker's marks, no tiny mechanical detail.
+
+          [BACKDROP]
+          Every part of the image that is not the child and his rod is one
+          completely flat, even magenta #FF00FF, exactly as in the attached
+          picture: edge to edge and into all four corners, no gradient, no
+          texture, no vignette, no shading. No water, no ground, no scenery,
+          and no drop shadow or reflection.
+
+          [STYLE]
+          Soft painterly storybook illustration, warm muted color palette,
+          gentle diffused lighting, thin warm brown outlines rather than black,
+          cozy and inviting mood, no harsh shadows, no neon or saturated
+          colours. Soft two-tone shading with blended edges, matching the
+          attached painting exactly. NOT pixel art, NOT flat vector art with
+          even line weight, NOT thick black cartoon linework, NOT a glossy 3D
+          render, NOT a photograph.
+
+          [CRITICAL: draw NO fishing line]
+          The rod must be completely bare. No thread, string or filament of any
+          kind: none wound on the reel, none threaded through the guides, none
+          trailing from the tip, none anywhere in the picture. A rod normally
+          has line on it and this one must not.
+
+          [ALSO NOT IN THE PICTURE]
+          No fish, no hook, no float, no lure, no hat, no landing net that is
+          not already there, no text, no labels, no watermark, no border, no
+          frame.
+
+          [CANVAS]
+          Return the image at the same 1344 by 1391 pixels as the picture I
+          attached. Output as PNG.
+Save as:  assets/Gemini_rod-bamboo-pond.jpg (the raw download, whatever
+          extension it arrives with, kept so the cut can be re-run)
+Wired in: check the corridor's reel circle and half-width against THIS
+          rod first (see the note above), then
+          `python3 tools/cut-angler.py pond \
+              assets/Gemini_rod-bamboo-pond.jpg`,
+          save the rod layer as assets/rod-bamboo-pond.png, then add
+          "rod-bamboo-pond" to CONFIG.rig.gearArt
+```
+
+**`rod-bamboo-ocean`.**
+
+```
+ART NEEDED: R7 gear, Bamboo Beauty for the Ocean angler
+Reference: assets/ref-angler-ocean.png (attach it, made with
+           `python3 tools/gear-ref.py`); ask for the SAME painting back
+Prompt:   [WHAT THIS IS]
+          I have attached a picture of a child fishing. I want the SAME picture
+          back with ONE thing changed: the fishing rod he is holding is a
+          different rod. Everything else must be identical to the picture I
+          attached: the same child, the same face, the same hair, the same
+          pose, the same clothes, the same hands, the same colours, the same
+          brushwork, the same size, the same canvas, the figure in exactly the
+          same position on it. Do not redraw the child. Do not change the crop,
+          the zoom or the framing.
+
+          [WHERE THE ROD GOES, AND THIS IS THE IMPORTANT PART]
+          The new rod lies along EXACTLY the same line as the old one: the same
+          angle across the picture, the same straight path, the butt end
+          stopping at the same point, the tip leaving the picture at the same
+          point on the same edge, the same overall length. Think of it as the
+          same pole repainted where it lies, not a new pole placed in the
+          picture. The child's hand does not move, and his fingers still cross
+          in FRONT of the pole exactly as they do now.
+
+          [HOW HE HOLDS IT]
+          The child is braced back as if leaning into a fish, seen from the
+          side and facing right, and he holds the rod in his near hand at about
+          chin height, with his whole near arm held clear of his chest. His far
+          arm stays resting along his far thigh. Nothing about the arms, the
+          hands or the clothes changes.
+
+          [THE ROD]
+          A split-cane fly rod in warm honey amber with slightly darker bands
+          at the nodes, a pale cork grip where his hand holds it, fine wire
+          line guides spaced along its length, and a small round dark-bronze
+          click reel mounted on the UNDERSIDE of the pole just BELOW his hand.
+
+          [THE REEL MOVES TO THE OTHER SIDE]
+          In the attached picture the reel sits above the pole. On this rod it
+          sits below the pole instead. Where the old reel was there must now be
+          nothing at all but the flat magenta backdrop: no reel, no reel seat,
+          no stub of one, no shadow of one, and only ONE reel in the picture.
+
+          [NOT THE OTHER ONE]
+          The rod in the attached picture is a thick dark boat rod with a big
+          brass reel on top. This one must be obviously different at a glance:
+          a slender honey-amber split-cane fly rod with a cork grip and a small
+          dark reel hanging BELOW the hand. This child also owns a plain honey-
+          tan stick, so this one is not bare: it has guides, a cork grip and a
+          reel.
+
+          [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
+          This rod will be shown about 65 pixels long and only two or three
+          pixels thick. Its overall thickness, its colour and the blob of its
+          reel are the only things that will survive. Paint the guides and the
+          thread whipping as soft suggestions rather than fine detail, and keep
+          the reel a clear simple round shape. No lettering, no logos, no brand
+          names, no maker's marks, no tiny mechanical detail.
+
+          [BACKDROP]
+          Every part of the image that is not the child and his rod is one
+          completely flat, even magenta #FF00FF, exactly as in the attached
+          picture: edge to edge and into all four corners, no gradient, no
+          texture, no vignette, no shading. No water, no ground, no scenery,
+          and no drop shadow or reflection.
+
+          [STYLE]
+          Soft painterly storybook illustration, warm muted color palette,
+          gentle diffused lighting, thin warm brown outlines rather than black,
+          cozy and inviting mood, no harsh shadows, no neon or saturated
+          colours. Soft two-tone shading with blended edges, matching the
+          attached painting exactly. NOT pixel art, NOT flat vector art with
+          even line weight, NOT thick black cartoon linework, NOT a glossy 3D
+          render, NOT a photograph.
+
+          [CRITICAL: draw NO fishing line]
+          The rod must be completely bare. No thread, string or filament of any
+          kind: none wound on the reel, none threaded through the guides, none
+          trailing from the tip, none anywhere in the picture. A rod normally
+          has line on it and this one must not.
+
+          [ALSO NOT IN THE PICTURE]
+          No fish, no hook, no float, no lure, no hat, no landing net that is
+          not already there, no text, no labels, no watermark, no border, no
+          frame.
+
+          [CANVAS]
+          Return the image at the same 1324 by 1466 pixels as the picture I
+          attached. Output as PNG.
+Save as:  assets/Gemini_rod-bamboo-ocean.jpg (the raw download, whatever
+          extension it arrives with, kept so the cut can be re-run)
+Wired in: check the corridor's reel circle and half-width against THIS
+          rod first (see the note above), then
+          `python3 tools/cut-angler.py ocean \
+              assets/Gemini_rod-bamboo-ocean.jpg`,
+          save the rod layer as assets/rod-bamboo-ocean.png, then add
+          "rod-bamboo-ocean" to CONFIG.rig.gearArt
+```
+
+##### The Carp Whisperer (`rod-carbon`), at all three poses
+
+No pose was painted holding it, so all three need one.
+
+**`rod-carbon-pond`.**
+
+```
+ART NEEDED: R7 gear, The Carp Whisperer for the Pond angler
+Reference: assets/ref-angler-pond.png (attach it, made with
+           `python3 tools/gear-ref.py`); ask for the SAME painting back
+Prompt:   [WHAT THIS IS]
+          I have attached a picture of a child fishing. I want the SAME picture
+          back with ONE thing changed: the fishing rod he is holding is a
+          different rod. Everything else must be identical to the picture I
+          attached: the same child, the same face, the same hair, the same
+          pose, the same clothes, the same hands, the same colours, the same
+          brushwork, the same size, the same canvas, the figure in exactly the
+          same position on it. Do not redraw the child. Do not change the crop,
+          the zoom or the framing.
+
+          [WHERE THE ROD GOES, AND THIS IS THE IMPORTANT PART]
+          The new rod lies along EXACTLY the same line as the old one: the same
+          angle across the picture, the same straight path, the butt end
+          stopping at the same point, the tip leaving the picture at the same
+          point on the same edge, the same overall length. Think of it as the
+          same pole repainted where it lies, not a new pole placed in the
+          picture. The child's hand does not move, and his fingers still cross
+          in FRONT of the pole exactly as they do now.
+
+          [HOW HE HOLDS IT]
+          The child is sitting with his knees drawn up, seen from the side and
+          facing right, and he holds the rod in his near hand at about chin
+          height. The butt of the pole tucks in behind his raised knee and his
+          far arm stays resting on that knee. Nothing about the arm, the hand,
+          the knee or the clothes changes.
+
+          [THE ROD]
+          A modern carbon-fibre rod: a slim matte blank in warm charcoal grey
+          (dark, but never pure black), fine gold thread whipping where each
+          small guide is bound on, a dark ribbed grip where his hand holds it,
+          and a small dark spinning reel hanging BELOW the pole just under his
+          hand.
+
+          [NOT THE OTHER ONE]
+          The pole in the attached picture is a plain stick with no reel and no
+          fittings. This one must be obviously different at a glance: a slim
+          matte grey carbon rod with a small spinning reel below the hand. This
+          child already owns a honey-tan stick and a honey-amber split-cane fly
+          rod, so this one is neither cane nor honey-coloured: it is GREY and
+          machine-made.
+
+          [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
+          This rod will be shown about 65 pixels long and only two or three
+          pixels thick. Its overall thickness, its colour and the blob of its
+          reel are the only things that will survive. Paint the guides and the
+          thread whipping as soft suggestions rather than fine detail, and keep
+          the reel a clear simple round shape. No lettering, no logos, no brand
+          names, no maker's marks, no tiny mechanical detail.
+
+          [BACKDROP]
+          Every part of the image that is not the child and his rod is one
+          completely flat, even magenta #FF00FF, exactly as in the attached
+          picture: edge to edge and into all four corners, no gradient, no
+          texture, no vignette, no shading. No water, no ground, no scenery,
+          and no drop shadow or reflection.
+
+          [STYLE]
+          Soft painterly storybook illustration, warm muted color palette,
+          gentle diffused lighting, thin warm brown outlines rather than black,
+          cozy and inviting mood, no harsh shadows, no neon or saturated
+          colours. Soft two-tone shading with blended edges, matching the
+          attached painting exactly. NOT pixel art, NOT flat vector art with
+          even line weight, NOT thick black cartoon linework, NOT a glossy 3D
+          render, NOT a photograph.
+
+          [CRITICAL: draw NO fishing line]
+          The rod must be completely bare. No thread, string or filament of any
+          kind: none wound on the reel, none threaded through the guides, none
+          trailing from the tip, none anywhere in the picture. A rod normally
+          has line on it and this one must not.
+
+          [ALSO NOT IN THE PICTURE]
+          No fish, no hook, no float, no lure, no hat, no landing net that is
+          not already there, no text, no labels, no watermark, no border, no
+          frame.
+
+          [CANVAS]
+          Return the image at the same 1344 by 1391 pixels as the picture I
+          attached. Output as PNG.
+Save as:  assets/Gemini_rod-carbon-pond.jpg (the raw download, whatever
+          extension it arrives with, kept so the cut can be re-run)
+Wired in: check the corridor's reel circle and half-width against THIS
+          rod first (see the note above), then
+          `python3 tools/cut-angler.py pond \
+              assets/Gemini_rod-carbon-pond.jpg`,
+          save the rod layer as assets/rod-carbon-pond.png, then add
+          "rod-carbon-pond" to CONFIG.rig.gearArt
+```
+
+**`rod-carbon-stream`.**
+
+```
+ART NEEDED: R7 gear, The Carp Whisperer for the Stream angler
+Reference: assets/ref-angler-stream.png (attach it, made with
+           `python3 tools/gear-ref.py`); ask for the SAME painting back
+Prompt:   [WHAT THIS IS]
+          I have attached a picture of a child fishing. I want the SAME picture
+          back with ONE thing changed: the fishing rod he is holding is a
+          different rod. Everything else must be identical to the picture I
+          attached: the same child, the same face, the same hair, the same
+          pose, the same clothes, the same hands, the same colours, the same
+          brushwork, the same size, the same canvas, the figure in exactly the
+          same position on it. Do not redraw the child. Do not change the crop,
+          the zoom or the framing.
+
+          [WHERE THE ROD GOES, AND THIS IS THE IMPORTANT PART]
+          The new rod lies along EXACTLY the same line as the old one: the same
+          angle across the picture, the same straight path, the butt end
+          stopping at the same point, the tip leaving the picture at the same
+          point on the same edge, the same overall length. Think of it as the
+          same pole repainted where it lies, not a new pole placed in the
+          picture. The child's hand does not move, and his fingers still cross
+          in FRONT of the pole exactly as they do now.
+
+          [HOW HE HOLDS IT]
+          The child is standing in waders, seen from the side and facing right,
+          and he holds the rod in his near hand at about chin height, with his
+          whole near arm held clear of his chest. His far arm hangs at his
+          other side and the landing net on its cord stays exactly where it
+          hangs. Nothing about the arm, the hand, the net or the clothes
+          changes.
+
+          [THE ROD]
+          A modern carbon-fibre rod: a slim matte blank in warm charcoal grey
+          (dark, but never pure black), fine gold thread whipping where each
+          small guide is bound on, a dark ribbed grip where his hand holds it,
+          and a small dark spinning reel hanging BELOW the pole just under his
+          hand.
+
+          [NOT THE OTHER ONE]
+          The rod in the attached picture is a honey-coloured split-cane fly
+          rod with a small dark reel. This one must be obviously different at a
+          glance: a slim matte grey carbon rod with a small spinning reel below
+          the hand. This child also owns a plain honey-tan stick, so this one
+          is not a bare pole: it is grey, machine-made, and it carries a reel.
+
+          [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
+          This rod will be shown about 95 pixels long and only two or three
+          pixels thick. Its overall thickness, its colour and the blob of its
+          reel are the only things that will survive. Paint the guides and the
+          thread whipping as soft suggestions rather than fine detail, and keep
+          the reel a clear simple round shape. No lettering, no logos, no brand
+          names, no maker's marks, no tiny mechanical detail.
+
+          [BACKDROP]
+          Every part of the image that is not the child and his rod is one
+          completely flat, even magenta #FF00FF, exactly as in the attached
+          picture: edge to edge and into all four corners, no gradient, no
+          texture, no vignette, no shading. No water, no ground, no scenery,
+          and no drop shadow or reflection.
+
+          [STYLE]
+          Soft painterly storybook illustration, warm muted color palette,
+          gentle diffused lighting, thin warm brown outlines rather than black,
+          cozy and inviting mood, no harsh shadows, no neon or saturated
+          colours. Soft two-tone shading with blended edges, matching the
+          attached painting exactly. NOT pixel art, NOT flat vector art with
+          even line weight, NOT thick black cartoon linework, NOT a glossy 3D
+          render, NOT a photograph.
+
+          [CRITICAL: draw NO fishing line]
+          The rod must be completely bare. No thread, string or filament of any
+          kind: none wound on the reel, none threaded through the guides, none
+          trailing from the tip, none anywhere in the picture. A rod normally
+          has line on it and this one must not.
+
+          [ALSO NOT IN THE PICTURE]
+          No fish, no hook, no float, no lure, no hat, no landing net that is
+          not already there, no text, no labels, no watermark, no border, no
+          frame.
+
+          [CANVAS]
+          Return the image at the same 1387 by 1510 pixels as the picture I
+          attached. Output as PNG.
+Save as:  assets/Gemini_rod-carbon-stream.jpg (the raw download, whatever
+          extension it arrives with, kept so the cut can be re-run)
+Wired in: check the corridor's reel circle and half-width against THIS
+          rod first (see the note above), then
+          `python3 tools/cut-angler.py stream \
+              assets/Gemini_rod-carbon-stream.jpg`,
+          save the rod layer as assets/rod-carbon-stream.png, then add
+          "rod-carbon-stream" to CONFIG.rig.gearArt
+```
+
+**`rod-carbon-ocean`.**
+
+```
+ART NEEDED: R7 gear, The Carp Whisperer for the Ocean angler
+Reference: assets/ref-angler-ocean.png (attach it, made with
+           `python3 tools/gear-ref.py`); ask for the SAME painting back
+Prompt:   [WHAT THIS IS]
+          I have attached a picture of a child fishing. I want the SAME picture
+          back with ONE thing changed: the fishing rod he is holding is a
+          different rod. Everything else must be identical to the picture I
+          attached: the same child, the same face, the same hair, the same
+          pose, the same clothes, the same hands, the same colours, the same
+          brushwork, the same size, the same canvas, the figure in exactly the
+          same position on it. Do not redraw the child. Do not change the crop,
+          the zoom or the framing.
+
+          [WHERE THE ROD GOES, AND THIS IS THE IMPORTANT PART]
+          The new rod lies along EXACTLY the same line as the old one: the same
+          angle across the picture, the same straight path, the butt end
+          stopping at the same point, the tip leaving the picture at the same
+          point on the same edge, the same overall length. Think of it as the
+          same pole repainted where it lies, not a new pole placed in the
+          picture. The child's hand does not move, and his fingers still cross
+          in FRONT of the pole exactly as they do now.
+
+          [HOW HE HOLDS IT]
+          The child is braced back as if leaning into a fish, seen from the
+          side and facing right, and he holds the rod in his near hand at about
+          chin height, with his whole near arm held clear of his chest. His far
+          arm stays resting along his far thigh. Nothing about the arms, the
+          hands or the clothes changes.
+
+          [THE ROD]
+          A modern carbon-fibre rod: a slim matte blank in warm charcoal grey
+          (dark, but never pure black), fine gold thread whipping where each
+          small guide is bound on, a dark ribbed grip where his hand holds it,
+          and a small dark spinning reel hanging BELOW the pole just under his
+          hand.
+
+          [THE REEL MOVES TO THE OTHER SIDE]
+          In the attached picture the reel sits above the pole. On this rod it
+          sits below the pole instead. Where the old reel was there must now be
+          nothing at all but the flat magenta backdrop: no reel, no reel seat,
+          no stub of one, no shadow of one, and only ONE reel in the picture.
+
+          [NOT THE OTHER ONE]
+          The rod in the attached picture is a thick dark boat rod with a big
+          brass reel on top. This one must be obviously different at a glance:
+          a slim matte grey carbon rod with a small spinning reel hanging BELOW
+          the hand. This child also owns a honey-tan stick and a honey-amber
+          split-cane fly rod, so this one is neither cane nor honey-coloured:
+          it is GREY and machine-made.
+
+          [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
+          This rod will be shown about 65 pixels long and only two or three
+          pixels thick. Its overall thickness, its colour and the blob of its
+          reel are the only things that will survive. Paint the guides and the
+          thread whipping as soft suggestions rather than fine detail, and keep
+          the reel a clear simple round shape. No lettering, no logos, no brand
+          names, no maker's marks, no tiny mechanical detail.
+
+          [BACKDROP]
+          Every part of the image that is not the child and his rod is one
+          completely flat, even magenta #FF00FF, exactly as in the attached
+          picture: edge to edge and into all four corners, no gradient, no
+          texture, no vignette, no shading. No water, no ground, no scenery,
+          and no drop shadow or reflection.
+
+          [STYLE]
+          Soft painterly storybook illustration, warm muted color palette,
+          gentle diffused lighting, thin warm brown outlines rather than black,
+          cozy and inviting mood, no harsh shadows, no neon or saturated
+          colours. Soft two-tone shading with blended edges, matching the
+          attached painting exactly. NOT pixel art, NOT flat vector art with
+          even line weight, NOT thick black cartoon linework, NOT a glossy 3D
+          render, NOT a photograph.
+
+          [CRITICAL: draw NO fishing line]
+          The rod must be completely bare. No thread, string or filament of any
+          kind: none wound on the reel, none threaded through the guides, none
+          trailing from the tip, none anywhere in the picture. A rod normally
+          has line on it and this one must not.
+
+          [ALSO NOT IN THE PICTURE]
+          No fish, no hook, no float, no lure, no hat, no landing net that is
+          not already there, no text, no labels, no watermark, no border, no
+          frame.
+
+          [CANVAS]
+          Return the image at the same 1324 by 1466 pixels as the picture I
+          attached. Output as PNG.
+Save as:  assets/Gemini_rod-carbon-ocean.jpg (the raw download, whatever
+          extension it arrives with, kept so the cut can be re-run)
+Wired in: check the corridor's reel circle and half-width against THIS
+          rod first (see the note above), then
+          `python3 tools/cut-angler.py ocean \
+              assets/Gemini_rod-carbon-ocean.jpg`,
+          save the rod layer as assets/rod-carbon-ocean.png, then add
+          "rod-carbon-ocean" to CONFIG.rig.gearArt
+```
+
+##### The Deep Endeavor (`rod-deepsea`), at the Pond and the Stream
+
+R4 painted the Ocean's angler holding it, so only the Pond and the Stream still
+need one.
+
+**`rod-deepsea-pond`.**
+
+```
+ART NEEDED: R7 gear, The Deep Endeavor for the Pond angler
+Reference: assets/ref-angler-pond.png (attach it, made with
+           `python3 tools/gear-ref.py`); ask for the SAME painting back
+Prompt:   [WHAT THIS IS]
+          I have attached a picture of a child fishing. I want the SAME picture
+          back with ONE thing changed: the fishing rod he is holding is a
+          different rod. Everything else must be identical to the picture I
+          attached: the same child, the same face, the same hair, the same
+          pose, the same clothes, the same hands, the same colours, the same
+          brushwork, the same size, the same canvas, the figure in exactly the
+          same position on it. Do not redraw the child. Do not change the crop,
+          the zoom or the framing.
+
+          [WHERE THE ROD GOES, AND THIS IS THE IMPORTANT PART]
+          The new rod lies along EXACTLY the same line as the old one: the same
+          angle across the picture, the same straight path, the butt end
+          stopping at the same point, the tip leaving the picture at the same
+          point on the same edge, the same overall length. Think of it as the
+          same pole repainted where it lies, not a new pole placed in the
+          picture. The child's hand does not move, and his fingers still cross
+          in FRONT of the pole exactly as they do now.
+
+          [HOW HE HOLDS IT]
+          The child is sitting with his knees drawn up, seen from the side and
+          facing right, and he holds the rod in his near hand at about chin
+          height. The butt of the pole tucks in behind his raised knee and his
+          far arm stays resting on that knee. Nothing about the arm, the hand,
+          the knee or the clothes changes.
+
+          [THE ROD]
+          A heavy boat rod: a thick tapered blank in dark warm brown,
+          noticeably thicker than a garden cane, a broad pale cork grip where
+          his hand holds it, a padded fore-grip above the hand, chunky guides,
+          and a big round brass multiplier reel sitting ON TOP of the pole just
+          ABOVE his hand.
+
+          [NOT THE OTHER ONE]
+          The pole in the attached picture is a plain stick with no reel and no
+          fittings. This one must be obviously different at a glance: a thick
+          heavy boat rod with a big brass reel on top. This child already owns
+          a honey-tan stick, a honey-amber split-cane fly rod and a slim grey
+          carbon rod, and all three are thin. This is the THICK one, in dark
+          warm brown, and its reel sits ON TOP of the pole rather than below
+          it.
+
+          [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
+          This rod will be shown about 65 pixels long and only two or three
+          pixels thick. Its overall thickness, its colour and the blob of its
+          reel are the only things that will survive. Paint the guides and the
+          thread whipping as soft suggestions rather than fine detail, and keep
+          the reel a clear simple round shape. No lettering, no logos, no brand
+          names, no maker's marks, no tiny mechanical detail.
+
+          [BACKDROP]
+          Every part of the image that is not the child and his rod is one
+          completely flat, even magenta #FF00FF, exactly as in the attached
+          picture: edge to edge and into all four corners, no gradient, no
+          texture, no vignette, no shading. No water, no ground, no scenery,
+          and no drop shadow or reflection.
+
+          [STYLE]
+          Soft painterly storybook illustration, warm muted color palette,
+          gentle diffused lighting, thin warm brown outlines rather than black,
+          cozy and inviting mood, no harsh shadows, no neon or saturated
+          colours. Soft two-tone shading with blended edges, matching the
+          attached painting exactly. NOT pixel art, NOT flat vector art with
+          even line weight, NOT thick black cartoon linework, NOT a glossy 3D
+          render, NOT a photograph.
+
+          [CRITICAL: draw NO fishing line]
+          The rod must be completely bare. No thread, string or filament of any
+          kind: none wound on the reel, none threaded through the guides, none
+          trailing from the tip, none anywhere in the picture. A rod normally
+          has line on it and this one must not.
+
+          [ALSO NOT IN THE PICTURE]
+          No fish, no hook, no float, no lure, no hat, no landing net that is
+          not already there, no text, no labels, no watermark, no border, no
+          frame.
+
+          [CANVAS]
+          Return the image at the same 1344 by 1391 pixels as the picture I
+          attached. Output as PNG.
+Save as:  assets/Gemini_rod-deepsea-pond.jpg (the raw download, whatever
+          extension it arrives with, kept so the cut can be re-run)
+Wired in: check the corridor's reel circle and half-width against THIS
+          rod first (see the note above), then
+          `python3 tools/cut-angler.py pond \
+              assets/Gemini_rod-deepsea-pond.jpg`,
+          save the rod layer as assets/rod-deepsea-pond.png, then add
+          "rod-deepsea-pond" to CONFIG.rig.gearArt
+```
+
+**`rod-deepsea-stream`.**
+
+```
+ART NEEDED: R7 gear, The Deep Endeavor for the Stream angler
+Reference: assets/ref-angler-stream.png (attach it, made with
+           `python3 tools/gear-ref.py`); ask for the SAME painting back
+Prompt:   [WHAT THIS IS]
+          I have attached a picture of a child fishing. I want the SAME picture
+          back with ONE thing changed: the fishing rod he is holding is a
+          different rod. Everything else must be identical to the picture I
+          attached: the same child, the same face, the same hair, the same
+          pose, the same clothes, the same hands, the same colours, the same
+          brushwork, the same size, the same canvas, the figure in exactly the
+          same position on it. Do not redraw the child. Do not change the crop,
+          the zoom or the framing.
+
+          [WHERE THE ROD GOES, AND THIS IS THE IMPORTANT PART]
+          The new rod lies along EXACTLY the same line as the old one: the same
+          angle across the picture, the same straight path, the butt end
+          stopping at the same point, the tip leaving the picture at the same
+          point on the same edge, the same overall length. Think of it as the
+          same pole repainted where it lies, not a new pole placed in the
+          picture. The child's hand does not move, and his fingers still cross
+          in FRONT of the pole exactly as they do now.
+
+          [HOW HE HOLDS IT]
+          The child is standing in waders, seen from the side and facing right,
+          and he holds the rod in his near hand at about chin height, with his
+          whole near arm held clear of his chest. His far arm hangs at his
+          other side and the landing net on its cord stays exactly where it
+          hangs. Nothing about the arm, the hand, the net or the clothes
+          changes.
+
+          [THE ROD]
+          A heavy boat rod: a thick tapered blank in dark warm brown,
+          noticeably thicker than a garden cane, a broad pale cork grip where
+          his hand holds it, a padded fore-grip above the hand, chunky guides,
+          and a big round brass multiplier reel sitting ON TOP of the pole just
+          ABOVE his hand.
+
+          [THE REEL MOVES TO THE OTHER SIDE]
+          In the attached picture the reel sits below the pole. On this rod it
+          sits above the pole instead. Where the old reel was there must now be
+          nothing at all but the flat magenta backdrop: no reel, no reel seat,
+          no stub of one, no shadow of one, and only ONE reel in the picture.
+
+          [NOT THE OTHER ONE]
+          The rod in the attached picture is a honey-coloured split-cane fly
+          rod with a small dark reel. This one must be obviously different at a
+          glance: a thick heavy boat rod with a big brass reel on top. This
+          child also owns a plain honey-tan stick and a slim grey carbon rod,
+          and both are thin. This is the THICK one, in dark warm brown, and its
+          reel sits ON TOP of the pole rather than below it.
+
+          [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
+          This rod will be shown about 95 pixels long and only two or three
+          pixels thick. Its overall thickness, its colour and the blob of its
+          reel are the only things that will survive. Paint the guides and the
+          thread whipping as soft suggestions rather than fine detail, and keep
+          the reel a clear simple round shape. No lettering, no logos, no brand
+          names, no maker's marks, no tiny mechanical detail.
+
+          [BACKDROP]
+          Every part of the image that is not the child and his rod is one
+          completely flat, even magenta #FF00FF, exactly as in the attached
+          picture: edge to edge and into all four corners, no gradient, no
+          texture, no vignette, no shading. No water, no ground, no scenery,
+          and no drop shadow or reflection.
+
+          [STYLE]
+          Soft painterly storybook illustration, warm muted color palette,
+          gentle diffused lighting, thin warm brown outlines rather than black,
+          cozy and inviting mood, no harsh shadows, no neon or saturated
+          colours. Soft two-tone shading with blended edges, matching the
+          attached painting exactly. NOT pixel art, NOT flat vector art with
+          even line weight, NOT thick black cartoon linework, NOT a glossy 3D
+          render, NOT a photograph.
+
+          [CRITICAL: draw NO fishing line]
+          The rod must be completely bare. No thread, string or filament of any
+          kind: none wound on the reel, none threaded through the guides, none
+          trailing from the tip, none anywhere in the picture. A rod normally
+          has line on it and this one must not.
+
+          [ALSO NOT IN THE PICTURE]
+          No fish, no hook, no float, no lure, no hat, no landing net that is
+          not already there, no text, no labels, no watermark, no border, no
+          frame.
+
+          [CANVAS]
+          Return the image at the same 1387 by 1510 pixels as the picture I
+          attached. Output as PNG.
+Save as:  assets/Gemini_rod-deepsea-stream.jpg (the raw download, whatever
+          extension it arrives with, kept so the cut can be re-run)
+Wired in: check the corridor's reel circle and half-width against THIS
+          rod first (see the note above), then
+          `python3 tools/cut-angler.py stream \
+              assets/Gemini_rod-deepsea-stream.jpg`,
+          save the rod layer as assets/rod-deepsea-stream.png, then add
+          "rod-deepsea-stream" to CONFIG.rig.gearArt
+```
 
 ### ✅ R6 wave 1 — the Pond's ten fish (all three sheets landed 2026-09-02)
 
