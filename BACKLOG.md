@@ -133,10 +133,12 @@ carelessness (repeated errors). Rewards key off accuracy/collection, never speed
 - **Named nemesis fish** — Muskie Quixote already exists in `data/fish.json` as the legendary; give it recurring lore + a bigger landing celebration.
 - **Home aquarium** — caught fish swim in a viewable tank. The ultimate "look what I made" for a kid. Needs art.
 
-## EPIC: Catch Feel — the moment of the catch (F1-F5, opened 2026-09-03)
+## EPIC: Catch Feel — the moment of the catch (F1-F5) ✅ SHIPPED 2026-09-03
 
-*Raised by Matt from a play session, September 2026. Detailed milestones:
-`BUILD_PLAN_FEEL.md`. R7's nine rods are paused while this runs, not cancelled.*
+*Raised by Matt from a play session, September 2026, and closed the same day.
+Detailed milestones and what each one measured: `BUILD_PLAN_FEEL.md`. R7 has its
+nine rods back. **Matt still has to play it** — the wiggle's word count is the
+number most likely to be wrong, and it is one line.*
 
 The refresh gave the game paintings; playing it showed that the moment those
 paintings exist for is the weakest part of the loop. Four scene elements
@@ -164,6 +166,11 @@ grouped into five milestones:
 - **Fish should take longer to bite, and some casts should need a few short
   words to wiggle the bait** before anything is interested. Matt's call: no
   wiggle, no bite. (F4)
+
+All seven shipped. `tools/play-check.mjs` came out of it: it plays a whole catch
+in a real browser and shoots every beat, which is how each of the seven was seen
+before it was written down and after it was fixed. **None of the first three
+would ever have failed an assertion** — each was wrong for about three frames.
 
 **Found while building it:**
 

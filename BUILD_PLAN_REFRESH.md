@@ -647,11 +647,14 @@ body, and all of it survives a reload with no 404s anywhere in the run.
 
 ## Open questions
 
-1. **Is the Silkscreen pixel display font still right?** It is the last pixel-era
-   thing left after R2, and it is used for the title, HUD and banners. A warm
-   rounded storybook face would match the new direction — but the keyboard is
-   staying pixel-crisp, so keeping Silkscreen is defensible as the thing that
-   ties the untouched keyboard to the rest. Not blocking; decide during R2.
+1. ~~**Is the Silkscreen pixel display font still right?**~~ **✅ Answered
+   2026-09-03 by the Catch Feel epic's F2: no, and it went game-wide.** Baloo 2,
+   self-hosted, chosen by rendering five candidates into the real game and
+   looking. The "it ties the keyboard to the rest" argument turned out not to
+   apply — `.key` never used `--display` at all, it inherits `--mono` from
+   `body`, so the keyboard was never pixel-typed and the swap went straight past
+   it (proved by element screenshot: same size, max channel difference 2 of 255).
+   Details in `ART_DIRECTION.md`.
 2. **One surface treatment or three?** Carried over unanswered from V1. The
    three levels could share one `#surface` palette or each get its own. Shared is
    cheaper and probably reads fine; R3 is when it becomes visible either way.

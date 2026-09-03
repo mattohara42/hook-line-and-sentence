@@ -175,8 +175,22 @@ Play it. Fold what each milestone decided into the doc that owns it
 `ART_DIRECTION.md` for the face), rewrite `HANDOFF.md`, and hand R7 back its
 nine rods.
 
+**Docs folded 2026-09-03.** `SPEC.md`'s core loop carries the wiggle and the
+card · `ANIMATION.md` carries the landing point, the twitch and the card's rise
+and yank · `ART_DIRECTION.md` carries Baloo 2 as its fourth adoption decision ·
+`BUILD_PLAN_REFRESH.md`'s open question 1 is struck through and answered.
+
+**The eye test is Matt's and it is the one thing left.** Netlify is manual, so
+none of this is live. What to look for is in `HANDOFF.md`, and every number
+worth arguing with is one line in `config.js`.
+
 ## Open questions
 
+0. **Is three wiggle words too many for a real beginner?** Measured at 220ms a
+   key it is about 3.3 seconds. A six-year-old is nearer 800–1000ms a key, which
+   makes it ten. `CONFIG.wiggle.wordsRange` drops to `[1, 2]` in one line, and
+   `chance` is the other knob. This is the number in the epic most likely to be
+   wrong, and only a kid can settle it.
 1. **Does the per-word wake belong on a fixed row or on the fish?** F1 suppresses
    the duplicate and lifts the hardcoded 258/262 into config, but leaves the ring
    on a fixed row. Tracking the fish's own y is more truthful and would put the
@@ -188,6 +202,11 @@ nine rods.
    16:9 it still emerges half behind it (`base-3b-approach-late`). Not F1's job —
    F1 moves the *line* to meet the fish — but it is the other half of the same
    complaint.
-3. **Should the escape get its own card treatment?** F3 gives it the plain card.
-   The parked "the one that got away" backlog item would make it a quest, which
-   is a different and larger thing.
+3. **Should the escape get its own card treatment?** F3 gives it the plain card
+   with the placeholder silhouette, keeping the species secret the way the reveal
+   does. The parked "the one that got away" backlog item would make it a quest,
+   which is a different and larger thing — and the card is now the obvious place
+   to hang it.
+4. **The four junk sprites are the last pixel-era art in the game**, and F3's
+   card is what made that visible. In `BACKLOG.md` with the mitigation that
+   shipped.
