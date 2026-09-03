@@ -1568,6 +1568,50 @@ previously shipped rods re-cut byte-identically: no tool changes were needed for
 this one, which is the first time the pipeline has taken a delivery without
 learning something new from it.
 
+#### ✅ `rod-carbon-pond` landed first attempt (2026-09-03), and it fixes the palette check
+
+**The first rod whose difference is a COLOUR rather than a shape**, and the one
+the prompt was most likely to lose. At the Pond the kid already owns a honey-tan
+stick and a honey-amber fly rod; at 65 design px a slim grey rod differs from a
+slim honey rod in almost nothing else, since both hang their reel below the hand.
+It came back unmistakably grey, and the separation is measurable rather than a
+matter of opinion — the shaft's **interior** colour, sampled inside the outline:
+
+| rod | mean RGB of the shaft interior | R − B |
+|---|---|---|
+| `rod-carbon-pond` | (101, 91, 87) | **+14** |
+| `rod-bamboo-pond` | (182, 104, 55) | +128 |
+| `rod-stick-pond` | (194, 140, 90) | +105 |
+
+**+14 is a warm grey**, which is exactly what `[THE ROD]` asked for and what
+`ART_DIRECTION.md` allows: dark, never neutral, never black.
+
+**And measuring it exposes a flaw in this section's own delivery checklist.** The
+list says *"no pure black"*, full stop — and by that reading **every rod in the
+game fails**, this one included:
+
+| layer | pure-black px | share darker than `#33291f` |
+|---|---|---|
+| `rod-carbon-pond` | 225 | 19.4% |
+| `rod-bamboo-pond` (shipped) | 84 | 23.8% |
+| `rod-deepsea-ocean` (R4) | 113 | 14.9% |
+| `rod-stick-pond` (R4) | 0 | 4.3% |
+
+Those are **outline and JPEG-ringing pixels**, not paint anyone chose, and the
+mean of the sub-umber ones is `(33, 18, 18)` — warm. A binary "any (0,0,0) fails"
+test would have rejected R4's own accepted deepsea rod. **The measure that means
+something is the interior**, which is why the table above samples inside an
+eroded mask and above the hand. The rule the art direction actually cares about
+is *the paint is warm and nothing reads as black*; a handful of black pixels on
+an anti-aliased outline is neither.
+
+Everything else is routine: 0 px of backdrop bleed, median colour distance
+**7.9** with 7.4% over 40, 380 px of the reference the return does not carry,
+94.8% of the shaft inside the pose's half-width, and the reel detector found
+7,137 px of hardware with only 152 px of the child inside it. No tool changes;
+all four previously shipped rods re-cut byte-identically. Verified in Chromium at
+the Pond against the bamboo — a kid can tell them apart.
+
 #### The coordinate space nobody had written down, and a tool that ate its own output
 
 Measuring the above turned up the thing that actually blocks the cut, and it is
