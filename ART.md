@@ -1362,6 +1362,71 @@ first, then run the corridor. **This is the first thing that will go wrong on
 the first rod delivery**, and it is worth doing before reading anything into a
 bad cut.
 
+#### ✅ `rod-stick-stream` landed first attempt (2026-09-03), and it found two things
+
+**The delivery is an accept.** Every check the section asks for, measured
+against `ref-angler-stream.png` rather than eyeballed:
+
+| check | result |
+|---|---|
+| canvas | 992x1079 against the 1387x1510 asked. Size ignored as always, but **the aspect held**: 0.9194 against 0.9185, the closest of any delivery so far |
+| backdrop bled into the subject | **0 px** more than 8px inside the figure — the reroll check, and it passes cleanly |
+| the pose, off the rod | silhouette agreement **0.9863**, median colour distance **9.7**, 11.3% over 40, and only **803 px** of the reference the return does not carry. The hats ran 0.974-0.975 and 8.1/9.3%, so this is the same faithful edit |
+| **the rod is on the axis** | **97.2%** of the shaft above the hand sits inside the pose's own half-width, and the centreline is off by **0.06 to 0.66 design px** across its length. This was the whole risk of the request and it held |
+| the reel | gone. The 808 px left inside the pose's reel circle are the shaft passing through its edge, not a remnant — drawn and checked |
+| palette | 0 pure-black px; 1.565% darker than umber, warm at `(67, 24, 8)` |
+
+**Two deviations, neither a reroll.** The tip runs on to the top-right corner
+rather than stopping where the reference's stopped, 186 px further up — which
+costs nothing, because the *rendered* rod length comes from `rod_len` against
+the figure's scale, so a longer painting only means less shaft to synthesise.
+And the shaft is **thinner** than the pose's `half` (median 9.6 px against 15),
+which is the per-item half-width this section flagged — except in the harmless
+direction. The corridor is `perp <= half` gated by alpha, so a generous corridor
+around a thin rod picks up nothing extra. **`half` only bites when a rod is
+FATTER than the pose's**, which means `rod-deepsea` at the Pond and the Stream,
+and nowhere else. Half the flag, retired.
+
+#### The coordinate space nobody had written down, and a tool that ate its own output
+
+Measuring the above turned up the thing that actually blocks the cut, and it is
+not any of the three numbers flagged above.
+
+**`assets/angler-<pose>.png` is an OUTPUT of `cut-angler.py`, not the raw
+delivery.** It is the keyed painting on the *padded* canvas the tool builds to
+hold the synthesised rod tip. The raw deliveries were 1024x1024 as asked and are
+not in the repo at all. So `POSES`'s coordinates — axis, grip, butt, hand band,
+reel circle — are in the **raw** delivery's space, and every gear return is in
+the **padded** space, because `gear-ref.py` builds the attachment from the
+padded file. The two differ by a top pad:
+
+| pose | `angler-<pose>.png` | top pad | raw delivery |
+|---|---|---|---|
+| `pond` | 1344x1391 | **367** | 1344x1024 |
+| `stream` | 1387x1510 | **486** | 1387x1024 |
+| `ocean` | 1324x1466 | **442** | 1324x1024 |
+
+Derived three independent ways that agree to a pixel — solving the axis through
+the painted tip, fitting the shaft's centreline with the pose's slope held, and
+scanning for the pad that best covers the corridor — and then **drawn**: the
+axis painted onto `ref-angler-stream.png` runs down the middle of the shaft, the
+half-width lines bracket it, the reel circle lands on the reel and the grip dot
+lands in the hand. That every raw source comes back at 1024 tall, which is what
+the angler prompts asked for, is the fourth confirmation.
+
+So registering a rod return is **the fit plus that shift**, not the fit alone.
+Cropping the pad back off also restores what `t_edge` assumes — that the shaft
+runs off the top of the frame — which is why the over-long tip above costs
+nothing.
+
+**And `cut-angler.py`'s source argument was optional, defaulting to
+`assets/angler-<pose>.png`, which is one of its own outputs.** Run as documented
+it reads a keyed PNG, `convert("RGB")` turns the alpha backdrop black, the flood
+keys on black, and it rewrites all four committed files for that pose with
+garbage. That is what happened when this delivery was checked against a control
+run (recovered from git, no loss). The source is now required, and a second
+guard refuses any image with a transparent border. Both were watched firing.
+
 ##### Trusty Stick (`rod-stick`), at the Stream and the Ocean
 
 R4 painted the Pond's angler holding it, so only the Stream and the Ocean still
