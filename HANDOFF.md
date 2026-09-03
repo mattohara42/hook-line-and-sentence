@@ -9,31 +9,16 @@ something is the way it is, `git log` and the PR body have it in full.
 
 | | |
 |---|---|
-| **Active milestone** | **F5 — eye test, docs, and back to the rods**, `BUILD_PLAN_FEEL.md`. |
-| **Done when** | Matt has played it, each milestone's decisions are folded into the doc that owns them, and R7 has its nine rods back |
-| **F1–F4** | ✅ all shipped 2026-09-03. |
-| **F1** | ✅ shipped. One ripple on a landing, the silhouette is the species that bites, and the line's far end moves 43px at the bite instead of 80 — all of it the fish's own mouth depth below the bait. |
-| **R7 is paused, not cancelled** | the nine rods are all that is left of the refresh; they resume when F5 closes. Everything the rods need is still below. |
+| **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. Back on; the nine rods are all that is left of the refresh. |
+| **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
+| **State** | both done-when clauses have been met since the straw hat landed. **12 of 21 painted, the hat column complete at 12 of 12.** Left: the 9 rods only. |
+| **Catch Feel** | ✅ **F1–F5 all shipped 2026-09-03**, `BUILD_PLAN_FEEL.md`. One thing left and it is Matt's: play it. |
 | `origin/main` | clean, nothing unpushed |
-| Tests | 93/93 (`npm test`) |
+| Tests | 95/95 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
 | Deploys | Netlify is **manual**; merging to `main` does not go live |
 
 ## Start here
-
-**The catch moment is the work now.** Matt played it and found seven things
-wrong with the beat between hooking a fish and casting again. They are grouped
-into five milestones in `BUILD_PLAN_FEEL.md`, which is the plan of record; that
-file also carries the three decisions he made when asked (no wiggle no bite ·
-Silkscreen goes game-wide · one card that escalates rather than two surfaces).
-
-**Every one of the seven was seen on screen before it was written down**, and the
-script that did it is now `tools/play-check.mjs` — it plays a whole catch in
-Chromium and shoots every beat. Use it rather than trusting an assertion: none
-of F1's three bugs would have failed one, and F2 through F4 are the same kind of
-problem. Take a `--tag base` run before you change anything.
-
-## R7, when it comes back
 
 **R7 has one thing left: the nine rods.** The hat column closed at 12 of 12 on
 2026-09-02 and every hat was verified in a real browser at every spot. Both
@@ -64,17 +49,11 @@ eye test (below).
 and for `spot-check.mjs`, `cd /tmp && npm install playwright`. `tools/README.md`
 indexes all nine tools and what each is for.
 
-**Two things the hats left behind.**
-
-- **A good delivery was rejected by mistake** for looking like the straw hat,
-  and was a sou'wester all along; measuring the two silhouettes settled it in
-  one command (reach behind vs in front, 2.44 against 2.01). A glance is not a
-  measurement, and a wrong rejection costs as much as a wrong acceptance while
-  being far harder to notice. Both hats were amber and wide-brimmed because
-  nothing in the prompts separated their *colour* — see `GEMINI_NOTES.md`.
-- **`cut-gear.py`'s neck guard truncates both sou'westers** and no constant
-  fixes it. Measured, visible at game scale, and in `BACKLOG.md` with the
-  numbers rather than bodged.
+**Two things the hats left behind**, both written up where they belong: a good
+delivery rejected by mistake for looking like the straw hat, because nothing in
+the prompts separated the two hats' *colour* (`GEMINI_NOTES.md`, #133) · and
+`cut-gear.py`'s neck guard truncating both sou'westers, with no constant that
+fixes it (`BACKLOG.md`, measured rather than bodged).
 
 **A delivered PNG is not live until it is registered** in `CONFIG.rig.gearArt`,
 and an unregistered one looks exactly like art that never arrived.
@@ -116,6 +95,19 @@ and an unregistered one looks exactly like art that never arrived.
 - **A7 fight beats have never been tested on a real kid.**
   `CONFIG.fight.clauseRunMs` (550) and `segmentRunMs` (900) were picked by feel.
 - **The Firebase blast-radius decision**, in `BACKLOG.md`.
+- **The whole Catch Feel epic wants a play** (F1–F5, 2026-09-03). Netlify is
+  manual, so none of it is live. Four things to look at, each one line in
+  `config.js` if it is wrong:
+  - **`CONFIG.wiggle.wordsRange`** — the number most likely to be wrong in the
+    epic. Two or three short words to twitch the bait measures 3.3s typed at
+    220ms a key; a six-year-old is nearer 800–1000ms, which makes it ten
+    seconds. `[1, 2]` is the lighter version and `chance` is the other knob.
+  - **`CONFIG.anim.cast.landing`** — the lure lands 28px lower. That is as low
+    as the guide panel allows on a 900x600 window, not as low as it could look.
+  - **Baloo 2**, the display face, everywhere but the frozen keyboard. One line
+    in `style.css`; Nunito was the runner-up.
+  - **The catch card and plaque**, held until you type — the pacing after a
+    catch is now yours rather than a timer's.
 
 ## Three decisions R6 left behind, none blocking
 
@@ -143,14 +135,10 @@ re-solving. Prompt and a cheaper CSS-tint fallback: `ART.md` → *R5 debt*.
 
 ## Rules of thumb
 
-- **`git fetch origin main` before branching**, and re-branch from it after
-  every squash-merge — reusing a branch across merges makes its history diverge
-  and the next PR conflicts against work that is already in.
-- **Verify visual and motion claims in a real browser**, not just unit tests —
-  and **screenshot past the startup modal**. `node tools/spot-check.mjs --loc
-  ocean --hat straw --rod deepsea` does it: it seeds a profile, clicks through
-  the picker, prints the rig's layer stack and any failed asset request, and
-  saves a shot. Serve the repo first, and it needs playwright on `NODE_PATH`.
+- **Verify visual and motion claims in a real browser, past the startup modal.**
+  `tools/spot-check.mjs` takes one still of a spot with its layer stack printed;
+  `tools/play-check.mjs` plays a whole catch and shoots every beat. Serve the
+  repo first, and both want playwright on `NODE_PATH`.
 - **Draw what you measured before believing it.** R6 shipped four bugs past
   green assertions. The muskie was checked by painting its configured mouth on
   the live scene next to the line's own endpoint — they coincided, which is the
@@ -164,6 +152,8 @@ re-solving. Prompt and a cheaper CSS-tint fallback: `ART.md` → *R5 debt*.
   alarm into a normal reading (#128). The Stream hat cost a scare for want of
   this: IoU 0.54 with 70% "changed", and a perfectly faithful edit whose fit was
   keying on a landing net that had swung (#124).
+- **Some bugs are only wrong for three frames.** All three F1 found were, and
+  none would ever have failed an assertion. That is what `play-check` is for.
 - **A registry beats a filename convention.** `CONFIG.fish.species`,
   `CONFIG.rig.poses` and now `CONFIG.rig.gearArt` are one idea three times: the
   config lists what exists, anything absent falls back, and a half-finished set
@@ -176,17 +166,14 @@ re-solving. Prompt and a cheaper CSS-tint fallback: `ART.md` → *R5 debt*.
   looking like the straw hat, and one command comparing the two silhouettes
   disproved it (#133). A wrong rejection costs as much as a wrong acceptance and
   nothing downstream ever complains about it.
-- **Nothing may land in the bottom-center finger-guide panel.** It covers the
-  lower third and it is the best part of the game.
-- **The keyboard is frozen and tested.** Never point `--kb-*` at a scene token.
 
 ## Which doc owns what
 
 | doc | owns |
 |---|---|
 | `SPEC.md` | the game's design, and its non-goals |
-| `BUILD_PLAN_FEEL.md` | the active epic, F1–F5 |
-| `BUILD_PLAN_REFRESH.md` | the paused epic, R1–R7 — nine rods left |
+| `BUILD_PLAN_REFRESH.md` | the active epic, R1–R7 — nine rods left |
+| `BUILD_PLAN_FEEL.md` | Catch Feel, F1–F5, shipped — and what each one measured |
 | `ART_DIRECTION.md` | what the art should **look like** |
 | `ANIMATION.md` | how the cast, line and reel **move** |
 | `ART.md` | the art **pipeline** and the open requests |

@@ -71,8 +71,10 @@ Full prompt set to be generated per costume, per fish, and per background follow
 
 ## Decisions taken on adoption (2026-08-31)
 
-Three things in this doc needed a call against what the game already shipped.
-Matt made all three; they are settled, not open questions.
+Four things in this doc needed a call against what the game already shipped.
+Matt made all four; they are settled, not open questions. (The fourth, the
+display face, was added in September 2026 and closed the refresh's own open
+question 1.)
 
 1. **How far the restyle reaches: everything except the keyboard grid.** The
    scene, the HUD, the tackle box, the shop, the badges *and* the collection
@@ -88,7 +90,21 @@ Matt made all three; they are settled, not open questions.
    The **favorite-color accent tint survives** — it is a CSS filter on one
    region of a drawn sprite, so it costs no extra art and keeps the
    personalization that the assignment was there for.
-3. **Fish: one rig per species, not shape families.** This doc assumes ~10 fish;
+3. **The display face: Baloo 2, self-hosted (added F2, 2026-09-03).** This doc
+   never named a typeface, and the game kept Silkscreen — a pixel face — through
+   the whole refresh, carrying every pun, chip, banner and shop label at 10–13px
+   over painterly backgrounds. It was `BUILD_PLAN_REFRESH.md`'s open question 1
+   and Matt's call was to swap it game-wide. Baloo 2 was chosen by rendering five
+   candidates into the real game on the same beat and looking: **weight decided
+   it**, because type here is laid straight over a painting with no panel behind
+   it and a light face disappears at 11px. It is **self-hosted** in `assets/`
+   (SIL OFL 1.1) rather than linked from Google Fonts, which removes the game's
+   last third-party request and means a CDN it cannot reach can no longer make
+   the game silently render in fallback monospace. `.key` carries no
+   `font-family` at all and so the frozen keyboard is untouched — never point a
+   `.key` rule at `--display`.
+
+4. **Fish: one rig per species, not shape families.** This doc assumes ~10 fish;
    the live roster in `data/fish.json` is **33 species** across the four ranks,
    currently served by four PNGs plus a hue-rotate. Matt's call is a rig per
    species — every fish in the collection gets its own art. That is the single

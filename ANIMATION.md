@@ -15,6 +15,25 @@ This exists because the current build's line "just appears" with no motion. This
 2. Rod swings forward, line and lure travel outward along an arc, not a straight line. Use a simple projectile-style curve (parabolic or a tuned Bezier), duration roughly 400–600ms, ease-out on landing.
 3. Lure lands with a small splash effect (a few expanding, fading circles is enough, no particle system needed at this stage) and a soft sound cue.
 
+**Where it lands (F1, 2026-09-03).** `CONFIG.anim.cast.landing` was `(394, 196)`
+— two px below `fish.surface.y`, the waterline the background art is painted to.
+In a scene whose water recedes *toward* the viewer, that line is the far bank: the
+lure sat on the horizon, and the line's far end then jumped ~80px down and ~65px
+right the instant a fish took it at y≈256. It is now `(458, 224)` and the jump is
+43px, all of it the fish's mouth sitting below the bait — which is what a bobber
+and a fish look like. The point is matched to `fish.path.fromX/fromY` plus
+`fish.approach.spawn`; move those and this moves with them. It cannot simply BE
+the bite point, which is inside the guide-panel band: **the panel is a fixed
+page-size element over a scaled design canvas, so the smaller the window the more
+design space it eats.** 224 is as low as it can go and still clear on 2:1, 16:9,
+16:10, 4:3 and 900x600, which is the binding shape at 13px.
+
+**The wiggle twitch (F4).** On a wiggle cast every word the kid types twitches
+the bait: a 340ms `bobberTwitch` (a sharp dip-and-flick, not a wobble), a ripple
+at the landing point, and `tug.wordImpulse` on the rod. Those are the same three
+motions a reeled word already makes, aimed at the bait instead of at a fish — the
+mechanic only works if a kid can see their typing move something in the water.
+
 ## Line while idle/waiting
 
 The line should sag slightly between rod tip and lure, a gentle curve rather than a straight rigid line. A quadratic Bezier from rod tip to lure position, with the control point offset downward, is enough to sell weight without a full rope simulation.
@@ -76,6 +95,20 @@ The one that gets away runs the ramp backwards: an escape is a CSS transition
 water and goes back to being a shape. It used to be `el.fish.style.left =
 "760px"` with the swim loop already stopped, which was not an escape so much as
 a disappearance.
+
+## The catch card (F3, 2026-09-03)
+
+The one piece of motion that is not in the water. The post-catch card **rises**
+into place under the catch (420ms, a slight overshoot) and is **yanked** off the
+top when the kid starts the next word (260ms, ease-in). The yank is deliberate
+and is not a fade: a fade reads as the card giving up, a yank reads as the kid
+clearing it to get on with fishing. Durations are `CONFIG.card.inMs` /
+`yankMs`, written onto the element as custom properties so the CSS and the JS
+timeout cannot drift apart.
+
+Under `prefers-reduced-motion` the card still appears and still waits for a
+keystroke — it just does not travel to get there. Losing the card entirely would
+lose the whole payoff of a catch.
 
 ## Scope note
 
