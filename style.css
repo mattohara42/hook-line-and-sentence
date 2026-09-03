@@ -82,10 +82,15 @@
 
      SELF-HOSTED rather than pulled from Google Fonts, which is what
      Silkscreen did. Three reasons and they all point the same way: it
-     removes the game's last third-party request (BACKLOG.md keeps "no
-     analytics, no third-party scripts" as a value), it cannot silently
-     fall back to monospace when the CDN is unreachable, and it is one
-     33KB file in assets/ instead of a network round trip. SIL OFL 1.1,
+     takes a third-party request off every page load (BACKLOG.md keeps
+     "no analytics, no third-party scripts" as a value), it cannot
+     silently fall back to monospace when the CDN is unreachable, and it
+     is one 33KB file in assets/ instead of a network round trip.
+     One fewer, not zero: syncInit() still imports the Firebase SDK from
+     gstatic on every launch while cloud saves are configured. That one
+     is the sync feature rather than presentation, it is documented in
+     FIRESTORE.md, and its privacy question is the blast-radius item in
+     BACKLOG.md. SIL OFL 1.1,
      licence in assets/baloo2-OFL.txt. Latin subset only; the game is
      English and the variable weight axis covers 400-800 in the one file.
 
