@@ -1287,7 +1287,12 @@ look like the straw hat (#133), where nothing in the prompts separated the two.
 `rod_len`: **65 design px at the Pond and the Ocean, 95 at the Stream.** At that
 size a rod is a two- or three-pixel stroke with one blob near the hand, so which
 side of the pole the reel sits on is doing more work than anything else in the
-painting.
+painting. **It comes in two versions**, and the difference is not cosmetic: the
+seven reeled rods are told the reel's side is the strongest of the three
+surviving cues, and the two `rod-stick` prompts are told the *absence* of a reel
+is what makes the stick recognisable. One `[SHAPE]` block for all nine would
+have asked the two stick prompts to "keep the reel a clear simple round shape"
+in the same breath as `[THE REEL IS GONE]`.
 
 **The order to fill them** is `stick` and `bamboo` before `carbon` and
 `deepsea`, and within a rod, the poses in the order below. `[NOT THE OTHER ONE]`
@@ -1383,11 +1388,11 @@ Prompt:   [WHAT THIS IS]
 
           [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
           This rod will be shown about 95 pixels long and only two or three
-          pixels thick. Its overall thickness, its colour and the blob of its
-          reel are the only things that will survive. Paint the guides and the
-          thread whipping as soft suggestions rather than fine detail, and keep
-          the reel a clear simple round shape. No lettering, no logos, no brand
-          names, no maker's marks, no tiny mechanical detail.
+          pixels thick. Its overall thickness and its colour are the only
+          things that will survive, and having NO reel is the whole of what
+          makes it recognisable next to the others. Paint the whipped cord as a
+          soft suggestion rather than fine detail. No lettering, no logos, no
+          brand names, no maker's marks, no tiny mechanical detail.
 
           [BACKDROP]
           Every part of the image that is not the child and his rod is one
@@ -1481,11 +1486,11 @@ Prompt:   [WHAT THIS IS]
 
           [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
           This rod will be shown about 65 pixels long and only two or three
-          pixels thick. Its overall thickness, its colour and the blob of its
-          reel are the only things that will survive. Paint the guides and the
-          thread whipping as soft suggestions rather than fine detail, and keep
-          the reel a clear simple round shape. No lettering, no logos, no brand
-          names, no maker's marks, no tiny mechanical detail.
+          pixels thick. Its overall thickness and its colour are the only
+          things that will survive, and having NO reel is the whole of what
+          makes it recognisable next to the others. Paint the whipped cord as a
+          soft suggestion rather than fine detail. No lettering, no logos, no
+          brand names, no maker's marks, no tiny mechanical detail.
 
           [BACKDROP]
           Every part of the image that is not the child and his rod is one
@@ -1579,10 +1584,11 @@ Prompt:   [WHAT THIS IS]
           [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
           This rod will be shown about 65 pixels long and only two or three
           pixels thick. Its overall thickness, its colour and the blob of its
-          reel are the only things that will survive. Paint the guides and the
-          thread whipping as soft suggestions rather than fine detail, and keep
-          the reel a clear simple round shape. No lettering, no logos, no brand
-          names, no maker's marks, no tiny mechanical detail.
+          reel are the only things that will survive, and which side of the
+          pole the reel sits on is the clearest of the three. Paint the guides
+          and the thread whipping as soft suggestions rather than fine detail,
+          and keep the reel a clear simple round shape. No lettering, no logos,
+          no brand names, no maker's marks, no tiny mechanical detail.
 
           [BACKDROP]
           Every part of the image that is not the child and his rod is one
@@ -1679,10 +1685,11 @@ Prompt:   [WHAT THIS IS]
           [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
           This rod will be shown about 65 pixels long and only two or three
           pixels thick. Its overall thickness, its colour and the blob of its
-          reel are the only things that will survive. Paint the guides and the
-          thread whipping as soft suggestions rather than fine detail, and keep
-          the reel a clear simple round shape. No lettering, no logos, no brand
-          names, no maker's marks, no tiny mechanical detail.
+          reel are the only things that will survive, and which side of the
+          pole the reel sits on is the clearest of the three. Paint the guides
+          and the thread whipping as soft suggestions rather than fine detail,
+          and keep the reel a clear simple round shape. No lettering, no logos,
+          no brand names, no maker's marks, no tiny mechanical detail.
 
           [BACKDROP]
           Every part of the image that is not the child and his rod is one
@@ -1778,10 +1785,11 @@ Prompt:   [WHAT THIS IS]
           [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
           This rod will be shown about 65 pixels long and only two or three
           pixels thick. Its overall thickness, its colour and the blob of its
-          reel are the only things that will survive. Paint the guides and the
-          thread whipping as soft suggestions rather than fine detail, and keep
-          the reel a clear simple round shape. No lettering, no logos, no brand
-          names, no maker's marks, no tiny mechanical detail.
+          reel are the only things that will survive, and which side of the
+          pole the reel sits on is the clearest of the three. Paint the guides
+          and the thread whipping as soft suggestions rather than fine detail,
+          and keep the reel a clear simple round shape. No lettering, no logos,
+          no brand names, no maker's marks, no tiny mechanical detail.
 
           [BACKDROP]
           Every part of the image that is not the child and his rod is one
@@ -1873,10 +1881,11 @@ Prompt:   [WHAT THIS IS]
           [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
           This rod will be shown about 95 pixels long and only two or three
           pixels thick. Its overall thickness, its colour and the blob of its
-          reel are the only things that will survive. Paint the guides and the
-          thread whipping as soft suggestions rather than fine detail, and keep
-          the reel a clear simple round shape. No lettering, no logos, no brand
-          names, no maker's marks, no tiny mechanical detail.
+          reel are the only things that will survive, and which side of the
+          pole the reel sits on is the clearest of the three. Paint the guides
+          and the thread whipping as soft suggestions rather than fine detail,
+          and keep the reel a clear simple round shape. No lettering, no logos,
+          no brand names, no maker's marks, no tiny mechanical detail.
 
           [BACKDROP]
           Every part of the image that is not the child and his rod is one
@@ -1974,10 +1983,11 @@ Prompt:   [WHAT THIS IS]
           [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
           This rod will be shown about 65 pixels long and only two or three
           pixels thick. Its overall thickness, its colour and the blob of its
-          reel are the only things that will survive. Paint the guides and the
-          thread whipping as soft suggestions rather than fine detail, and keep
-          the reel a clear simple round shape. No lettering, no logos, no brand
-          names, no maker's marks, no tiny mechanical detail.
+          reel are the only things that will survive, and which side of the
+          pole the reel sits on is the clearest of the three. Paint the guides
+          and the thread whipping as soft suggestions rather than fine detail,
+          and keep the reel a clear simple round shape. No lettering, no logos,
+          no brand names, no maker's marks, no tiny mechanical detail.
 
           [BACKDROP]
           Every part of the image that is not the child and his rod is one
@@ -2075,10 +2085,11 @@ Prompt:   [WHAT THIS IS]
           [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
           This rod will be shown about 65 pixels long and only two or three
           pixels thick. Its overall thickness, its colour and the blob of its
-          reel are the only things that will survive. Paint the guides and the
-          thread whipping as soft suggestions rather than fine detail, and keep
-          the reel a clear simple round shape. No lettering, no logos, no brand
-          names, no maker's marks, no tiny mechanical detail.
+          reel are the only things that will survive, and which side of the
+          pole the reel sits on is the clearest of the three. Paint the guides
+          and the thread whipping as soft suggestions rather than fine detail,
+          and keep the reel a clear simple round shape. No lettering, no logos,
+          no brand names, no maker's marks, no tiny mechanical detail.
 
           [BACKDROP]
           Every part of the image that is not the child and his rod is one
@@ -2177,10 +2188,11 @@ Prompt:   [WHAT THIS IS]
           [SHAPE, BECAUSE IT WILL BE SEEN SMALL]
           This rod will be shown about 95 pixels long and only two or three
           pixels thick. Its overall thickness, its colour and the blob of its
-          reel are the only things that will survive. Paint the guides and the
-          thread whipping as soft suggestions rather than fine detail, and keep
-          the reel a clear simple round shape. No lettering, no logos, no brand
-          names, no maker's marks, no tiny mechanical detail.
+          reel are the only things that will survive, and which side of the
+          pole the reel sits on is the clearest of the three. Paint the guides
+          and the thread whipping as soft suggestions rather than fine detail,
+          and keep the reel a clear simple round shape. No lettering, no logos,
+          no brand names, no maker's marks, no tiny mechanical detail.
 
           [BACKDROP]
           Every part of the image that is not the child and his rod is one
