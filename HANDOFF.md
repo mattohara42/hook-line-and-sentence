@@ -39,6 +39,15 @@ in Chromium.
 nothing**, because the cut is geometric: line outside the shaft corridor is not
 in the layer. Worth knowing before anyone rerolls one for it (`GEMINI_NOTES.md`).
 
+**`rod-carbon-stream` was rejected on colour (2026-09-03), the rod column's first
+reroll.** Same prompt wording as the Pond's carbon, which is a neutral grey
+(R−B +3); this came back dark plum (+40). Geometry was perfect, so it is a
+colour miss and nothing else. The `[THE ROD]` block for all three carbon rods now
+asks for *"a NEUTRAL charcoal grey — no red, no brown, no purple, the colour of
+graphite or wet slate"*. **Send `rod-carbon-stream` again with the strengthened
+prompt.** Full reasoning, and the measurement that corrected a wrong first
+diagnosis, in `ART.md`.
+
 **`ART.md`'s "no pure black" delivery check is wrong as written** and would
 reject every rod in the game, R4's own included: 84 to 225 pixels of each is
 outline and JPEG ringing. The measure that means something is the shaft's

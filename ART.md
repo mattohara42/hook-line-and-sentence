@@ -1612,6 +1612,40 @@ Everything else is routine: 0 px of backdrop bleed, median colour distance
 all four previously shipped rods re-cut byte-identically. Verified in Chromium at
 the Pond against the bamboo — a kid can tell them apart.
 
+#### ❌ `rod-carbon-stream`, attempt 1 rejected (2026-09-03) — a grey rod that came back plum
+
+**The first rejection of the rod column, and it is a colour miss rather than a
+geometry one.** Everything structural was fine: 0 px of backdrop bleed, **98.9%**
+of the shaft inside the pose's half-width (the best figure of any rod), the net
+unmoved, the reel on the correct side, and the cut aligned to the committed body
+at IoU 0.9793. The rod is simply the wrong colour.
+
+| the same shop item, same prompt wording | shaft R − B |
+|---|---|
+| `rod-carbon-pond` (shipped) | **+3** — neutral grey |
+| `rod-carbon-stream` attempt 1 | **+40** — dark plum |
+
+**The measurement had to be done twice, because the first answer was wrong.** The
+Stream's shaft is thin enough that magenta bleeds into it, so the naive interior
+sample read maroon and the obvious conclusion was that the *despill* had made it
+so — `cut-angler.py` clamps B down to G but leaves R at up to 1.9×G, which is
+tuned for a warm subject and would indeed redden a contaminated grey. That
+theory is testable and it is false: **magenta inflates R and B equally**, so a
+residual R − B gap after unmixing is real paint, and unmixing moved the Stream's
++40 to +46 while the Pond's +3 stayed +2. The plum is in the painting.
+
+**Rerolled rather than accepted, and the reason is R7's own done-when.** A
+purchased rod is meant to be the rod in your hand *everywhere*; one shop item
+that is grey at the Pond and plum at the Stream breaks exactly what the
+milestone exists to deliver. Plum is also not a colour anywhere in
+`ART_DIRECTION.md`.
+
+**The wording is now stronger for the two carbon rods still outstanding**, and it
+names the failure rather than repeating the ask: *"a NEUTRAL charcoal grey — a
+true grey with no red, no brown and no purple in it, the colour of graphite or
+wet slate."* The Pond proved the original wording *can* produce grey, so this is
+variance being narrowed rather than a prompt that never worked.
+
 #### The coordinate space nobody had written down, and a tool that ate its own output
 
 Measuring the above turned up the thing that actually blocks the cut, and it is
@@ -2100,8 +2134,10 @@ Prompt:   [WHAT THIS IS]
           the knee or the clothes changes.
 
           [THE ROD]
-          A modern carbon-fibre rod: a slim matte blank in warm charcoal grey
-          (dark, but never pure black), fine gold thread whipping where each
+          A modern carbon-fibre rod: a slim matte blank in NEUTRAL charcoal
+          grey — a true grey with no red, no brown and no purple in it, the
+          colour of graphite or wet slate, equally grey in every part of it,
+          dark but never pure black. Fine gold thread whipping where each
           small guide is bound on, a dark ribbed grip where his hand holds it,
           and a small dark spinning reel hanging BELOW the pole just under his
           hand.
@@ -2199,8 +2235,10 @@ Prompt:   [WHAT THIS IS]
           changes.
 
           [THE ROD]
-          A modern carbon-fibre rod: a slim matte blank in warm charcoal grey
-          (dark, but never pure black), fine gold thread whipping where each
+          A modern carbon-fibre rod: a slim matte blank in NEUTRAL charcoal
+          grey — a true grey with no red, no brown and no purple in it, the
+          colour of graphite or wet slate, equally grey in every part of it,
+          dark but never pure black. Fine gold thread whipping where each
           small guide is bound on, a dark ribbed grip where his hand holds it,
           and a small dark spinning reel hanging BELOW the pole just under his
           hand.
@@ -2296,8 +2334,10 @@ Prompt:   [WHAT THIS IS]
           hands or the clothes changes.
 
           [THE ROD]
-          A modern carbon-fibre rod: a slim matte blank in warm charcoal grey
-          (dark, but never pure black), fine gold thread whipping where each
+          A modern carbon-fibre rod: a slim matte blank in NEUTRAL charcoal
+          grey — a true grey with no red, no brown and no purple in it, the
+          colour of graphite or wet slate, equally grey in every part of it,
+          dark but never pure black. Fine gold thread whipping where each
           small guide is bound on, a dark ribbed grip where his hand holds it,
           and a small dark spinning reel hanging BELOW the pole just under his
           hand.
