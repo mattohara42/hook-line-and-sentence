@@ -7,12 +7,19 @@ done); `BUILD_PLAN_ADVANCED.md` was the plan for the post-v1 **Advanced
 Progression epic** (tiers, phrases, sentences, WPM-as-goal) — **A0–A8 all
 shipped 2026-08-22, epic complete.**
 
-The current epic is the **Art & Animation Refresh** —
-`BUILD_PLAN_REFRESH.md` (R1–R7, opened 2026-08-31; **R1–R6 shipped — all three
+The current epic is **Catch Feel** — `BUILD_PLAN_FEEL.md` (F1–F5, opened
+2026-09-03). It fixes the moment of the catch: four scene elements that disagree
+about where the fish is, and a payoff that is a two-line pixel-font message in
+the corner. Everything in it was seen on screen first. It also finally answers
+the refresh's open question 1 — **Silkscreen goes, game-wide**.
+
+The **Art & Animation Refresh** is paused one milestone from done, not
+cancelled — `BUILD_PLAN_REFRESH.md` (R1–R7, opened 2026-08-31; **R1–R6 shipped — all three
 anglers are painted, cut and rigged, both vessels are cut and wired under them,
 and all 33 fish have their own art. R7, the gear, is the last one: its code half
 is in and all 12 hats landed 2026-09-02, so what remains is the nine rods. Each
-painting that lands is one `CONFIG.rig.gearArt` line**). It is a
+painting that lands is one `CONFIG.rig.gearArt` line — they resume when F5
+closes**). It was a
 significant piece of work: the whole visual layer is being restarted under two
 new source-of-truth docs, **`ART_DIRECTION.md`** (warm painterly, Ghibli-
 anchored, no pure black) and **`ANIMATION.md`** (the cast/line/reel motion the

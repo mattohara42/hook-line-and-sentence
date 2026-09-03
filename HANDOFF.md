@@ -9,15 +9,29 @@ something is the way it is, `git log` and the PR body have it in full.
 
 | | |
 |---|---|
-| **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. The last one in the epic. |
-| **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
-| **State** | **12 of 21 painted, 2026-09-02. The hat column is COMPLETE, 12 of 12**, from six paintings (each Pond hat transplanted to the Stream for free). All twelve verified in Chromium at all three spots in one sweep. Both done-when clauses are met. Left: **the 9 rods only.** |
+| **Active milestone** | **F1 — the water tells the truth**, `BUILD_PLAN_FEEL.md`. New epic, opened 2026-09-03. |
+| **Done when** | one ripple leaves the water on a landing, the shape that rises out of the depths is the shape that takes the hook, and the line's far end doesn't jump at the bite |
+| **State** | plan written, nothing built. All three bugs reproduced on screen first — see the PR for the shots. |
+| **R7 is paused, not cancelled** | the nine rods are all that is left of the refresh; they resume when F5 closes. Everything the rods need is still below. |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 93/93 (`npm test`) |
 | Open PRs | **#55 only** — close it unmerged, see below |
 | Deploys | Netlify is **manual**; merging to `main` does not go live |
 
 ## Start here
+
+**The catch moment is the work now.** Matt played it and found seven things
+wrong with the beat between hooking a fish and casting again. They are grouped
+into five milestones in `BUILD_PLAN_FEEL.md`, which is the plan of record; that
+file also carries the three decisions he made when asked (no wiggle no bite ·
+Silkscreen goes game-wide · one card that escalates rather than two surfaces).
+
+**Every one of the seven was seen on screen before it was written down**, with a
+scratch script that plays a real catch in Chromium and shoots every beat of it.
+Rebuild it rather than trusting an assertion — F1 through F4 are each only
+checkable by looking, which is the rule R6 learned the hard way.
+
+## R7, when it comes back
 
 **R7 has one thing left: the nine rods.** The hat column closed at 12 of 12 on
 2026-09-02 and every hat was verified in a real browser at every spot. Both
@@ -169,7 +183,8 @@ re-solving. Prompt and a cheaper CSS-tint fallback: `ART.md` → *R5 debt*.
 | doc | owns |
 |---|---|
 | `SPEC.md` | the game's design, and its non-goals |
-| `BUILD_PLAN_REFRESH.md` | the active epic, R1–R7 |
+| `BUILD_PLAN_FEEL.md` | the active epic, F1–F5 |
+| `BUILD_PLAN_REFRESH.md` | the paused epic, R1–R7 — nine rods left |
 | `ART_DIRECTION.md` | what the art should **look like** |
 | `ANIMATION.md` | how the cast, line and reel **move** |
 | `ART.md` | the art **pipeline** and the open requests |

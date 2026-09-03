@@ -133,6 +133,38 @@ carelessness (repeated errors). Rewards key off accuracy/collection, never speed
 - **Named nemesis fish** — Muskie Quixote already exists in `data/fish.json` as the legendary; give it recurring lore + a bigger landing celebration.
 - **Home aquarium** — caught fish swim in a viewable tank. The ultimate "look what I made" for a kid. Needs art.
 
+## EPIC: Catch Feel — the moment of the catch (F1-F5, opened 2026-09-03)
+
+*Raised by Matt from a play session, September 2026. Detailed milestones:
+`BUILD_PLAN_FEEL.md`. R7's nine rods are paused while this runs, not cancelled.*
+
+The refresh gave the game paintings; playing it showed that the moment those
+paintings exist for is the weakest part of the loop. Four scene elements
+disagree about where the fish is, and landing one pays out a two-line pixel-font
+message in the corner that is gone in a second and a half. Seven complaints,
+grouped into five milestones:
+
+- **Two ripples on a landing** - one in open water and one directly above it at
+  the waterline. `pullFishOneWord()` fires its per-word ring on the landing word
+  too, where `surfaceBreak()` is already splashing. (F1)
+- **The fish you hook is not the fish you saw.** The approach silhouette is one
+  of the old shared placeholder bodies; it turns into the real species at the
+  bite. `approach()` wipes the `.rigged` class that `renderFish` had just set.
+  (F1)
+- **The line lands at the far bank and jumps down at the bite.** It should land
+  where the fish actually is. (F1)
+- **The puns are in a tiny pixel font and vanish before they can be read.** (F2,
+  and this finally answers open question 1 of `BUILD_PLAN_REFRESH.md`: Silkscreen
+  goes, game-wide.)
+- **The post-catch moment needs to be prominent, prettier, and to last** - held
+  until the kid starts the next word rather than on a 1500ms timer. (F3)
+- **A trophy plaque for a new species or a new record**, with the fish on it,
+  dismissed the same way. One card that escalates rather than a second surface
+  queued behind the first. (F3)
+- **Fish should take longer to bite, and some casts should need a few short
+  words to wiggle the bait** before anything is interested. Matt's call: no
+  wiggle, no bite. (F4)
+
 ## EPIC: Advanced Progression — tiers, phrases, sentences, WPM-as-goal (v2/v3)
 
 *Approved by Matt, July 2026. A multi-milestone epic, NOT a single milestone —
