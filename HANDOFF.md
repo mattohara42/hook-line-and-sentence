@@ -9,7 +9,7 @@ something is the way it is, `git log` and the PR body have it in full.
 
 | | |
 |---|---|
-| **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. Back on; the nine rods are all that is left of the refresh. |
+| **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. Three rods are all that is left of the refresh. |
 | **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
 | **State** | both done-when clauses met. **18 of 21 painted and wired** — 12 hats, `rod-stick` x2, `rod-bamboo` x2, `rod-carbon` at the Pond and Stream. Left: **3 rods**, prompts written out and ready to send. |
 | **Catch Feel** | ✅ **F1–F5 all shipped 2026-09-03**, `BUILD_PLAN_FEEL.md`. One thing left and it is Matt's: play it. |
@@ -20,80 +20,48 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**R7 has 4 rods left. The pipeline took the last delivery without needing a single change** — the first time — so the loop below is the whole job now. The
-loop per rod is four commands, and the third is new:
+**R7 has 3 rods left: `rod-carbon-ocean`, and `rod-deepsea` at the Pond and the
+Stream.** Every prompt is written out whole in `ART.md` → *R7* → *The rods*, and
+the loop per rod is four commands:
 
 ```
 python3 tools/gear-ref.py <pose>                  # the attachment
-#   ... paste the prompt from ART.md -> R7 -> The rods, attach the ref ...
+#   ... paste that rod's prompt from ART.md, attach the ref ...
 python3 tools/gear-register.py <pose> <download>  # -> assets/reg-<name>.png
 python3 tools/cut-angler.py <pose> assets/reg-<name>.png --rod <stem>
 #   then add "<stem>-<pose>" to CONFIG.rig.gearArt, or it is never drawn
 ```
 
-Four rods went through it on 2026-09-03 — `rod-stick` at the Stream and Ocean,
-`rod-bamboo` at the Pond and Ocean — each a first-attempt accept, each verified
-in Chromium.
+Six rods went through it on 2026-09-03 in seven generations. The pipeline is
+settled: the last three deliveries needed no tool changes at all, and every
+shipped rod re-cuts byte-identically.
 
-**One delivery came back breaking `[CRITICAL: draw NO fishing line]` and it cost
-nothing**, because the cut is geometric: line outside the shaft corridor is not
-in the layer. Worth knowing before anyone rerolls one for it (`GEMINI_NOTES.md`).
+**Before your first cut in a fresh container:** `pip install Pillow numpy scipy`,
+and for the browser checks `cd /tmp && npm install playwright`.
+`tools/README.md` indexes all eleven tools.
 
-**`rod-carbon-stream` cost the rod column's only reroll, and Matt accepted the
-second attempt warm.** Both attempts came back warmer than the Pond's carbon
-(R−B +39 against +2) despite a strengthened `[THE ROD]`, which points at
-`[STYLE]`'s "warm muted color palette" rather than the rod wording. Accepted
-because at 95 design px it reads dark and is nothing like the honey bamboo
-(+137), and a third generation was not worth the neutrality. **A real pipeline
-improvement came out of it and is deliberately not done:** `cut-angler.py`'s
-despill adds about 11 of those 39 points and should move to `cut-gear.py`'s
-unmix model — `BACKLOG.md`, because it changes how every rod is cut.
+**One judgement call is already made and should not be relitigated.**
+`rod-carbon-stream` cost the column's only reroll and was accepted warm on
+Matt's call: both attempts came back at R−B +39 against the Pond carbon's +2,
+which points at `[STYLE]`'s "warm muted color palette" rather than the rod
+wording. At 95 design px it reads dark and is nothing like the honey bamboo
+(+137). If a neutral colour is ever needed again, `[STYLE]` is where to aim.
 
-**`ART.md`'s "no pure black" delivery check is wrong as written** and would
-reject every rod in the game, R4's own included: 84 to 225 pixels of each is
-outline and JPEG ringing. The measure that means something is the shaft's
-**interior** colour, and by it the carbon rod is a warm grey (R−B +14) against
-the bamboo's +128. Numbers and method in `ART.md` → *`rod-carbon-pond`*.
-Every prompt is written out whole; send them `stick` and `bamboo` before
-`carbon` and `deepsea`.
+**Two things the rods left behind, both written up where they belong:**
+`cut-angler.py`'s despill reddens thin neutral pieces and should move to
+`cut-gear.py`'s unmix model — deliberately not done, because it changes how every
+rod is cut (`BACKLOG.md`, with the numbers) · and `ART.md`'s *"no pure black"*
+delivery check is wrong as written and would reject every rod in the game, R4's
+included; the measure that means something is the shaft's **interior** colour,
+not the presence of any (0,0,0) pixel.
 
-**Three things that pipeline learned, all in `ART.md` → *The rods*:** a return
-is in the *padded* canvas's coordinates and `poses.py`'s numbers are in the raw
-delivery's, so registering is the fit **plus** a pad of 367 / 486 / 442 · a rod
-must be aligned to the committed body's box by integer search, and refining the
-upstream fit to chase that box makes the fit worse · and `cut-angler.py`'s
-source is now required, because it used to default to one of its own outputs and
-rewrote four committed files when handed it.
-
-**The Ocean rod found a defect that had been invisible since R4**, and it is
-worth expecting again: the pose's `reel` circle was fitted to take the gate
-rod's reel into the rod layer and stopped at its rim, leaving 2,766 px of brass
-in the *body* layer where that same gate rod hid it perfectly. The first
-reel-less rod at that pose hung it in mid-air. Fixed at the root (the circle is
-90 now, measured to destroy none of the child; the arm gets the corridor
-subtracted too) and the committed layers repaired, since they cannot be re-cut.
-Full numbers in `ART.md`. **A layer defect masked by the gate rod's own hardware
-stays invisible until gear arrives without it** — and only the two `rod-stick`
-deliveries could ever have found this one.
-
-**The reel circle is now retired too, and not the way this was planned.** The
-sketched per-item table is disproved: Bamboo Beauty painted twice puts its reel
-8.68 design px back from the grip at the Stream and 2.04 at the Pond, at 3.51
-radius against 2.22. The generator places it per painting, so `cut-angler.py
---rod` detects it from the delivery instead and needs no constants at all. Three
-smaller things fell out of the same cut, all in `ART.md`: the reel goes in as the
-measured mask rather than a circle (a circle ate 4,521 px of the child's knee),
-`~hand` must not clip hardware off the shaft, and `scale` must be measured on the
-pose rather than on a delivery whose guides stand clear of the shaft — that last
-one also improved `rod-stick-ocean`, so both earlier rods were re-cut.
-
-**Still open on the corridor, and now half-retired.** `half` (the shaft's
-half-width) only bites when a rod is *fatter* than the pose's gate rod, which
-the first delivery proved: a thin rod in a generous corridor loses nothing. So
-it is `rod-deepsea` at the Pond and the Stream, and nowhere else. The **reel
-circle** is still per rod and untested — seven of the eight remaining rods carry
-one, and `rod-bamboo-ocean` is the first that puts it on the other side of the
-pole from the gate rod's.
+**The one habit worth carrying into the last three rods:** a layer defect hidden
+by the gate rod's own hardware stays invisible until gear arrives without it.
+The Ocean's brass reel had left 2,766 px of itself in the *body* layer since R4,
+and only a reel-less rod could ever have exposed it. Both remaining `deepsea`
+rods are the thickest and heaviest in the set, so the corridor's `half` — the
+one flag still open, and the one that only bites when a rod is *fatter* than the
+pose's — is what to check first there.
 
 ## Waiting on Matt (none of it blocks R7)
 
