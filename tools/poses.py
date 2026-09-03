@@ -27,7 +27,17 @@ a fitted axis is the kind of duplication that goes wrong silently.
 #   half        half the shaft's width, outline included
 #   butt        the rod's lowest point along the axis
 #   hand        the band of rows where the hand covers the rod (synthesised)
-#   reel        an off-axis circle the corridor would otherwise miss, or None
+#   reel        an off-axis circle the corridor would otherwise miss, or None.
+#               It has to cover the reel the pose was PAINTED with, not just
+#               enough of it to read: whatever it leaves behind stays in the
+#               body and arm layers, where the gate rod's own reel hides it
+#               perfectly — until a rod with no reel is equipped and it hangs in
+#               mid-air. The Ocean's was 58, which stopped exactly at the brass
+#               reel's rim and left a 2,766 px crescent in the body layer. 90
+#               covers it and destroys nothing: the child's own nearest paint is
+#               76 px from that centre and the hand band protects the fingers.
+#               The Stream's 42 is right and must not be grown the same way —
+#               there the child's own arm is inside 70.
 #   rod_xmin    a hard left bound, where the corridor would otherwise bite into
 #               the body (the Stream's butt passes close to the waders)
 #   rod_len     grip to tip, in DESIGN px — the delivered rod is cropped by the
@@ -62,7 +72,7 @@ POSES = {
     "ocean": dict(
         pad=442,
         axis=(-0.8156, 962.3), half=22.0, butt=612.0, hand=(398.0, 492.0),
-        reel=(595.0, 360.0, 58.0), rod_xmin=None, rod_len=65.0, tip_half=2.5,
+        reel=(595.0, 360.0, 90.0), rod_xmin=None, rod_len=65.0, tip_half=2.5,
         grip=(603.0, 440.0),
         arm=dict(pivot=(292.0, 445.0), elbow=(418.0, 517.0), wrist=(508.0, 487.0),
                  hand=(615.0, 440.0), r_fore=42.0, r_hand=58.0, joint=34.0),

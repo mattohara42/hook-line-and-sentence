@@ -11,7 +11,7 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. Back on; the nine rods are all that is left of the refresh. |
 | **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
-| **State** | both done-when clauses met. **13 of 21 painted and wired** — the hat column complete at 12 of 12, and `rod-stick-stream` in a kid's hand. Left: **8 rods**, prompts written out and ready to send. |
+| **State** | both done-when clauses met. **14 of 21 painted and wired** — the hat column complete at 12 of 12, plus `rod-stick` at the Stream and the Ocean. Left: **7 rods**, prompts written out and ready to send. |
 | **Catch Feel** | ✅ **F1–F5 all shipped 2026-09-03**, `BUILD_PLAN_FEEL.md`. One thing left and it is Matt's: play it. |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 95/95 (`npm test`) |
@@ -20,7 +20,7 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**R7 has 8 rods left, and the pipeline for them now exists and is proven.** The
+**R7 has 7 rods left, and the pipeline for them is proven at two poses.** The
 loop per rod is four commands, and the third is new:
 
 ```
@@ -31,7 +31,8 @@ python3 tools/cut-angler.py <pose> assets/reg-<name>.png --rod <stem>
 #   then add "<stem>-<pose>" to CONFIG.rig.gearArt, or it is never drawn
 ```
 
-`rod-stick-stream` went through it on 2026-09-03 and is verified in Chromium.
+`rod-stick-stream` and `rod-stick-ocean` both went through it on 2026-09-03,
+each a first-attempt accept, both verified in Chromium.
 Every prompt is written out whole; send them `stick` and `bamboo` before
 `carbon` and `deepsea`.
 
@@ -42,6 +43,17 @@ must be aligned to the committed body's box by integer search, and refining the
 upstream fit to chase that box makes the fit worse · and `cut-angler.py`'s
 source is now required, because it used to default to one of its own outputs and
 rewrote four committed files when handed it.
+
+**The Ocean rod found a defect that had been invisible since R4**, and it is
+worth expecting again: the pose's `reel` circle was fitted to take the gate
+rod's reel into the rod layer and stopped at its rim, leaving 2,766 px of brass
+in the *body* layer where that same gate rod hid it perfectly. The first
+reel-less rod at that pose hung it in mid-air. Fixed at the root (the circle is
+90 now, measured to destroy none of the child; the arm gets the corridor
+subtracted too) and the committed layers repaired, since they cannot be re-cut.
+Full numbers in `ART.md`. **A layer defect masked by the gate rod's own hardware
+stays invisible until gear arrives without it** — and only the two `rod-stick`
+deliveries could ever have found this one.
 
 **Still open on the corridor, and now half-retired.** `half` (the shaft's
 half-width) only bites when a rod is *fatter* than the pose's gate rod, which

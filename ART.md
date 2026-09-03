@@ -1420,6 +1420,62 @@ over the other and take the offset. It landed at `+1, +1` with body IoU
 1048x1466 — the committed box, by construction. `--rod` refuses below IoU 0.90
 rather than saving something misplaced.
 
+#### ✅ `rod-stick-ocean` landed first attempt (2026-09-03), and it exposed a two-year-old defect
+
+**The delivery is an accept, and cleaner than the Stream's on every measure:**
+canvas 976x1088 against 1324x1466 asked; **0 px** of backdrop bleed; agreement
+off the rod **0.9887**; median colour distance **8.2** with 9.7% over 40 — the
+hats' own band; only **285 px** of the reference the return does not carry
+(against the Stream's 803); **95.6%** of the shaft above the hand inside the
+pose's half-width. The reel is gone and the pole is bare cane.
+
+**But equipping it hung a dark crescent in mid-air above the fist**, and it was
+not the rod's fault. It is the top rim of the Ocean's *painted brass reel*,
+sitting in the committed **body** layer since R4. `POSES["ocean"]["reel"]` was
+`(595, 360, 58)` — a circle fitted to take the reel into the rod layer, which
+stopped exactly at that reel's rim and left 2,766 px of it behind. With the
+deep-sea gate rod equipped the rod layer's own reel fills the same silhouette
+and it is perfectly invisible. **The first reel-less rod at that pose is what
+made it visible**, two milestones later.
+
+A second, smaller version of the same thing was in the **arm** layer: R4's cut
+does `body[corridor & ~hand] = 0` but built the arm as `armlayer[arm] =
+keyed[arm]`, with no corridor subtraction at all. The corridor is the rod's own
+footprint, so whatever is painted in it belongs to the rod layer. The Ocean had
+leaked 1,379 px of reel into its arm that way, the Stream 87, the Pond — whose
+gate rod has no reel — none.
+
+**Both fixed at the root, and the radius was measured rather than guessed:**
+
+| Ocean reel radius | stray reel px it removes | px of the child it destroys |
+|---|---|---|
+| 58 (as fitted) | 0 | 0 |
+| 70 | 1,650 | 0 |
+| **90** | **2,799** | **0** |
+| 110 | 2,893 | 0 |
+
+The child's own nearest paint is **76 px** from that centre and the hand band
+protects the fingers, so there is simply no cost. **The Stream is the control
+that says this is not a general rule:** growing its 42 destroys 361 px of the
+child at r=70 and 1,512 at r=90, because there the arm really is that close. Its
+radius is right and was left alone.
+
+`cut-angler.py` now subtracts the corridor from the arm as well as the body, and
+the Ocean's radius is 90. The committed layers **cannot be re-cut** — the raw
+angler deliveries are not in the repo — so the identical subtraction was applied
+to them directly: 2,790 px out of `angler-ocean-body.png`, 1,379 out of
+`angler-ocean-arm.png`, 87 out of `angler-stream-arm.png`.
+
+Verified in Chromium at both poses with both the swapped rod and the pose's own
+gate rod: the crescent is gone, the deep-sea reel still reads as a reel, and the
+Stream is unchanged.
+
+**The general lesson, and it will come round again:** a layer defect hidden by
+the gate rod's own hardware is invisible until the first piece of gear that
+lacks that hardware. Seven of the eight remaining rods carry a reel, so the two
+`rod-stick` deliveries were the only ones that could have found this — and one
+of them did.
+
 #### The coordinate space nobody had written down, and a tool that ate its own output
 
 Measuring the above turned up the thing that actually blocks the cut, and it is
