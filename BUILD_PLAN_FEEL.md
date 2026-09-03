@@ -121,6 +121,18 @@ still there a minute later if nobody touches the keyboard, the first letter of
 the next cast clears it, and a new species and a new personal best each raise the
 plaque.
 
+**✅ Shipped 2026-09-03.** All four dresses were driven through the real code
+path and shot, not faked: an ordinary catch, the plaque, a junk pull
+(`junk.chance` temporarily at 1.0) and an escape (`play-check --escape`).
+
+**The banner does not fit next to the card, so it moves in time instead.** The
+free band is 364px tall on a 720 screen and the two panels need 410 between
+them — measured. So when a letter unlock or the prestige capstone is due, the
+celebration plays first and the card arrives as it clears, which is also the
+right order to read them in. With no banner due the card lands with the catch.
+A card still *waiting* on a banner is cancelled by `cardGen` if the kid changes
+spot during those 2.6 seconds.
+
 ## F4 — the wait is something you do
 
 Two changes to the pre-bite beat, which today is 1.2–3.2s of locked input and

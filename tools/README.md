@@ -97,6 +97,23 @@ page coordinates). The class list is what caught `.rigged` being wiped.
 Take a baseline before you change anything (`--tag base`) and the same run after
 (`--tag f1`). A before/after pair of the same beat is the whole argument.
 
+Two flags reach beats an ordinary catch never gets to:
+
+- `--catches N` seeds the collection so the catch you play lands **on an unlock
+  boundary** (`--catches 2` makes it the third, which unlocks stage 2). The
+  ladder counts the collection, not `save.totalCatches`, which is worth knowing
+  before you seed the wrong field and wonder where the banner went.
+- `--escape` types the wrong letter until tension reaches `reel.escapeAt`. It is
+  the game's only failure state and it wears the same card, so it needs looking
+  at too.
+
+One trap it now avoids, recorded because it cost a wrong conclusion: **break the
+reel loop on an empty word box, not on the reel counter.** The counter reads
+`landing…` on the last word rather than emptying, so a loop watching it spins
+for seconds after the catch and every "just landed" reading is taken long after
+the fact. That is how the first attempt at F3 concluded the letter banner was
+not firing when it was firing and clearing perfectly.
+
 `spot-check.mjs` loops cheaply, which is how R7 closed:
 
 ```bash

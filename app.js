@@ -1213,7 +1213,10 @@ function land(success) {
     save.jokesEndured = (save.jokesEndured ?? 0) + 1;
     persistSave();
     sfxEscape();
-    setStatus(pick(PUNS.junk).replace("{it}", junk.name));
+    const junkPun = pick(PUNS.junk).replace("{it}", junk.name);
+    setStatus("");                      // the card carries it now, and announces it
+    showCatchCard({ kind: "junk", files: [junk.file], box: CONFIG.card.junkBox,
+                    name: junk.name, sub: "not a fish", pun: junkPun });
     later(startCast, CONFIG.reel.recastDelayMs);
     return;
   }
@@ -1263,22 +1266,50 @@ function land(success) {
       ? ` · ${wpm} wpm` + (newWpmBest ? " ★ your best!" : "")
       : "";
     const weightBestNote = (newBest && !firstCatch) ? " ★ new best!" : "";
-    setStatus((firstCatch ? "NEW! " : "") + pun + sizeNote + wpmNote + weightBestNote);
+    // F3: the same three facts the old corner message carried, on a card big
+    // enough to read. A first catch is trivially a personal best, so it flies
+    // the one flag that is actually news — exactly as the old string did.
+    const flags = [];
+    if (firstCatch) flags.push("NEW SPECIES");
+    else if (newBest) flags.push("NEW RECORD");
+    if (newWpmBest) flags.push("FASTEST YET");
+    const art = CONFIG.fish.species[fish.id];
+    setStatus("");                      // the card carries it now, and announces it
+    const showCard = () => showCatchCard({
+      kind: "catch",
+      files: art ? art.layers.map(L => L.file) : [],
+      box: art ?? CONFIG.fish.placeholder,
+      name: fish.name,
+      sub: `${weight} lb` + (cls === "lunker" ? " · a LUNKER!" : cls === "little" ? " · a little one" : "")
+           + (wpmNote ? " ·" + wpmNote.replace(" ★ your best!", "") : ""),
+      pun, coins: amount, flags,
+    });
     if (collectionOpen) renderCollection();
     const stagesAfter = unlockedStageCount(totalCatches());
     let delay = CONFIG.reel.recastDelayMs;
+    let celebrating = false;
     if (stagesAfter > stagesBefore) {
       const fresh = CONFIG.unlock.stages.slice(stagesBefore, stagesAfter).flatMap(s => [...s.letters]);
       recomputeUnlocks();
       showUnlock(fresh);
       delay = CONFIG.unlock.celebrateMs;
+      celebrating = true;
     }
     // A8: the capstone queues *after* any letter banner, so the two celebrations
     // never land on top of each other — and the recast waits for both
     if (prestigeNow) {
       later(showPrestige, delay);
       delay += CONFIG.prestige.celebrateMs;
+      celebrating = true;
     }
+    // F3: the card is the LAST thing to arrive when a banner is due. The banner
+    // and the card are both full-width panels in the same band and they do not
+    // both fit — measured, not guessed: the band is 364px tall on a 720 screen
+    // and they need 410 between them. So the celebration plays first and the
+    // card is what is left on screen when it clears, which is also the right
+    // order to read them in. With no banner due there is nothing to wait for.
+    if (celebrating) { const g = ++cardGen; later(() => g === cardGen && showCard(), delay); }
+    else showCard();
     later(startCast, delay);
     return;
   } else {
@@ -1287,9 +1318,79 @@ function land(success) {
     el.escaped.textContent = save.stats.escapes;
     fleeOffscreen();
     sfxEscape();
-    setStatus(pick(PUNS.escape));
+    const escPun = pick(PUNS.escape);
+    setStatus("");                      // the card carries it now, and announces it
+    // No species on this one, deliberately: the reveal never tells you what a
+    // fish was until it is close, and an escape is the fish you never found out
+    // about. The card shows the same shape that rose out of the depths.
+    showCatchCard({ kind: "escape", box: CONFIG.fish.placeholder,
+                    name: "the one that got away", sub: "it'll be back", pun: escPun });
   }
   later(startCast, CONFIG.reel.recastDelayMs);
+}
+
+// ---- F3: the catch card ----
+// The payoff. This used to be one setStatus line in the top-left corner at
+// 12px, held for reel.recastDelayMs (1500ms) and then overwritten by the cast
+// prompt — by which point the fish had already arced off the screen, so there
+// was nothing to look at and no time to read what you had caught.
+//
+// ONE surface with three dresses (Matt's call): a plain card for a junk pull or
+// an escape, the ordinary catch card, and the same card raised to a plaque when
+// a species is new or a record falls. One surface means one dismissal and
+// nothing to sequence against anything else.
+//
+// It has no timer. It is dismissed by the kid starting the next word, and that
+// keystroke still counts — see the keydown handler.
+let cardUp = false;
+// Bumped by anything that invalidates a card, including one still WAITING on a
+// celebration banner — a kid can reach the location buttons during those 2.6s,
+// and the Ocean should not then be handed the Pond's trophy.
+let cardGen = 0;
+
+// `files` is the paint order, same as CONFIG.fish.species[].layers: the fish's
+// own cut layers for a catch, one sprite for junk, none for an escape. CSS
+// paints the FIRST background-image on top, so the list is reversed here — the
+// same trick the journal grid uses, and the reason a card fish has its tail.
+function showCatchCard({ kind, files = [], box, name, sub, pun, coins = 0, flags = [] }) {
+  const card = $("catch-card");
+  card.className = kind + (flags.length ? " plaque" : "");
+  card.style.setProperty("--card-in", CONFIG.card.inMs + "ms");
+  card.style.setProperty("--card-out", CONFIG.card.yankMs + "ms");
+  const shape = card.querySelector(".card-fish");
+  shape.style.backgroundImage = files.length
+    ? files.map(f => `url("assets/${f}.png")`).reverse().join(", ")
+    : "";
+  // Drawn from the species' own box so every fish arrives at the same LENGTH
+  // and keeps its own proportions — the card is where a kid finally sees the
+  // thing at a size worth painting, and 33 species at 33 scales would undo R6.
+  const px = kind === "junk" ? CONFIG.card.junkPx : CONFIG.card.fishPx;
+  const scale = box ? px / box.w : 1;
+  shape.style.width = (box ? box.w * scale : px) + "px";
+  shape.style.height = (box ? box.h * scale : px * 0.55) + "px";
+  card.querySelector(".card-ribbon").textContent = flags.join("  ·  ");
+  card.querySelector(".card-name").textContent = name;
+  card.querySelector(".card-sub").textContent = sub ?? "";
+  card.querySelector(".card-pun").textContent = pun ?? "";
+  card.querySelector(".card-coins").textContent = coins ? `+${coins} coins` : "";
+  $("card-slot").hidden = false;
+  void card.offsetWidth;               // commit the resting state to animate FROM
+  card.classList.add("in");
+  cardUp = true;
+}
+
+function hideCatchCard() {
+  cardGen++;                           // …and cancel any card still waiting on a banner
+  if (!cardUp) return;
+  cardUp = false;
+  const card = $("catch-card");
+  card.classList.remove("in");
+  card.classList.add("out");           // yanked off the top, not faded away
+  setTimeout(() => {
+    if (cardUp) return;                // a new catch beat us to it
+    $("card-slot").hidden = true;
+    card.classList.remove("out");
+  }, CONFIG.card.yankMs);
 }
 
 // shared celebration banner over the pond (letter unlocks + A0 rank-ups)
@@ -1358,6 +1459,12 @@ document.addEventListener("keydown", (e) => {
   if (!save || pickerOpen || collectionOpen || shopOpen || nudgeOpen || progressOpen || journalOpen || speedOpen || inputLocked) return;
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (e.key.length !== 1) return;
+  // F3: starting the next word yanks the catch card off. It happens here, above
+  // the hit/miss logic, so the keystroke that dismisses it is not swallowed —
+  // and so a wrong first letter dismisses it too, because the kid has still
+  // started typing. inputLocked above means keys during the recast pause do
+  // nothing at all, card included.
+  if (cardUp) hideCatchCard();
   if (e.key === " ") { e.preventDefault(); handleSpace(); return; }   // forgiving spacebar (A1)
   // forgiving punctuation (A5). preventDefault like the spacebar: "?" is
   // Firefox's quick-find-links shortcut, and these are game keys here.
@@ -1655,6 +1762,7 @@ function renderLocations() {
 }
 function switchLocation(loc) {
   save.location = loc;
+  hideCatchCard();          // F3: the last spot's catch doesn't follow you here
   persistSave();
   renderLocations();
   applyScene();
