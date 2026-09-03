@@ -11,7 +11,7 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. Back on; the nine rods are all that is left of the refresh. |
 | **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
-| **State** | both done-when clauses met. **16 of 21 painted and wired** — 12 hats, `rod-stick` at the Stream and Ocean, `rod-bamboo` at the Pond and Ocean. Left: **5 rods**, prompts written out and ready to send. |
+| **State** | both done-when clauses met. **17 of 21 painted and wired** — 12 hats, `rod-stick` x2, `rod-bamboo` x2, `rod-carbon` at the Pond. Left: **4 rods**, prompts written out and ready to send. |
 | **Catch Feel** | ✅ **F1–F5 all shipped 2026-09-03**, `BUILD_PLAN_FEEL.md`. One thing left and it is Matt's: play it. |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 95/95 (`npm test`) |
@@ -20,7 +20,7 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**R7 has 5 rods left. The pipeline took the last delivery without needing a single change** — the first time — so the loop below is the whole job now. The
+**R7 has 4 rods left. The pipeline took the last delivery without needing a single change** — the first time — so the loop below is the whole job now. The
 loop per rod is four commands, and the third is new:
 
 ```
@@ -38,6 +38,12 @@ in Chromium.
 **One delivery came back breaking `[CRITICAL: draw NO fishing line]` and it cost
 nothing**, because the cut is geometric: line outside the shaft corridor is not
 in the layer. Worth knowing before anyone rerolls one for it (`GEMINI_NOTES.md`).
+
+**`ART.md`'s "no pure black" delivery check is wrong as written** and would
+reject every rod in the game, R4's own included: 84 to 225 pixels of each is
+outline and JPEG ringing. The measure that means something is the shaft's
+**interior** colour, and by it the carbon rod is a warm grey (R−B +14) against
+the bamboo's +128. Numbers and method in `ART.md` → *`rod-carbon-pond`*.
 Every prompt is written out whole; send them `stick` and `bamboo` before
 `carbon` and `deepsea`.
 
