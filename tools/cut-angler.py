@@ -8,6 +8,15 @@ instead of redoing the work by hand.
 
     python3 tools/cut-angler.py <pose> <source.jpg|png>
 
+The source is REQUIRED and must be the raw delivered painting, on its flat
+magenta backdrop. It is not optional and there is no default: this tool writes
+assets/angler-<pose>.png as one of its OUTPUTS, so a default pointing there
+would make the tool eat its own output. Handed that file, it reads a keyed PNG
+whose backdrop is alpha, `convert("RGB")` turns that backdrop black, the flood
+keys on black instead of magenta, and every layer comes out wrong — over the
+top of the committed ones. The guard below refuses it now; before the guard it
+cost four committed files (recovered from git).
+
 Writes assets/angler-<pose>.png (the keyed source) plus the three cut layers.
 They share ONE canvas, so their box in CONFIG.rig.poses.<pose> is identical and
 the offsets are zero by construction.
@@ -96,7 +105,23 @@ RIG_X, RIG_Y = 20.0, 168.0     # #rig's position in style.css
 
 pose_name = sys.argv[1] if len(sys.argv) > 1 else "pond"
 P = POSES[pose_name]
-SRC = sys.argv[2] if len(sys.argv) > 2 else os.path.join(ROOT, "assets", "angler-%s.png" % pose_name)
+if len(sys.argv) < 3:
+    sys.exit("usage: cut-angler.py <pose> <source.jpg|png>\n"
+             "  The source is the RAW delivered painting on flat magenta. There is no\n"
+             "  default: assets/angler-%s.png is one of this tool's own outputs."
+             % pose_name)
+SRC = sys.argv[2]
+
+# The raw delivery is opaque on magenta. Anything with a transparent border is
+# this tool's own output being fed back in, which reads as a black backdrop and
+# quietly rewrites every committed layer for the pose.
+_probe = Image.open(SRC)
+if _probe.mode in ("RGBA", "LA") or "transparency" in _probe.info:
+    _a = np.asarray(_probe.convert("RGBA"))[..., 3]
+    if min(_a[0].min(), _a[-1].min(), _a[:, 0].min(), _a[:, -1].min()) < 8:
+        sys.exit("refusing %s: its backdrop is alpha, so this is a keyed image, not a\n"
+                 "raw delivery. Pass the painting as it was downloaded, on flat magenta."
+                 % SRC)
 M, B = P["axis"]
 
 im = Image.open(SRC).convert("RGB")
