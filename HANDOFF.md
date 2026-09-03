@@ -9,9 +9,9 @@ something is the way it is, `git log` and the PR body have it in full.
 
 | | |
 |---|---|
-| **Active milestone** | **F1 — the water tells the truth**, `BUILD_PLAN_FEEL.md`. New epic, opened 2026-09-03. |
-| **Done when** | one ripple leaves the water on a landing, the shape that rises out of the depths is the shape that takes the hook, and the line's far end doesn't jump at the bite |
-| **State** | plan written, nothing built. All three bugs reproduced on screen first — see the PR for the shots. |
+| **Active milestone** | **F2 — a face that matches the paintings**, `BUILD_PLAN_FEEL.md`. |
+| **Done when** | `--display` names the new face, the game reads warm at 11px, and the guide keyboard is pixel-for-pixel what it was |
+| **F1** | ✅ shipped. One ripple on a landing, the silhouette is the species that bites, and the line's far end moves 43px at the bite instead of 80 — all of it the fish's own mouth depth below the bait. |
 | **R7 is paused, not cancelled** | the nine rods are all that is left of the refresh; they resume when F5 closes. Everything the rods need is still below. |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 93/93 (`npm test`) |
@@ -26,10 +26,11 @@ into five milestones in `BUILD_PLAN_FEEL.md`, which is the plan of record; that
 file also carries the three decisions he made when asked (no wiggle no bite ·
 Silkscreen goes game-wide · one card that escalates rather than two surfaces).
 
-**Every one of the seven was seen on screen before it was written down**, with a
-scratch script that plays a real catch in Chromium and shoots every beat of it.
-Rebuild it rather than trusting an assertion — F1 through F4 are each only
-checkable by looking, which is the rule R6 learned the hard way.
+**Every one of the seven was seen on screen before it was written down**, and the
+script that did it is now `tools/play-check.mjs` — it plays a whole catch in
+Chromium and shoots every beat. Use it rather than trusting an assertion: none
+of F1's three bugs would have failed one, and F2 through F4 are the same kind of
+problem. Take a `--tag base` run before you change anything.
 
 ## R7, when it comes back
 
@@ -60,7 +61,7 @@ eye test (below).
 
 **Before your first cut in a fresh container:** `pip install Pillow numpy scipy`,
 and for `spot-check.mjs`, `cd /tmp && npm install playwright`. `tools/README.md`
-indexes all eight tools and what each is for.
+indexes all nine tools and what each is for.
 
 **Two things the hats left behind.**
 

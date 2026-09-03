@@ -576,7 +576,7 @@ function bobberIn() {
   el.bobber.style.top = (CONFIG.anim.cast.landing.y - el.bobber.offsetHeight / 2) + "px";
   el.bobber.classList.remove("plunge");
   el.bobber.classList.add("on");
-  ripple(394, 196); // splash-in ring, then the idle rhythm
+  ripple(A.cast.landing.x, A.cast.landing.y); // splash-in ring, then the idle rhythm
   bobberRippleTimer = setInterval(
     () => ripple(CONFIG.anim.cast.landing.x, CONFIG.anim.cast.landing.y), JUICE.bobberRippleMs);
 }
@@ -584,7 +584,7 @@ function bobberOut(plunge) {
   clearInterval(bobberRippleTimer);
   if (plunge) {
     el.bobber.classList.add("plunge");
-    ripple(394, 196);
+    ripple(A.cast.landing.x, A.cast.landing.y);
     setTimeout(() => el.bobber.classList.remove("on", "plunge"), 400);
   } else {
     el.bobber.classList.remove("on", "plunge");
@@ -1002,11 +1002,18 @@ function chooseCatch() {
 function approach() {
   if (phase !== "wait") return;
   chooseCatch();
-  renderFish(fish);
   const ap = CONFIG.fish.approach;
   setFishTarget(0);                         // where the reel will start it, and so where the rise ends
   const to = { x: fishTX + ap.spawn.dx, y: fishTY + ap.spawn.dy };
+  // F1: the class assignment goes FIRST and renderFish second, because
+  // renderFish sets `.rigged` and this line would wipe it. It did, for as long
+  // as the approach has existed: `#fish:not(.rigged)` paints the old shared
+  // fish-common.png placeholder, so the tease was that generic body showing
+  // through behind the two real species layers, and the bite — which calls
+  // renderFish again, after its own class work — was where the real fish
+  // finally appeared. One shape rises, the same shape takes the hook.
   el.fish.className = "silhouette";
+  renderFish(fish);
   el.fish.style.left = to.x + ap.rise.dx + "px";
   el.fish.style.top = to.y + ap.rise.dy + "px";
   void el.fish.offsetWidth;                 // paint it down there first, or there is nothing to drift from
@@ -1069,7 +1076,7 @@ function bite() {
   setReveal(fishX);
   el.dist.textContent = wordsLeft + " words";
   shakeScene();
-  burst(410, 200, 10);
+  burst(A.cast.landing.x + 16, A.cast.landing.y + 4, CONFIG.fish.approach.biteParticles);
   sfxBite();
   setStatus(pick(PUNS.bite));
   startSwim();
@@ -1088,9 +1095,16 @@ function pullFishOneWord() {
   startPull(CONFIG.fish.pull.wordMs);  // …and it swims there rather than arriving there
   rodTug(A.tug.wordImpulse);           // R1: the rod bends to the pull
   if (REDUCE_MOTION) { fishX = fishTX; fishY = fishTY; drawFish(fishTX, fishTY); }
-  const mid = parseInt(el.fish.style.left) + fishBox().w / 2;   // R6: a species' box is its own
-  burst(mid, 258, 4);
-  ripple(mid, 262);
+  // F1: the wake this throws is skipped on the word that LANDS the fish.
+  // surfaceBreak() splashes at the waterline for the same fish in the same
+  // instant, and the two rings stacked vertically read as one bug: a ring in
+  // open water with a second directly above it at the surface.
+  if (wordsLeft > 0) {
+    const w = CONFIG.fish.wake;
+    const mid = parseInt(el.fish.style.left) + fishBox().w / 2;   // R6: a species' box is its own
+    burst(mid, w.y, w.particles);
+    ripple(mid, w.y + w.rippleDy);
+  }
   sfxWordTick();
   el.word.classList.remove("pop"); void el.word.offsetWidth; el.word.classList.add("pop");
 }
