@@ -688,6 +688,23 @@ export const CONFIG = {
   // Junk catches — comedy fake catches (boot/can/weed/nugget) that roll in place of a
   // fish on a small fraction of bites. No coins, no collection entry, just a
   // groan pun. `file` is assets/<file>.png; `{it}` in PUNS.junk gets `name`.
+  // F3: the post-catch card — the moment a catch pays out. It has no display
+  // duration on purpose: it is dismissed by the kid typing, not by a clock,
+  // which is the whole complaint it answers. The old message lived for
+  // reel.recastDelayMs (1500) and was then overwritten by the cast prompt,
+  // which is not enough time to read a fish's name, weight and pun at six.
+  card: {
+    inMs: 420,       // rises into place under the catch
+    yankMs: 260,     // …and is yanked up off the top the moment typing starts
+    fishPx: 148,     // how long the fish is drawn on the card, in card px
+    // A junk pull is drawn smaller: a boot is a gag, not a trophy, and the four
+    // junk sprites are the last pixel-era art in the game — the refresh never
+    // repainted them, and 148px is a magnifying glass held over that. See
+    // BACKLOG.md; this is a mitigation, not the fix.
+    junkPx: 96,
+    junkBox: { w: 1, h: 1 },   // junk sprites are square crops, unlike a fish's box
+  },
+
   junk: {
     chance: 0.08,
     items: [

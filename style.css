@@ -525,6 +525,100 @@ h1 {
 @keyframes wordpop { 40% { transform: translateX(-50%) scale(1.07); } }
 #word:empty { background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; }
 
+/* ============ F3: THE CATCH CARD ============
+   The payoff, and the one surface a kid actually stops and reads. It replaces
+   a 12px line in the top-left corner that was overwritten 1500ms later.
+
+   Two things about the geometry, both of them rules from CLAUDE.md rather than
+   taste. Nothing may reach the bottom-center finger-guide panel, and #word sits
+   at bottom: 250px — so the card is not positioned, it is CENTRED IN A SLOT
+   that spans exactly the free band between the HUD and the word. A fixed `top`
+   would collide with one or the other on some window shape; a slot cannot.
+
+   The unlock banner (z-index 6) deliberately still sits ABOVE this (z-index 5).
+   The two land on the same catch, the banner is a 2.6s celebration and the card
+   waits for the kid — so the banner plays over the card and the card is still
+   there when it clears. There is nothing to sequence. */
+#card-slot {
+  position: fixed; left: 0; right: 0;
+  top: 52px;         /* clear of the HUD chips */
+  bottom: 312px;     /* clear of #word (bottom 250 + its 54px box + a margin) */
+  z-index: 5;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+#catch-card {
+  width: min(348px, 88vw); max-height: 100%;
+  padding: 15px 20px 12px; border-radius: 18px; text-align: center;
+  background: rgba(var(--umber-rgb),0.84);
+  border: 1px solid rgba(var(--ink-rgb),0.16);
+  box-shadow: 0 12px 34px rgba(var(--shadow-rgb),0.5);
+  backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px);
+  opacity: 0; transform: translateY(16px) scale(0.95);
+}
+/* in: it rises under the catch. out: it is YANKED off the top — the word Matt
+   used, and the reason this isn't a fade. A fade reads as the card giving up;
+   a yank reads as the kid clearing it to get on with fishing. */
+#catch-card.in {
+  opacity: 1; transform: none;
+  transition: opacity var(--card-in) ease, transform var(--card-in) cubic-bezier(0.2,0.9,0.3,1.25);
+}
+#catch-card.out {
+  opacity: 0; transform: translateY(-26px) scale(0.97);
+  transition: opacity var(--card-out) ease-in, transform var(--card-out) ease-in;
+}
+.card-fish {
+  margin: 2px auto 10px; background: center / contain no-repeat;
+  filter: drop-shadow(0 6px 10px rgba(var(--shadow-rgb),0.45));
+}
+/* An escape has no species: the reveal (CONFIG.fish.reveal) never tells you
+   what a fish is until it is close, and the one that got away is the one you
+   never found out about. So the card shows the shared placeholder body under
+   the same treatment #fish.silhouette uses — the shape that rose out of the
+   depths, and nothing more. Not a blank space, which is what an empty box
+   looked like, and not the species, which would give away the secret the whole
+   reel is built on. */
+.escape .card-fish {
+  background-image: url("assets/fish-common.png") !important;
+  filter: brightness(0.42) saturate(0.35) contrast(0.85) blur(1.4px);
+  opacity: 0.75;
+}
+.card-name {
+  font-family: var(--display); font-size: 21px; font-weight: 600;
+  color: var(--ink); letter-spacing: 0.02em;
+}
+.card-sub { font-family: var(--display); font-size: 13px; color: var(--gold); margin-top: 2px; }
+.card-pun {
+  font-family: var(--display); font-size: 14px; color: var(--ink);
+  opacity: 0.92; margin-top: 9px; line-height: 1.35;
+}
+.card-coins { font-family: var(--display); font-size: 14px; color: var(--gold); margin-top: 8px; }
+.card-coins:empty { display: none; }
+.card-hint {
+  font-family: var(--display); font-size: 11px; color: var(--dim);
+  margin-top: 12px; padding-top: 9px; border-top: 1px solid rgba(var(--ink-rgb),0.12);
+}
+/* the ribbon only exists on a plaque, so the ordinary card has no gap for it */
+.card-ribbon { display: none; }
+
+/* ---- the plaque: the same card, raised, when a species is new or a record
+   falls. A second surface queued behind the first was the alternative and this
+   is deliberately not that: one card, one dismissal, more gold. ---- */
+#catch-card.plaque {
+  border: 2px solid var(--gold); padding-top: 8px;
+  background: rgba(var(--umber-rgb),0.92);
+  box-shadow: 0 12px 34px rgba(var(--shadow-rgb),0.5), 0 0 28px rgba(var(--gold-rgb),0.28);
+}
+#catch-card.plaque .card-ribbon {
+  display: block; margin: -8px -20px 10px; padding: 7px 20px 6px;
+  font-family: var(--display); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.14em; color: var(--umber);
+  background: linear-gradient(180deg, var(--amber), var(--gold));
+  border-radius: 15px 15px 4px 4px;
+}
+#catch-card.plaque .card-name { color: var(--gold); font-size: 23px; }
+#catch-card.plaque .card-fish { filter: drop-shadow(0 0 14px rgba(var(--gold-rgb),0.5)); }
+
 /* the "new letters!" celebration banner */
 #unlock-banner {
   position: fixed; left: 50%; top: 40%; transform: translate(-50%, -50%);
@@ -852,6 +946,9 @@ h1 {
   #bg-far, #bg-water, #bg-fore, .fish-layer { animation: none !important; }
   .finger, #fish { transition: none; }
   #scene.shake, #word.shakeword, #word.pop, #unlock-banner.show, #unlock-banner.prestige, .key.fresh, #fish.hooked, #word .cur.space { animation: none; }
+  /* the card still appears and still waits for a keystroke; it just doesn't
+     travel to get there. Losing the card would lose the catch's whole payoff. */
+  #catch-card.in, #catch-card.out { transition: none; }
   .ripple, .p, .coinfloat { display: none; }
 }
 

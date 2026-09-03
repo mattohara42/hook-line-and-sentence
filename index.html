@@ -65,6 +65,25 @@
        made them huge enough to collide with the hud/guide overlays -->
   <div id="status" aria-live="polite"></div>
   <div id="word"></div>
+  <!-- F3: the post-catch card. One surface for a catch, a junk pull and an
+       escape, raised to a plaque when a species is new or a record falls. It
+       is held until the kid types the first letter of the next cast rather
+       than on a timer, and it carries the announcement now (aria-live) since
+       the status line no longer says what was caught. The slot spans the free
+       band between the HUD and #word, so the card centres in it at any window
+       shape and can never reach the finger-guide panel. -->
+  <div id="card-slot" aria-live="polite" hidden>
+    <div id="catch-card">
+      <div class="card-ribbon"></div>
+      <div class="card-fish"></div>
+      <div class="card-name"></div>
+      <div class="card-sub"></div>
+      <div class="card-pun"></div>
+      <div class="card-coins"></div>
+      <div class="card-hint">type to cast again</div>
+    </div>
+  </div>
+
   <div id="unlock-banner"><div class="banner-title">NEW LETTERS UNLOCKED!</div><div class="letters"></div></div>
 
   <div id="hud">

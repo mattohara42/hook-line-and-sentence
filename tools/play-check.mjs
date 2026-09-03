@@ -27,6 +27,10 @@ const args = Object.fromEntries(process.argv.slice(2).join(" ")
 const loc = args.loc ?? "pond";
 const outDir = args.out ?? "/tmp/shots";   // one PNG per beat, named <tag>-<beat>.png
 const tag = args.tag ?? "now";
+// --catches lands you ON an unlock boundary. The ladder counts the COLLECTION,
+// not save.totalCatches, so this seeds the collection — pass 2 and the catch
+// you play is the third, which unlocks stage 2 and fires the letter banner.
+const catches = Number(args.catches ?? 40);
 const url = args.url ?? "http://localhost:8080/index.html";
 mkdirSync(outDir, { recursive: true });
 const require = createRequire("/tmp/node_modules/playwright/index.js");
@@ -39,21 +43,21 @@ page.on("requestfailed", r => { if (r.url().includes("/assets/")) missing.push(r
 page.on("pageerror", e => console.log("PAGE ERROR:", e.message));
 
 await page.goto(url);
-await page.evaluate(([loc]) => {
+await page.evaluate(([loc, catches]) => {
   const now = Date.now();
   localStorage.setItem("tf:profile:spotcheck", JSON.stringify({
     id: "spotcheck", name: "Spot", avatar: "🎣", createdAt: now, updatedAt: now,
-    totalCatches: 40, stage: 5, coins: 900, rank: "Angler", location: loc,
+    totalCatches: catches, stage: 5, coins: 900, rank: "Angler", location: loc,
     unlockedLocations: ["pond", "stream", "ocean"],
     upgrades: { rod: "carbon", bait: "worm", boat: "classic", hat: "straw",
       owned: { rod: ["stick", "bamboo", "carbon"], bait: ["worm"], boat: ["classic"], hat: ["none", "straw"] } },
-    collection: {}, records: {}, badges: [],
+    collection: catches ? { pumpkinseed: catches } : {}, records: {}, badges: [],
     stats: { letters: {}, wordsTyped: 0, escapes: 0, sessionCount: 1, lastPlayed: now },
     jokesEndured: 0, speedBest: null,
   }));
   localStorage.setItem("tf:profiles", JSON.stringify([{ id: "spotcheck", name: "Spot", avatar: "🎣", updatedAt: now }]));
   localStorage.setItem("tf:active", "spotcheck");
-}, [loc]);
+}, [loc, catches]);
 await page.reload();
 await page.waitForTimeout(900);
 await page.click(".profile-cell:not(.add)");
@@ -70,6 +74,13 @@ const lineEnd = () => page.evaluate(() => {
 const fishAt = () => page.evaluate(() => {
   const f = document.getElementById("fish");
   return `${f.style.left},${f.style.top} cls=[${f.className}] layers=${f.querySelectorAll(".fish-layer").length}`;
+});
+
+const card = () => page.evaluate(() => {
+  const slot = document.getElementById("card-slot"), c = document.getElementById("catch-card");
+  if (!slot || slot.hidden) return "(hidden)";
+  return `[${c.className}] ${c.querySelector(".card-ribbon").textContent}| ${c.querySelector(".card-name").textContent}`
+       + ` | ${c.querySelector(".card-sub").textContent} | ${c.querySelector(".card-coins").textContent}`;
 });
 
 async function typeWord() {
@@ -102,20 +113,56 @@ await page.waitForTimeout(120);
 console.log("bite      |", await fishAt(), "| line end:", await lineEnd(), "| status:", await status());
 await shot("4-bite");
 
-// reel it in
-for (let i = 0; i < 12; i++) {
-  const left = await page.evaluate(() => document.getElementById("dist").textContent);
-  if (left === "—") break;
-  await typeWord();
-  await page.waitForTimeout(520);
-  if (i === 0) await shot("5-reeling");
-  if (left.startsWith("1 ")) { await page.waitForTimeout(120); await shot("6-landing"); }
+// --escape plays the other ending: type the wrong letter until tension hits
+// reel.escapeAt and the fish is gone. It is the only failure state in the game
+// and it gets the same card, so it needs looking at too.
+if (args.escape) {
+  for (let i = 0; i < 40 && (await word()); i++) {
+    const w = await word();
+    await page.keyboard.press(w[0] === "z" ? "q" : "z");   // never the right one
+    await page.waitForTimeout(60);
+  }
+  await page.waitForTimeout(600);
+  console.log("escaped   | card:", await card());
+  await shot("7-escaped");
+  await page.waitForTimeout(3500);
+  console.log("+3.5s     | card:", await card());
+  await shot("8-card-held");
+  console.log("missing assets:", missing.length ? missing : "none");
+  await browser.close();
+  process.exit(0);
 }
-await page.waitForTimeout(300);
-console.log("landed    | status:", await status());
+
+// Reel it in. Break on an EMPTY word box, not on the reel counter: the counter
+// reads "landing…" on the last word, so a loop watching it spins for seconds
+// after the catch and every "just landed" reading is taken long after the fact.
+// That is how the first attempt at this missed the unlock banner entirely.
+for (let i = 0; i < 14; i++) {
+  const left = await page.evaluate(() => document.getElementById("dist").textContent);
+  if (!(await word())) break;
+  await typeWord();
+  if (i === 0) { await page.waitForTimeout(520); await shot("5-reeling"); }
+  if (left.startsWith("1 ")) { await page.waitForTimeout(140); await shot("6-landing"); break; }
+  await page.waitForTimeout(520);
+}
+await page.waitForTimeout(400);
+console.log("landed    | card:", await card(), "| banner:",
+  await page.evaluate(() => document.getElementById("unlock-banner").className));
+await shot("6b-just-landed");
+await page.waitForTimeout(2600);
+console.log("+2.6s     | card:", await card(), "| banner:",
+  await page.evaluate(() => document.getElementById("unlock-banner").className));
 await shot("7-caught");
-await page.waitForTimeout(1600);
-console.log("after     | status:", await status(), "| word:", await word());
-await shot("8-after");
+// F3: the card has no timer — prove it is still there long after the old
+// 1500ms message would have gone, and that a keystroke is what clears it
+await page.waitForTimeout(4000);
+console.log("+4s       | card:", await card(), "| word:", await word());
+await shot("8-card-held");
+const w2 = await word();
+if (w2) { await page.keyboard.press(w2[0]); await page.waitForTimeout(120); await shot("9-first-key"); }
+console.log("1 key     | card:", await card());
+await page.waitForTimeout(500);
+await shot("10-cleared");
+console.log("after     | card:", await card(), "| status:", await status());
 console.log("missing assets:", missing.length ? missing : "none");
 await browser.close();

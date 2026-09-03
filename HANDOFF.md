@@ -9,9 +9,9 @@ something is the way it is, `git log` and the PR body have it in full.
 
 | | |
 |---|---|
-| **Active milestone** | **F3 — the catch card**, `BUILD_PLAN_FEEL.md`. The big one. |
-| **Done when** | a catch puts a readable card on screen, it is still there a minute later if nobody types, the first letter of the next cast clears it, and a new species or a personal best raises the plaque |
-| **F2** | ✅ shipped. Baloo 2, self-hosted; Silkscreen is gone and the keyboard is provably untouched. |
+| **Active milestone** | **F4 — the wait is something you do**, `BUILD_PLAN_FEEL.md`. |
+| **Done when** | a wiggle cast asks for its words, each word visibly twitches the bait, the fish comes after the last one, and an ordinary cast is unchanged apart from being a little longer |
+| **F2, F3** | ✅ shipped. Baloo 2 self-hosted (keyboard provably untouched), and the catch card holds until the kid types. |
 | **F1** | ✅ shipped. One ripple on a landing, the silhouette is the species that bites, and the line's far end moves 43px at the bite instead of 80 — all of it the fish's own mouth depth below the bait. |
 | **R7 is paused, not cancelled** | the nine rods are all that is left of the refresh; they resume when F5 closes. Everything the rods need is still below. |
 | `origin/main` | clean, nothing unpushed |

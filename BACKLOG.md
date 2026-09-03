@@ -165,6 +165,23 @@ grouped into five milestones:
   words to wiggle the bait** before anything is interested. Matt's call: no
   wiggle, no bite. (F4)
 
+**Found while building it:**
+
+- **The four junk sprites are the last pixel-era art in the game.** `junk-boot`,
+  `junk-can`, `junk-weed` and `junk-nugget` were drawn under the old direction
+  and the refresh never repainted them (they are not in `BUILD_PLAN_REFRESH.md`
+  at all — R6 covered the 33 fish and nothing else that gets caught). At 54px in
+  the scene it never showed; F3's card draws what you caught at 148px and it
+  shows immediately. Mitigated, not fixed: `CONFIG.card.junkPx` draws junk at 96
+  rather than 148, on the argument that a boot is a gag and not a trophy. Four
+  small repaints would close it, and they are the same shape of ask as R6's
+  fish sheets.
+- **The junk puns repeat the item's name**, because `PUNS.junk` substitutes
+  `{it}` into the sentence and the card now also shows the name in its own row
+  ("a dinosaur chicken nugget — a dinosaur chicken nugget. Well, it's the sole
+  of the lake…"). Reads fine on the fish cards, clumsy on junk. The fix is
+  editing the pun pool, which is data and a separate pass.
+
 ## EPIC: Advanced Progression — tiers, phrases, sentences, WPM-as-goal (v2/v3)
 
 *Approved by Matt, July 2026. A multi-milestone epic, NOT a single milestone —
