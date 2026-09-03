@@ -239,7 +239,21 @@ body[corridor & ~hand] = 0
 body[arm & (adist >= A["joint"])] = 0
 armlayer = np.zeros_like(keyed)
 armlayer[arm] = keyed[arm]
-print("arm %d px; body keeps the joint within %.0f px of the pivot" % (arm.sum(), A["joint"]))
+# The corridor comes out of the ARM too, not just the body, and for the same
+# reason: it is the rod's own footprint, so whatever is painted in it belongs to
+# the rod layer. Leaving it in the arm is invisible while the pose's own gate rod
+# sits behind it filling the same silhouette — and it stops being invisible the
+# moment a rod without a reel is equipped. The Ocean's big brass reel had leaked
+# 1379 px into that pose's arm, and the first reel-less rod at the Ocean left a
+# dark crescent hanging in the air above the fist (R7, 2026-09-03). The Stream
+# leaked 87 and the Pond, whose gate rod has no reel, leaked none.
+# `~hand` is the same exception the body makes: the fingers cross in FRONT of
+# the pole and that is the one place the arm should keep corridor pixels.
+armlayer[corridor & ~hand] = 0
+print("arm %d px (%d dropped where it overlapped the rod corridor); body keeps the "
+      "joint within %.0f px of the pivot"
+      % ((armlayer[..., 3] > 30).sum(), arm.sum() - (armlayer[..., 3] > 30).sum(),
+         A["joint"]))
 
 # --- one shared crop, so the pose needs a single set of offsets ---------------
 union = (rod[..., 3] > 30) | (body[..., 3] > 30) | (armlayer[..., 3] > 30)
