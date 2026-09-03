@@ -1476,6 +1476,61 @@ lacks that hardware. Seven of the eight remaining rods carry a reel, so the two
 `rod-stick` deliveries were the only ones that could have found this — and one
 of them did.
 
+#### ✅ `rod-bamboo-pond` landed first attempt (2026-09-03), and it disproved this section's own proposal
+
+**The delivery is the best of the three so far:** canvas 1008x1056; **0 px** of
+backdrop bleed; median colour distance **7.9** with only **7.9%** over 40;
+whole-figure IoU **0.9560**; 370 px of the reference the return does not carry;
+**96.9%** of the shaft above the hand inside the pose's half-width.
+
+**It is also the first rod to bring a reel to a pose that has none** — the Pond's
+gate rod is a bare stick, so `POSES["pond"]["reel"]` is `None` and a fly reel
+would have fallen outside the corridor and simply not been in the layer. Four
+things came out of cutting it, and the first is that this section was wrong.
+
+**1. The per-item reel table does not work, and the measurement is one line.**
+The sketch above proposed four rows — a reel as *how far along from the grip,
+which side, how big*, read through each pose's own axis. Bamboo Beauty is now
+painted twice, so it can be checked:
+
+| | along from the grip | across | radius |
+|---|---|---|---|
+| at the **Stream** | −8.68 design px | −3.35 | 3.51 |
+| at the **Pond** | **−2.04** | −4.97 | **2.22** |
+
+One table would be wrong at one of those poses by more than the reel's own size.
+**The generator places the reel per painting, not per item**, so the only thing
+that knows where it is, is the delivery. `cut-angler.py --rod` now finds it: the
+paint this return adds that the reference did not have, off the shaft, near the
+grip. Same shape as `cut-fish.py`'s detectors, written against a real delivery,
+and it needs no constants for the six rods still to come.
+
+**2. It goes in as the measured shape, not a circle round it.** The Pond's reel
+and the cork-grip flare below the hand are one 4,734 px component whose
+enclosing circle needs radius 69 — and that circle swallows **4,521 px of the
+child's knee**. The corridor is a mask, so it can just have the shape that was
+measured. Biting the child fell from 4,521 px to 760.
+
+**3. `~hand` must not apply to hardware off the shaft.** That band exists to drop
+the stretch of *shaft* the fingers cover so it can be synthesised from the
+cross-section above. The Pond's reel sits at row 575 against a hand band ending
+at 560, so subtracting the band clipped it: the first cut produced a wedge where
+the reel should be.
+
+**4. `scale` cannot come from a delivery whose rod has hardware on it, and this
+one improved the two rods already shipped.** `figure` is meant to be the child,
+and `perp0 > half*2` is only a safe test for that while the rod is a bare pole.
+A fly rod's wire guides stand well clear of the shaft, so on this delivery the
+mask reached row 23 instead of 94 and made the child **949 px tall against his
+real 878** — an 8% error in the number every other one derives from, and the
+box guard caught it at body IoU 0.691. In `--rod` mode the child is unchanged by
+definition, so he is now measured on the pose's own committed painting instead.
+Re-cutting `rod-stick-ocean` with that fix moved its alignment from IoU 0.9753
+to **0.9862**, so both shipped rods were re-cut and re-verified.
+
+Wired and verified in Chromium at the Pond against the gate stick: same axis,
+same hand, and the reel blob is the difference that reads at game size.
+
 #### The coordinate space nobody had written down, and a tool that ate its own output
 
 Measuring the above turned up the thing that actually blocks the cut, and it is
