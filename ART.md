@@ -1531,6 +1531,43 @@ to **0.9862**, so both shipped rods were re-cut and re-verified.
 Wired and verified in Chromium at the Pond against the gate stick: same axis,
 same hand, and the reel blob is the difference that reads at game size.
 
+#### ✅ `rod-bamboo-ocean` landed first attempt (2026-09-03) — the reel crossed the pole, and a prompt violation cost nothing
+
+**Two firsts, and both are the point of this one.**
+
+**`[THE REEL MOVES TO THE OTHER SIDE]` worked, and it was written on reasoning
+rather than measurement.** The Ocean's gate rod carries a big brass multiplier
+*above* the hand and this rod's click reel hangs *below* it, which is the case
+the block exists for. Measured on the return: where the multiplier was there is
+now the cork grip and the child's fingers and **nothing else** — one reel in the
+picture, on the correct side. That block was flagged as unverified when it was
+written; it is verified now.
+
+**The delivery broke `[CRITICAL: draw NO fishing line]`, and it did not matter.**
+Line came back threaded through the guides and running off past the tip, with
+the paragraph present verbatim — the four rod deliveries before it had obeyed
+the same words. **The cut discarded every stroke**, because `cut-angler.py` takes
+the rod geometrically: line outside the shaft corridor and outside the detected
+hardware simply is not in the layer. A difference cut would have swallowed all of
+it. That is worth more than the instruction, and it is now in `GEMINI_NOTES.md`.
+
+It does show up in the registration numbers, and it is worth knowing why they
+read low: agreement off the rod **0.9671** and whole-figure IoU **0.8861**, the
+weakest of the four, purely because the line is paint the reference does not
+have. The measures that matter are all fine — median colour distance **8.7** with
+9.7% over 40, 430 px of the reference the return does not carry, 0 px of backdrop
+bleed, and **98.6% of the shaft inside the pose's half-width, the best of the
+four.**
+
+**The reel came through whole here** (8,506 px against the Pond's 4,734) because
+nothing of the child sits behind it at this pose — the Pond's lost a bite to the
+knee, which the body layer covers anyway.
+
+Wired and verified in Chromium at the Ocean against the gate boat rod. All three
+previously shipped rods re-cut byte-identically: no tool changes were needed for
+this one, which is the first time the pipeline has taken a delivery without
+learning something new from it.
+
 #### The coordinate space nobody had written down, and a tool that ate its own output
 
 Measuring the above turned up the thing that actually blocks the cut, and it is

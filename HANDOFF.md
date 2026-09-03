@@ -11,7 +11,7 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. Back on; the nine rods are all that is left of the refresh. |
 | **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
-| **State** | both done-when clauses met. **15 of 21 painted and wired** — 12 hats, `rod-stick` at the Stream and Ocean, `rod-bamboo` at the Pond. Left: **6 rods**, prompts written out and ready to send. |
+| **State** | both done-when clauses met. **16 of 21 painted and wired** — 12 hats, `rod-stick` at the Stream and Ocean, `rod-bamboo` at the Pond and Ocean. Left: **5 rods**, prompts written out and ready to send. |
 | **Catch Feel** | ✅ **F1–F5 all shipped 2026-09-03**, `BUILD_PLAN_FEEL.md`. One thing left and it is Matt's: play it. |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 95/95 (`npm test`) |
@@ -20,7 +20,7 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**R7 has 6 rods left, and the pipeline is proven at all three poses, with and without a reel.** The
+**R7 has 5 rods left. The pipeline took the last delivery without needing a single change** — the first time — so the loop below is the whole job now. The
 loop per rod is four commands, and the third is new:
 
 ```
@@ -31,8 +31,13 @@ python3 tools/cut-angler.py <pose> assets/reg-<name>.png --rod <stem>
 #   then add "<stem>-<pose>" to CONFIG.rig.gearArt, or it is never drawn
 ```
 
-`rod-stick-stream`, `rod-stick-ocean` and `rod-bamboo-pond` all went through it
-on 2026-09-03, each a first-attempt accept, each verified in Chromium.
+Four rods went through it on 2026-09-03 — `rod-stick` at the Stream and Ocean,
+`rod-bamboo` at the Pond and Ocean — each a first-attempt accept, each verified
+in Chromium.
+
+**One delivery came back breaking `[CRITICAL: draw NO fishing line]` and it cost
+nothing**, because the cut is geometric: line outside the shaft corridor is not
+in the layer. Worth knowing before anyone rerolls one for it (`GEMINI_NOTES.md`).
 Every prompt is written out whole; send them `stick` and `bamboo` before
 `carbon` and `deepsea`.
 

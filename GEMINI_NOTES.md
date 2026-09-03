@@ -69,6 +69,16 @@ Scope note, so the docs don't drift into each other:
   must be completely bare."* When you are excluding part of an object's own idiom,
   spend a paragraph and name every form it could take.
 
+  **And it still fails sometimes, so plan for the cut to absorb it.**
+  `rod-bamboo-ocean` (R7, 2026-09-03) carried that exact paragraph, verbatim and
+  unweakened, and came back with line threaded through the guides and running off
+  past the tip. The four rod deliveries before it obeyed it. So the paragraph
+  raises the odds rather than settling the matter, and a request whose downstream
+  step *tolerates* line is worth more than one that relies on the instruction:
+  `cut-angler.py` takes the rod geometrically, so line outside the shaft corridor
+  is discarded and the violation cost nothing. `cut-gear.py`'s difference cut
+  would have swallowed every stroke of it.
+
 ## Several subjects on one sheet: it works, and it is cheaper (R6)
 
 **R6's final tally: eight sheets in nine generations, across four layouts** — a
