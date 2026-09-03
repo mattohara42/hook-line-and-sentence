@@ -39,7 +39,8 @@ paints BEHIND the body and that stretch is never actually seen.
 import sys, os
 from collections import deque
 import numpy as np
-from PIL import Image
+from scipy import ndimage
+from PIL import Image, ImageFilter
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -125,6 +126,20 @@ print("key %s  backdrop %.1f%%  enclosed pockets %d px" % (KEY.round(1), 100*bg.
 Y, X = np.mgrid[0:H, 0:W]
 perp0 = np.abs(X - M * Y - B) / np.sqrt(1 + M * M)
 figure = (keyed[..., 3] > 30) & (perp0 > P["half"] * 2)
+if ROD_STEM:
+    # `figure` is meant to be the child, and `perp0 > half*2` is only a safe test
+    # for that while the rod is a bare pole. A fly rod's wire guides stand well
+    # clear of the shaft, so on the Pond's bamboo delivery this mask reached row
+    # 23 instead of 94 and made the child 949 px tall against his real 878 —
+    # an 8% error in `scale`, which is the number every other one comes from.
+    # In --rod mode the child is unchanged by definition, so measure him on the
+    # copy that has no new hardware on it: the pose's own committed painting.
+    _fa = Image.open(os.path.join(ROOT, "assets", "angler-%s.png" % pose_name)).convert("RGBA")
+    _fr = np.asarray(Image.alpha_composite(
+        Image.new("RGBA", _fa.size, (255, 0, 255, 255)), _fa).convert("RGB"),
+        dtype=float)[P["pad"]:][:H, :W]
+    figure = (np.sqrt(((_fr - np.array([255.0, 0.0, 255.0])) ** 2).sum(axis=2)) > TOL) \
+        & (perp0 > P["half"] * 2)
 fy, fx = np.where(figure)
 scale = P["figure_h"] / (fy.max() - fy.min() + 1)
 rod_len = P["rod_len"] / scale
@@ -134,6 +149,60 @@ grip = np.array(P["grip"])
 tip = grip + rod_len * unit
 print("figure %d px tall -> scale %.5f; rod %.0f src px, tip (%.0f, %.0f)"
       % (fy.max()-fy.min()+1, scale, rod_len, tip[0], tip[1]))
+
+# --- a swapped rod brings its own reel, and only it knows where -------------
+# POSES["<pose>"]["reel"] is the circle for the rod that pose was PAINTED with,
+# so it is no use for a different one: the Pond's is None because its gate rod
+# is a bare stick, and a fly reel there would fall outside the corridor and
+# simply not be in the layer.
+#
+# The obvious fix was a per-ITEM table — a reel as "how far along from the grip,
+# which side, how big", read through each pose's own axis, four rows instead of
+# nine circles. ART.md sketched exactly that. It is wrong, and the first two
+# paintings of the SAME rod say so: Bamboo Beauty's reel sits 8.68 design px
+# back from the grip at the Stream and 2.04 at the Pond, at radius 3.51 against
+# 2.22. One table would be wrong at one of them by more than the reel's own
+# size. The generator places it per painting, not per item.
+#
+# So measure it from the delivery, which is the only thing that knows: the paint
+# this return adds that the reference did not have, off the shaft, near the
+# grip. Same idea as cut-fish.py's detectors — written against a real delivery
+# rather than guessed at, and self-correcting for the seven rods still to come.
+GEAR_REEL = None
+if ROD_STEM:
+    _art = Image.open(os.path.join(ROOT, "assets", "angler-%s.png" % pose_name)).convert("RGBA")
+    _ref = np.asarray(Image.alpha_composite(
+        Image.new("RGBA", _art.size, (255, 0, 255, 255)), _art).convert("RGB"), dtype=float)[P["pad"]:]
+    _ref = _ref[:H, :W]
+    _mr = np.sqrt(((_ref - np.array([255.0, 0.0, 255.0])) ** 2).sum(axis=2)) > TOL
+    _new = (keyed[..., 3] > 30) & ~_mr & (perp0 > P["half"])
+    _lab, _n = ndimage.label(_new)
+    _best = None
+    for _i in range(1, _n + 1):
+        _c = _lab == _i
+        if _c.sum() < 500:
+            continue
+        _ys, _xs = np.where(_c)
+        if np.hypot(_xs.mean() - P["grip"][0], _ys.mean() - P["grip"][1]) > 250:
+            continue
+        if _best is None or _c.sum() > _best[0]:
+            _best = (_c.sum(), _c, _xs.mean(), _ys.mean())
+    if _best:
+        # The component itself, grown a little for the anti-aliased rim — NOT a
+        # circle around it. The Pond's bamboo reel plus the cork grip flare below
+        # the hand is one 4,734 px component whose enclosing circle needs radius
+        # 69, and that circle swallows 4,521 px of the child's knee. The corridor
+        # is a mask, so it can simply have the shape that was measured.
+        _, _c, _cx, _cy = _best
+        GEAR_REEL = np.asarray(Image.fromarray((_c * 255).astype(np.uint8))
+                               .filter(ImageFilter.MaxFilter(9))) > 128
+        _bite = GEAR_REEL & _mr & (perp0 > P["half"] * 2)
+        print("this rod's own hardware off the shaft: %d px around (%.0f, %.0f); "
+              "%d px of the pose's own paint inside it%s"
+              % (_best[0], _cx, _cy, _bite.sum(),
+                 "" if _bite.sum() < 400 else "  <-- check it, that is the child"))
+    else:
+        print("this rod's own reel: none found — a rod with no reel, or none off the shaft")
 
 PAD_T = max(0, int(np.ceil(-tip[1])) + 8)
 PAD_R = max(0, int(np.ceil(tip[0] - W)) + 8)
@@ -147,6 +216,8 @@ print("padded %dx%d (top +%d, right +%d)" % (Wp, Hp, PAD_T, PAD_R))
 
 # --- the rod ------------------------------------------------------------------
 corridor = (perp <= P["half"]) & (Yp <= P["butt"] + PAD_T)
+if GEAR_REEL is not None:
+    corridor |= np.pad(GEAR_REEL, ((PAD_T, 0), (0, PAD_R)))
 if P["reel"]:
     rx, ry, rr = P["reel"]
     corridor |= np.hypot(Xp - rx, Yp - (ry + PAD_T)) <= rr
@@ -156,6 +227,13 @@ hand = (Yp >= P["hand"][0] + PAD_T) & (Yp <= P["hand"][1] + PAD_T)
 
 rod = np.zeros_like(keyed)
 visible = corridor & ~hand & (keyed[..., 3] > 30)
+if GEAR_REEL is not None:
+    # `~hand` exists to drop the stretch of SHAFT the fingers cover, so it can be
+    # synthesised from the cross-section above. Hardware hanging off the shaft is
+    # not that stretch, and subtracting the band from it clips the reel: the
+    # Pond's bamboo reel sits at row 575 against a hand band ending at 560, and
+    # everything above that line came out as a wedge instead of a reel.
+    visible |= np.pad(GEAR_REEL, ((PAD_T, 0), (0, PAD_R))) & (keyed[..., 3] > 30)
 rod[visible] = keyed[visible]
 
 offs = np.arange(-int(P["half"]), int(P["half"]) + 1)

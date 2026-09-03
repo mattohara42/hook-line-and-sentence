@@ -11,7 +11,7 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. Back on; the nine rods are all that is left of the refresh. |
 | **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
-| **State** | both done-when clauses met. **14 of 21 painted and wired** — the hat column complete at 12 of 12, plus `rod-stick` at the Stream and the Ocean. Left: **7 rods**, prompts written out and ready to send. |
+| **State** | both done-when clauses met. **15 of 21 painted and wired** — 12 hats, `rod-stick` at the Stream and Ocean, `rod-bamboo` at the Pond. Left: **6 rods**, prompts written out and ready to send. |
 | **Catch Feel** | ✅ **F1–F5 all shipped 2026-09-03**, `BUILD_PLAN_FEEL.md`. One thing left and it is Matt's: play it. |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 95/95 (`npm test`) |
@@ -20,7 +20,7 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**R7 has 7 rods left, and the pipeline for them is proven at two poses.** The
+**R7 has 6 rods left, and the pipeline is proven at all three poses, with and without a reel.** The
 loop per rod is four commands, and the third is new:
 
 ```
@@ -31,8 +31,8 @@ python3 tools/cut-angler.py <pose> assets/reg-<name>.png --rod <stem>
 #   then add "<stem>-<pose>" to CONFIG.rig.gearArt, or it is never drawn
 ```
 
-`rod-stick-stream` and `rod-stick-ocean` both went through it on 2026-09-03,
-each a first-attempt accept, both verified in Chromium.
+`rod-stick-stream`, `rod-stick-ocean` and `rod-bamboo-pond` all went through it
+on 2026-09-03, each a first-attempt accept, each verified in Chromium.
 Every prompt is written out whole; send them `stick` and `bamboo` before
 `carbon` and `deepsea`.
 
@@ -54,6 +54,17 @@ subtracted too) and the committed layers repaired, since they cannot be re-cut.
 Full numbers in `ART.md`. **A layer defect masked by the gate rod's own hardware
 stays invisible until gear arrives without it** — and only the two `rod-stick`
 deliveries could ever have found this one.
+
+**The reel circle is now retired too, and not the way this was planned.** The
+sketched per-item table is disproved: Bamboo Beauty painted twice puts its reel
+8.68 design px back from the grip at the Stream and 2.04 at the Pond, at 3.51
+radius against 2.22. The generator places it per painting, so `cut-angler.py
+--rod` detects it from the delivery instead and needs no constants at all. Three
+smaller things fell out of the same cut, all in `ART.md`: the reel goes in as the
+measured mask rather than a circle (a circle ate 4,521 px of the child's knee),
+`~hand` must not clip hardware off the shaft, and `scale` must be measured on the
+pose rather than on a delivery whose guides stand clear of the shaft — that last
+one also improved `rod-stick-ocean`, so both earlier rods were re-cut.
 
 **Still open on the corridor, and now half-retired.** `half` (the shaft's
 half-width) only bites when a rod is *fatter* than the pose's gate rod, which
