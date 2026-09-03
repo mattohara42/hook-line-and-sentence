@@ -55,6 +55,12 @@ of the depths is the shape that takes the hook, and the line's far end does not
 move at the bite beyond the fish's own swim. Each proved by a screenshot, not by
 an assertion.
 
+**✅ Shipped 2026-09-03.** The wake is skipped on the landing word and its
+numbers are in `CONFIG.fish.wake`; the silhouette keeps `.rigged`; the lure
+lands at `(458, 224)` and the far end now moves 43px at the bite instead of 80,
+all of it the fish's mouth sitting below the bait. `tools/play-check.mjs` came
+out of this milestone and every later one should use it.
+
 ## F2 — a face that matches the paintings
 
 Answers **open question 1 of `BUILD_PLAN_REFRESH.md`**, which R2 left parked:
