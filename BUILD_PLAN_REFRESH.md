@@ -535,7 +535,7 @@ against the placeholder while the art is being made, and the cut tool is written
 against the first delivered painting rather than guessed at — which is how
 `cut-angler.py` and `cut-vessel.py` were both built, and why their detectors work.
 
-### R7 — Gear in the new style (code half done 2026-09-02; **all 12 hats landed the same day; 4 rods remain, and the pipeline now takes a delivery unchanged**)
+### R7 — Gear in the new style (code half done 2026-09-02; **all 12 hats landed the same day; 3 rods remain, and the pipeline now takes a delivery unchanged**)
 
 Hats and rods re-cut for the shop, in the new direction, drawn against each
 pose. Was V5; the shop code (`renderShopList`) already generalizes, so this is
@@ -648,7 +648,7 @@ body, and all of it survives a reload with no 404s anywhere in the run.
 | R4 | per pose: head, torso, arm, rod + a fingers overlay — all on one canvas, drawn from the torso |
 | R5 | ~~rowboat, Whaler + fighting chair, and a near-side layer for each~~ ✅ — four shop hull repaints outstanding |
 | R6 | ~~33 species × body/tail, in waves by biome~~ ✅ — 33 of 33, in eight sheets and nine generations |
-| R7 | 21 paintings, one per gear item per pose, each an **edit of that pose's own painting** (`ART.md` has all 21 prompts written out). **17 landed, 4 to go** — the hat column is complete and five non-gate rods are in kids' hands. A hat is one `tools/cut-gear.py` run and one `rig.gearArt` line; a rod is a `tools/cut-angler.py` run instead, because the shaft under the hand is where the two paintings agree |
+| R7 | 21 paintings, one per gear item per pose, each an **edit of that pose's own painting** (`ART.md` has all 21 prompts written out). **18 landed, 3 to go** — the hat column is complete and six non-gate rods are in kids' hands. A hat is one `tools/cut-gear.py` run and one `rig.gearArt` line; a rod is a `tools/cut-angler.py` run instead, because the shaft under the hand is where the two paintings agree |
 
 ## Open questions
 

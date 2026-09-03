@@ -11,7 +11,7 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. Back on; the nine rods are all that is left of the refresh. |
 | **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
-| **State** | both done-when clauses met. **17 of 21 painted and wired** — 12 hats, `rod-stick` x2, `rod-bamboo` x2, `rod-carbon` at the Pond. Left: **4 rods**, prompts written out and ready to send. |
+| **State** | both done-when clauses met. **18 of 21 painted and wired** — 12 hats, `rod-stick` x2, `rod-bamboo` x2, `rod-carbon` at the Pond and Stream. Left: **3 rods**, prompts written out and ready to send. |
 | **Catch Feel** | ✅ **F1–F5 all shipped 2026-09-03**, `BUILD_PLAN_FEEL.md`. One thing left and it is Matt's: play it. |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 95/95 (`npm test`) |
@@ -39,14 +39,15 @@ in Chromium.
 nothing**, because the cut is geometric: line outside the shaft corridor is not
 in the layer. Worth knowing before anyone rerolls one for it (`GEMINI_NOTES.md`).
 
-**`rod-carbon-stream` was rejected on colour (2026-09-03), the rod column's first
-reroll.** Same prompt wording as the Pond's carbon, which is a neutral grey
-(R−B +3); this came back dark plum (+40). Geometry was perfect, so it is a
-colour miss and nothing else. The `[THE ROD]` block for all three carbon rods now
-asks for *"a NEUTRAL charcoal grey — no red, no brown, no purple, the colour of
-graphite or wet slate"*. **Send `rod-carbon-stream` again with the strengthened
-prompt.** Full reasoning, and the measurement that corrected a wrong first
-diagnosis, in `ART.md`.
+**`rod-carbon-stream` cost the rod column's only reroll, and Matt accepted the
+second attempt warm.** Both attempts came back warmer than the Pond's carbon
+(R−B +39 against +2) despite a strengthened `[THE ROD]`, which points at
+`[STYLE]`'s "warm muted color palette" rather than the rod wording. Accepted
+because at 95 design px it reads dark and is nothing like the honey bamboo
+(+137), and a third generation was not worth the neutrality. **A real pipeline
+improvement came out of it and is deliberately not done:** `cut-angler.py`'s
+despill adds about 11 of those 39 points and should move to `cut-gear.py`'s
+unmix model — `BACKLOG.md`, because it changes how every rod is cut.
 
 **`ART.md`'s "no pure black" delivery check is wrong as written** and would
 reject every rod in the game, R4's own included: 84 to 225 pixels of each is

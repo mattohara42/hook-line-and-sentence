@@ -199,7 +199,7 @@ export const CONFIG = {
       // committed body layer — a rod only lands right if it shares that box.
       "rod-stick-stream", "rod-stick-ocean",
       "rod-bamboo-pond", "rod-bamboo-ocean",
-      "rod-carbon-pond",
+      "rod-carbon-pond", "rod-carbon-stream",
       "hat-straw-pond", "hat-straw-stream", "hat-straw-ocean",
       // All 12 hats, complete. Every *-stream entry below is the Pond painting
       // landed on the Stream head by tools/hat-transplant.py rather than its own
