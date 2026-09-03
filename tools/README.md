@@ -8,7 +8,7 @@ a command instead of redoing the work by hand.
 
 Each tool's own docstring is the real reference, and it carries the reasoning
 and the numbers that set its constants. This file is the index, so a new session
-knows what exists before inventing a tenth one.
+knows what exists before inventing an eleventh one.
 
 ## Which doc owns what
 
@@ -39,10 +39,25 @@ construction.
 
 | tool | milestone | cuts |
 |---|---|---|
-| `cut-angler.py <pose> <src>` | R4 | one pose painting → `rod` / `arm` / `body` layers |
+| `cut-angler.py <pose> <src> [--rod <stem>]` | R4, and R7's rods | one pose painting → `rod` / `arm` / `body` layers. `--rod` writes **only** a swapped shop rod |
 | `cut-vessel.py` | R5 | one boat painting → `far` / `near` halves along the gunwale |
 | `cut-fish.py <sheet> [src]` | R6 | one sheet → each species' `body` and `tail` |
 | `cut-gear.py <pose> <stem> <src>` | R7 | a delivered **edit** of a pose → just the gear |
+
+**`cut-angler.py`'s source is required, and it must be the raw download.**
+`assets/angler-<pose>.png` is one of this tool's own OUTPUTS — the keyed
+painting on a canvas padded upward to hold the synthesised rod tip. Handed that,
+`convert("RGB")` turns the alpha backdrop black, the flood keys on black instead
+of magenta, and all four committed files for the pose get rewritten with
+garbage. It used to be the default argument and it did exactly that once. Two
+guards now refuse it.
+
+**A rod is cut by `cut-angler.py`, not `cut-gear.py`.** A hat is found by
+difference; a rod cannot be, because the shaft under the hand is precisely where
+the two paintings agree. `--rod <stem>` cuts it with the pose's own corridor and
+saves only that layer, aligning it to the committed body by an integer search —
+a rod is only in the right place if it shares that body's box, and the box
+includes the synthesised tip, so it cannot be read off any committed file.
 
 `cut-gear.py` is the odd one and worth knowing about before you use it: gear is
 asked for as an *edit* of the pose (attach the painting, ask for it back with
@@ -55,12 +70,26 @@ each paid for by a real delivery.
 | tool | does |
 |---|---|
 | `gear-ref.py [pose]` | flattens `angler-<pose>.png` back onto magenta → `assets/ref-angler-<pose>.png`, the file you **attach** to a gear prompt |
+| `gear-register.py <pose> <download>` | the inverse: puts a **return** back into the pose's own coordinates → `assets/reg-<name>.png`, the file you **cut** |
+| `poses.py` | not a tool. The three anglers' geometry, imported by `cut-angler.py` and `gear-register.py` — one copy of a fitted axis, because two would drift |
 | `hat-transplant.py <stem> <from> <to>` | lands a hat painted for one pose on another pose's head, by matching the two head silhouettes |
 
 **Attach the ref, never the keyed PNG.** `angler-<pose>.png` has an alpha
 backdrop, and an attachment carrying no magenta gives "keep the backdrop exactly
 as it is" nothing to hold onto. The refs are gitignored on purpose: one line of
 derivation from a committed file is not game art.
+
+**`gear-ref.py` and `gear-register.py` are the two ends of one round trip**, and
+missing the second looks exactly like the generator missing the axis. It undoes
+two things: the scale and offset (the generator ignores the asked canvas size
+every time — the first rod came back 992x1079 against 1387x1510), using
+`cut-gear.py`'s fit with the rod corridor excluded instead of a hat box; and
+**the pad**, because `gear-ref.py` builds the attachment from the padded file
+while every number in `poses.py` is in the raw delivery's coordinates. Cropping
+the pad off also restores what `cut-angler.py`'s `t_edge` assumes — that the
+shaft runs off the top of the frame — which is why a delivery whose tip
+overshoots costs nothing. Its output is gitignored for the same reason the refs
+are.
 
 **`hat-transplant.py` refuses when it should.** It measured out at head IoU
 0.904 Pond→Stream (indistinguishable from a real generation at game size) and

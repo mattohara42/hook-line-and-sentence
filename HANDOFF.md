@@ -11,7 +11,7 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. Back on; the nine rods are all that is left of the refresh. |
 | **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
-| **State** | both done-when clauses have been met since the straw hat landed. **12 of 21 painted, the hat column complete at 12 of 12.** Left: the 9 rods only, and **all nine prompts are now written out and ready to send.** |
+| **State** | both done-when clauses met. **13 of 21 painted and wired** — the hat column complete at 12 of 12, and `rod-stick-stream` in a kid's hand. Left: **8 rods**, prompts written out and ready to send. |
 | **Catch Feel** | ✅ **F1–F5 all shipped 2026-09-03**, `BUILD_PLAN_FEEL.md`. One thing left and it is Matt's: play it. |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 95/95 (`npm test`) |
@@ -20,53 +20,36 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**R7 has one thing left: the nine rods, and the next action is Matt's.** All
-nine prompts are written out whole in `ART.md` → *R7* → *The rods*, in the order
-to send them (`stick` and `bamboo` before `carbon` and `deepsea`). Each is
-paste-ready: the pose line, the canvas size and the rendered rod length are baked
-into every one. Generate, cut, register, repeat.
+**R7 has 8 rods left, and the pipeline for them now exists and is proven.** The
+loop per rod is four commands, and the third is new:
 
-**A rod is not cut the way a hat is, and that is the whole job.** A hat is found
-by *difference* (`cut-gear.py`); a rod cannot be, because the shaft under the
-hand is exactly where the two paintings agree. A rod is cut by `cut-angler.py`'s
-fitted corridor instead — its axis, half-width, butt, hand band and reel circle
-— and every one of those numbers stays valid **only if the new rod lands on the
-same axis**, which is what the rod prompt spends its weight on.
+```
+python3 tools/gear-ref.py <pose>                  # the attachment
+#   ... paste the prompt from ART.md -> R7 -> The rods, attach the ref ...
+python3 tools/gear-register.py <pose> <download>  # -> assets/reg-<name>.png
+python3 tools/cut-angler.py <pose> assets/reg-<name>.png --rod <stem>
+#   then add "<stem>-<pose>" to CONFIG.rig.gearArt, or it is never drawn
+```
 
-**The first thing that will go wrong on the first rod delivery is not a per-rod
-number: `cut-angler.py` has no registration fit.** Every number in its `POSES`
-dict is in the original painting's source pixels, applied to whatever image it
-is handed, which was safe while the only input was that painting. The generator
-ignores the asked canvas size every time, so a returned rod puts the axis, grip,
-butt and reel circle all off at once and the corridor lands nowhere near the
-rod. `cut-gear.py` already fits for exactly this and the answer is to reuse its
-fit (agreement outside the changed box, pivoted about the centroids) rather than
-re-derive one. Register first, then run the corridor: `ART.md` → *The rods*.
+`rod-stick-stream` went through it on 2026-09-03 and is verified in Chromium.
+Every prompt is written out whole; send them `stick` and `bamboo` before
+`carbon` and `deepsea`.
 
-**And three of that corridor's numbers are per rod, not per pose.** The reel circle,
-the shaft half-width and the Stream's left bound were each measured off the gate
-rod that pose happens to hold, so a fly reel below the hand at the Ocean falls
-outside a circle fitted to a multiplier above it, and a boat rod at the Pond is
-thicker than the cane the half-width was fitted to. Flagged rather than solved,
-with the cheap shape sketched (a per-item table read through each pose's axis,
-four rows rather than nine circles): `ART.md` → *The rods*.
+**Three things that pipeline learned, all in `ART.md` → *The rods*:** a return
+is in the *padded* canvas's coordinates and `poses.py`'s numbers are in the raw
+delivery's, so registering is the fit **plus** a pad of 367 / 486 / 442 · a rod
+must be aligned to the committed body's box by integer search, and refining the
+upstream fit to chase that box makes the fit worse · and `cut-angler.py`'s
+source is now required, because it used to default to one of its own outputs and
+rewrote four committed files when handed it.
 
-**Not R7, and already landed:** the reel now animates and the fish keeps its
-name back until it is close (#135) — `ANIMATION.md` owns it, and it wants an
-eye test (below).
-
-**Before your first cut in a fresh container:** `pip install Pillow numpy scipy`,
-and for `spot-check.mjs`, `cd /tmp && npm install playwright`. `tools/README.md`
-indexes all nine tools and what each is for.
-
-**Two things the hats left behind**, both written up where they belong: a good
-delivery rejected by mistake for looking like the straw hat, because nothing in
-the prompts separated the two hats' *colour* (`GEMINI_NOTES.md`, #133) · and
-`cut-gear.py`'s neck guard truncating both sou'westers, with no constant that
-fixes it (`BACKLOG.md`, measured rather than bodged).
-
-**A delivered PNG is not live until it is registered** in `CONFIG.rig.gearArt`,
-and an unregistered one looks exactly like art that never arrived.
+**Still open on the corridor, and now half-retired.** `half` (the shaft's
+half-width) only bites when a rod is *fatter* than the pose's gate rod, which
+the first delivery proved: a thin rod in a generous corridor loses nothing. So
+it is `rod-deepsea` at the Pond and the Stream, and nowhere else. The **reel
+circle** is still per rod and untested — seven of the eight remaining rods carry
+one, and `rod-bamboo-ocean` is the first that puts it on the other side of the
+pole from the gate rod's.
 
 ## Waiting on Matt (none of it blocks R7)
 
