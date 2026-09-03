@@ -413,3 +413,20 @@ drafted in `ART.md`). The rig/hat/rod/character/color work is a real code
 change (new layered rendering + shop sections + profile-setup UI), not just
 art — scope it as its own milestone(s) once A5-A8 close, since it touches all
 three locations at once rather than landing as one vertical slice.
+
+## `cut-angler.py`'s despill reddens thin neutral pieces (R7, 2026-09-03)
+
+Its alpha is a distance ramp plus an asymmetric despill: `B → min(B, G)` and
+`R → min(R, 1.9·G)`. The 1.9 was tuned for terracotta, tan skin and honey cane,
+where R legitimately runs high. On the first *neutral* subject the pipeline has
+met — `rod-carbon-stream`, the thinnest rod in the set at 15.6 px against the
+Pond's 29.7 — it turns a grey-taupe shaft into a plum one. Measured on the same
+pixels: ramp + despill gives R − B **+50**, `cut-gear.py`'s unmix model
+(`gap = min(R,B) − G`, adopted there precisely because a JPEG's ringing against a
+saturated key is not a linear mix) gives **+39**. About 11 points of the warmth
+is ours.
+
+Not done with the delivery it was found on, because it changes how **every** rod
+is cut and all six shipped ones would need re-cutting and re-verifying. Confine
+it to `--rod` mode and the committed angler layers stay untouched. Worth doing
+before any further neutral or very thin gear.

@@ -1612,6 +1612,58 @@ Everything else is routine: 0 px of backdrop bleed, median colour distance
 all four previously shipped rods re-cut byte-identically. Verified in Chromium at
 the Pond against the bamboo — a kid can tell them apart.
 
+#### ✅ `rod-carbon-stream` attempt 2 accepted (2026-09-03) — warmer than the Pond's, and that is Matt's call
+
+The strengthened `[THE ROD]` wording moved the raw shaft's R − B from **+40 to
++26**, so it did something. It did not reach grey, and on screen the rod still
+reads plum against the Stream's greens.
+
+**Two measurements worth keeping, because the obvious readings were both wrong.**
+
+*The cut layer cannot be trusted for colour on a thin piece.* The Stream's carbon
+shaft is **15.6 px** wide against the Pond's 29.7 — the thinnest rod in the set —
+so magenta fringe reaches its centre. Profiling the Pond's cut layer across the
+shaft shows a neutral core warming outward (R − B **+2** at the centreline, +41
+out at 9–14 px, which is the warm outline the art direction asks for). The
+Stream's has no neutral core at any radius. Reading the raw crop at 8× shows a
+grey-taupe shaft inside a heavy magenta halo, which is neither the grey the
+prompt asked for nor the maroon the swatch suggested.
+
+*`cut-angler.py`'s despill exaggerates warmth, but does not create it.* Its rule
+clamps B down to G and allows R up to 1.9 × G — tuned for terracotta and tan,
+where R legitimately runs high, and wrong for the first neutral subject the
+pipeline has met. Measured on the same pixels:
+
+| alpha model | shaft RGB | R − B |
+|---|---|---|
+| ramp + asymmetric despill (`cut-angler.py` today) | (106, 56, 56) | **+50** |
+| unmix, `gap = min(R,B) − G` (`cut-gear.py`'s model) | (110, 73, 71) | **+39** |
+| the Pond's carbon, for reference | (81, 81, 79) | **+2** |
+
+So the pipeline accounts for about 11 points of the warmth and the painting for
+the other 39. **Switching the rod cut to the unmix model is a real improvement
+and does not rescue this delivery.**
+
+**The experiment this reroll was for is answered.** Attempt 2 changed `[THE ROD]`
+only, deliberately, so that a second warm result would implicate `[STYLE]`'s
+"warm muted color palette" rather than the rod wording. It came back warm, which
+points at `[STYLE]`.
+
+**Accepted anyway, and the reasoning is worth being straight about.** Attempt 1
+was rejected on consistency — one shop item should not be grey at one spot and
+plum at another — and attempt 2 is only marginally less warm. Put to Matt with
+the numbers and the options (reroll against `[STYLE]`, accept, fix the despill
+first, or park it), **the call was to accept**: at 95 design px the rod reads
+dark against the Stream's greens and is nothing like the honey bamboo
+(R − B +39 against +137), which is what a kid actually needs from it. A third
+generation on one rod is not worth the small gain in neutrality. The Pond's
+carbon stays the greyer of the two and nobody sees them together.
+
+**The despill improvement is real and is not being done here.** Switching the rod
+cut to `cut-gear.py`'s unmix model recovers about 11 points of that warmth and
+would help every future thin or neutral piece; it is in `BACKLOG.md` rather than
+bundled into a delivery, since it changes how every rod is cut.
+
 #### ❌ `rod-carbon-stream`, attempt 1 rejected (2026-09-03) — a grey rod that came back plum
 
 **The first rejection of the rod column, and it is a colour miss rather than a
