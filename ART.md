@@ -1387,6 +1387,39 @@ around a thin rod picks up nothing extra. **`half` only bites when a rod is
 FATTER than the pose's**, which means `rod-deepsea` at the Pond and the Stream,
 and nowhere else. Half the flag, retired.
 
+#### ✅ Cut and wired 2026-09-03 — the round trip exists now
+
+`rod-stick-stream` is in a kid's hand at the Stream, verified in Chromium past
+the profile modal with no failed asset request. **10 of 21 gear paintings are
+live; 8 rods to go.** Two new pieces of pipeline, and one thing that had to be
+un-learned:
+
+- **`tools/gear-register.py`** is `gear-ref.py`'s inverse, and the pair is the
+  whole round trip. It undoes the scale and offset (`cut-gear.py`'s fit, with
+  the rod corridor excluded rather than a hat box) and then the pad, and writes
+  `assets/reg-<name>.png` in the pose's own coordinates, opaque on magenta.
+  Gitignored, like the refs: one derivation from a committed download.
+- **`cut-angler.py --rod <stem>`** cuts only the rod and saves only that layer.
+- **`tools/poses.py`** now holds the three anglers' geometry, imported by both,
+  because a second copy of a fitted axis drifts silently.
+
+**The box was the hard part, and the first answer was wrong.** A rod only lands
+right if it shares the committed body layer's box, and that box is the union of
+all three layers *including the synthesised tip*, so it cannot be read back off
+any committed file. The registration measured 0.9864 agreement off the rod and
+*still* cut to 1047x1464 against the committed 1048x1466, because one pixel of
+figure height moves `scale` and `scale` moves everything. Chasing that pixel by
+refining the upstream fit onto the figure's bounding box made the fit **worse**
+(agreement 0.9864 → 0.9766) — which is `cut-gear.py`'s hat lesson repeating, and
+it was backed out.
+
+The answer is to align where it is exact and integral instead: **the body this
+source cuts to IS the committed body**, unchanged art either side, so slide one
+over the other and take the offset. It landed at `+1, +1` with body IoU
+**0.9857** and mean 11.4 / 255 over the shared paint, and the rod came out at
+1048x1466 — the committed box, by construction. `--rod` refuses below IoU 0.90
+rather than saving something misplaced.
+
 #### The coordinate space nobody had written down, and a tool that ate its own output
 
 Measuring the above turned up the thing that actually blocks the cut, and it is

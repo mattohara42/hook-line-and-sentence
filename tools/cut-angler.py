@@ -43,70 +43,23 @@ from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Every number below was measured off that pose's own delivered painting. The
-# only thing shared between poses is the method.
-#
-#   axis        the rod's fitted centreline, x = m*y + b, in source px
-#   half        half the shaft's width, outline included
-#   butt        the rod's lowest point along the axis
-#   hand        the band of rows where the hand covers the rod (synthesised)
-#   reel        an off-axis circle the corridor would otherwise miss, or None
-#   rod_xmin    a hard left bound, where the corridor would otherwise bite into
-#               the body (the Stream's butt passes close to the waders)
-#   rod_len     grip to tip, in DESIGN px — the delivered rod is cropped by the
-#               canvas, so this is a decision, not a measurement
-#   arm         pivot / wrist / hand centre, and an optional elbow when the
-#               limb bends visibly (the Ocean's does; the other two hide their
-#               upper arm). The pivot is where the limb disappears behind
-#               something the body layer carries: the Pond's forearm behind the
-#               drawn-up knee, the Stream's and Ocean's sleeve behind the vest.
-#               The cut end then sits AT the pivot and never moves.
-#   figure_h    see below — measured as the widest row in the top 20% of the
-#               figure, which is the one head measure that has stayed consistent
-#               across all three poses (318 / 217 / 315 source px).
-#   figure_h    how tall the figure should render, in design px. NOT scaled from
-#               the source: the generator draws every pose to fill its frame, so
-#               the standing Stream kid came back only 2% taller than the seated
-#               Pond one. 50 seated / 75 standing comes from matching the two
-#               HEADS — the Pond's is 318 source px wide at its scale, which is
-#               18.1 design px, and the Stream's 217 px head matches at 0.083.
-#   feet_y      where the figure's feet land, in scene design px
-#   centre_x    where the figure's centre lands, in scene design px
-POSES = {
-    "pond": dict(
-        axis=(-0.9002, 1012.9), half=16.0, butt=560.0, hand=(408.0, 560.0),
-        reel=None, rod_xmin=None, rod_len=65.0, tip_half=1.2, grip=(572.0, 490.0),
-        arm=dict(pivot=(487.0, 558.0), wrist=(566.0, 502.0), hand=(602.0, 486.0),
-                 r_fore=30.0, r_hand=60.0, joint=35.0),
-        profile_rows=(370, 405), figure_h=50.0, feet_y=200.0, centre_x=79.5,
-        rod_file="rod-stick-pond",
-    ),
-    "ocean": dict(
-        axis=(-0.8156, 962.3), half=22.0, butt=612.0, hand=(398.0, 492.0),
-        reel=(595.0, 360.0, 58.0), rod_xmin=None, rod_len=65.0, tip_half=2.5,
-        grip=(603.0, 440.0),
-        arm=dict(pivot=(292.0, 445.0), elbow=(418.0, 517.0), wrist=(508.0, 487.0),
-                 hand=(615.0, 440.0), r_fore=42.0, r_hand=58.0, joint=34.0),
-        profile_rows=(100, 250), figure_h=51.0, feet_y=202.0, centre_x=79.5,
-        rod_file="rod-deepsea-ocean",
-    ),
-    "stream": dict(
-        axis=(-0.8063, 993.2), half=15.0, butt=546.0, hand=(352.0, 464.0),
-        reel=(631.0, 513.0, 42.0), rod_xmin=556.0, rod_len=95.0, tip_half=1.2,
-        grip=(665.0, 407.0),
-        arm=dict(pivot=(550.0, 452.0), wrist=(612.0, 434.0), hand=(658.0, 404.0),
-                 r_fore=32.0, r_hand=56.0, joint=30.0),
-        profile_rows=(150, 250), figure_h=75.0, feet_y=220.0, centre_x=80.0,
-        rod_file="rod-bamboo-stream",
-    ),
-}
-TOL, LO, HI = 90.0, 55.0, 115.0
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from poses import POSES, TOL, LO, HI
 RIG_X, RIG_Y = 20.0, 168.0     # #rig's position in style.css
 
+argv = sys.argv[1:]
+ROD_STEM = None
+if "--rod" in argv:
+    i = argv.index("--rod")
+    if i + 1 >= len(argv):
+        sys.exit("--rod needs the shop item's stem, e.g. --rod rod-stick")
+    ROD_STEM = argv[i + 1]
+    del argv[i:i + 2]
+sys.argv = [sys.argv[0]] + argv
 pose_name = sys.argv[1] if len(sys.argv) > 1 else "pond"
 P = POSES[pose_name]
 if len(sys.argv) < 3:
-    sys.exit("usage: cut-angler.py <pose> <source.jpg|png>\n"
+    sys.exit("usage: cut-angler.py <pose> <source.jpg|png> [--rod <stem>]\n"
              "  The source is the RAW delivered painting on flat magenta. There is no\n"
              "  default: assets/angler-%s.png is one of this tool's own outputs."
              % pose_name)
@@ -302,10 +255,66 @@ def save(arr, name, crop=True):
     img.save(path, optimize=True)
     print("  %-26s %-11s %6.0f KB" % (name, "%dx%d" % img.size, os.path.getsize(path)/1024))
 
-save(keyed, "angler-%s.png" % pose_name, crop=False)
-save(body, "angler-%s-body.png" % pose_name)
-save(armlayer, "angler-%s-arm.png" % pose_name)
-save(rod, "%s.png" % P["rod_file"])
+if ROD_STEM:
+    # A swapped shop rod (R7). Only the rod is new: the body and the arm in this
+    # source are the pose's own unchanged paint, arriving back through
+    # gear-register.py. So they are not saved — they are the RULER.
+    #
+    # A rod layer is only in the right place if it shares the committed body's
+    # box, and that box is the union of all three layers INCLUDING the
+    # synthesised tip, so it cannot be read back off any committed file. Nor is
+    # it enough to fit the delivery well upstream: this cut's own box came out
+    # 1047x1464 against the committed 1048x1466 on a registration measuring
+    # 0.9864 agreement, because a pixel of figure height moves `scale` and
+    # `scale` moves everything. Chasing that pixel through the upstream fit made
+    # the fit worse — it is bounding-box matching again, which cut-gear.py
+    # already paid to learn is fragile.
+    #
+    # So align here, where the answer is exact and integral: the body this
+    # source cuts to IS the committed body, so slide one over the other, take
+    # the offset that matches them, and cut the rod on the committed box at that
+    # offset. Unchanged art registering unchanged art.
+    name = "%s-%s.png" % (ROD_STEM, pose_name)
+    ref_layer = Image.open(os.path.join(ROOT, "assets", "angler-%s-body.png" % pose_name))
+    RW, RH = ref_layer.size
+    ref_a = np.asarray(ref_layer.convert("RGBA"), dtype=float)
+    ref_m = ref_a[..., 3] > 30
+    got = np.asarray(Image.fromarray(body.astype(np.uint8), "RGBA"), dtype=float)
+    got_m = got[..., 3] > 30
+
+    best_off, best_iou = None, -1.0
+    for dy in range(box[1] - 6, box[1] + 7):
+        for dx in range(box[0] - 6, box[0] + 7):
+            if dx < 0 or dy < 0 or dx + RW > got.shape[1] or dy + RH > got.shape[0]:
+                continue
+            w = got_m[dy:dy + RH, dx:dx + RW]
+            u = (w | ref_m).sum()
+            if not u:
+                continue
+            v = (w & ref_m).sum() / u
+            if v > best_iou:
+                best_iou, best_off = v, (dx, dy)
+    if best_iou < 0.90:
+        sys.exit("refusing to save %s: this source's body matches the committed one at "
+                 "only IoU %.3f.\nThe rod would not line up. Check the fit that "
+                 "tools/gear-register.py printed." % (name, best_iou))
+    X0, Y0 = best_off
+    crop = (X0, Y0, X0 + RW, Y0 + RH)
+    w = got[Y0:Y0 + RH, X0:X0 + RW]
+    on = (w[..., 3] > 30) & ref_m
+    print("aligned to the committed body at (%d, %d), %+d%+d from this cut's own box: "
+          "IoU %.4f, mean %.1f / 255 over the shared paint"
+          % (X0, Y0, X0 - box[0], Y0 - box[1], best_iou,
+             np.abs(w[..., :3] - ref_a[..., :3])[on].mean()))
+    box = crop
+    save(rod, name)
+    print("\n  add \"%s-%s\" to CONFIG.rig.gearArt, or it is never drawn"
+          % (ROD_STEM, pose_name))
+else:
+    save(keyed, "angler-%s.png" % pose_name, crop=False)
+    save(body, "angler-%s-body.png" % pose_name)
+    save(armlayer, "angler-%s-arm.png" % pose_name)
+    save(rod, "%s.png" % P["rod_file"])
 
 out = rod.copy()
 for layer in (armlayer, body):

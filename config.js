@@ -194,6 +194,10 @@ export const CONFIG = {
     // gate rod. Add a stem here the moment its PNG lands.
     gearArt: [
       "rod-stick-pond", "rod-bamboo-stream", "rod-deepsea-ocean",
+      // The first non-gate rod. Cut from a delivery registered back into the
+      // pose's coordinates by tools/gear-register.py, then aligned to the
+      // committed body layer — a rod only lands right if it shares that box.
+      "rod-stick-stream",
       "hat-straw-pond", "hat-straw-stream", "hat-straw-ocean",
       // All 12 hats, complete. Every *-stream entry below is the Pond painting
       // landed on the Stream head by tools/hat-transplant.py rather than its own

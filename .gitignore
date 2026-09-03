@@ -6,3 +6,9 @@ node_modules/
 # R7: gear prompt attachments, derived from assets/angler-<pose>.png by
 # tools/gear-ref.py. Regenerated on demand, never committed.
 assets/ref-angler-*.png
+
+# R7: gear deliveries registered back into a pose's coordinates by
+# tools/gear-register.py. One line of derivation from the committed raw
+# download, same as ref-angler-*.png above.
+assets/reg-*.png
+tools/__pycache__/
