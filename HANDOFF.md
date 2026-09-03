@@ -9,8 +9,9 @@ something is the way it is, `git log` and the PR body have it in full.
 
 | | |
 |---|---|
-| **Active milestone** | **F2 — a face that matches the paintings**, `BUILD_PLAN_FEEL.md`. |
-| **Done when** | `--display` names the new face, the game reads warm at 11px, and the guide keyboard is pixel-for-pixel what it was |
+| **Active milestone** | **F3 — the catch card**, `BUILD_PLAN_FEEL.md`. The big one. |
+| **Done when** | a catch puts a readable card on screen, it is still there a minute later if nobody types, the first letter of the next cast clears it, and a new species or a personal best raises the plaque |
+| **F2** | ✅ shipped. Baloo 2, self-hosted; Silkscreen is gone and the keyboard is provably untouched. |
 | **F1** | ✅ shipped. One ripple on a landing, the silhouette is the species that bites, and the line's far end moves 43px at the bite instead of 80 — all of it the fish's own mouth depth below the bait. |
 | **R7 is paused, not cancelled** | the nine rods are all that is left of the refresh; they resume when F5 closes. Everything the rods need is still below. |
 | `origin/main` | clean, nothing unpushed |

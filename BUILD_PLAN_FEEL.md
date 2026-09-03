@@ -80,6 +80,17 @@ this paragraph.
 **Done when** `--display` names the new face, the game reads warm at 11px, and
 the guide keyboard is pixel-for-pixel what it was.
 
+**✅ Shipped 2026-09-03. Baloo 2, self-hosted.** Picked by rendering five
+candidates into the real game on the same beat and looking: Quicksand vanished
+at 11px over the painting and Grandstander wrapped the longest catch message to
+two lines, which is the readability problem this milestone exists to fix.
+Self-hosted rather than pulled from Google Fonts — it removes the game's last
+third-party request, and a CDN it cannot reach is exactly why Silkscreen was
+silently rendering as plain monospace in the build container. The keyboard was
+proved unchanged by element screenshot: same size, max channel difference 2 of
+255, zero pixels differing by more than 2 (water shimmer behind the translucent
+panel, not type).
+
 ## F3 — the catch card
 
 The payoff, and the biggest piece of work in the epic. Today a catch produces

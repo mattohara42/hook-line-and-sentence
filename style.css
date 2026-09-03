@@ -13,7 +13,9 @@
    The ghost-hands keyboard is the one deliberate exception (CLAUDE.md): it is
    off limits, so its colours are frozen below as --kb-* at their pre-refresh
    values and it references nothing else. Changing the palette must never drag
-   the keyboard with it. */
+   the keyboard with it. The same goes for its type: `.key` deliberately carries
+   no font-family, so it inherits --mono from body and F2's display swap went
+   straight past it. Never point a .key rule at --display. */
 
 :root {
   /* Sky and light. REFERENCE VALUES — nothing consumes these yet: the sky and
@@ -66,8 +68,38 @@
   --kb-key:     18,39,54;
   --kb-line:    157,180,184;
 
-  --display: "Silkscreen", ui-monospace, monospace;
+  /* F2: the display face. Silkscreen was the last pixel-era thing in the
+     game after R2 repainted the palette, and it was carrying every pun,
+     chip, banner and shop label at 10-13px over warm painterly art. This
+     is BUILD_PLAN_REFRESH.md open question 1, answered: it goes.
+
+     Baloo 2 was picked by rendering five candidates into the real game on
+     the same beat and looking (Baloo 2, Fredoka, Nunito, Grandstander,
+     Quicksand). It has weight, which matters when type is laid straight
+     over a painting — Quicksand vanished at 11px — and the longest string
+     the game shows, a catch message with a size class and a best flag,
+     fits on one line where Grandstander wrapped it.
+
+     SELF-HOSTED rather than pulled from Google Fonts, which is what
+     Silkscreen did. Three reasons and they all point the same way: it
+     removes the game's last third-party request (BACKLOG.md keeps "no
+     analytics, no third-party scripts" as a value), it cannot silently
+     fall back to monospace when the CDN is unreachable, and it is one
+     33KB file in assets/ instead of a network round trip. SIL OFL 1.1,
+     licence in assets/baloo2-OFL.txt. Latin subset only; the game is
+     English and the variable weight axis covers 400-800 in the one file.
+
+     The ghost-hands keyboard is untouched by this and must stay that way,
+     but not because of anything here: `.key` has never carried a
+     font-family at all, so it inherits --mono from body. */
+  --display: "Baloo 2", ui-rounded, system-ui, sans-serif;
   --mono: ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace;
+}
+@font-face {
+  font-family: "Baloo 2";
+  src: url("assets/baloo2-latin.woff2") format("woff2");
+  font-weight: 400 800;
+  font-display: swap;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
