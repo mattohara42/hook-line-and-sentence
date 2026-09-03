@@ -1301,7 +1301,18 @@ attachment, so it grows down each pose's column the way the hats' did.
 Delivering out of order is not wrong; it just leaves a clause naming a rod that
 does not exist yet.
 
-**Three of the corridor's numbers turn out to be per rod, not per pose.**
+**The tip does not reach a canvas edge, and the prompts had said it did.**
+Measured on all three paintings rather than assumed: no painted pixel touches
+any edge of any of the three canvases, and in all three the **rod tip is the
+topmost painted pixel** (y=367 of 1391 at the Pond, 486 of 1510 at the Stream,
+442 of 1466 at the Ocean, each about three-quarters of the way across). That is
+what makes `cut-angler.py`'s `t_edge` work: it takes the axis where it crosses
+the top of the *cropped* frame, which is the tip. So `[WHERE THE ROD GOES]` now
+says the tip stops in open backdrop short of the corner and must be neither
+lengthened to reach it nor shortened — the opposite of what it said, inside the
+block that carries the whole request.
+
+**Three more of the corridor's numbers turn out to be per rod, not per pose.**
 Flagged rather than solved, and it is a bigger flag than the one this section
 carried before the prompts were written. `cut-angler.py`'s `POSES` dict was
 measured off each pose's own painted gate rod, and three of its entries describe
@@ -1330,6 +1341,27 @@ It is deliberately not written yet. `cut-fish.py`'s four detectors were each
 written against a real sheet, and the same applies here — the first delivered
 rod is what says whether a generated reel lands where the geometry predicts.
 
+**And one that is not a per-rod number at all: `cut-angler.py` has no
+registration fit, and it is going to need one.** Every number in `POSES` is in
+the *source pixels of the original painting*, applied to whatever image the tool
+is handed. That was safe while the only input was `assets/angler-<pose>.png`
+itself. It is not safe for a delivery: the generator ignores the canvas size
+every single time (the straw hat came back 1008x1056 against the 1344x1391
+asked, and the aspect drifted too), so a returned rod will have the axis, grip,
+butt, hand band and reel circle all off by whatever it decided to draw at.
+The corridor will sit nowhere near the rod, and it will look like the generator
+missed the axis when it did not.
+
+`cut-gear.py` already solved exactly this and the fix is to reuse it rather than
+re-derive it: fit by **maximising silhouette agreement outside the box the
+changed thing can occupy, pivoting the search about the two centroids** (the
+Stream hat paid for both halves of that). For a rod the excluded box is the rod
+corridor rather than the head, which leaves the child's whole body in the
+objective — a better anchor than the diagonal the hat fit leans on. Register
+first, then run the corridor. **This is the first thing that will go wrong on
+the first rod delivery**, and it is worth doing before reading anything into a
+bad cut.
+
 ##### Trusty Stick (`rod-stick`), at the Stream and the Ocean
 
 R4 painted the Pond's angler holding it, so only the Stream and the Ocean still
@@ -1354,11 +1386,13 @@ Prompt:   [WHAT THIS IS]
           [WHERE THE ROD GOES, AND THIS IS THE IMPORTANT PART]
           The new rod lies along EXACTLY the same line as the old one: the same
           angle across the picture, the same straight path, the butt end
-          stopping at the same point, the tip leaving the picture at the same
-          point on the same edge, the same overall length. Think of it as the
-          same pole repainted where it lies, not a new pole placed in the
-          picture. The child's hand does not move, and his fingers still cross
-          in FRONT of the pole exactly as they do now.
+          stopping at the same point, the tip stopping at the same point, the
+          same overall length. The tip does NOT reach the edge of the picture.
+          It stops in open backdrop, short of the top-right corner, exactly
+          where it stops now: do not lengthen it to reach the corner and do not
+          shorten it. Think of it as the same pole repainted where it lies, not
+          a new pole placed in the picture. The child's hand does not move, and
+          his fingers still cross in FRONT of the pole exactly as they do now.
 
           [HOW HE HOLDS IT]
           The child is standing in waders, seen from the side and facing right,
@@ -1453,11 +1487,13 @@ Prompt:   [WHAT THIS IS]
           [WHERE THE ROD GOES, AND THIS IS THE IMPORTANT PART]
           The new rod lies along EXACTLY the same line as the old one: the same
           angle across the picture, the same straight path, the butt end
-          stopping at the same point, the tip leaving the picture at the same
-          point on the same edge, the same overall length. Think of it as the
-          same pole repainted where it lies, not a new pole placed in the
-          picture. The child's hand does not move, and his fingers still cross
-          in FRONT of the pole exactly as they do now.
+          stopping at the same point, the tip stopping at the same point, the
+          same overall length. The tip does NOT reach the edge of the picture.
+          It stops in open backdrop, short of the top-right corner, exactly
+          where it stops now: do not lengthen it to reach the corner and do not
+          shorten it. Think of it as the same pole repainted where it lies, not
+          a new pole placed in the picture. The child's hand does not move, and
+          his fingers still cross in FRONT of the pole exactly as they do now.
 
           [HOW HE HOLDS IT]
           The child is braced back as if leaning into a fish, seen from the
@@ -1556,11 +1592,13 @@ Prompt:   [WHAT THIS IS]
           [WHERE THE ROD GOES, AND THIS IS THE IMPORTANT PART]
           The new rod lies along EXACTLY the same line as the old one: the same
           angle across the picture, the same straight path, the butt end
-          stopping at the same point, the tip leaving the picture at the same
-          point on the same edge, the same overall length. Think of it as the
-          same pole repainted where it lies, not a new pole placed in the
-          picture. The child's hand does not move, and his fingers still cross
-          in FRONT of the pole exactly as they do now.
+          stopping at the same point, the tip stopping at the same point, the
+          same overall length. The tip does NOT reach the edge of the picture.
+          It stops in open backdrop, short of the top-right corner, exactly
+          where it stops now: do not lengthen it to reach the corner and do not
+          shorten it. Think of it as the same pole repainted where it lies, not
+          a new pole placed in the picture. The child's hand does not move, and
+          his fingers still cross in FRONT of the pole exactly as they do now.
 
           [HOW HE HOLDS IT]
           The child is sitting with his knees drawn up, seen from the side and
@@ -1649,11 +1687,13 @@ Prompt:   [WHAT THIS IS]
           [WHERE THE ROD GOES, AND THIS IS THE IMPORTANT PART]
           The new rod lies along EXACTLY the same line as the old one: the same
           angle across the picture, the same straight path, the butt end
-          stopping at the same point, the tip leaving the picture at the same
-          point on the same edge, the same overall length. Think of it as the
-          same pole repainted where it lies, not a new pole placed in the
-          picture. The child's hand does not move, and his fingers still cross
-          in FRONT of the pole exactly as they do now.
+          stopping at the same point, the tip stopping at the same point, the
+          same overall length. The tip does NOT reach the edge of the picture.
+          It stops in open backdrop, short of the top-right corner, exactly
+          where it stops now: do not lengthen it to reach the corner and do not
+          shorten it. Think of it as the same pole repainted where it lies, not
+          a new pole placed in the picture. The child's hand does not move, and
+          his fingers still cross in FRONT of the pole exactly as they do now.
 
           [HOW HE HOLDS IT]
           The child is braced back as if leaning into a fish, seen from the
@@ -1754,11 +1794,13 @@ Prompt:   [WHAT THIS IS]
           [WHERE THE ROD GOES, AND THIS IS THE IMPORTANT PART]
           The new rod lies along EXACTLY the same line as the old one: the same
           angle across the picture, the same straight path, the butt end
-          stopping at the same point, the tip leaving the picture at the same
-          point on the same edge, the same overall length. Think of it as the
-          same pole repainted where it lies, not a new pole placed in the
-          picture. The child's hand does not move, and his fingers still cross
-          in FRONT of the pole exactly as they do now.
+          stopping at the same point, the tip stopping at the same point, the
+          same overall length. The tip does NOT reach the edge of the picture.
+          It stops in open backdrop, short of the top-right corner, exactly
+          where it stops now: do not lengthen it to reach the corner and do not
+          shorten it. Think of it as the same pole repainted where it lies, not
+          a new pole placed in the picture. The child's hand does not move, and
+          his fingers still cross in FRONT of the pole exactly as they do now.
 
           [HOW HE HOLDS IT]
           The child is sitting with his knees drawn up, seen from the side and
@@ -1850,11 +1892,13 @@ Prompt:   [WHAT THIS IS]
           [WHERE THE ROD GOES, AND THIS IS THE IMPORTANT PART]
           The new rod lies along EXACTLY the same line as the old one: the same
           angle across the picture, the same straight path, the butt end
-          stopping at the same point, the tip leaving the picture at the same
-          point on the same edge, the same overall length. Think of it as the
-          same pole repainted where it lies, not a new pole placed in the
-          picture. The child's hand does not move, and his fingers still cross
-          in FRONT of the pole exactly as they do now.
+          stopping at the same point, the tip stopping at the same point, the
+          same overall length. The tip does NOT reach the edge of the picture.
+          It stops in open backdrop, short of the top-right corner, exactly
+          where it stops now: do not lengthen it to reach the corner and do not
+          shorten it. Think of it as the same pole repainted where it lies, not
+          a new pole placed in the picture. The child's hand does not move, and
+          his fingers still cross in FRONT of the pole exactly as they do now.
 
           [HOW HE HOLDS IT]
           The child is standing in waders, seen from the side and facing right,
@@ -1946,11 +1990,13 @@ Prompt:   [WHAT THIS IS]
           [WHERE THE ROD GOES, AND THIS IS THE IMPORTANT PART]
           The new rod lies along EXACTLY the same line as the old one: the same
           angle across the picture, the same straight path, the butt end
-          stopping at the same point, the tip leaving the picture at the same
-          point on the same edge, the same overall length. Think of it as the
-          same pole repainted where it lies, not a new pole placed in the
-          picture. The child's hand does not move, and his fingers still cross
-          in FRONT of the pole exactly as they do now.
+          stopping at the same point, the tip stopping at the same point, the
+          same overall length. The tip does NOT reach the edge of the picture.
+          It stops in open backdrop, short of the top-right corner, exactly
+          where it stops now: do not lengthen it to reach the corner and do not
+          shorten it. Think of it as the same pole repainted where it lies, not
+          a new pole placed in the picture. The child's hand does not move, and
+          his fingers still cross in FRONT of the pole exactly as they do now.
 
           [HOW HE HOLDS IT]
           The child is braced back as if leaning into a fish, seen from the
@@ -2053,11 +2099,13 @@ Prompt:   [WHAT THIS IS]
           [WHERE THE ROD GOES, AND THIS IS THE IMPORTANT PART]
           The new rod lies along EXACTLY the same line as the old one: the same
           angle across the picture, the same straight path, the butt end
-          stopping at the same point, the tip leaving the picture at the same
-          point on the same edge, the same overall length. Think of it as the
-          same pole repainted where it lies, not a new pole placed in the
-          picture. The child's hand does not move, and his fingers still cross
-          in FRONT of the pole exactly as they do now.
+          stopping at the same point, the tip stopping at the same point, the
+          same overall length. The tip does NOT reach the edge of the picture.
+          It stops in open backdrop, short of the top-right corner, exactly
+          where it stops now: do not lengthen it to reach the corner and do not
+          shorten it. Think of it as the same pole repainted where it lies, not
+          a new pole placed in the picture. The child's hand does not move, and
+          his fingers still cross in FRONT of the pole exactly as they do now.
 
           [HOW HE HOLDS IT]
           The child is sitting with his knees drawn up, seen from the side and
@@ -2150,11 +2198,13 @@ Prompt:   [WHAT THIS IS]
           [WHERE THE ROD GOES, AND THIS IS THE IMPORTANT PART]
           The new rod lies along EXACTLY the same line as the old one: the same
           angle across the picture, the same straight path, the butt end
-          stopping at the same point, the tip leaving the picture at the same
-          point on the same edge, the same overall length. Think of it as the
-          same pole repainted where it lies, not a new pole placed in the
-          picture. The child's hand does not move, and his fingers still cross
-          in FRONT of the pole exactly as they do now.
+          stopping at the same point, the tip stopping at the same point, the
+          same overall length. The tip does NOT reach the edge of the picture.
+          It stops in open backdrop, short of the top-right corner, exactly
+          where it stops now: do not lengthen it to reach the corner and do not
+          shorten it. Think of it as the same pole repainted where it lies, not
+          a new pole placed in the picture. The child's hand does not move, and
+          his fingers still cross in FRONT of the pole exactly as they do now.
 
           [HOW HE HOLDS IT]
           The child is standing in waders, seen from the side and facing right,

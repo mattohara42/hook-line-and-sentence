@@ -33,8 +33,17 @@ fitted corridor instead — its axis, half-width, butt, hand band and reel circl
 — and every one of those numbers stays valid **only if the new rod lands on the
 same axis**, which is what the rod prompt spends its weight on.
 
-**One thing the prompt-writing turned up, and it lands on the first delivery:
-three of that corridor's numbers are per rod, not per pose.** The reel circle,
+**The first thing that will go wrong on the first rod delivery is not a per-rod
+number: `cut-angler.py` has no registration fit.** Every number in its `POSES`
+dict is in the original painting's source pixels, applied to whatever image it
+is handed, which was safe while the only input was that painting. The generator
+ignores the asked canvas size every time, so a returned rod puts the axis, grip,
+butt and reel circle all off at once and the corridor lands nowhere near the
+rod. `cut-gear.py` already fits for exactly this and the answer is to reuse its
+fit (agreement outside the changed box, pivoted about the centroids) rather than
+re-derive one. Register first, then run the corridor: `ART.md` → *The rods*.
+
+**And three of that corridor's numbers are per rod, not per pose.** The reel circle,
 the shaft half-width and the Stream's left bound were each measured off the gate
 rod that pose happens to hold, so a fly reel below the hand at the Ocean falls
 outside a circle fitted to a multiplier above it, and a boat rod at the Pond is
