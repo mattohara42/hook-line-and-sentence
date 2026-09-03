@@ -11,7 +11,7 @@ something is the way it is, `git log` and the PR body have it in full.
 |---|---|
 | **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. Back on; the nine rods are all that is left of the refresh. |
 | **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
-| **State** | both done-when clauses have been met since the straw hat landed. **12 of 21 painted, the hat column complete at 12 of 12.** Left: the 9 rods only. |
+| **State** | both done-when clauses have been met since the straw hat landed. **12 of 21 painted, the hat column complete at 12 of 12.** Left: the 9 rods only, and **all nine prompts are now written out and ready to send.** |
 | **Catch Feel** | ✅ **F1–F5 all shipped 2026-09-03**, `BUILD_PLAN_FEEL.md`. One thing left and it is Matt's: play it. |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 95/95 (`npm test`) |
@@ -20,26 +20,27 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**R7 has one thing left: the nine rods.** The hat column closed at 12 of 12 on
-2026-09-02 and every hat was verified in a real browser at every spot. Both
-done-when clauses have been met since the straw hat landed.
+**R7 has one thing left: the nine rods, and the next action is Matt's.** All
+nine prompts are written out whole in `ART.md` → *R7* → *The rods*, in the order
+to send them (`stick` and `bamboo` before `carbon` and `deepsea`). Each is
+paste-ready: the pose line, the canvas size and the rendered rod length are baked
+into every one. Generate, cut, register, repeat.
 
 **A rod is not cut the way a hat is, and that is the whole job.** A hat is found
 by *difference* (`cut-gear.py`); a rod cannot be, because the shaft under the
 hand is exactly where the two paintings agree. A rod is cut by `cut-angler.py`'s
 fitted corridor instead — its axis, half-width, butt, hand band and reel circle
 — and every one of those numbers stays valid **only if the new rod lands on the
-same axis**, which is what the rod prompt spends its weight on. That is also the
-argument for holding the axis rather than accepting a well-drawn rod elsewhere
-on the canvas: nine freely drawn rods are nine axes to measure and nine chances
-to bite into the body.
+same axis**, which is what the rod prompt spends its weight on.
 
-**Their prompt is still a template**, not written out per rod, in `ART.md` → *R7*
-→ *The rods*. Writing the first one out whole is the natural next step; `<W> by
-<H>` comes from the pose table above it. The hats proved that pays for itself —
-a prompt recorded as "that one with the block swapped" is not something anyone
-can paste, and the eight substitutions include the canvas size, which is per
-pose and costs a generation when wrong.
+**One thing the prompt-writing turned up, and it lands on the first delivery:
+three of that corridor's numbers are per rod, not per pose.** The reel circle,
+the shaft half-width and the Stream's left bound were each measured off the gate
+rod that pose happens to hold, so a fly reel below the hand at the Ocean falls
+outside a circle fitted to a multiplier above it, and a boat rod at the Pond is
+thicker than the cane the half-width was fitted to. Flagged rather than solved,
+with the cheap shape sketched (a per-item table read through each pose's axis,
+four rows rather than nine circles): `ART.md` → *The rods*.
 
 **Not R7, and already landed:** the reel now animates and the fish keeps its
 name back until it is close (#135) — `ANIMATION.md` owns it, and it wants an

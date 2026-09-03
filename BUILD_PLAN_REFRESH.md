@@ -544,8 +544,8 @@ mostly content.
 **The code half is in, against no new art at all.** The shop sells four rods and
 five hats, equipping either rebuilds the rig, and both persist.
 
-**All 21 prompts are written (`ART.md`, the R7 request). The 12 hats have
-landed; the nine rods are what the epic is still waiting on.** Two things about the shape of the ask are worth
+**All 21 prompts are written out whole (`ART.md`, the R7 request). The 12 hats
+have landed; the nine rods are what the epic is still waiting on.** Two things about the shape of the ask are worth
 carrying past this milestone. Gear is the first art in the project asked for as
 an **edit of a delivered painting** rather than a new one: the pose's own
 painting is attached and comes back with one thing changed, so registration
@@ -623,7 +623,12 @@ body, and all of it survives a reload with no 404s anywhere in the run.
   pose was painted holding its own gate rod, so the shop's other rods fall back
   to that rather than 404ing, which is why this does not block. A rod is cut by
   `cut-angler.py`'s corridor, not `cut-gear.py`'s difference — the shaft under
-  the hand is exactly where the two paintings agree.
+  the hand is exactly where the two paintings agree. Writing the nine prompts out
+  turned up one thing worth carrying: **three of that corridor's numbers are per
+  rod, not per pose** (the reel circle, the shaft half-width, and the Stream's
+  left bound), because each was measured off the gate rod that pose happens to
+  hold. It is flagged rather than solved, with the cheap shape sketched, in
+  `ART.md` → *The rods* — the first delivered rod is what settles it.
 - **What the hats actually cost:** six generations for nine hats, because a hat
   painted at the Pond lands on the Stream's head for free
   (`tools/hat-transplant.py`, head IoU 0.904), plus three at the Ocean, which
@@ -643,7 +648,7 @@ body, and all of it survives a reload with no 404s anywhere in the run.
 | R4 | per pose: head, torso, arm, rod + a fingers overlay — all on one canvas, drawn from the torso |
 | R5 | ~~rowboat, Whaler + fighting chair, and a near-side layer for each~~ ✅ — four shop hull repaints outstanding |
 | R6 | ~~33 species × body/tail, in waves by biome~~ ✅ — 33 of 33, in eight sheets and nine generations |
-| R7 | 21 paintings, one per gear item per pose, each an **edit of that pose's own painting** (`ART.md` has the prompts). **1 landed, 20 to go**; each delivery is one `tools/cut-gear.py` run and one `rig.gearArt` line. Hats first |
+| R7 | 21 paintings, one per gear item per pose, each an **edit of that pose's own painting** (`ART.md` has all 21 prompts written out). **12 landed, 9 to go** — the hat column is complete and the nine rods are what remains. A hat is one `tools/cut-gear.py` run and one `rig.gearArt` line; a rod is a `tools/cut-angler.py` run instead, because the shaft under the hand is where the two paintings agree |
 
 ## Open questions
 
