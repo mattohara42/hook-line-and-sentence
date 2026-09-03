@@ -1420,6 +1420,20 @@ over the other and take the offset. It landed at `+1, +1` with body IoU
 1048x1466 — the committed box, by construction. `--rod` refuses below IoU 0.90
 rather than saving something misplaced.
 
+**The nine rod prompts' `Wired in:` lines predated this round trip and all nine
+were wrong** (corrected 2026-09-03). They had been written on 2026-09-02, a day
+before `gear-register.py` and `--rod` existed, and each said to run
+`cut-angler.py <pose> <the raw download>`. Run verbatim that is not a no-op and
+not a bad cut: with no `--rod` the tool takes its full-figure path and
+**overwrites four committed files** — `angler-<pose>.png`, its body and arm
+layers, and the pose's own R4 gate rod — from a source that was never
+registered, so they land in the wrong box. Measured on the Ocean rather than
+argued: 1141x1305 written over the committed 1324x1466, exit status 0, no
+warning. The six rods already shipped went through the correct loop anyway, but
+their blocks carried the same line, and a shipped rod's re-cut is the control
+this repo reaches for (#128) — so all nine now name both commands.
+
+
 #### ✅ `rod-stick-ocean` landed first attempt (2026-09-03), and it exposed a two-year-old defect
 
 **The delivery is an accept, and cleaner than the Stream's on every measure:**
@@ -1837,11 +1851,17 @@ Prompt:   [WHAT THIS IS]
 Save as:  assets/Gemini_rod-stick-stream.jpg (the raw download, whatever
           extension it arrives with, kept so the cut can be re-run)
 Wired in: check the corridor's reel circle and half-width against THIS
-          rod first (see the note above), then
-          `python3 tools/cut-angler.py stream \
-              assets/Gemini_rod-stick-stream.jpg`,
-          save the rod layer as assets/rod-stick-stream.png, then add
-          "rod-stick-stream" to CONFIG.rig.gearArt
+          rod first (see the note above), then register the delivery back
+          into the pose's coordinates and cut only the rod:
+          `python3 tools/gear-register.py stream \
+              assets/Gemini_rod-stick-stream.jpg`   -> assets/reg-rod-stick-stream.png
+          `python3 tools/cut-angler.py stream assets/reg-rod-stick-stream.png \
+              --rod rod-stick`               -> assets/rod-stick-stream.png
+          then add "rod-stick-stream" to CONFIG.rig.gearArt, or it is never drawn.
+          NEVER run cut-angler.py on the raw download: without --rod it
+          overwrites angler-stream.png and its body and arm layers and the
+          pose's own gate rod, and an unregistered source cuts to the
+          wrong box. It exits 0 while doing it.
 ```
 
 **`rod-stick-ocean`.**
@@ -1937,11 +1957,17 @@ Prompt:   [WHAT THIS IS]
 Save as:  assets/Gemini_rod-stick-ocean.jpg (the raw download, whatever
           extension it arrives with, kept so the cut can be re-run)
 Wired in: check the corridor's reel circle and half-width against THIS
-          rod first (see the note above), then
-          `python3 tools/cut-angler.py ocean \
-              assets/Gemini_rod-stick-ocean.jpg`,
-          save the rod layer as assets/rod-stick-ocean.png, then add
-          "rod-stick-ocean" to CONFIG.rig.gearArt
+          rod first (see the note above), then register the delivery back
+          into the pose's coordinates and cut only the rod:
+          `python3 tools/gear-register.py ocean \
+              assets/Gemini_rod-stick-ocean.jpg`   -> assets/reg-rod-stick-ocean.png
+          `python3 tools/cut-angler.py ocean assets/reg-rod-stick-ocean.png \
+              --rod rod-stick`               -> assets/rod-stick-ocean.png
+          then add "rod-stick-ocean" to CONFIG.rig.gearArt, or it is never drawn.
+          NEVER run cut-angler.py on the raw download: without --rod it
+          overwrites angler-ocean.png and its body and arm layers and the
+          pose's own gate rod, and an unregistered source cuts to the
+          wrong box. It exits 0 while doing it.
 ```
 
 ##### Bamboo Beauty (`rod-bamboo`), at the Pond and the Ocean
@@ -2037,11 +2063,17 @@ Prompt:   [WHAT THIS IS]
 Save as:  assets/Gemini_rod-bamboo-pond.jpg (the raw download, whatever
           extension it arrives with, kept so the cut can be re-run)
 Wired in: check the corridor's reel circle and half-width against THIS
-          rod first (see the note above), then
-          `python3 tools/cut-angler.py pond \
-              assets/Gemini_rod-bamboo-pond.jpg`,
-          save the rod layer as assets/rod-bamboo-pond.png, then add
-          "rod-bamboo-pond" to CONFIG.rig.gearArt
+          rod first (see the note above), then register the delivery back
+          into the pose's coordinates and cut only the rod:
+          `python3 tools/gear-register.py pond \
+              assets/Gemini_rod-bamboo-pond.jpg`   -> assets/reg-rod-bamboo-pond.png
+          `python3 tools/cut-angler.py pond assets/reg-rod-bamboo-pond.png \
+              --rod rod-bamboo`               -> assets/rod-bamboo-pond.png
+          then add "rod-bamboo-pond" to CONFIG.rig.gearArt, or it is never drawn.
+          NEVER run cut-angler.py on the raw download: without --rod it
+          overwrites angler-pond.png and its body and arm layers and the
+          pose's own gate rod, and an unregistered source cuts to the
+          wrong box. It exits 0 while doing it.
 ```
 
 **`rod-bamboo-ocean`.**
@@ -2140,11 +2172,17 @@ Prompt:   [WHAT THIS IS]
 Save as:  assets/Gemini_rod-bamboo-ocean.jpg (the raw download, whatever
           extension it arrives with, kept so the cut can be re-run)
 Wired in: check the corridor's reel circle and half-width against THIS
-          rod first (see the note above), then
-          `python3 tools/cut-angler.py ocean \
-              assets/Gemini_rod-bamboo-ocean.jpg`,
-          save the rod layer as assets/rod-bamboo-ocean.png, then add
-          "rod-bamboo-ocean" to CONFIG.rig.gearArt
+          rod first (see the note above), then register the delivery back
+          into the pose's coordinates and cut only the rod:
+          `python3 tools/gear-register.py ocean \
+              assets/Gemini_rod-bamboo-ocean.jpg`   -> assets/reg-rod-bamboo-ocean.png
+          `python3 tools/cut-angler.py ocean assets/reg-rod-bamboo-ocean.png \
+              --rod rod-bamboo`               -> assets/rod-bamboo-ocean.png
+          then add "rod-bamboo-ocean" to CONFIG.rig.gearArt, or it is never drawn.
+          NEVER run cut-angler.py on the raw download: without --rod it
+          overwrites angler-ocean.png and its body and arm layers and the
+          pose's own gate rod, and an unregistered source cuts to the
+          wrong box. It exits 0 while doing it.
 ```
 
 ##### The Carp Whisperer (`rod-carbon`), at all three poses
@@ -2244,11 +2282,17 @@ Prompt:   [WHAT THIS IS]
 Save as:  assets/Gemini_rod-carbon-pond.jpg (the raw download, whatever
           extension it arrives with, kept so the cut can be re-run)
 Wired in: check the corridor's reel circle and half-width against THIS
-          rod first (see the note above), then
-          `python3 tools/cut-angler.py pond \
-              assets/Gemini_rod-carbon-pond.jpg`,
-          save the rod layer as assets/rod-carbon-pond.png, then add
-          "rod-carbon-pond" to CONFIG.rig.gearArt
+          rod first (see the note above), then register the delivery back
+          into the pose's coordinates and cut only the rod:
+          `python3 tools/gear-register.py pond \
+              assets/Gemini_rod-carbon-pond.jpg`   -> assets/reg-rod-carbon-pond.png
+          `python3 tools/cut-angler.py pond assets/reg-rod-carbon-pond.png \
+              --rod rod-carbon`               -> assets/rod-carbon-pond.png
+          then add "rod-carbon-pond" to CONFIG.rig.gearArt, or it is never drawn.
+          NEVER run cut-angler.py on the raw download: without --rod it
+          overwrites angler-pond.png and its body and arm layers and the
+          pose's own gate rod, and an unregistered source cuts to the
+          wrong box. It exits 0 while doing it.
 ```
 
 **`rod-carbon-stream`.**
@@ -2344,11 +2388,17 @@ Prompt:   [WHAT THIS IS]
 Save as:  assets/Gemini_rod-carbon-stream.jpg (the raw download, whatever
           extension it arrives with, kept so the cut can be re-run)
 Wired in: check the corridor's reel circle and half-width against THIS
-          rod first (see the note above), then
-          `python3 tools/cut-angler.py stream \
-              assets/Gemini_rod-carbon-stream.jpg`,
-          save the rod layer as assets/rod-carbon-stream.png, then add
-          "rod-carbon-stream" to CONFIG.rig.gearArt
+          rod first (see the note above), then register the delivery back
+          into the pose's coordinates and cut only the rod:
+          `python3 tools/gear-register.py stream \
+              assets/Gemini_rod-carbon-stream.jpg`   -> assets/reg-rod-carbon-stream.png
+          `python3 tools/cut-angler.py stream assets/reg-rod-carbon-stream.png \
+              --rod rod-carbon`               -> assets/rod-carbon-stream.png
+          then add "rod-carbon-stream" to CONFIG.rig.gearArt, or it is never drawn.
+          NEVER run cut-angler.py on the raw download: without --rod it
+          overwrites angler-stream.png and its body and arm layers and the
+          pose's own gate rod, and an unregistered source cuts to the
+          wrong box. It exits 0 while doing it.
 ```
 
 **`rod-carbon-ocean`.**
@@ -2450,11 +2500,17 @@ Prompt:   [WHAT THIS IS]
 Save as:  assets/Gemini_rod-carbon-ocean.jpg (the raw download, whatever
           extension it arrives with, kept so the cut can be re-run)
 Wired in: check the corridor's reel circle and half-width against THIS
-          rod first (see the note above), then
-          `python3 tools/cut-angler.py ocean \
-              assets/Gemini_rod-carbon-ocean.jpg`,
-          save the rod layer as assets/rod-carbon-ocean.png, then add
-          "rod-carbon-ocean" to CONFIG.rig.gearArt
+          rod first (see the note above), then register the delivery back
+          into the pose's coordinates and cut only the rod:
+          `python3 tools/gear-register.py ocean \
+              assets/Gemini_rod-carbon-ocean.jpg`   -> assets/reg-rod-carbon-ocean.png
+          `python3 tools/cut-angler.py ocean assets/reg-rod-carbon-ocean.png \
+              --rod rod-carbon`               -> assets/rod-carbon-ocean.png
+          then add "rod-carbon-ocean" to CONFIG.rig.gearArt, or it is never drawn.
+          NEVER run cut-angler.py on the raw download: without --rod it
+          overwrites angler-ocean.png and its body and arm layers and the
+          pose's own gate rod, and an unregistered source cuts to the
+          wrong box. It exits 0 while doing it.
 ```
 
 ##### The Deep Endeavor (`rod-deepsea`), at the Pond and the Stream
@@ -2554,11 +2610,17 @@ Prompt:   [WHAT THIS IS]
 Save as:  assets/Gemini_rod-deepsea-pond.jpg (the raw download, whatever
           extension it arrives with, kept so the cut can be re-run)
 Wired in: check the corridor's reel circle and half-width against THIS
-          rod first (see the note above), then
-          `python3 tools/cut-angler.py pond \
-              assets/Gemini_rod-deepsea-pond.jpg`,
-          save the rod layer as assets/rod-deepsea-pond.png, then add
-          "rod-deepsea-pond" to CONFIG.rig.gearArt
+          rod first (see the note above), then register the delivery back
+          into the pose's coordinates and cut only the rod:
+          `python3 tools/gear-register.py pond \
+              assets/Gemini_rod-deepsea-pond.jpg`   -> assets/reg-rod-deepsea-pond.png
+          `python3 tools/cut-angler.py pond assets/reg-rod-deepsea-pond.png \
+              --rod rod-deepsea`               -> assets/rod-deepsea-pond.png
+          then add "rod-deepsea-pond" to CONFIG.rig.gearArt, or it is never drawn.
+          NEVER run cut-angler.py on the raw download: without --rod it
+          overwrites angler-pond.png and its body and arm layers and the
+          pose's own gate rod, and an unregistered source cuts to the
+          wrong box. It exits 0 while doing it.
 ```
 
 **`rod-deepsea-stream`.**
@@ -2659,11 +2721,17 @@ Prompt:   [WHAT THIS IS]
 Save as:  assets/Gemini_rod-deepsea-stream.jpg (the raw download, whatever
           extension it arrives with, kept so the cut can be re-run)
 Wired in: check the corridor's reel circle and half-width against THIS
-          rod first (see the note above), then
-          `python3 tools/cut-angler.py stream \
-              assets/Gemini_rod-deepsea-stream.jpg`,
-          save the rod layer as assets/rod-deepsea-stream.png, then add
-          "rod-deepsea-stream" to CONFIG.rig.gearArt
+          rod first (see the note above), then register the delivery back
+          into the pose's coordinates and cut only the rod:
+          `python3 tools/gear-register.py stream \
+              assets/Gemini_rod-deepsea-stream.jpg`   -> assets/reg-rod-deepsea-stream.png
+          `python3 tools/cut-angler.py stream assets/reg-rod-deepsea-stream.png \
+              --rod rod-deepsea`               -> assets/rod-deepsea-stream.png
+          then add "rod-deepsea-stream" to CONFIG.rig.gearArt, or it is never drawn.
+          NEVER run cut-angler.py on the raw download: without --rod it
+          overwrites angler-stream.png and its body and arm layers and the
+          pose's own gate rod, and an unregistered source cuts to the
+          wrong box. It exits 0 while doing it.
 ```
 
 ### ✅ R6 wave 1 — the Pond's ten fish (all three sheets landed 2026-09-02)
