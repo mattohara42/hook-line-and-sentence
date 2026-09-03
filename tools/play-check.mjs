@@ -96,8 +96,22 @@ await typeWord();
 // the lure is still in flight for backswingMs+flightMs; measure at rest
 await page.waitForFunction(() => document.getElementById("bobber").classList.contains("on"), { timeout: 8000 });
 await page.waitForTimeout(120);
-console.log("waiting   | line end:", await lineEnd(), "| status:", await status());
+console.log("waiting   | line end:", await lineEnd(), "| status:", await status(), "| word:", await word());
 await shot("2-waiting");
+
+// F4: a wiggle cast puts a short word up and does not bite until it is typed.
+// Nothing here decides that it IS one — it just types whatever appears, which
+// is also the proof that no-wiggle-no-bite holds: if the word box fills during
+// the wait, the fish is waiting on the kid.
+let wiggled = 0;
+while (await word()) {
+  if (wiggled === 0) { await shot("2b-wiggle"); console.log("wiggle    | status:", await status()); }
+  await typeWord();
+  wiggled++;
+  await page.waitForTimeout(300);
+  if (wiggled > 6) break;
+}
+if (wiggled) console.log("wiggled   |", wiggled, "words | then:", await status());
 
 // catch the approach silhouette: poll until #fish has opacity
 await page.waitForFunction(() => document.getElementById("fish").style.opacity === "1", { timeout: 15000 });

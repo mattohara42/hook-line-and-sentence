@@ -298,6 +298,18 @@ h1 {
   animation: bobberBob 3s ease-in-out infinite;
 }
 #bobber.on { opacity: 1; }
+/* F4: one word's worth of twitch on the bait. Short and sharp on purpose — the
+   whole mechanic rests on a kid seeing their typing move something in the
+   water, and a gentle wobble would not read as "I did that". It replaces the
+   idle bob for its third of a second and the bob resumes underneath. */
+#bobber.twitch { animation: bobberTwitch 0.34s ease-out; }
+@keyframes bobberTwitch {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  28%  { transform: translate(-3px, 5px) rotate(-11deg); }
+  58%  { transform: translate(2px, -3px) rotate(8deg); }
+  80%  { transform: translate(-1px, 1px) rotate(-3deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
 #bobber.plunge { animation: plunge 0.35s ease-in forwards; }
 @keyframes bobberBob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
 @keyframes plunge { to { transform: translateY(14px); opacity: 0; } }

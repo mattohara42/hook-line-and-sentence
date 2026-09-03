@@ -29,7 +29,10 @@ export const CONFIG = {
   },
 
   bite: {
-    delayMsRange: [1200, 3200],
+    // F4: the pre-bite beat used to be 1.2-3.2s of locked input with nothing to
+    // do at all. It is longer now, and some casts ask the kid to wiggle the
+    // bait first (see `wiggle` below) rather than just waiting it out.
+    delayMsRange: [2200, 4800],
     // odds a bite comes from each tier, by rod level (must sum to 1)
     tierOddsByRod: {
       1: { common: 0.80, uncommon: 0.17, rare: 0.03,  legendary: 0.00  },
@@ -37,6 +40,30 @@ export const CONFIG = {
       3: { common: 0.45, uncommon: 0.35, rare: 0.17,  legendary: 0.03  },
       4: { common: 0.34, uncommon: 0.36, rare: 0.24,  legendary: 0.06  },
     },
+  },
+
+  // F4: the wiggle. Some casts land the bait and nothing is interested yet — the
+  // kid types a couple of short words to twitch it, and the fish comes when they
+  // finish.
+  //
+  // MATT'S CALL, and the one thing here worth understanding before changing it:
+  // NO WIGGLE, NO BITE. The cast waits for the words rather than biting anyway
+  // on a timer. That makes this the first thing in the Pond that waits on the
+  // kid, so it was worth being sure it does not break the cozy guardrail — and
+  // it does not. The guardrail is "never punish SLOW typing, only carelessness":
+  // wiggle words can be typed as slowly as you like, carry no tension, have no
+  // clock and cannot lose you anything. Nothing is taken away; the game simply
+  // waits. What it IS is a state a distracted kid can park the game in, which is
+  // why the ask is deliberately small, the prompt keeps the literal instruction,
+  // and every word visibly moves the bobber so the cause and effect is obvious.
+  wiggle: {
+    chance: 0.34,           // how often a cast asks for one
+    wordsRange: [2, 3],     // "a few short words" — kept small on purpose
+    maxWordLen: 4,          // "short": long enough to be a word, short enough to be a twitch
+    // Once the bait is moving, something has noticed. The bite comes fast, and
+    // that speed IS the reward for wiggling — it is what stops the mechanic
+    // reading as a toll on the way to the fishing.
+    biteDelayMsRange: [500, 1300],
   },
 
   // Letter unlock: cumulative total catches required to reach each stage.

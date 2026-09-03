@@ -517,3 +517,37 @@ test("the fish rises into water the panel isn't covering, and breaks a real surf
   assert.ok(surface.y > 0 && surface.y < 360, "the waterline is off the canvas");
   assert.ok(surface.splashParticles > 0, "the surface break has no splash");
 });
+
+// ---- F4: the wiggle ----
+// It is the one thing in the game that WAITS on the kid (CONFIG.wiggle explains
+// why that is still cozy), so the ways it could quietly get stuck are worth
+// pinning. Each of these was checked by breaking the invariant it guards.
+
+test("wiggle config is a sane, small ask (F4)", () => {
+  const w = CONFIG.wiggle;
+  assert.ok(w.chance > 0 && w.chance < 1, `wiggle.chance ${w.chance} must be between 0 and 1 — at 1 every cast gates`);
+  const [lo, hi] = w.wordsRange;
+  assert.ok(Number.isInteger(lo) && Number.isInteger(hi), "wiggle.wordsRange must be whole words");
+  assert.ok(lo >= 1 && lo <= hi, `wiggle.wordsRange ${JSON.stringify(w.wordsRange)} must ascend from at least 1`);
+  assert.ok(hi <= 4, `wiggle.wordsRange asks for up to ${hi} words — "a few short words", not a second reel`);
+  assert.ok(w.maxWordLen >= 3, `wiggle.maxWordLen ${w.maxWordLen} is shorter than the shortest useful word`);
+  const [bLo, bHi] = w.biteDelayMsRange;
+  assert.ok(bLo >= 0 && bLo <= bHi, "wiggle.biteDelayMsRange must ascend");
+  assert.ok(bHi <= CONFIG.bite.delayMsRange[0],
+    `a wiggled bait (${bHi}ms) must bite sooner than an un-wiggled one (${CONFIG.bite.delayMsRange[0]}ms) — the speed IS the reward`);
+});
+
+test("every unlock stage has short words to wiggle with (F4)", () => {
+  // The wiggle falls back to the whole unlocked pool when no short word exists,
+  // which would ask a beginner to type a long word to twitch a bait. Stage 1 is
+  // 37 home-row words and is the binding case.
+  let letters = new Set();
+  CONFIG.unlock.stages.forEach((stage, i) => {
+    letters = new Set([...letters, ...stage.letters]);
+    const usable = words.filter(e => [...e.letters].every(l => letters.has(l)));
+    const short = usable.filter(e => e.w.length <= CONFIG.wiggle.maxWordLen);
+    assert.ok(short.length >= CONFIG.wiggle.wordsRange[1],
+      `stage ${i + 1} (${stage.letters}) has ${short.length} words of ${CONFIG.wiggle.maxWordLen} letters or fewer, ` +
+      `but a wiggle can ask for ${CONFIG.wiggle.wordsRange[1]}`);
+  });
+});

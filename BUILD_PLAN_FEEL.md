@@ -156,6 +156,18 @@ respond to every word so the cause and effect is obvious.
 bait, the fish comes after the last one, and an ordinary cast is unchanged apart
 from being a little longer.
 
+**✅ Shipped 2026-09-03.** Bite delay 1.2–3.2s → 2.2–4.8s, measured back at
+2.4–4.4s over ten casts. A third of casts ask for two or three words of four
+letters or fewer; each one twitches the bobber, rings the surface and pulls the
+rod. *No wiggle, no bite* was proved by not typing: fifteen seconds, no fish,
+prompt still up, word still waiting. Three config traps guard it and each was
+watched failing.
+
+**One number to know if it feels long.** The measurements above type at 220ms
+a key. A real beginner is nearer 800–1000ms, which makes three four-letter words
+about ten seconds of wiggling. `CONFIG.wiggle.wordsRange` is one line if that is
+too much; `chance` is the other.
+
 ## F5 — eye test, docs, and back to the rods
 
 Play it. Fold what each milestone decided into the doc that owns it

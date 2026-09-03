@@ -14,9 +14,9 @@ A cozy fishing game that teaches kids to type. The vibe is Cast n Chill: calm wa
 ## Core Loop
 
 1. **Cast** — A short word/phrase appears. Type it accurately to cast the line. Accuracy matters, speed doesn't.
-2. **Wait** — Cozy idle moment. Water ripples, ambient sounds. A fish bites after a short random delay.
+2. **Wait** — Cozy idle moment. Water ripples, ambient sounds. A fish bites after a short random delay. **Some casts land on an uninterested pond and ask for a *wiggle* first** (F4, decided Sept 2026): a couple of short words that twitch the bait, each one moving the bobber, ringing the surface and pulling the rod. **No wiggle, no bite** — the cast waits rather than biting anyway on a timer. This is the only place in the game that waits on the kid, and it stays inside the forgiveness stance below: wiggle words carry no tension, no clock and nothing to lose, so slow is still safe. Nothing is taken away; the game just waits.
 3. **Reel** — Words stream in one at a time. Each correctly typed word reels the fish closer. A tension meter reacts to *errors*, not speed: wrong letters raise tension; typing correctly (at any speed) lowers it. The fish escapes only if tension maxes out from sustained mistakes.
-4. **Catch** — Fish added to collection. Earn coins based on fish rarity.
+4. **Catch** — Fish added to collection. Earn coins based on fish rarity. **The payoff is a card** (F3, Sept 2026) carrying the fish's own art, its name, weight and size class, the pun and the coins — raised to a trophy plaque when a species is new or a personal best falls. It has **no display timer**: it is dismissed by the kid typing the first letter of the next cast word, and that letter still counts.
 5. **Spend** — Coins buy rods and bait (upgrades) that unlock better fishing.
 
 **Game voice (decided):** All status/flavor text is fishing puns and dad jokes ("Oh my cod — reel it in!"), pulled at random from per-moment pools. Exception: cast prompts always retain the literal instruction so beginners aren't confused. Pun pools live in one data structure — easy for the family to add to.
