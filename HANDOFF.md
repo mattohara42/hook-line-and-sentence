@@ -60,7 +60,7 @@ eye test (below).
 
 **Before your first cut in a fresh container:** `pip install Pillow numpy scipy`,
 and for `spot-check.mjs`, `cd /tmp && npm install playwright`. `tools/README.md`
-indexes all eight tools and what each is for.
+indexes all nine tools and what each is for.
 
 **Two things the hats left behind.**
 

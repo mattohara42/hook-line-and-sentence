@@ -425,12 +425,21 @@ export const CONFIG = {
     // behind the panel on a 2:1 screen and swam out of it — the fish now appears
     // where it can be seen. The reel is untouched: it still eases to the same
     // targets from wherever the fish starts.
-    approach: { leadMs: 1100, rise: { dx: 12, dy: 44 }, spawn: { dx: 30, dy: 24 } },
+    // `biteParticles` is the splash the bait throws as the fish takes it. It
+    // was a hardcoded burst(410, 200, 10) sitting next to the OLD landing
+    // point; it now follows anim.cast.landing like everything else there.
+    approach: { leadMs: 1100, rise: { dx: 12, dy: 44 }, spawn: { dx: 30, dy: 24 }, biteParticles: 10 },
     // and the other end of it: the fish breaks the surface on the way to the
     // boat. y is the waterline every biome's art is painted to and #surface
     // starts at (55% of the 360px canvas) — a splash under the water is what
     // this used to be, and it read as nothing at all.
     surface: { y: 198, splashParticles: 18 },
+    // The wake a hooked fish throws as it is hauled one word closer. These were
+    // hardcoded in pullFishOneWord as 258 and 262. It is a fixed row rather
+    // than the fish's own y on purpose — the fish starts at 256 and reels up to
+    // 216, so tracking it would put the first rings behind the guide panel.
+    // See BUILD_PLAN_FEEL.md, open question 1.
+    wake: { y: 258, rippleDy: 4, particles: 4 },
     // Filled a wave at a time — see ART.md. Every entry below was printed by
     // tools/cut-fish.py off the delivered sheet; none of it was tuned in the
     // browser, and re-running the tool reproduces it exactly.
@@ -583,7 +592,26 @@ export const CONFIG = {
       // where the lure lands and the bobber then sits. The old build hardcoded
       // this three times (bobber CSS, the splash at 400,195, the ripple at
       // 394,196); now it is one point and those all derive from it.
-      landing: { x: 394, y: 196 },
+      //
+      // F1: this used to be (394, 196) — two px below fish.surface.y, the
+      // waterline the background art is painted to. In a scene whose water
+      // recedes TOWARD the viewer, that line is the far bank: the lure sat on
+      // the horizon and the line's far end then jumped ~80px down and ~65px
+      // right the instant a fish took it at y≈256. It now lands just above
+      // where the fish rises, so a bite moves the line by the fish's own swim
+      // and nothing else. Both numbers are matched to fish.path.fromX/fromY
+      // plus fish.approach.spawn — move those and this has to move with them.
+      // It cannot simply BE the bite point: that is y≈276, inside the
+      // guide-panel band, and a bobber behind the keyboard is not a bobber.
+      //
+      // y is as low as the panel allows, measured rather than guessed: the panel
+      // is a FIXED page-size element over a scaled design canvas, so the smaller
+      // the window the more design space it eats. At 250 the bobber sat 31px
+      // behind it on a 900x600 window. At 228 it clears on 2:1, 16:9, 16:10, 4:3
+      // and 900x600. 900x600 is the binding one and is only just clear (7px of
+      // gap measured mid-bob, so 224 rather than 228 to keep the bob's own 3px
+      // outside it); every other shape has 45px or more.
+      landing: { x: 458, y: 224 },
       apexPx: 46,          // how high above the straight chord the lure arcs
       backswingMs: 190,    // anticipation (ease-in)
       flightMs: 520,       // release → splash (ease-out)

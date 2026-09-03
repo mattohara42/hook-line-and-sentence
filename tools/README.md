@@ -1,4 +1,4 @@
-# tools/ — the art pipeline, and one word generator
+# tools/ — the art pipeline, two browser checks, and one word generator
 
 **None of this is the game.** Nothing in here is loaded at runtime, nothing is a
 build step, and the no-build-step rule in `CLAUDE.md` is not bent by any of it.
@@ -20,12 +20,13 @@ others should restate it.
 
 ```
 pip install Pillow numpy scipy          # every cut-*.py, gear-ref.py, hat-transplant.py
-cd /tmp && npm install playwright       # spot-check.mjs only
+cd /tmp && npm install playwright       # spot-check.mjs and play-check.mjs
 ```
 
-`spot-check.mjs` also needs the repo served (`python3 -m http.server 8080`) and
-is run as `NODE_PATH=/tmp/node_modules node tools/spot-check.mjs …`. Chromium is
-already on the box; do not let playwright download its own.
+Both `.mjs` verification tools also need the repo served
+(`python3 -m http.server 8080`) and are run as
+`NODE_PATH=/tmp/node_modules node tools/<tool>.mjs …`. Chromium is already on
+the box; do not let playwright download its own.
 
 ## The cutting family
 
@@ -82,7 +83,21 @@ ES module and nothing is on `window`, so the way in is to seed a profile in
 localStorage, reload, and click the card — re-derived three times in one session
 before it got written down.
 
-It loops cheaply, which is how R7 closed:
+`play-check.mjs --loc <spot> [--tag name] [--out dir]`
+
+Plays one whole catch and shoots every beat of it — cast, wait, approach, bite,
+reel, landing, and the beat after. Where `spot-check` takes a still of a spot,
+this takes the moment, which is what F1 needed: **its three bugs were each wrong
+for about three frames and none of them would have failed an assertion.** It
+prints the numbers behind each shot too — `#fish`'s position and class list, how
+many species layers are mounted, and where the line's `<path>` really ends (in
+design px; the path is drawn inside the scaled `#scene-frame`, so those are not
+page coordinates). The class list is what caught `.rigged` being wiped.
+
+Take a baseline before you change anything (`--tag base`) and the same run after
+(`--tag f1`). A before/after pair of the same beat is the whole argument.
+
+`spot-check.mjs` loops cheaply, which is how R7 closed:
 
 ```bash
 for loc in pond stream ocean; do for hat in straw bucket beanie souwester; do
