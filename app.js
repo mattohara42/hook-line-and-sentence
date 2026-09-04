@@ -2115,10 +2115,25 @@ function renderLocations() {
 function switchLocation(loc) {
   save.location = loc;
   hideCatchCard();          // F3: the last spot's catch doesn't follow you here
+  // …and neither does the cast. This used to change the scene and the rig and
+  // leave the cast itself running, so the Pond's cork float stayed on screen at
+  // the Ocean (which T2 says floats nothing), the line was still drawn out to
+  // it, and a bite armed at the Pond landed HERE: a 17-word Ocean sentence off
+  // a cast the kid never made there.
+  //
+  // Two things end it, and both are needed. gameGen stales the pending
+  // approach/bite the way activating a profile already does, because later()
+  // is the only thing holding them and it checks nothing else. startCast()
+  // does the rest: the phase, the line, the tackle, the fish and a fresh word.
+  // It also speaks the new spot's own cast prompt, which is why the old
+  // "Now fishing the Ocean." line is gone rather than moved: there is one
+  // status line, and an instruction the game promises always shows outranks a
+  // confirmation of something the whole repainted scene has already said.
+  gameGen++;
   persistSave();
   renderLocations();
   applyScene();
-  setStatus("Now fishing " + CONFIG.tiers.find(t => t.location === loc).locationName + ".");
+  startCast();
 }
 
 // R7: which shop list each `gear` slot draws from. The layer says "hat", the
