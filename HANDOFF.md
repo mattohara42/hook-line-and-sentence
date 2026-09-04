@@ -10,7 +10,7 @@ something is the way it is, `git log` and the PR body have it in full.
 | | |
 |---|---|
 | **Active milestone** | **T4: junk art**, `BUILD_PLAN_TACKLE.md`. Prompt written, **waiting on one generation from Matt**. T1–T3 shipped 2026-09-04. |
-| **Last change** | **The top bar** (#170) and then **the tests** (2026-09-04), outside the epic. Both corners are one flex row, the puns are big, dismissable and per spot, and `tools/ui-check.mjs` now sweeps twelve viewport shapes. |
+| **Last change** | **A whole-repo code review** (2026-09-04), findings backlogged, no code touched. Before it: the top bar (#170) and the tests, both outside the epic. |
 | **R7** | ✅ **21 of 21 gear pieces**, `BUILD_PLAN_REFRESH.md`. Both done-when clauses met: a bought hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand at every spot. |
 | **The epic** | **Tackle & Junk (T1–T4)**, opened 2026-09-04: the bobber/fly/nothing per spot, and junk trophies plus the last pixel-era art. |
 | **The refresh** | ✅ **R1–R7 all shipped.** Every angler, vessel, background, fish and shop item is painted in the new direction. |
@@ -22,9 +22,10 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**Nothing is half-finished.** Two epics closed in two days and the list below is
-all that is outstanding, none of it code: the play-tests are Matt's, and the
-carried debts are decisions rather than bugs.
+**Nothing is half-finished.** Two epics closed in two days. The play-tests below
+are Matt's and the carried debts are decisions rather than bugs, but the
+2026-09-04 code review did find real code work: it is all in `BACKLOG.md` and
+none of it is started.
 
 **The top bar was reworked on 2026-09-04** (#170: the tackle box sat on the HUD
 chips on any phone; the game's voice was 12px of bare text). `#topbar` is one
@@ -57,13 +58,20 @@ the tinted thwarts bother you once you have played it.
 23% of the art the game ships. `tools/palette-check.py` is the runnable version
 and `--corpus` is its control.
 
-**The one piece of work left on the list**, in `BACKLOG.md` and not started:
+**The work left, all in `BACKLOG.md` and none of it started:**
 
+- **A whole-repo code review ran on 2026-09-04** and its findings are one
+  section, `BACKLOG.md` → *Code review, whole repo*. Two are worth doing
+  first and are the same shape of bug (state that outlives the moment that set
+  it): `tools/ui-check.mjs` fails about one run in three by racing the wiggle
+  roll, which matters because `CLAUDE.md` makes it the gate on every chrome
+  change; and switching spots mid-cast leaves the old spot's bobber, line and
+  armed bite in place, so a Pond cast can land an Ocean fight. Both were
+  reproduced in the browser and the numbers are in the entry.
 - **`cut-angler.py`'s despill should move to `cut-gear.py`'s unmix model.** It
   reddens thin neutral pieces by about 11 points of R − B. Deliberately not
   done inside a delivery, because it changes how every rod is cut and they all
-  re-cut byte-identically today (`BACKLOG.md` has the numbers). It is the only
-  thing left on this list.
+  re-cut byte-identically today (`BACKLOG.md` has the numbers).
 
 **Before any cut in a fresh container:** `pip install Pillow numpy scipy`, and
 for the browser checks `cd /tmp && npm install playwright`. `tools/README.md`

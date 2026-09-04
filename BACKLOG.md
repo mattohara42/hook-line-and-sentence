@@ -39,6 +39,83 @@ Ideas captured during design/build. Nothing here expands the current milestone.
   card band under 620px rather than redesigned; it is still a nowrap pill on a
   wide screen and a wrapping one on a narrow.
 
+## Code review, whole repo (2026-09-04)
+
+One pass over `app.js`, `logic.js`, `config.js`, `index.html`, `style.css`,
+both test files and `firestore.rules`, with the browser checks run. Nothing
+here was fixed; it is all captured for a later milestone. The first two are
+the same shape of bug (state that outlives the moment that set it) and
+probably belong in one pass.
+
+- **`tools/ui-check.mjs` fails about one run in three, and `CLAUDE.md` makes it
+  the gate on every chrome change.** Four runs went pass, fail, fail, pass; the
+  cause reproduced 4 times in 12. At `ui-check.mjs:275` it types the cast word,
+  waits for `#status` to change, reads the line, asserts `#pun-dismiss` is
+  showing, then clicks it at `:281`. But `startWait()` sets the "wait" flavour
+  line *immediately*, while the wiggle roll does not happen until the cast
+  animation lands ~710ms later (`anim.cast.backswingMs` 190 + `flightMs` 520).
+  On a wiggle, `startWiggle()` replaces that line with a non-dismissable
+  instruction and hides the button mid-click, which is the timeout. 4/12 is
+  `CONFIG.wiggle.chance` (0.34) to the run, so this is the whole of it. The fix
+  is to wait for the cast to actually land before deciding which branch the run
+  is in, and to re-read `isInstruction` immediately before the click rather
+  than 700ms earlier. Worth doing before the next chrome change trusts a green
+  run: today a green sweep is luck as often as it is evidence.
+- **Switching spots mid-cast does not reset the cast.** `switchLocation()`
+  updates `save.location`, the scene and the rig, and leaves `phase`, the
+  bobber, the line and the pending `later(approach)` / `later(bite)` timers
+  alone. Measured after casting at the Pond and switching to the Ocean during
+  the wait: `#bobber` still `on`, still `tackle-bobber`, opacity 1, display
+  block, at (1008, 490) 20x27 on a 1280x800 window. So the Pond's cork float is
+  fully visible at a spot `CONFIG.tackle` says floats nothing, the line is still
+  drawn, and the bite armed at the Pond lands at the Ocean and serves a 17-word
+  sentence fight off a cast the kid never made there. Cheapest fix is calling
+  `startCast()` at the end of `switchLocation`, which already resets every one
+  of those. (The rig itself is fine: a control shot confirmed it switches to
+  `angler-ocean-body` / `boat-ocean-near` / `rod-deepsea-ocean` correctly.)
+- **`&mdash;` walks straight past the em-dash test.** Three of them, at
+  `index.html:208`, `:221` and `:241`, and two are strings a kid reads ("nothing
+  to lose &mdash; this one is just you", "type the word &mdash; it moves on by
+  itself"). The guard at `data.test.mjs:651` checks for the literal U+2014 character only,
+  so the entity is invisible to it while rendering as a real em-dash on screen.
+  Add `&mdash;` and `&#8212;` to that check and the hole closes.
+- **`firestore.rules` does not bound `junk`.** `sane()` caps `collection`,
+  `records` and `stats.letters` with `boundedMap` (`firestore.rules:52-54`),
+  which is the right instinct. T3 added `junk`, the same unbounded
+  `id -> count` map, documented in `FIRESTORE.md`, and the rules never picked it
+  up. One more `boundedMap(incoming().get('junk', {}), 200)` line.
+- **Opening the journal is a Firestore write.** `renderJournal()` calls
+  `persistSave()` unconditionally (`app.js:2278`), so the journal writes even
+  when nothing changed. It is the only call site that does, and it is against
+  the one-write-per-catch budget `FIRESTORE.md` opens with. Guard it on
+  `evaluateBadges()` returning something.
+- **`renderProgress()` re-implements `logic.overallAccuracy`.** The same
+  `totalN`/`totalErr` loop, inline at `app.js:2145`, while the wrapper
+  `overallAccuracy()` sits three functions away in the same file.
+- **About 4.8MB of unreferenced art ships, plus 5.6MB of source deliveries.**
+  Nothing references `body-kid`, `rod-basic`, `boat-blue`, `boat-leaf`,
+  `boat-purple`, `background.png`, `background-ocean.png`, `angler-ocean.png`
+  or `angler-stream.png`; `config.js:709` already records that the boat ones
+  are dead. Separately, 32 `Gemini_*` source deliveries sit in `assets/` and go
+  out with the deploy. They are pipeline inputs, so the question is whether they
+  belong in `assets/` at all rather than whether to delete them.
+- **`junk-weed.png` is 1.2MB for a sprite drawn at 96px.** 1376x740, the
+  largest file in the game bar one background; `junk-boot.png` is 697KB. The
+  repaint is already a backlog item (the junk sprites are the last pixel-era
+  art), but downscaling is a cheap win that does not wait on it.
+- **`bobberRippleTimer` is a raw `setInterval`** (`app.js:544`) rather than
+  going through `later()`, so it keeps appending ripples across a profile
+  switch until the next `startCast` clears it. Invisible behind the picker and
+  self-limiting, so cosmetic, but `later()` exists for exactly this.
+- **Two nits.** The Escape handler closes every open overlay at once rather
+  than the topmost. And `style.css:11` has a sentence a search-and-replace ate:
+  "every `rgba(var(--shadow-rgb),x)` in here is now `rgba(var(--shadow-rgb),x)`".
+- **One question rather than a finding: is `#word` meant to be monospace?** It
+  carries no `font-family`, so the reel target inherits `--mono` while F2 moved
+  everything else to Baloo 2. A monospace typing target is defensible (character
+  width stays put as you type), so this may be decided rather than missed. It
+  is visible as soon as an Ocean sentence is on screen against a Baloo 2 HUD.
+
 ## World
 - More ponds/locations; weather; real day/night tied to clock.
 - Sound design pass beyond ambient loop.
