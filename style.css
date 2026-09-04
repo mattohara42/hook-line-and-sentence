@@ -943,6 +943,52 @@ h1 {
   text-align: center;
 }
 .overlay-title { font-family: var(--display); font-size: 13px; color: var(--gold); letter-spacing: 0.12em; margin-bottom: 16px; }
+
+/* ---- The browsable panels: a fixed head, a row of tabs, one scrolling body.
+   `paneled` is opt-in rather than applied to every .overlay-panel because the
+   flow panels (the profile picker, the rod nudge, quick cast) are a single
+   column that scrolls as one and would lose their scrolling to the flex
+   layout below. The panel itself stops scrolling: .overlay-body does it, which
+   is what keeps the close button and the tabs on screen. */
+.overlay-panel.paneled {
+  display: flex; flex-direction: column; overflow: hidden;
+  padding: 14px 18px 16px; width: min(680px, calc(100vw - 24px));
+}
+.overlay-head {
+  display: flex; align-items: center; gap: 12px;
+  padding-bottom: 12px; margin-bottom: 12px;
+  border-bottom: 1px solid rgba(var(--gold-rgb),0.22);
+  flex: 0 0 auto;
+}
+.overlay-head .overlay-title { margin-bottom: 0; text-align: left; }
+/* Top-LEFT, and first in the DOM: it is the first thing a tab lands on and the
+   first thing a thumb finds, and it never scrolls away under a long shop. */
+.overlay-x {
+  flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; line-height: 1; color: var(--gold); cursor: pointer;
+  background: rgba(var(--gold-rgb),0.1); border: 1px solid rgba(var(--gold-rgb),0.35);
+}
+.overlay-x:hover { background: rgba(var(--gold-rgb),0.22); }
+.overlay-x:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+.tabs {
+  display: flex; gap: 6px; flex: 0 0 auto; margin-bottom: 12px;
+  overflow-x: auto; scrollbar-width: none;   /* a narrow phone scrolls the row rather than wrapping it */
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  font-family: var(--display); font-size: 10px; letter-spacing: 0.1em;
+  color: var(--dim); background: rgba(var(--ink-rgb),0.04);
+  border: 1px solid rgba(var(--ink-rgb),0.12); border-radius: 8px;
+  padding: 8px 14px; cursor: pointer; white-space: nowrap; flex: 0 0 auto;
+}
+.tab:hover { color: var(--ink); }
+.tab.active { color: var(--umber); background: var(--gold); border-color: var(--gold); }
+.tab:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+.overlay-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding-right: 2px; }
+.tabpane[hidden] { display: none; }
 .nudge-text { font-size: 13px; line-height: 1.5; color: var(--ink); max-width: 380px; margin: 0 auto 18px; }
 
 /* Fishing journal: badge grid */
@@ -1018,31 +1064,36 @@ h1 {
 #progress-summary { font-size: 12px; color: var(--ink); line-height: 1.7; margin-bottom: 14px; }
 #progress-summary b { color: var(--gold); }
 #progress-kb { display: flex; flex-direction: column; gap: 6px; align-items: center; margin-bottom: 14px; }
-.prow { display: flex; gap: 6px; }
+.prow { display: flex; gap: clamp(3px, 1vw, 6px); }
+/* The keys shrink with the screen instead of the ten-key top row hanging 67px
+   off the side of a 320px phone, which is where `o` and `p` used to live: the
+   panel scrolled sideways to reach them, and now it does not scroll at all. */
 .pkey {
-  width: 34px; height: 34px; border-radius: 6px;
+  width: clamp(22px, 7vw, 34px); height: clamp(22px, 7vw, 34px); border-radius: 6px;
   display: flex; align-items: center; justify-content: center;
-  font-family: var(--display); font-size: 12px; color: var(--ink); text-transform: uppercase;
+  font-family: var(--display); font-size: clamp(9px, 2.2vw, 12px); color: var(--ink); text-transform: uppercase;
   border: 1px solid rgba(var(--ink-rgb),0.12);
 }
 .pkey.nodata { background: rgba(var(--ink-rgb),0.05); color: var(--dim); }
-#progress-legend { font-size: 10px; color: var(--dim); margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+#progress-legend { font-size: 10px; color: var(--dim); margin-bottom: 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; }
 .pscale { display: inline-block; width: 120px; height: 10px; border-radius: 5px;
   background: linear-gradient(90deg, hsl(6,42%,48%), hsl(42,46%,50%), hsl(112,30%,44%)); }
 .nudge-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 #nudge-shop { color: var(--umber); background: var(--gold); border-color: var(--gold); }
-#collection-grid {
-  display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 16px;
+/* One grid per spot, inside that spot's tab. It used to be a single grid with
+   full-width .cgroup headings inside it (A3); the tab row is that heading now,
+   so the headings went with it rather than being said twice. */
+/* auto-fill rather than a fixed five columns, and the cell no longer sets its
+   own width: at five fixed 116px cells the grid was 628px wide inside a 366px
+   phone panel and simply hung off the right-hand edge (visible the moment the
+   panel stopped scrolling sideways). It is five across on the desktop panel
+   and three on a phone, from the same rule. */
+.cgrid {
+  display: grid; gap: 12px; margin-bottom: 4px;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
 }
-/* A3: a full-width location heading that groups the silhouettes below it */
-.cgroup {
-  grid-column: 1 / -1; margin: 4px 0 -2px;
-  font-family: var(--display); font-size: 13px; color: var(--gold);
-  border-bottom: 1px solid rgba(var(--gold-rgb),0.25); padding-bottom: 6px;
-}
-.cgroup:first-child { margin-top: 0; }
 .cell {
-  width: 116px; padding: 10px 6px 12px; border-radius: 10px;
+  min-width: 0; padding: 10px 6px 12px; border-radius: 10px;
   background: rgba(var(--ink-rgb),0.04); border: 1px solid rgba(var(--ink-rgb),0.1);
 }
 /* R2: rare and legendary catches carry the same gold the scene gives them when
@@ -1136,12 +1187,8 @@ h1 {
 #sync-status { font-size: 11px; color: var(--dim); }
 
 /* ============ SHOP ============ */
-#shop-coins { font-family: var(--display); font-size: 11px; color: var(--dim); margin-bottom: 10px; }
+#shop-coins { font-family: var(--display); font-size: 11px; color: var(--dim); margin-left: auto; white-space: nowrap; }
 #shop-coins b { color: var(--gold); font-size: 14px; }
-.shop-section {
-  font-family: var(--display); font-size: 10px; color: var(--dim);
-  letter-spacing: 0.14em; text-align: left; margin: 14px 0 6px;
-}
 .shop-row {
   display: flex; align-items: center; gap: 12px;
   padding: 9px 12px; margin-bottom: 6px; border-radius: 8px;

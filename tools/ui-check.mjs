@@ -7,7 +7,9 @@
 // Pass 1 (layout) sweeps twelve viewport shapes and checks that no two overlays
 // overlap. Pass 2 (behaviour) drives the top bar at a phone and a desktop: the
 // tray takes clicks, the jokes toggle does what it claims, and a real catch
-// stands the pun bubble down.
+// stands the pun bubble down. Pass 3 opens each browsable panel at all twelve
+// shapes and holds P1's promise to it: the close button is top-left, on screen
+// and thumb-sized wherever you are, and nothing in the panel hangs off the side.
 //
 // Why this exists: every overlap the top-bar rework fixed was a geometry bug,
 // and not one of them could fail an assertion, because the only tools that
@@ -311,7 +313,68 @@ async function behaviour() {
   }
 }
 
-if (!args["skip-behaviour"] && !only) { console.log(""); await behaviour(); }
+// ---- pass 3: the browsable panels, at every shape ----
+// P1 gave the collection, shop, journal and grown-ups panel a head that does
+// not scroll, with the close in its top-left corner, and tabs instead of one
+// long column. The promise is "the way out is always on screen", and that is
+// geometry, so it belongs here rather than in a screenshot someone squints at.
+// The first run of this found the collection grid hanging off the right of a
+// phone: five fixed-width cells in a panel 366px wide, which the old panel had
+// hidden by scrolling sideways.
+const PANELS = [["collection", "collection-btn"], ["shop", "shop-btn"],
+                ["journal", "journal-btn"], ["progress", "progress-btn"]];
+async function panels() {
+  console.log("");
+  // from a clean game: pass 2 ends on a landed catch, and a card held over the
+  // top bar makes the tackle box unclickable, which reads as this pass hanging
+  await enter();
+  for (const vp of VIEWPORTS) {
+    await page.setViewportSize({ width: vp.w, height: vp.h });
+    await page.waitForTimeout(150);
+    const before = problems.length;
+    for (const [id, btn] of PANELS) {
+      const trayHidden = await page.evaluate(() => document.getElementById("controls").hidden);
+      if (trayHidden) await page.click("#tacklebox");
+      await page.click("#" + btn);
+      await page.waitForTimeout(220);
+      const m = await page.evaluate((id) => {
+        const root = document.getElementById(id);
+        const panel = root.querySelector(".overlay-panel");
+        const x = root.querySelector(".overlay-x");
+        const body = root.querySelector(".overlay-body");
+        const r = panel.getBoundingClientRect(), xr = x?.getBoundingClientRect();
+        const tabs = [...root.querySelectorAll(".tab")].map(t => t.getBoundingClientRect());
+        return {
+          panel: { x: r.x, y: r.y, right: r.right, bottom: r.bottom },
+          close: xr && { x: xr.x, y: xr.y, w: Math.round(xr.width), h: Math.round(xr.height) },
+          wide: body ? body.scrollWidth > body.clientWidth + 1 : false,
+          overflow: body ? body.scrollWidth - body.clientWidth : 0,
+          tabTop: tabs.length ? Math.min(...tabs.map(t => t.y)) : null,
+          tabH: tabs.length ? Math.round(Math.min(...tabs.map(t => t.height))) : null,
+        };
+      }, id);
+      const P = (msg) => fail(vp, id, msg);
+      if (m.panel.y < -1 || m.panel.bottom > vp.h + 1 || m.panel.x < -1 || m.panel.right > vp.w + 1)
+        P(`the panel is off screen: ${JSON.stringify(m.panel)}`);
+      if (!m.close) P("no close button in the head");
+      else {
+        // the whole point: it is up top, on screen, and big enough for a thumb
+        if (m.close.y < -1 || m.close.y > vp.h - 20) P(`the close button is at y ${Math.round(m.close.y)} on a ${vp.h}px screen`);
+        if (m.close.w < 30 || m.close.h < 30) P(`the close button is ${m.close.w}x${m.close.h}`);
+        if (m.tabTop !== null && m.close.y > m.tabTop) P("the close button is below the tabs");
+      }
+      if (m.wide) P(`the panel body overflows sideways by ${m.overflow}px`);
+      if (m.tabH !== null && m.tabH < 28) P(`a tab is only ${m.tabH}px tall`);
+      await page.click(`#${id} .overlay-x`);
+      await page.waitForTimeout(120);
+      if (await page.evaluate((id) => !document.getElementById(id).hidden, id))
+        P("the close button did not close it");
+    }
+    console.log(`${problems.length === before ? "ok  " : "FAIL"}  panels at ${vp.name.padEnd(14)} ${vp.w}x${vp.h}`);
+  }
+}
+
+if (!args["skip-behaviour"] && !only) { console.log(""); await behaviour(); await panels(); }
 
 await browser.close();
 if (notes.length) console.log(`\n${notes.length} known and not fixed here (BACKLOG.md):\n`

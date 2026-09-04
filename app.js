@@ -2230,27 +2230,69 @@ document.addEventListener("click", (e) => {
   if (!controlsTray.hidden && !controlsTray.contains(e.target) && e.target !== tackleBtn) toggleControls(false);
 });
 
+// ---- Tabs inside an overlay ----
+// One tab bar per browsable panel. The tabs and panes are paired by
+// `data-tab`, which is the whole mechanism: a pane with no tab never shows and
+// a tab with no pane shows nothing, and both are visible in the markup rather
+// than assembled here. Returns the show function so opening a panel can put it
+// back on its first tab, which is what a kid expects from a thing they closed.
+function initTabs(root) {
+  const tabs = [...root.querySelectorAll(".tab")];
+  const panes = [...root.querySelectorAll(".tabpane")];
+  const body = root.querySelector(".overlay-body");
+  const show = (name) => {
+    for (const t of tabs) {
+      const on = t.dataset.tab === name;
+      t.classList.toggle("active", on);
+      t.setAttribute("aria-selected", on ? "true" : "false");
+    }
+    for (const p of panes) p.hidden = p.dataset.tab !== name;
+    if (body) body.scrollTop = 0;   // a new tab starts at its own top, not the last one's
+  };
+  for (const t of tabs) t.addEventListener("click", () => show(t.dataset.tab));
+  if (tabs.length) show(tabs[0].dataset.tab);
+  return show;
+}
+
 // ---- Collection screen (per-profile once M4 lands; one shared save for now) ----
 let collectionOpen = false;
 const collectionRoot = $("collection");
 const collectionGrid = $("collection-grid");
+const collectionTabs = $("collection-tabs");
 
 function renderCollection() {
   collectionGrid.innerHTML = "";
+  collectionTabs.innerHTML = "";
   // A3: group silhouettes by location (Pond, then Stream, then Ocean), showing
   // only spots that actually have fish. Fish with an unknown/missing location
   // fall under the home water so nothing is ever dropped from the journal.
+  // The grouping is a tab per spot now rather than a heading inside one long
+  // grid: 33 species in one column is a scroll, and three tabs is a glance.
+  // The tabs are built here rather than sitting in index.html because which
+  // spots have fish is a question only the data can answer.
   const homeLoc = CONFIG.tiers[0].location;
   const known = new Set(CONFIG.tiers.map(t => t.location));
   const locOf = f => (known.has(f.location) ? f.location : homeLoc);
   const locs = CONFIG.tiers.map(t => t.location).filter(loc => FISH.some(f => locOf(f) === loc));
   for (const loc of locs) {
     const tier = CONFIG.tiers.find(t => t.location === loc);
-    const header = document.createElement("div");
-    header.className = "cgroup";
-    header.textContent = `${tier.badge} ${tier.locationName}`;
-    collectionGrid.appendChild(header);
-    for (const f of FISH.filter(f => locOf(f) === loc)) {
+    const tab = document.createElement("button");
+    tab.className = "tab"; tab.dataset.tab = loc; tab.setAttribute("role", "tab");
+    // how many of this spot's species are in the book: the one number a kid
+    // wants off a collection screen, and it was nowhere on the old one
+    const here = FISH.filter(f => locOf(f) === loc);
+    const got = here.filter(f => (save.collection[f.id] ?? 0) > 0).length;
+    // "the Pond" is how the game says it in a sentence; a tab is a label, and
+    // three of them plus their counts have to fit across a phone
+    tab.textContent = `${tier.badge} ${tier.locationName.replace(/^the /, "")} ${got}/${here.length}`;
+    collectionTabs.appendChild(tab);
+    const pane = document.createElement("div");
+    pane.className = "tabpane"; pane.dataset.tab = loc;
+    const grid = document.createElement("div");
+    grid.className = "cgrid";
+    pane.appendChild(grid);
+    collectionGrid.appendChild(pane);
+    for (const f of here) {
       const count = save.collection[f.id] ?? 0;
       const cell = document.createElement("div");
       // R2: the tier rides on the cell so a caught rare/legendary glows here the
@@ -2287,9 +2329,10 @@ function renderCollection() {
         : f.tier;
       if (count) cell.title = f.blurb;
       cell.append(shape, name, sub);
-      collectionGrid.appendChild(cell);
+      grid.appendChild(cell);
     }
   }
+  initTabs(collectionRoot);
 }
 
 function toggleCollection(open) {
@@ -2378,9 +2421,12 @@ function renderShopList(items, container, kind, hint) {
   }
 }
 
+// the tabs are wired once; opening the shop puts it back on RODS rather than
+// wherever the last visit left it
+const showShopTab = initTabs(shopRoot);
 function toggleShop(open) {
   shopOpen = open ?? !shopOpen;
-  if (shopOpen) renderShop();
+  if (shopOpen) { renderShop(); showShopTab("rods"); }
   shopRoot.hidden = !shopOpen;
 }
 $("shop-btn").addEventListener("click", () => toggleShop(true));
@@ -2600,9 +2646,10 @@ function renderJunkShelf() {
     shelf.appendChild(cell);
   }
 }
+const showJournalTab = initTabs(journalRoot);
 function toggleJournal(open) {
   journalOpen = open ?? !journalOpen;
-  if (journalOpen) renderJournal();
+  if (journalOpen) { renderJournal(); showJournalTab("badges"); }
   journalRoot.hidden = !journalOpen;
 }
 $("journal-btn").addEventListener("click", () => toggleJournal(true));
