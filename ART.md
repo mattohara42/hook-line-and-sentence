@@ -1326,7 +1326,20 @@ measured off each pose's own painted gate rod, and three of its entries describe
   circle and the reel is simply not in the layer.
 - **`half`**, half the shaft's width: 16 / 15 / 22 source px at the Pond, Stream
   and Ocean, and the Ocean's is the outlier because a boat rod is thick.
-  `rod-deepsea-pond` is a thick rod on a corridor fitted to a cane.
+  `rod-deepsea-pond` is a thick rod on a corridor fitted to a stick.
+  **Measured before the delivery, because source px hide the answer:** the three
+  poses render at different scales, so compare in *design* px. The corridors are
+  **1.82 / 2.51 / 2.54** wide and the shafts painted inside them are
+  **1.66 / 1.13 / 1.99** just above the hand. The Ocean's deepsea rod is
+  therefore only ~20% thicker than the Pond's stick and ~75% thicker than the
+  Stream's cane, and **the Pond is the tight one, not the Stream**: 1.99 against
+  a 1.82 ceiling is about 9% of the width shaved at the thick end. Drawing the
+  two corridor edges over each shaft agrees, and adds what the numbers missed —
+  the Pond's stick already sits ON its upper edge, so every bit of the spare
+  room is on the other side and a fatter rod loses paint from one side only.
+  The Stream has room to spare, which is the opposite of what 15 source px
+  suggests. Measure the delivery the way `rod-carbon-stream` was measured (98.9%
+  of the shaft inside the pose's half-width) before reading anything into it.
 - **`rod_xmin`**, the Stream's hard left bound, which exists because that pose's
   butt passes close to the waders. A rod whose butt stops elsewhere may not need
   it, or may need it somewhere else.

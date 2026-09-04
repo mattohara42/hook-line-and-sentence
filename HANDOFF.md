@@ -61,7 +61,10 @@ The Ocean's brass reel had left 2,766 px of itself in the *body* layer since R4,
 and only a reel-less rod could ever have exposed it. Both remaining `deepsea`
 rods are the thickest and heaviest in the set, so the corridor's `half` — the
 one flag still open, and the one that only bites when a rod is *fatter* than the
-pose's — is what to check first there.
+pose's — is what to check first there. **It has now been measured ahead of the
+delivery and the answer is the other way round: the Pond is the tight corridor,
+the Stream has room to spare.** Numbers, and the picture that adds what they
+missed, in `ART.md` → the `half` bullet.
 
 ## Waiting on Matt (none of it blocks R7)
 
