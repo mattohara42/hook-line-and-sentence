@@ -9,61 +9,69 @@ something is the way it is, `git log` and the PR body have it in full.
 
 | | |
 |---|---|
-| **Active milestone** | **None.** T4 (junk art) is still open and still **waiting on one generation from Matt**; S1 and P1 below were asked for directly and are done. |
-| **Last change** | **S1 (sound) and P1 (tabbed panels)**, 2026-09-04, on `claude/gameplay-polish-sound-o6s0yn`. Both want a play: see *Waiting on Matt*. |
+| **Active milestone** | **None.** T4 (junk art) is still open and still **waiting on one generation from Matt**. |
+| **Last change** | **The code-review backlog, nine of its ten findings**, 2026-09-04, on `claude/backlog-ksh09h`. See *Start here*. |
 | **R7** | ✅ **21 of 21 gear pieces**, `BUILD_PLAN_REFRESH.md`. Both done-when clauses met: a bought hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand at every spot. |
 | **The epic** | **Tackle & Junk (T1–T4)**, opened 2026-09-04: the bobber/fly/nothing per spot, and junk trophies plus the last pixel-era art. |
 | **The refresh** | ✅ **R1–R7 all shipped.** Every angler, vessel, background, fish and shop item is painted in the new direction. |
 | **Catch Feel** | ✅ **F1–F5 all shipped 2026-09-03**, `BUILD_PLAN_FEEL.md`. One thing left and it is Matt's: play it. |
 | `origin/main` | clean, nothing unpushed |
-| Tests | 110/110 (`npm test`), plus `tools/ui-check.mjs` for the chrome (needs a served repo + playwright) |
+| Tests | 113/113 (`npm test`), plus `tools/ui-check.mjs` for the chrome (needs a served repo + playwright) |
 | Open PRs | **#55 only**: close it unmerged, see below |
 | Deploys | Netlify is **manual**; merging to `main` does not go live |
 
 ## Start here
 
-**The sound is per spot now, and the panels have tabs (S1 and P1, 2026-09-04).**
-Both came straight from Matt and neither belongs to an epic.
+**Nine of the code review's ten findings are fixed (2026-09-04).** One pass
+over the section it left in `BACKLOG.md`; each fix is its own commit and the
+reasoning and the numbers are there.
 
-- **S1**: the ambience was one bed of filtered noise at all three spots, which
-  is why it sounded like white noise. `CONFIG.audio.ambience` is a registry per
-  spot now (a `bed`, plus `voices` fired at random gaps): the Pond's frog and
-  dragonfly, the Stream's bubbles, the Ocean's swell and gull. Sound is **on by
-  default** now. New tool, `tools/audio-check.mjs`: a playable `.webm` and a
-  spectrogram per spot.
-- **P1**: the four browsable panels share a head that does not scroll, with the
-  close in the **top-left corner**, and tabs instead of one long column.
-  Nothing scrolls at 320x568 any more. `ui-check.mjs` grew a **third pass** for
-  it (every panel at all twelve shapes), which found two real overflow bugs on
-  its first run.
-- **What to build next is Matt's call**, and the shortlist he asked for is at
-  the top of `BACKLOG.md`: living water first (the frogs and dragonflies you can
-  now hear but not see), then weather, then a daily goal, with the argument for
+- **`tools/ui-check.mjs` no longer races the wiggle roll.** It was failing about
+  one run in three, which mattered because `CLAUDE.md` makes it the gate on
+  every chrome change. It waits for the cast to come to rest before judging the
+  bubble, and it covers **both** branches of the jokes toggle now instead of
+  whichever one the roll handed it.
+- **Switching water ends the cast.** A Pond cast could land an Ocean fight, with
+  the Pond's cork still floating at a spot that floats nothing. `gameGen++` and
+  `startCast()`; the "Now fishing the Ocean." status went with it, and putting
+  it back is one line.
+- **Found while proving that: the word box made tackle-box menu items
+  untappable.** `#word` (z-index 7) painted over the middle of the open tray,
+  which sits inside a z-index 6 bar it cannot climb out of, so on a phone the
+  button under the word took no taps. Which button depended on the random cast
+  word's width, which is why it looked like a flake. The bar moves while the
+  menu is open, and `ui-check.mjs` hit-tests every tray button now instead of
+  assuming a menu covers what is behind it. **Matt's call to make: whether the
+  tray should keep winning over `#word` in landscape**, where the two genuinely
+  compete for the same strip.
+- **The rest, one line each:** the em-dash test catches the HTML entity (three
+  were hiding behind it) · `firestore.rules` bounds `junk` · opening the journal
+  no longer spends a Firestore write · `renderProgress()` uses
+  `logic.overallAccuracy` · `bobberRippleTimer` goes through `later()` · Escape
+  closes the topmost overlay rather than all of them · the eaten sentence at the
+  top of `style.css` · and the four junk sprites went from 2.4MB to 263KB with
+  no visible difference at either size the game draws them.
+- **One finding and one question are left, and both are Matt's**, in
+  `BACKLOG.md` → *Code review, whole repo*: whether the ~4.8MB of unreferenced
+  art and the 32 `Gemini_*` source deliveries belong in `assets/` at all, and
+  whether `#word` is meant to be monospace.
+- **What to build next is still Matt's call**, and the shortlist is at the top
+  of `BACKLOG.md`: living water first (the frogs and dragonflies you can now
+  hear but not see), then weather, then a daily goal, with the argument for
   *not* adding modes, gates or an idle earner.
 
-**Nothing else is half-finished.** Two epics closed in two days. The play-tests below
-are Matt's and the carried debts are decisions rather than bugs, but the
-2026-09-04 code review did find real code work: it is all in `BACKLOG.md` and
-none of it is started.
+**Nothing is half-finished.** The play-tests below are Matt's and the carried
+debts are decisions rather than bugs.
 
-**Landed just before these and all merged**, one line each, reasoning in the PR:
-the top bar is one flex row and the pun pools are per spot in `data/puns.json`
-(#170) · `tools/ui-check.mjs` and three node tests came out of checking that by
-hand, and it found seven more collisions (#171) · the catch card's doubled
-separator, now `logic.catchSubtitle` (#172) · the four shop hulls work, as CSS
-tints of the Pond rowboat (R5's last debt) · `tools/palette-check.py` was
-rejecting 23% of the art the game ships and is fixed.
+**Landed just before this and all merged**, one line each, reasoning in the PR:
+S1 (a soundscape per spot) and P1 (panels with tabs and a close you can reach)
+(#175) · the top bar is one flex row and the pun pools are per spot in
+`data/puns.json` (#170) · `tools/ui-check.mjs` and three node tests (#171) · the
+catch card's doubled separator, now `logic.catchSubtitle` (#172) · the four shop
+hulls work, as CSS tints of the Pond rowboat (R5's last debt).
 
-**The work left, all in `BACKLOG.md` and none of it started:**
+**One debt still open and not started:**
 
-- **A whole-repo code review ran on 2026-09-04** and its findings are one
-  section, `BACKLOG.md` → *Code review, whole repo*. Two are worth doing
-  first and are the same shape of bug (state that outlives the moment that set
-  it): `tools/ui-check.mjs` fails about one run in three by racing the wiggle
-  roll, which matters because `CLAUDE.md` makes it the gate on every chrome
-  change; and switching spots mid-cast leaves the old spot's bobber, line and
-  armed bite in place, so a Pond cast can land an Ocean fight. Both were
-  reproduced in the browser and the numbers are in the entry.
 - **`cut-angler.py`'s despill should move to `cut-gear.py`'s unmix model.** It
   reddens thin neutral pieces by about 11 points of R − B. Deliberately not
   done inside a delivery, because it changes how every rod is cut and they all
