@@ -1325,10 +1325,6 @@ function land(success) {
     const isRare = fish.tier === "rare" || fish.tier === "legendary";
     (isRare ? sfxRareCatch : sfxCatch)();
     const pun = isRare ? punFor("catchRare") : punFor("catchCommon");
-    const sizeNote = `: ${fish.name} (${weight} lb`
-      + (cls === "lunker" ? ", a LUNKER!" : cls === "little" ? ", a little one" : "")
-      + ")";
-    const weightBestNote = (newBest && !firstCatch) ? " ★ new best!" : "";
     // F3: the same three facts the old corner message carried, on a card big
     // enough to read. A first catch is trivially a personal best, so it flies
     // the one flag that is actually news: exactly as the old string did.
