@@ -4,18 +4,23 @@ A cozy fishing game that teaches kids to type. Casting, reeling,
 and catching all happen through the keyboard: practice that never feels
 like practice.
 
-**Status:** built and playable. The core game (M1–M10) and the Advanced
-Progression epic (A0–A8) are both done: four ranks, three fishing spots, words
-→ phrases → punctuated sentences. Current work is the **Art & Animation
-Refresh** (`BUILD_PLAN_REFRESH.md`): the whole visual layer has been restarted
-in a warm painterly style (`ART_DIRECTION.md`), and the cast, line and reel have
-real motion (`ANIMATION.md`). R1–R6 have landed; R7 (the gear) has its nine rods
-left. The **Catch Feel** epic (`BUILD_PLAN_FEEL.md`) shipped alongside it and
-fixed the moment of the catch: where the line lands, what rises out of the
-water, a trophy card that waits for you instead of a message that vanishes, and
-a wait you can do something in. The engine underneath: progression, the
-ghost-hands keyboard, the unlockables: isn't changing. Hosted on Netlify,
-pushes to `main` are promoted to production manually.
+![The Pond: a landed walleye on its trophy card, with the ghost-hands keyboard below](docs/images/social-preview.png)
+
+**Status:** built and playable, with no epic currently open. The core game
+(M1–M10) and the Advanced Progression epic (A0–A8) are done: four ranks, three
+fishing spots, words → phrases → punctuated sentences. The **Art & Animation
+Refresh** (`BUILD_PLAN_REFRESH.md`) closed in September 2026 and replaced the
+entire visual layer: every angler, vessel, background, all 33 fish and all 21
+gear pieces are painted in a warm painterly style (`ART_DIRECTION.md`), and the
+cast, line and reel have real motion (`ANIMATION.md`). The **Catch Feel** epic
+(`BUILD_PLAN_FEEL.md`) shipped alongside it and fixed the moment of the catch:
+where the line lands, what rises out of the water, a trophy card that waits for
+you instead of a message that vanishes, and a wait you can do something in.
+**Tackle & Junk** (`BUILD_PLAN_TACKLE.md`) is T1–T3 done, with T4 (repainting
+the four junk sprites, the last of the old pixel art) waiting on art. The engine
+underneath: progression, the ghost-hands keyboard, the unlockables: has not
+changed through any of it. Hosted on Netlify, pushes to `main` are promoted to
+production manually.
 
 > **Renamed 2026-08-31.** This project was *Typing Fishing*, in a repo called
 > `WordsPerM...`, and lived at `fishtyping.netlify.app`. Everything moved to
@@ -30,7 +35,8 @@ pushes to `main` are promoted to production manually.
 | `SPEC.md` | Design source of truth: all decisions and v1 scope |
 | `BUILD_PLAN.md` | v1 milestone order (M1–M10, all done) with done-criteria |
 | `BUILD_PLAN_ADVANCED.md` | Post-v1 Advanced Progression epic: tiers (Minnow→Muskie), phrases/sentences, WPM-as-goal; phased A0–A8 (done) |
-| `BUILD_PLAN_REFRESH.md` | **Current epic**: the Art & Animation Refresh, R1–R7: motion, palette, painted backgrounds, one rigged angler, vessels, a rig per fish, gear |
+| `BUILD_PLAN_REFRESH.md` | The Art & Animation Refresh, R1–R7 (closed): motion, palette, painted backgrounds, one rigged angler, vessels, a rig per fish, gear |
+| `BUILD_PLAN_TACKLE.md` | Tackle & Junk, T1–T4: the bobber/fly/nothing per spot, junk trophies, and the last pixel-era art (T4 open) |
 | `BUILD_PLAN_FEEL.md` | The Catch Feel epic, F1–F5 (shipped): the moment of the catch, and what each milestone measured |
 | `ART_DIRECTION.md` | How the game looks: warm painterly storybook; governs every visual choice, generated or CSS-drawn |
 | `ANIMATION.md` | How the cast, line and reel move: the R1 spec, plus where the lure lands and how the catch card arrives |
@@ -47,7 +53,7 @@ pushes to `main` are promoted to production manually.
 | `data/sentences.json` | Ocean content: punctuated sentences (hand-curated) |
 | `data/fish.json` | The roster: say hi to Muskie Quixote |
 | `prototype/` | Playable design artifacts, kept as a reasoning trail: the reel feel test, the R1 line-animation prototype, and the V1 visual mockup (still in the retired pixel style) |
-| `tools/README.md` | The nine pipeline tools: what each cuts, the two browser checks, and the deps a fresh box lacks |
+| `tools/README.md` | The thirteen pipeline tools: what each cuts, the browser and audio checks, and the deps a fresh box lacks |
 
 ## How it plays
 
@@ -139,7 +145,10 @@ Zero dependencies: Node's built-in runner.
 `logic.js` holds the pure, DOM-free math; `app.js` keeps thin wrappers that feed
 it the live `CONFIG`, equipped rod, and word pool. Everything else in `app.js`
 is DOM/state-bound and verified in a real browser: `tools/spot-check.mjs` takes
-one still of a fishing spot with its layer stack printed, and
-`tools/play-check.mjs` plays a whole catch and screenshots every beat of it.
-That second one exists because some bugs are only wrong for three frames and
-would never fail an assertion: see `tools/README.md`.
+one still of a fishing spot with its layer stack printed, `tools/play-check.mjs`
+plays a whole catch and screenshots every beat of it, and `tools/ui-check.mjs`
+sweeps the chrome across twelve viewport shapes and asserts, which is the gate
+on any layout change. The second exists because some bugs are only wrong for
+three frames and would never fail an assertion; the third because four
+hand-checked viewports had missed seven real collisions that a rectangle-overlap
+loop found in fifteen seconds. See `tools/README.md`.
