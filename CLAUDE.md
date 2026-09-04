@@ -144,6 +144,15 @@ older still and is load-bearing for the pre-profiles migration.
 - **Art that doesn't fit is a reroll, not an offset tweak.** Sprite pieces are
   generated from a reference image and returned on the same canvas so they
   register by construction (see `ART.md`).
+- **In a pipeline tool, the destructive mode is the flag.** `cut-angler.py` had
+  it backwards: its frequent, safe cut needed `--rod`, while the rare cut that
+  overwrites four committed paintings was what you got by forgetting it. The
+  same accident happened three times. Twice it was patched by asking what the
+  source file *was*, and that could never catch the third, because a rod
+  delivery and an angler delivery are the same kind of file (an opaque painting
+  on flat magenta) and only the caller's intent separates them. So make the path
+  that destroys work the one you have to ask for, and let the tool refuse when
+  nobody asked (#157).
 - Local dev: `python3 -m http.server 8080`. Firestore/OAuth work (M4+) needs
   HTTPS — deploy previews on Netlify or ngrok.
 - Surface code smells as separate issues; don't refactor unrelated code.
