@@ -13,7 +13,7 @@ import {
   rankForProfile, earnsPrestige, speedTestPool, typingAccuracy,
   castArcPoint, lineSagPx, lineControlPoint, stepTug, rotateAboutPivot, easeIn, easeOut,
   easeInOut, reelProgressAtX, revealAt,
-  gearFile, punPool
+  gearFile, punPool, catchSubtitle
 } from "../logic.js";
 
 const TIER_ORDER = ["legendary", "rare", "uncommon", "common"];   // hardest → easiest
@@ -332,6 +332,20 @@ test("a fight's segments never exceed the sentence pool's real content (A7 sanit
   // guards the config against asking for more sentences than the Ocean has
   const most = Math.max(...Object.values(CONFIG.fight.segmentsByTier));
   assert.ok(most >= 1 && most <= 5, `segmentsByTier tops out at ${most}: that's a long fight for a kid`);
+});
+
+test("the catch card's subtitle joins its parts with exactly one separator each", () => {
+  assert.equal(catchSubtitle(1.3, "normal"), "1.3 lb");
+  assert.equal(catchSubtitle(12.4, "lunker"), "12.4 lb · a LUNKER!");
+  assert.equal(catchSubtitle(0.7, "little"), "0.7 lb · a little one");
+  // the regression: a Stream catch read "1.3 lb · a little one · · 255 wpm",
+  // because the weight clause and the wpm clause each brought their own dot
+  assert.equal(catchSubtitle(1.3, "little", 255), "1.3 lb · a little one · 255 wpm");
+  assert.equal(catchSubtitle(3.4, "normal", 41), "3.4 lb · 41 wpm");
+  assert.ok(!/·\s*·/.test(catchSubtitle(1.3, "little", 255)), "no doubled separator, ever");
+  // a spot that does not measure speed says nothing about it, rather than 0 wpm
+  assert.equal(catchSubtitle(2, "normal", 0), "2 lb");
+  assert.equal(catchSubtitle(2, "normal"), "2 lb");
 });
 
 test("punPool prefers the spot's own lines and falls back to the shared pool", () => {

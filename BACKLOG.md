@@ -39,14 +39,6 @@ Ideas captured during design/build. Nothing here expands the current milestone.
   card band under 620px rather than redesigned; it is still a nowrap pill on a
   wide screen and a wrapping one on a narrow.
 
-## Found while testing, not fixed (2026-09-04)
-- **The catch card prints a double separator on every phrase-mode catch.**
-  `app.js` builds the card's subtitle as `… + (wpmNote ? " ·" + wpmNote : "")`
-  and `wpmNote` already opens with `" · "`, so a Stream or Ocean catch reads
-  `1.3 lb · a little one · · 255 wpm`. Seen in `play-check.mjs` output at the
-  Stream. One character, on the surface the game cares most about, and unrelated
-  to the work that found it.
-
 ## World
 - More ponds/locations; weather; real day/night tied to clock.
 - Sound design pass beyond ambient loop.
@@ -503,14 +495,11 @@ thwarts may well not be worth four generations.
 loads any more. They are exactly the filenames the repaint prompt says to
 overwrite, which is the only reason they are still in the repo.
 
-## The wait puns are not location-aware (noticed during T2, 2026-09-04)
+## ✅ The wait puns are not location-aware (noticed during T2, fixed in #170)
 
-`play-check --loc ocean` surfaced "The trout are impressed" and "Don't trout
-yourself now" while fishing the Ocean. `PUNS.wait` and friends are one shared
-pool per *moment*, and only phrases and sentences are filtered by
-`save.location` (`buildPhrasePool`). So freshwater jokes land at sea.
-
-Small and purely flavour, and the fix is a choice rather than a bug: either tag
-the handful of species-specific puns with a location the way `PHRASES` already
-are, or just reword the offenders to be water-agnostic. The second is cheaper
-and probably right: the pools are meant to be groan-first, not accurate.
+Freshwater jokes landed at sea ("The trout are impressed", at the Ocean). Fixed
+the more expensive of the two ways this entry proposed: the pools moved to
+`data/puns.json` and every spot now owns the moments where the water matters,
+rather than the offending lines being reworded water-agnostic. The last trout at
+sea was caught by `tools/ui-check.mjs` afterwards, in the shared fly-cast praise
+that only two spots ever see.

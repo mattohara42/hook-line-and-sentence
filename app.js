@@ -1328,9 +1328,6 @@ function land(success) {
     const sizeNote = `: ${fish.name} (${weight} lb`
       + (cls === "lunker" ? ", a LUNKER!" : cls === "little" ? ", a little one" : "")
       + ")";
-    const wpmNote = (reelMode === "phrase" && wpm > 0)
-      ? ` · ${wpm} wpm` + (newWpmBest ? " ★ your best!" : "")
-      : "";
     const weightBestNote = (newBest && !firstCatch) ? " ★ new best!" : "";
     // F3: the same three facts the old corner message carried, on a card big
     // enough to read. A first catch is trivially a personal best, so it flies
@@ -1346,8 +1343,7 @@ function land(success) {
       files: art ? art.layers.map(L => L.file) : [],
       box: art ?? CONFIG.fish.placeholder,
       name: fish.name,
-      sub: `${weight} lb` + (cls === "lunker" ? " · a LUNKER!" : cls === "little" ? " · a little one" : "")
-           + (wpmNote ? " ·" + wpmNote.replace(" ★ your best!", "") : ""),
+      sub: logic.catchSubtitle(weight, cls, reelMode === "phrase" ? wpm : 0),
       pun, coins: amount, flags,
     });
     if (collectionOpen) renderCollection();

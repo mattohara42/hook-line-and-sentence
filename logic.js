@@ -145,15 +145,6 @@ export function earnsPrestige(prestigeCfg, fishId, alreadyHad) {
 // when the pool is too thin to fill minSize (e.g. stage 1's lone hard word).
 // Content-agnostic: works on any entry with a numeric `d`, so the phrase reel
 // (AD2) draws from data/phrases.json through the same difficulty machinery.
-// The game's voice, resolved for one moment at one spot (data/puns.json). Per
-// spot first, then the shared pool: a spot overrides the moments where the
-// water matters (the Ocean does not tell pond jokes) and inherits the rest.
-// Pure, so the fallback chain is testable without a browser; app.js picks a
-// line out of what comes back.
-export function punPool(pools, location, moment) {
-  return pools?.[location]?.[moment] ?? pools?.shared?.[moment] ?? [];
-}
-
 export function buildReelPool(entries, difficulty, minSize) {
   let floor = difficulty, pool;
   do {
@@ -162,6 +153,33 @@ export function buildReelPool(entries, difficulty, minSize) {
     floor--;
   } while (pool.length < minSize && floor >= 1);
   return pool;
+}
+
+// The catch card's subtitle: the weight, what size that counts as, and the reel
+// speed at a spot that measures one. A pure join, and it lives here rather than
+// in app.js because separators are exactly the kind of thing that goes wrong
+// quietly. It shipped reading "1.3 lb · a little one · · 255 wpm" at every
+// Stream and Ocean catch, because two of the pieces each carried the dot. One
+// separator, in one place, cannot do that.
+//
+// `wpm` is 0 at a spot that does not measure it (the Pond reels single words,
+// so there is no self-paced speed to report). Whether the speed is a personal
+// best is not in here: the card flies that as a FASTEST YET ribbon instead.
+export function catchSubtitle(weight, sizeClass, wpm = 0) {
+  const parts = [`${weight} lb`];
+  if (sizeClass === "lunker") parts.push("a LUNKER!");
+  else if (sizeClass === "little") parts.push("a little one");
+  if (wpm > 0) parts.push(`${wpm} wpm`);
+  return parts.join(" · ");
+}
+
+// The game's voice, resolved for one moment at one spot (data/puns.json). Per
+// spot first, then the shared pool: a spot overrides the moments where the
+// water matters (the Ocean does not tell pond jokes) and inherits the rest.
+// Pure, so the fallback chain is testable without a browser; app.js picks a
+// line out of what comes back.
+export function punPool(pools, location, moment) {
+  return pools?.[location]?.[moment] ?? pools?.shared?.[moment] ?? [];
 }
 
 // Split a reel string into ordered tokens for the token-at-a-time reel (AD2):
