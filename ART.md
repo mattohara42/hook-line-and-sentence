@@ -1433,6 +1433,19 @@ warning. The six rods already shipped went through the correct loop anyway, but
 their blocks carried the same line, and a shipped rod's re-cut is the control
 this repo reaches for (#128) — so all nine now name both commands.
 
+**And the tool now refuses the mistake rather than trusting the caller.** This
+was the third instance of one failure, `cut-angler.py` rewriting the pose's four
+committed paintings unasked: the optional source that defaulted to its own
+output was the first, a keyed PNG fed back in was the second, and both are
+guarded. Neither could catch this one, because a rod delivery and an angler
+delivery are the same kind of file — an opaque raw painting on magenta — so no
+property of the source separates them. Only intent does. The full-figure cut is
+therefore opt-in as `--figure`, and passing neither flag exits 1 naming both and
+listing the four files `--figure` would overwrite. Watched firing on all four
+paths: the bare command refuses and writes nothing, `--rod` still re-cuts
+byte-identically, `--figure` still performs the R4 cut, and both together
+refuse.
+
 
 #### ✅ `rod-stick-ocean` landed first attempt (2026-09-03), and it exposed a two-year-old defect
 
