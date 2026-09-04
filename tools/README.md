@@ -1,4 +1,4 @@
-# tools/: the art pipeline, a palette gate, two browser checks, and one word generator
+# tools/: the art pipeline, a palette gate, three browser checks, and one word generator
 
 **None of this is the game.** Nothing in here is loaded at runtime, nothing is a
 build step, and the no-build-step rule in `CLAUDE.md` is not bent by any of it.
@@ -8,7 +8,7 @@ a command instead of redoing the work by hand.
 
 Each tool's own docstring is the real reference, and it carries the reasoning
 and the numbers that set its constants. This file is the index, so a new session
-knows what exists before inventing a thirteenth one.
+knows what exists before inventing a fourteenth one.
 
 ## Which doc owns what
 
@@ -20,10 +20,10 @@ others should restate it.
 
 ```
 pip install Pillow numpy scipy          # every cut-*.py, gear-ref.py, hat-transplant.py, palette-check.py
-cd /tmp && npm install playwright       # spot-check.mjs and play-check.mjs
+cd /tmp && npm install playwright       # spot-check.mjs, play-check.mjs and ui-check.mjs
 ```
 
-Both `.mjs` verification tools also need the repo served
+All three `.mjs` verification tools also need the repo served
 (`python3 -m http.server 8080`) and are run as
 `NODE_PATH=/tmp/node_modules node tools/<tool>.mjs …`. Chromium is already on
 the box; do not let playwright download its own.
@@ -169,6 +169,39 @@ for loc in pond stream ocean; do for hat in straw bucket beanie souwester; do
     --out /tmp/grid-$loc-$hat.png
 done; done
 ```
+
+`ui-check.mjs [--out dir] [--only <viewport>] [--skip-behaviour]`
+
+The chrome: everything that floats above the pond. Two passes, both asserting,
+and it exits non-zero, which is what makes it different from the two above.
+
+**Pass 1 sweeps twelve viewport shapes** (320x568 up to 2560x1080, phones both
+ways up, a tablet, a dragged-narrow window, an ultrawide) and checks that no two
+overlays overlap. It exists because every collision the top-bar rework fixed was
+geometry, and not one of them could fail an assertion: the HUD chips sitting on
+the tackle box was visible on any phone for weeks, while the only tools that
+opened a browser shot a single 1280x720 window. Overlap is arithmetic on two
+rectangles, so it is checkable, everywhere, in about fifteen seconds.
+
+Two lists carry the judgement, and both are the point of the tool rather than a
+way around it. `ALLOWED` is the overlaps that are correct, each with its reason
+(a tray the kid opened is meant to cover things). `KNOWN` is the ones that are
+wrong and are not being fixed yet, each pointing at `BACKLOG.md`; they print as
+`known` instead of failing, so the sweep is green when the game is as good as it
+is meant to be today. If either list grows without a reason next to it, that is
+the tool rotting.
+
+**Pass 2 drives the top bar**: the tray takes clicks (including on its own
+padding, inside a `pointer-events: none` bar), each spot serves cast lines from
+its own pool with the literal instruction still in them, the jokes toggle
+dismisses and persists without taking the instruction with it, and a real catch
+puts a card up with the pun bubble stood down. The card states in pass 1 are
+synthesised, because playing twelve real catches costs three minutes; the two
+real catches here are what prove the synthetic shape is the honest one.
+
+It also fails on any page error or any `assets/` request that 404s, which is
+free with a browser already open and is the class of bug that hides best: an
+unregistered PNG becomes an invisible layer and nothing else goes wrong.
 
 ## Not art pipeline
 

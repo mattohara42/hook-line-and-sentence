@@ -257,11 +257,8 @@ function graduateLocations() {
 //
 // House rule (CLAUDE.md): cast lines always keep the literal instruction, which
 // is exactly why the jokes toggle below cannot reach them. See setPun.
-function puns(moment) {
-  return PUN_POOLS[save?.location]?.[moment] ?? PUN_POOLS.shared?.[moment] ?? [];
-}
 function punFor(moment) {
-  const pool = puns(moment);
+  const pool = logic.punPool(PUN_POOLS, save?.location, moment);
   return pool.length ? pick(pool) : "";
 }
 
@@ -333,6 +330,26 @@ function fitScene() {
 }
 window.addEventListener("resize", fitScene);
 fitScene();
+
+// The catch card centres in the band between the top bar and #word, so the band
+// has to start below whatever the bar actually is. Its height is not a constant:
+// the chips wrap at narrow widths, and under 620px the bar stacks the HUD above
+// the tackle box. Measured and published as --card-top, the same shape as
+// fitScene/fitGuide, because the guessed 52px put the card under the tackle box
+// on a 320px phone. Above 620px only the chips are in a centred card's way (the
+// tackle box is out at the right edge), which is why the two modes differ.
+const topbarEl = $("topbar"), toprightEl = $("topright");
+function fitTopbar() {
+  const stacked = getComputedStyle(topbarEl).flexDirection === "column-reverse";
+  const clear = (stacked ? toprightEl : $("hud")).getBoundingClientRect().bottom;
+  document.documentElement.style.setProperty("--card-top", Math.round(clear + 12) + "px");
+}
+// an observer rather than call sites: the bar also changes height when a chip's
+// number gets wider (999 -> 1000 coins) or the title crosses its breakpoint,
+// and neither of those is a resize
+new ResizeObserver(fitTopbar).observe(toprightEl);
+window.addEventListener("resize", fitTopbar);
+fitTopbar();
 
 const pick = a => a[Math.floor(Math.random() * a.length)];
 const rand = (a, b) => a + Math.random() * (b - a);

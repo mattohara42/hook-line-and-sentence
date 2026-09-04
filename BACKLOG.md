@@ -22,13 +22,30 @@ Ideas captured during design/build. Nothing here expands the current milestone.
   is why the pun bubble has to shrink under `max-height: 520px` and why `#word`
   now outranks the top bar in z-order. A word box positioned as a share of the
   free band (the way `#card-slot` already is) would take the constraint away.
-- **`tools/play-check.mjs` only ever shoots 1280x720.** Every overlap the top-bar
-  rework fixed was a phone-width bug, and none of them could have been caught by
-  the repo's own tool. A `--w/--h` flag is a few lines.
+- **✅ Nothing swept viewports (fixed 2026-09-04).** `tools/ui-check.mjs` now
+  checks twelve shapes and drives the top bar. `play-check.mjs` still shoots
+  1280x720 only, which is fine: it owns the beats of a catch, not the chrome.
+- **A phone on its side has nowhere to put the celebrations, and the catch card
+  breaks there.** Numbers, from `ui-check.mjs` at 740x360: the card's band runs
+  from the top bar down to `#word`'s box, which is pinned 250px up, so the band
+  is *negative* and the card collapses to a 24px sliver. The badge toast's only
+  free strip (between the keyboard's top edge at 201px and the word's bottom at
+  250px) is also where the unlock banner lands at `top: 40%`. Both are listed in
+  that tool's `KNOWN` list so the sweep stays honest. The fix is a landscape
+  pass (where `#word` sits, and a compact card), not a nudge: it is a design
+  call about a shape the game has never been laid out for.
 - **The badge toast was landing on the HUD chips at phone width** (top-centre
   versus a right-aligned HUD that wraps across most of the row). Moved below the
   card band under 620px rather than redesigned; it is still a nowrap pill on a
   wide screen and a wrapping one on a narrow.
+
+## Found while testing, not fixed (2026-09-04)
+- **The catch card prints a double separator on every phrase-mode catch.**
+  `app.js` builds the card's subtitle as `… + (wpmNote ? " ·" + wpmNote : "")`
+  and `wpmNote` already opens with `" · "`, so a Stream or Ocean catch reads
+  `1.3 lb · a little one · · 255 wpm`. Seen in `play-check.mjs` output at the
+  Stream. One character, on the surface the game cares most about, and unrelated
+  to the work that found it.
 
 ## World
 - More ponds/locations; weather; real day/night tied to clock.

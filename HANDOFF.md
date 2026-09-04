@@ -10,13 +10,13 @@ something is the way it is, `git log` and the PR body have it in full.
 | | |
 |---|---|
 | **Active milestone** | **T4: junk art**, `BUILD_PLAN_TACKLE.md`. Prompt written, **waiting on one generation from Matt**. T1–T3 shipped 2026-09-04. |
-| **Last change** | **The top bar**, 2026-09-04, outside the epic (Matt asked directly). Both corners are one flex row now, the puns are big, dismissable and per spot. See below. |
+| **Last change** | **The top bar** (#170) and then **the tests** (2026-09-04), outside the epic. Both corners are one flex row, the puns are big, dismissable and per spot, and `tools/ui-check.mjs` now sweeps twelve viewport shapes. |
 | **R7** | ✅ **21 of 21 gear pieces**, `BUILD_PLAN_REFRESH.md`. Both done-when clauses met: a bought hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand at every spot. |
 | **The epic** | **Tackle & Junk (T1–T4)**, opened 2026-09-04: the bobber/fly/nothing per spot, and junk trophies plus the last pixel-era art. |
 | **The refresh** | ✅ **R1–R7 all shipped.** Every angler, vessel, background, fish and shop item is painted in the new direction. |
 | **Catch Feel** | ✅ **F1–F5 all shipped 2026-09-03**, `BUILD_PLAN_FEEL.md`. One thing left and it is Matt's: play it. |
 | `origin/main` | clean, nothing unpushed |
-| Tests | 104/104 (`npm test`) |
+| Tests | 109/109 (`npm test`), plus `tools/ui-check.mjs` for the chrome (needs a served repo + playwright) |
 | Open PRs | **#55 only**: close it unmerged, see below |
 | Deploys | Netlify is **manual**; merging to `main` does not go live |
 
@@ -26,14 +26,22 @@ something is the way it is, `git log` and the PR body have it in full.
 all that is outstanding, none of it code: the play-tests are Matt's, and the
 carried debts are decisions rather than bugs.
 
-**The top bar was reworked on 2026-09-04** (the tackle box sat on the HUD chips
-on any phone; the game's voice was 12px of bare text). `#topbar` is now one flex
-row holding both corners, and it stacks below 620px rather than overlapping. The
-pun pools moved to `data/puns.json` and are **per spot**, and the bubble can be
-dismissed. **Two knobs are Matt's to judge, both one line:** the bubble's type
-size (`#status`, `clamp(17px, 2.4vw, 22px)`) and how many of the three spots'
-lines actually land as jokes. The rules that hold it together are in
-`CLAUDE.md`.
+**The top bar was reworked on 2026-09-04** (#170: the tackle box sat on the HUD
+chips on any phone; the game's voice was 12px of bare text). `#topbar` is one
+flex row holding both corners and it stacks below 620px; the pun pools moved to
+`data/puns.json` and are **per spot**; the bubble can be dismissed. **Two knobs
+are Matt's to judge, both one line:** the bubble's type size (`#status`,
+`clamp(17px, 2.4vw, 22px)`) and how many of the three spots' lines land as
+jokes. The rules that hold it together are in `CLAUDE.md`.
+
+**Then the tests were reviewed, because that PR was checked at four viewports by
+hand.** `tools/ui-check.mjs` is the answer: twelve shapes swept for overlapping
+overlays, then a pass that drives the top bar. It found seven more real
+collisions the hand check had missed, all now fixed, at sizes from a 320px phone
+to a tablet. Three node tests came with it, for the classes of bug that produce
+no error at all: an id `app.js` reaches for that the markup does not have, a
+`var(--typo)` that silently renders nothing, and config naming a painting that
+was never delivered. `logic.js` also has a coverage floor now.
 
 **R5's last debt is paid too: the four shop hulls work** (2026-09-04). They are
 CSS tints of the Pond rowboat's own painting, chosen over four repaints after
@@ -115,10 +123,11 @@ ever needed again, `[STYLE]` is where to aim.
   a one-line revert (`CONFIG.fish.approach.spawn.dy`) if you liked it deeper.
 - **A7 fight beats have never been tested on a real kid.**
   `CONFIG.fight.clauseRunMs` (550) and `segmentRunMs` (900) were picked by feel.
-- **The new top bar wants a play on a real phone** (2026-09-04). It was checked
-  at 360x640, 390x844, 740x360 and 1280x720 in a real browser, but not with a
-  thumb. The compromise to look at: a phone held sideways has ~55px of sky, so
-  the pun bubble shrinks there and `#word` outranks it if they still meet.
+- **The new top bar wants a play on a real phone** (2026-09-04). Swept at twelve
+  viewport shapes by `ui-check.mjs`, but never touched with a thumb. The known
+  limit to look at: a phone held sideways has ~55px of sky, and the catch card
+  does not fit there at all (`BACKLOG.md` has the numbers, and it is a design
+  call rather than a bug to nudge).
 - **The Firebase blast-radius decision**, in `BACKLOG.md`.
 - **The whole Catch Feel epic wants a play** (F1–F5, 2026-09-03). Netlify is
   manual, so none of it is live. Four things to look at, each one line in
@@ -138,8 +147,13 @@ ever needed again, `[STYLE]` is where to aim.
 
 - **Verify visual and motion claims in a real browser, past the startup modal.**
   `tools/spot-check.mjs` takes one still of a spot with its layer stack printed;
-  `tools/play-check.mjs` plays a whole catch and shoots every beat. Serve the
-  repo first, and both want playwright on `NODE_PATH`.
+  `tools/play-check.mjs` plays a whole catch and shoots every beat;
+  `tools/ui-check.mjs` sweeps the chrome across twelve viewports and asserts.
+  Serve the repo first, and all three want playwright on `NODE_PATH`.
+- **A layout bug is arithmetic, so stop looking at it and measure it.** Four
+  hand-checked viewports missed seven real collisions that a rectangle-overlap
+  loop found in fifteen seconds, including a catch card under the tackle box on
+  a 320px phone.
 - **Draw what you measured before believing it.** R6 shipped four bugs past
   green assertions. The muskie was checked by painting its configured mouth on
   the live scene next to the line's own endpoint: they coincided, which is the
@@ -179,7 +193,7 @@ ever needed again, `[STYLE]` is where to aim.
 | `ANIMATION.md` | how the cast, line and reel **move** |
 | `ART.md` | the art **pipeline** and the open requests |
 | `GEMINI_NOTES.md` | how the **generator** behaves, and how to salvage it |
-| `tools/README.md` | **what the pipeline tools are**, and the deps a fresh box lacks |
+| `tools/README.md` | **what the pipeline tools are** (and `ui-check.mjs`), and the deps a fresh box lacks |
 | `BACKLOG.md` | everything deliberately not being done yet |
 | `FIRESTORE.md` | the sync contract |
 | this file | state and pointers, nothing else |
