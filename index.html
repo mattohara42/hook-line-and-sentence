@@ -8,8 +8,6 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>HOOK, LINE AND SENTENCE</h1>
-
   <div id="scene-viewport"><div id="scene-frame"><div id="scene">
     <!-- R3: the Pond's painted background, in the three parallax planes
          ART_DIRECTION.md calls for. They are elements rather than stacked
@@ -63,7 +61,6 @@
   <!-- text/UI moments live as fixed-size viewport overlays, not inside the
        scaled #scene-frame canvas: scaling them up with the background art
        made them huge enough to collide with the hud/guide overlays -->
-  <div id="status" aria-live="polite"></div>
   <div id="word"></div>
   <!-- F3: the post-catch card. One surface for a catch, a junk pull and an
        escape, raised to a plaque when a species is new or a record falls. It
@@ -86,27 +83,49 @@
 
   <div id="unlock-banner"><div class="banner-title">NEW LETTERS UNLOCKED!</div><div class="letters"></div></div>
 
-  <div id="hud">
-    <span class="chip">CAUGHT <b id="caught">0</b></span>
-    <span class="chip coins">COINS <b id="coins">0</b></span>
-    <span class="chip">ESCAPED <b id="escaped">0</b></span>
-    <span class="chip">REEL <b id="dist">–</b></span>
-  </div>
+  <!-- The top strip. Both corners live in ONE flex row so they can never be
+       laid on top of each other: the tackle box used to be a separately-fixed
+       34px square at top:46px, which sat squarely on the second row of HUD
+       chips as soon as they wrapped (any phone). Now the corners are columns
+       in a row that stacks the left one BELOW the right one when the viewport
+       is too narrow to hold both, instead of overlapping them. -->
+  <div id="topbar">
+    <div id="topleft">
+      <h1>HOOK, LINE AND SENTENCE</h1>
+      <!-- the game's voice: one line at a time, popped in, and dismissable.
+           #status keeps its id (and its aria-live) because it is the same line
+           it always was; the bubble around it is what got big. -->
+      <div id="pun" class="empty">
+        <div id="status" aria-live="polite"></div>
+        <button id="pun-dismiss" type="button" aria-label="Hide the jokes" title="Hide the jokes" hidden>✕</button>
+      </div>
+    </div>
 
-  <!-- the corner "tackle box": one button that opens the menu tray below it,
-       so the corner stays calm until the kid reaches for their gear -->
-  <button id="tacklebox" aria-label="Tackle box menu" aria-expanded="false" aria-controls="controls">🧰</button>
-  <div id="controls" hidden>
-    <span id="who"></span>
-    <div id="locations" hidden></div>
-    <button class="toggle-btn nav" id="collection-btn">🎣 Collection</button>
-    <button class="toggle-btn nav" id="shop-btn">🪝 Bait &amp; tackle</button>
-    <button class="toggle-btn nav" id="journal-btn">📖 Journal</button>
-    <button class="toggle-btn nav" id="speed-btn">⏱️ Quick cast</button>
-    <div class="ctrl-row"><span>✋ Fingers</span><button class="toggle-btn active" id="guide-toggle">ON</button></div>
-    <div class="ctrl-row"><span>🔊 Sound</span><button class="toggle-btn active" id="sound-toggle">ON</button></div>
-    <button class="toggle-btn nav" id="progress-btn">👓 Grown-ups</button>
-    <button class="toggle-btn nav" id="switch-btn">🔄 Switch kid</button>
+    <div id="topright">
+      <div id="hud">
+        <span class="chip">CAUGHT <b id="caught">0</b></span>
+        <span class="chip coins">COINS <b id="coins">0</b></span>
+        <span class="chip">ESCAPED <b id="escaped">0</b></span>
+        <span class="chip">REEL <b id="dist">–</b></span>
+      </div>
+
+      <!-- the corner "tackle box": one button that opens the menu tray below
+           it, so the corner stays calm until the kid reaches for their gear -->
+      <button id="tacklebox" aria-label="Tackle box menu" aria-expanded="false" aria-controls="controls">🧰</button>
+      <div id="controls" hidden>
+        <span id="who"></span>
+        <div id="locations" hidden></div>
+        <button class="toggle-btn nav" id="collection-btn">🎣 Collection</button>
+        <button class="toggle-btn nav" id="shop-btn">🪝 Bait &amp; tackle</button>
+        <button class="toggle-btn nav" id="journal-btn">📖 Journal</button>
+        <button class="toggle-btn nav" id="speed-btn">⏱️ Quick cast</button>
+        <div class="ctrl-row"><span>✋ Fingers</span><button class="toggle-btn active" id="guide-toggle">ON</button></div>
+        <div class="ctrl-row"><span>😄 Jokes</span><button class="toggle-btn active" id="pun-toggle">ON</button></div>
+        <div class="ctrl-row"><span>🔊 Sound</span><button class="toggle-btn active" id="sound-toggle">ON</button></div>
+        <button class="toggle-btn nav" id="progress-btn">👓 Grown-ups</button>
+        <button class="toggle-btn nav" id="switch-btn">🔄 Switch kid</button>
+      </div>
+    </div>
   </div>
 
   <div id="guide-panel"><div id="guide"></div></div>

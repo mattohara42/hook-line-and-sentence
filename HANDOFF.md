@@ -10,12 +10,13 @@ something is the way it is, `git log` and the PR body have it in full.
 | | |
 |---|---|
 | **Active milestone** | **T4: junk art**, `BUILD_PLAN_TACKLE.md`. Prompt written, **waiting on one generation from Matt**. T1–T3 shipped 2026-09-04. |
+| **Last change** | **The top bar**, 2026-09-04, outside the epic (Matt asked directly). Both corners are one flex row now, the puns are big, dismissable and per spot. See below. |
 | **R7** | ✅ **21 of 21 gear pieces**, `BUILD_PLAN_REFRESH.md`. Both done-when clauses met: a bought hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand at every spot. |
 | **The epic** | **Tackle & Junk (T1–T4)**, opened 2026-09-04: the bobber/fly/nothing per spot, and junk trophies plus the last pixel-era art. |
 | **The refresh** | ✅ **R1–R7 all shipped.** Every angler, vessel, background, fish and shop item is painted in the new direction. |
 | **Catch Feel** | ✅ **F1–F5 all shipped 2026-09-03**, `BUILD_PLAN_FEEL.md`. One thing left and it is Matt's: play it. |
 | `origin/main` | clean, nothing unpushed |
-| Tests | 95/95 (`npm test`) |
+| Tests | 104/104 (`npm test`) |
 | Open PRs | **#55 only**: close it unmerged, see below |
 | Deploys | Netlify is **manual**; merging to `main` does not go live |
 
@@ -24,6 +25,15 @@ something is the way it is, `git log` and the PR body have it in full.
 **Nothing is half-finished.** Two epics closed in two days and the list below is
 all that is outstanding, none of it code: the play-tests are Matt's, and the
 carried debts are decisions rather than bugs.
+
+**The top bar was reworked on 2026-09-04** (the tackle box sat on the HUD chips
+on any phone; the game's voice was 12px of bare text). `#topbar` is now one flex
+row holding both corners, and it stacks below 620px rather than overlapping. The
+pun pools moved to `data/puns.json` and are **per spot**, and the bubble can be
+dismissed. **Two knobs are Matt's to judge, both one line:** the bubble's type
+size (`#status`, `clamp(17px, 2.4vw, 22px)`) and how many of the three spots'
+lines actually land as jokes. The rules that hold it together are in
+`CLAUDE.md`.
 
 **R5's last debt is paid too: the four shop hulls work** (2026-09-04). They are
 CSS tints of the Pond rowboat's own painting, chosen over four repaints after
@@ -105,6 +115,10 @@ ever needed again, `[STYLE]` is where to aim.
   a one-line revert (`CONFIG.fish.approach.spawn.dy`) if you liked it deeper.
 - **A7 fight beats have never been tested on a real kid.**
   `CONFIG.fight.clauseRunMs` (550) and `segmentRunMs` (900) were picked by feel.
+- **The new top bar wants a play on a real phone** (2026-09-04). It was checked
+  at 360x640, 390x844, 740x360 and 1280x720 in a real browser, but not with a
+  thumb. The compromise to look at: a phone held sideways has ~55px of sky, so
+  the pun bubble shrinks there and `#word` outranks it if they still meet.
 - **The Firebase blast-radius decision**, in `BACKLOG.md`.
 - **The whole Catch Feel epic wants a play** (F1–F5, 2026-09-03). Netlify is
   manual, so none of it is live. Four things to look at, each one line in

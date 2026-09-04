@@ -114,24 +114,20 @@ body {
   color: var(--ink);
   overflow: hidden;
 }
+/* The title sits in #topleft above the pun bubble. It used to be separately
+   fixed and needed two media queries to keep it off the HUD; the top bar's
+   layout does that job now, so it only shrinks for its own sake. */
 h1 {
-  position: fixed; top: 10px; left: 14px; z-index: 5;
   font-family: var(--display); font-size: 10px; letter-spacing: 0.1em; color: var(--dim);
   background: rgba(var(--umber-rgb),0.45); padding: 5px 9px; border-radius: 6px;
-  pointer-events: none;
+  align-self: flex-start; pointer-events: none;
 }
-/* The title is top-left and #hud is top-right, so a long title runs into the
-   HUD on a narrow window. "HOOK, LINE AND SENTENCE" is ~1.5x the width of the
-   old "TYPING FISHING", which pushed that collision up from ~380px to ~500px,
-   so shrink the chip rather than let it overlap. */
 @media (max-width: 560px) {
   h1 { font-size: 8px; letter-spacing: 0.04em; padding: 4px 7px; }
 }
-/* Below ~400px even the shrunk chip runs into the HUD (the old short title did
-   too, by a few px: this is the pre-existing overlap, now fixed rather than
-   inherited). The title is decorative: dim, pointer-events:none, and the game
-   is already on screen. Drop it and give the HUD the room. */
-@media (max-width: 400px) {
+/* the pun is the voice of the game and the title is decoration: on a phone the
+   room goes to the pun */
+@media (max-width: 430px) {
   h1 { display: none; }
 }
 
@@ -571,19 +567,64 @@ h1 {
 /* Text/UI moments: fixed-size viewport overlays (not scaled with the
    #scene-frame canvas; that was blowing status/word text up 2-3x and
    colliding with the hud/guide overlays). */
-/* anchored left/below the title rather than centered across the viewport,
-   centering collided with #hud/#controls whenever their actual (content-
-   driven, not vw-capped) width ate into the centered zone on narrower
-   windows */
+/* ---- the pun bubble (top-left) ----
+   The game's voice used to be a 12px line of bare text tucked under the title,
+   which is a strange size for the only thing on screen that talks to the kid.
+   It is a card now, at roughly twice the type size, and it POPS in: a new line
+   is a small event, not a silent text swap. The bubble is only as wide as it
+   needs to be (fit-content) so a four-word line does not draw a banner across
+   the sky, and it disappears entirely when there is nothing to say. */
+#pun {
+  display: flex; align-items: flex-start; gap: 6px;
+  width: fit-content; max-width: min(100%, 34ch);
+  padding: 9px 12px 10px 14px; border-radius: 16px 16px 16px 4px;
+  background: rgba(var(--umber-rgb),0.72);
+  border: 1px solid rgba(var(--ink-rgb),0.14);
+  border-left: 3px solid rgba(var(--gold-rgb),0.75);
+  box-shadow: 0 8px 22px rgba(var(--shadow-rgb),0.38);
+  backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+  transform-origin: 12% 0;
+}
+#pun.empty { display: none; }
+/* The card is the payoff and it says "type to cast again" itself, so while one
+   is up the bubble stands down: on a phone the two were landing on top of each
+   other (the bubble covered the card's NEW SPECIES ribbon), and even where they
+   fit, two instructions on one screen is one too many. */
+#pun.behind-card { display: none; }
 #status {
-  position: fixed; top: 34px; left: 14px; max-width: 440px;
-  z-index: 4; text-align: left; pointer-events: none;
-  font-family: var(--display); font-size: 12px; color: var(--ink);
-  text-shadow: 0 2px 8px rgba(var(--umber-rgb),0.8); letter-spacing: 0.06em;
+  font-family: var(--display); font-weight: 600;
+  font-size: clamp(17px, 2.4vw, 22px); line-height: 1.28;
+  color: var(--ink); letter-spacing: 0.02em;
+  text-shadow: 0 2px 8px rgba(var(--umber-rgb),0.8);
+}
+/* the way out, for a kid who has heard enough. It only ever appears on a line
+   that is safe to lose (app.js, setPun): never on the cast prompt. */
+#pun-dismiss {
+  flex: none; margin: -2px -4px 0 0;
+  width: 26px; height: 26px; padding: 0; border-radius: 50%;
+  font-family: var(--display); font-size: 13px; line-height: 1;
+  color: var(--dim); background: rgba(var(--ink-rgb),0.08);
+  border: 1px solid rgba(var(--ink-rgb),0.14); cursor: pointer;
+}
+#pun-dismiss:hover { color: var(--ink); background: rgba(var(--ink-rgb),0.18); }
+#pun-dismiss:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+#pun-dismiss[hidden] { display: none; }
+/* the pop: overshoot, a little tilt, and a settle. Re-triggered per line by
+   popPun() in app.js, and skipped entirely under prefers-reduced-motion (which
+   app.js checks, so the class is simply never added). */
+#pun.pop { animation: punpop 460ms cubic-bezier(0.22,1,0.36,1); }
+@keyframes punpop {
+  0%   { opacity: 0; transform: translate(-10px,-12px) scale(0.62) rotate(-5deg); }
+  45%  { opacity: 1; transform: translate(0,2px) scale(1.08) rotate(1.6deg); }
+  70%  { transform: translate(0,0) scale(0.97) rotate(-0.8deg); }
+  100% { opacity: 1; transform: none; }
 }
 #word {
   position: fixed; left: 50%; bottom: 250px; transform: translateX(-50%);
-  z-index: 4;
+  /* above the top bar (6): on a short landscape screen the pun bubble and the
+     word box are within a few px of each other, and the word is the one thing
+     that has to stay readable */
+  z-index: 7;
   font-size: 36px; letter-spacing: 0.14em; min-width: 120px; min-height: 54px;
   padding: 4px 22px; border-radius: 27px; text-align: center;
   background: rgba(var(--umber-rgb),0.5);
@@ -729,9 +770,48 @@ h1 {
 @keyframes meterpulse { from { filter: brightness(1); } to { filter: brightness(1.6); } }
 
 /* ============ OVERLAY CHROME (floats above the full-screen pond) ============ */
+/* ---- the top bar: both corners, one row ----
+   Nothing in here is positioned against the viewport individually any more.
+   The row hands the left column whatever the right column does not need, and
+   below 620px it stacks (column-reverse: the HUD keeps the corner, the pun
+   drops underneath it with the full width). An overlap is not something this
+   layout can express, which is the point: the old one could, and did. */
+#topbar {
+  position: fixed; top: 12px; left: 14px; right: 14px; z-index: 6;
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  pointer-events: none;      /* the sky behind it stays clickable */
+}
+/* the chips and the title stay click-through (the sky behind them is scenery
+   worth not blocking); everything you can press does not */
+#topbar button, #controls { pointer-events: auto; }
+#topleft {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 7px;
+  min-width: 0; max-width: 54%;
+}
+#topright {
+  position: relative;        /* #controls hangs off this, so the tray follows
+                                the tackle box instead of guessing a `top` */
+  display: flex; flex-direction: column; align-items: flex-end; gap: 8px;
+  flex: none; max-width: 46%;
+}
 #hud {
-  position: fixed; top: 12px; right: 14px; z-index: 5;
-  display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; max-width: 62vw;
+  display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end;
+}
+@media (max-width: 620px) {
+  #topbar { flex-direction: column-reverse; align-items: stretch; gap: 10px; }
+  #topleft, #topright { max-width: 100%; }
+}
+/* A phone on its side: the whole game is squeezed between the HUD and the
+   keyboard, and #word (at bottom: 250px) is only ~55px from the top. The
+   bubble gives the room back rather than growing into the one thing a kid has
+   to be able to read. Where they still meet on a long sentence, #word wins:
+   see its z-index. */
+@media (max-height: 520px) {
+  h1 { display: none; }
+  #topbar { top: 8px; }
+  #pun { padding: 6px 10px 7px 12px; border-radius: 12px 12px 12px 4px; max-width: min(100%, 26ch); }
+  #status { font-size: 15px; }
+  #pun-dismiss { width: 22px; height: 22px; font-size: 11px; }
 }
 .chip {
   font-family: var(--display); font-size: 11px; color: var(--dim);
@@ -744,8 +824,9 @@ h1 {
 
 /* the tackle box: a single always-visible button that opens #controls */
 #tacklebox {
-  position: fixed; top: 46px; right: 14px; z-index: 6;
-  width: 34px; height: 34px; padding: 0; font-size: 18px; line-height: 1;
+  /* 44px is the smallest thing a thumb hits reliably, and this is the only
+     way into the shop, the journal and every spot in the game */
+  width: 44px; height: 44px; padding: 0; font-size: 24px; line-height: 1;
   background: rgba(var(--umber-rgb),0.55); border: 1px solid rgba(var(--ink-rgb),0.15);
   border-radius: 8px; cursor: pointer;
   backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
@@ -757,18 +838,24 @@ h1 {
 
 /* the menu tray drops out of the tackle box, top-right, as a vertical stack */
 #controls {
-  position: fixed; top: 88px; right: 14px; z-index: 6;
-  display: flex; flex-direction: column; align-items: stretch; gap: 6px;
-  width: 180px; padding: 10px;
+  /* absolutely positioned inside #topright rather than fixed at a guessed
+     `top`: it now opens under the tackle box wherever the chips have pushed
+     it to, and opening it never shoves the pun bubble down the screen. */
+  position: absolute; top: calc(100% + 6px); right: 0; z-index: 6;
+  display: flex; flex-direction: column; align-items: stretch; gap: 7px;
+  width: 208px; max-height: calc(100vh - 190px); overflow-y: auto; padding: 11px;
   background: rgba(var(--umber-rgb),0.82); border: 1px solid rgba(var(--ink-rgb),0.15);
   border-radius: 10px; font-size: 12px; color: var(--dim);
   backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
 }
 #controls[hidden] { display: none; }
-#controls .toggle-btn.nav { text-align: left; }
+/* the tray is a menu on a touchscreen, so its rows are sized for a finger
+   rather than for the corner of a desktop window */
+#controls .toggle-btn.nav { text-align: left; font-size: 12px; padding: 9px 12px; }
+#controls .ctrl-row .toggle-btn { min-width: 46px; padding: 7px 10px; font-size: 11px; }
 .ctrl-row {
-  display: flex; align-items: center; justify-content: space-between;
-  font-family: var(--display); font-size: 11px; color: var(--ink); padding-left: 2px;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  font-family: var(--display); font-size: 12px; color: var(--ink); padding-left: 2px;
 }
 #who {
   font-family: var(--display); font-size: 11px; color: var(--gold);
@@ -897,6 +984,13 @@ h1 {
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 #badge-toast.show { transform: translate(-50%, 0); opacity: 1; }
+@media (max-width: 620px) {
+  #badge-toast {
+    top: auto; bottom: 316px;             /* clear of #word, below the card band */
+    transform: translate(-50%, 140%);     /* so it rises into place, not drops */
+    max-width: calc(100vw - 28px); white-space: normal; text-align: center;
+  }
+}
 #badge-toast b { color: var(--gold); }
 #badge-toast .badge-medal { font-size: 15px; display: inline; margin: 0; }
 

@@ -76,6 +76,12 @@ older still and is load-bearing for the pre-profiles migration.
   for shapes CSS can't express: R1's curved fishing line is one `<path>` in the
   scene. That is still DOM, still no build step; it is not the canvas door
   opening.
+- **The top bar (`#topbar`) is one flex row and both corners live in it.**
+  Nothing up there is positioned against the viewport on its own any more: that
+  is what let a fixed 34px tackle box land on the HUD chips the moment they
+  wrapped. Below 620px the row stacks (`column-reverse`) instead of overlapping.
+  Anything new in a top corner goes in that row, not into a fresh `position:
+  fixed`.
 - **The scene has three planes** (V1, and it survives the art refresh):
   background art, the mid plane (rig, fish), and `#surface`: the water painted
   *in front* of the mid plane. New scene elements have to pick a side of the
@@ -95,8 +101,15 @@ older still and is load-bearing for the pre-profiles migration.
 - Word-at-a-time reeling with ~450ms pause (prototype-tested)
 - Tension reacts to errors only, never speed: slow typing is always safe
 - Lowercase only; no visible timers/WPM for kids; stats logged silently
-- Game voice is dad jokes/puns from per-moment pools; cast prompts always
-  keep the literal instruction
+- Game voice is dad jokes/puns from per-moment pools, and the pools are
+  **per spot** and live in `data/puns.json`: the Ocean does not tell pond
+  jokes, and a moment a spot does not override falls back to `shared`. Add a
+  joke to the JSON, never to `app.js`. Two rules are tested: **cast prompts
+  always keep the literal instruction** (at every spot), and every spot can
+  serve every moment `app.js` asks for. A kid can turn the jokes off (the "x"
+  on the bubble, or the tackle box), which silences **flavour only**: the cast
+  and wiggle prompts are instructions and always show. That is the whole reason
+  `setStatus` and `setPun` are two functions.
 - Stage 1 (home row) is short by design: 37 words available, first unlock
   at 3 catches
 - **Quick Cast is the one mode outside the progression** and is meant to stay
