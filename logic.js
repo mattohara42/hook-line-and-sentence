@@ -385,3 +385,23 @@ export function revealAt(progress, startAt, fullAt = 1) {
   if (f <= s) return progress >= f ? 1 : 0;
   return Math.min(1, Math.max(0, (progress - s) / (f - s)));
 }
+
+// S1: which soundscape a spot gets. Same fallback shape as punPool above: a
+// spot the game grows later, with no entry of its own, gets `shared` rather
+// than silence, and a registry with nothing in it at all returns null so the
+// caller can skip building a bed.
+export function ambienceFor(ambience, location, fallbackKey = "shared") {
+  return ambience?.[location] ?? ambience?.[fallbackKey] ?? null;
+}
+
+// The gap before an ambient voice speaks again. Random inside `everyMs` so a
+// frog never lands on a beat, which is the whole difference between a place
+// and a loop. A malformed or missing range is a long silence rather than a
+// zero-delay timer spinning the CPU.
+export function nextVoiceDelayMs(everyMs, rnd = Math.random) {
+  const [lo, hi] = Array.isArray(everyMs) ? everyMs : [everyMs, everyMs];
+  const min = Number.isFinite(lo) && lo > 0 ? lo : null;
+  if (min == null) return 60000;
+  const max = Number.isFinite(hi) && hi > min ? hi : min;
+  return Math.round(min + rnd() * (max - min));
+}

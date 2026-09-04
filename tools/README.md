@@ -1,4 +1,4 @@
-# tools/: the art pipeline, a palette gate, three browser checks, and one word generator
+# tools/: the art pipeline, a palette gate, four browser checks, and one word generator
 
 **None of this is the game.** Nothing in here is loaded at runtime, nothing is a
 build step, and the no-build-step rule in `CLAUDE.md` is not bent by any of it.
@@ -8,7 +8,7 @@ a command instead of redoing the work by hand.
 
 Each tool's own docstring is the real reference, and it carries the reasoning
 and the numbers that set its constants. This file is the index, so a new session
-knows what exists before inventing a fourteenth one.
+knows what exists before inventing a fifteenth one.
 
 ## Which doc owns what
 
@@ -20,10 +20,10 @@ others should restate it.
 
 ```
 pip install Pillow numpy scipy          # every cut-*.py, gear-ref.py, hat-transplant.py, palette-check.py
-cd /tmp && npm install playwright       # spot-check.mjs, play-check.mjs and ui-check.mjs
+cd /tmp && npm install playwright       # spot-check, play-check, ui-check, audio-check
 ```
 
-All three `.mjs` verification tools also need the repo served
+All four `.mjs` verification tools also need the repo served
 (`python3 -m http.server 8080`) and are run as
 `NODE_PATH=/tmp/node_modules node tools/<tool>.mjs …`. Chromium is already on
 the box; do not let playwright download its own.
@@ -202,6 +202,35 @@ real catches here are what prove the synthetic shape is the honest one.
 It also fails on any page error or any `assets/` request that 404s, which is
 free with a browser already open and is the class of bug that hides best: an
 unregistered PNG becomes an invisible layer and nothing else goes wrong.
+
+`audio-check.mjs [--secs n] [--loc <spot>] [--out dir]`
+
+The sound, which until S1 was one bed of filtered noise at all three spots and
+was described, accurately, as white noise. It plays the game at each spot for
+`--secs` and writes two files per spot: a `.webm` you can actually listen to,
+and a **spectrogram PNG**, because the ambience is procedural and an assertion
+can only ever reach the numbers that went in. On the picture a plop is a narrow
+spike, a frog is a doubled one, a dragonfly is a wide low blob, a brook is a
+dense scatter along the bottom and a swell is a bright column rising through
+the whole band: you can see whether a voice ever spoke without hearing it.
+
+It taps the master bus by subclassing `AudioContext` in an init script, so the
+game has no test-only code in it: app.js connects to `actx.destination` and the
+subclass answers with a gain of its own. The same init script counts the
+oscillators and noise sources the page builds, which is where the assertions
+come from. Three things fail it: a page error (a synth that throws is exactly
+the bug this exists for, and it is silent in every other way, since the bed
+keeps playing), a spot where nothing reached the bus at all, and a spot where
+**nothing spoke over the bed** in the whole run.
+
+That last number is a count of sources built, not a reading of the mix, and
+that is worth knowing before trying to improve it. Three attempts to get it out
+of the master bus all failed, and the control (the same beds with `voices: []`)
+is what showed why: the Pond's events clear its bed easily, the Stream's babble
+is dense enough to *be* a bed, and the Ocean's slow swell crosses any level
+threshold you pick on its own. No single reading of the output separates a
+texture from an event when the bed is a texture too. Counting what the voices
+build is direct, and a bed with no voices reads 0.
 
 ## Not art pipeline
 

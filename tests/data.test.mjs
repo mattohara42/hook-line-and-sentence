@@ -393,6 +393,44 @@ test("every spot's tackle names a real location and a look the stylesheet draws"
     "no spot floats anything, so nothing ever marks where the bait is");
 });
 
+// S1: the same trap as the tackle test above, one layer down. The ambience
+// registry names a synth by id and app.js holds the synths; a typo in either is
+// a spot that plays a bed and nothing else, which is exactly the white noise
+// this milestone was opened to fix, and nothing at runtime would say a word.
+test("every spot's ambience names real voices, and every spot has one", () => {
+  const app = readFileSync(new URL("../app.js", import.meta.url), "utf8");
+  const table = app.match(/const VOICES = \{([\s\S]*?)\};/);
+  assert.ok(table, "app.js no longer has a VOICES table: this test lost its grip on it");
+  const synths = new Set([...table[1].matchAll(/(\w+):/g)].map(m => m[1]));
+  assert.ok(synths.size >= 3, "found almost no voices: the table shape changed");
+
+  const amb = CONFIG.audio.ambience;
+  const spots = CONFIG.tiers.map(t => t.location);
+  assert.ok(amb.shared, "no shared entry: a spot with no sound design of its own would be silent");
+  for (const key of Object.keys(amb))
+    assert.ok(key === "shared" || spots.includes(key),
+      `CONFIG.audio.ambience has "${key}", which is not a fishing spot`);
+  for (const spot of spots)
+    assert.ok(spot in amb, `"${spot}" has no ambience: it would fall back to the shared bed`);
+
+  for (const [spot, cfg] of Object.entries(amb)) {
+    assert.ok(cfg.bed?.body?.hz > 0, `${spot}: a bed with no body is silence`);
+    for (const v of cfg.voices ?? []) {
+      assert.ok(synths.has(v.id), `${spot} asks for the voice "${v.id}" and app.js has no synth for it`);
+      const [lo, hi] = v.everyMs ?? [];
+      assert.ok(lo > 0 && hi >= lo,
+        `${spot}/${v.id}: everyMs ${JSON.stringify(v.everyMs)} is not a gap the scheduler can use`);
+    }
+    if (cfg.rippleVoice)
+      assert.ok(synths.has(cfg.rippleVoice.id),
+        `${spot}'s ripple asks for "${cfg.rippleVoice.id}" and app.js has no synth for it`);
+  }
+  // The point of the whole registry: if every spot ended up with the same
+  // voices, the game is back to one soundscape wearing three hats.
+  const casts = spots.map(s => (amb[s].voices ?? []).map(v => v.id).sort().join(","));
+  assert.equal(new Set(casts).size, casts.length, "two spots have the identical cast of voices");
+});
+
 // R5 debt: the boat shop was the last one still on its own older mechanism, and
 // it had quietly stopped working: every vessel was skinnable:false, so buying a
 // hull changed nothing at any spot and nothing caught it. These are the traps

@@ -130,11 +130,23 @@
 
   <div id="guide-panel"><div id="guide"></div></div>
 
+  <!-- The browsable panels (collection, shop, journal, grown-ups) all have the
+       same skeleton now: a head that does not scroll, carrying the close in the
+       top-left corner where a thumb can always reach it, then a row of tabs,
+       then the one scrolling body. Before this they were a single column with
+       the close at the very bottom, so shutting the shop meant scrolling past
+       four sections of stock to find the button. The flow panels (quick cast,
+       the rod nudge, the profile picker) keep their own big action buttons:
+       they are a sequence with a next step, not a thing to browse. -->
   <div id="collection" class="overlay" hidden>
-    <div class="overlay-panel">
-      <div class="overlay-title">FISH COLLECTION</div>
-      <div id="collection-grid"></div>
-      <button class="toggle-btn" id="collection-close">CLOSE&nbsp;&nbsp;esc</button>
+    <div class="overlay-panel paneled">
+      <div class="overlay-head">
+        <button class="overlay-x" id="collection-close" aria-label="Close" title="Close (esc)">✕</button>
+        <div class="overlay-title">FISH COLLECTION</div>
+      </div>
+      <!-- one tab per fishing spot, built by app.js from CONFIG.tiers -->
+      <div class="tabs" id="collection-tabs" role="tablist"></div>
+      <div class="overlay-body"><div id="collection-grid"></div></div>
     </div>
   </div>
 
@@ -158,44 +170,71 @@
   </div>
 
   <div id="shop" class="overlay" hidden>
-    <div class="overlay-panel">
-      <div class="overlay-title">BAIT &amp; TACKLE</div>
-      <div id="shop-coins">COINS <b id="shop-coin-count">0</b></div>
-      <div class="shop-section">RODS</div>
-      <div id="shop-rods"></div>
-      <div class="shop-section">BAIT</div>
-      <div id="shop-baits"></div>
-      <div class="shop-section">BOATS</div>
-      <div id="shop-boats"></div>
-      <div class="shop-section">HATS</div>
-      <div id="shop-hats"></div>
-      <button class="toggle-btn" id="shop-close">CLOSE&nbsp;&nbsp;esc</button>
+    <div class="overlay-panel paneled">
+      <div class="overlay-head">
+        <button class="overlay-x" id="shop-close" aria-label="Close" title="Close (esc)">✕</button>
+        <div class="overlay-title">BAIT &amp; TACKLE</div>
+        <!-- the purse rides in the head: it is the number you are shopping
+             against, so it must not scroll away with the stock -->
+        <div id="shop-coins">COINS <b id="shop-coin-count">0</b></div>
+      </div>
+      <div class="tabs" role="tablist">
+        <button class="tab" data-tab="rods"  role="tab">RODS</button>
+        <button class="tab" data-tab="baits" role="tab">BAIT</button>
+        <button class="tab" data-tab="boats" role="tab">BOATS</button>
+        <button class="tab" data-tab="hats"  role="tab">HATS</button>
+      </div>
+      <div class="overlay-body">
+        <div class="tabpane" data-tab="rods"><div id="shop-rods"></div></div>
+        <div class="tabpane" data-tab="baits" hidden><div id="shop-baits"></div></div>
+        <div class="tabpane" data-tab="boats" hidden><div id="shop-boats"></div></div>
+        <div class="tabpane" data-tab="hats"  hidden><div id="shop-hats"></div></div>
+      </div>
     </div>
   </div>
 
   <div id="badge-toast"></div>
 
   <div id="journal" class="overlay" hidden>
-    <div class="overlay-panel">
-      <div class="overlay-title">FISHING JOURNAL</div>
-      <div id="journal-summary"></div>
-      <div id="journal-grid"></div>
-      <!-- T3: the junk shelf. Junk is the one thing you catch that is not a
-           fish, so it has no home in the collection; it lives under the badges
-           it earns. -->
-      <div id="junk-summary"></div>
-      <div id="junk-shelf"></div>
-      <button class="toggle-btn" id="journal-close">CLOSE&nbsp;&nbsp;esc</button>
+    <div class="overlay-panel paneled">
+      <div class="overlay-head">
+        <button class="overlay-x" id="journal-close" aria-label="Close" title="Close (esc)">✕</button>
+        <div class="overlay-title">FISHING JOURNAL</div>
+      </div>
+      <div class="tabs" role="tablist">
+        <button class="tab" data-tab="badges" role="tab">BADGES</button>
+        <button class="tab" data-tab="junk"   role="tab">JUNK</button>
+      </div>
+      <div class="overlay-body">
+        <div class="tabpane" data-tab="badges">
+          <div id="journal-summary"></div>
+          <div id="journal-grid"></div>
+        </div>
+        <!-- T3: the junk shelf. Junk is the one thing you catch that is not a
+             fish, so it has no home in the collection; it lives beside the
+             badges it earns (its own tab since the panel got one). -->
+        <div class="tabpane" data-tab="junk" hidden>
+          <div id="junk-summary"></div>
+          <div id="junk-shelf"></div>
+        </div>
+      </div>
     </div>
   </div>
 
+  <!-- No tabs here: it is one heatmap and splitting it would be a tab bar
+       invented to match the others. It gets the head so the close is in the
+       same corner as everywhere else. -->
   <div id="progress" class="overlay" hidden>
-    <div class="overlay-panel">
-      <div class="overlay-title">TYPING PROGRESS</div>
-      <div id="progress-summary"></div>
-      <div id="progress-kb"></div>
-      <div id="progress-legend">less accurate <span class="pscale"></span> more accurate</div>
-      <button class="toggle-btn" id="progress-close">CLOSE&nbsp;&nbsp;esc</button>
+    <div class="overlay-panel paneled">
+      <div class="overlay-head">
+        <button class="overlay-x" id="progress-close" aria-label="Close" title="Close (esc)">✕</button>
+        <div class="overlay-title">TYPING PROGRESS</div>
+      </div>
+      <div class="overlay-body">
+        <div id="progress-summary"></div>
+        <div id="progress-kb"></div>
+        <div id="progress-legend">less accurate <span class="pscale"></span> more accurate</div>
+      </div>
     </div>
   </div>
 

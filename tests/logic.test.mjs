@@ -13,7 +13,7 @@ import {
   rankForProfile, earnsPrestige, speedTestPool, typingAccuracy,
   castArcPoint, lineSagPx, lineControlPoint, stepTug, rotateAboutPivot, easeIn, easeOut,
   easeInOut, reelProgressAtX, revealAt,
-  gearFile, punPool, catchSubtitle
+  gearFile, punPool, catchSubtitle, ambienceFor, nextVoiceDelayMs
 } from "../logic.js";
 
 const TIER_ORDER = ["legendary", "rare", "uncommon", "common"];   // hardest → easiest
@@ -362,6 +362,31 @@ test("punPool prefers the spot's own lines and falls back to the shared pool", (
   assert.deepEqual(punPool(pools, "lagoon", "cast"), ["shared cast"]);
   assert.deepEqual(punPool(pools, "pond", "nosuchmoment"), []);
   assert.deepEqual(punPool(undefined, "pond", "cast"), []);
+});
+
+test("ambienceFor falls back to the shared bed, and to nothing at all", () => {
+  const amb = { shared: { bed: "quiet" }, pond: { bed: "frogs" } };
+  assert.deepEqual(ambienceFor(amb, "pond"), { bed: "frogs" }, "a spot's own soundscape wins");
+  assert.deepEqual(ambienceFor(amb, "lagoon"), { bed: "quiet" }, "a spot with no entry gets shared");
+  assert.deepEqual(ambienceFor(amb, undefined), { bed: "quiet" }, "and so does no spot at all");
+  // A registry with no fallback in it must be null rather than undefined: the
+  // caller skips building a bed on it, and building one out of undefined is a
+  // crash at boot rather than a quiet game.
+  assert.equal(ambienceFor({ pond: { bed: "frogs" } }, "ocean"), null);
+  assert.equal(ambienceFor(undefined, "pond"), null);
+});
+
+test("nextVoiceDelayMs lands inside its range, and never at zero", () => {
+  assert.equal(nextVoiceDelayMs([1000, 3000], () => 0), 1000);
+  assert.equal(nextVoiceDelayMs([1000, 3000], () => 0.5), 2000);
+  assert.equal(nextVoiceDelayMs([1000, 3000], () => 0.999), 2998);
+  assert.equal(nextVoiceDelayMs(1500, () => 0.5), 1500, "a bare number is a fixed gap");
+  // A malformed range must not become a zero-delay timer: that is a voice
+  // firing every tick, which is a locked tab rather than a wrong sound.
+  assert.equal(nextVoiceDelayMs([3000, 1000], () => 0.9), 3000, "a backwards range holds at its floor");
+  assert.equal(nextVoiceDelayMs([0, 500], () => 0.5), 60000);
+  assert.equal(nextVoiceDelayMs(undefined), 60000);
+  assert.equal(nextVoiceDelayMs([]), 60000);
 });
 
 test("buildReelPool works on phrase entries too (content-agnostic on .d)", () => {
