@@ -279,7 +279,10 @@ h1 {
   position: absolute; left: 0; top: 0; width: 720px; height: 360px;
   pointer-events: none; overflow: visible;
 }
-#line-path { fill: none; stroke: rgba(245,236,224,0.72); }
+/* The alpha is paired with CONFIG.anim.line.widthPx and the two are one
+   decision — see the note there. A 0.5px line at 0.72 disappears against the
+   Ocean's pale sky; at 0.9 it reads more clearly than the old 1.6px did. */
+#line-path { fill: none; stroke: rgba(245,236,224,0.9); }
 /* R1: the lure/hook on the end of the line while it's in the air. The bobber
    takes over once it lands, so this is only ever visible mid-cast. */
 #lure {
