@@ -295,17 +295,66 @@ h1 {
    the angle is set per frame in JS, so there's no transition to fight. */
 .rig-layer[data-id="rod"] { will-change: transform; }
 
-/* bobber floats where the line meets the water during the wait */
+/* T2: terminal tackle — what sits where the line meets the water during the
+   wait. ONE element with one look per spot, chosen from CONFIG.tackle: the Pond
+   floats a cork, the Stream drifts a dry fly, and the Ocean names nothing so
+   this never turns on there. The size belongs to the look, which is why
+   bobberIn() applies the kind before it reads offsetWidth to centre it. */
 #bobber {
   /* left/top are set from CONFIG.anim.cast.landing by app.js (R1) — the lure
-     lands and the bobber takes its place, so the two can't drift apart. */
-  position: absolute; width: 11px; height: 11px;
-  border-radius: 50%;
-  background: linear-gradient(180deg, var(--ember) 0 50%, var(--foam) 50% 100%);
+     lands and the tackle takes its place, so the two can't drift apart. */
+  position: absolute;
   opacity: 0; transition: opacity 0.3s;
-  animation: bobberBob 3s ease-in-out infinite;
 }
 #bobber.on { opacity: 1; }
+
+/* The Pond's cork float. Red over cream with a warm dark outline rather than a
+   black one (ART_DIRECTION.md), taller than it is wide, and the colour break
+   sits BELOW the middle so the pale half reads as the bit riding in the water
+   rather than as half a bicolour ball. The old one was a flat 50/50 circle. */
+#bobber.tackle-bobber {
+  width: 9px; height: 12px;
+  border-radius: 50% 50% 46% 46% / 55% 55% 45% 45%;
+  background: linear-gradient(178deg, var(--ember) 0 44%, #d9c9b6 44% 52%, #f0e7db 52% 100%);
+  box-shadow: inset 0 0 0 0.8px var(--bark-deep);
+  animation: bobberBob 3s ease-in-out infinite;
+}
+/* the wet shine, one notch above the waterline */
+#bobber.tackle-bobber::after {
+  content: ""; position: absolute; left: 1.8px; top: 2px;
+  width: 2.4px; height: 3px; border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+}
+
+/* The Stream's dry fly. A hackled body riding ON the surface with a pale wing
+   standing up off it — at this size that silhouette is the whole read, so the
+   wing is the thing worth the pixels. It does not bob: a dry fly sits in the
+   film and drifts, which is also what tells a kid this spot fishes differently
+   from the Pond. */
+#bobber.tackle-fly {
+  width: 11px; height: 4px;
+  border-radius: 60% 40% 45% 55% / 65% 65% 35% 35%;
+  background: linear-gradient(90deg, var(--bark-deep) 0 24%, #6f6a44 24% 100%);
+  box-shadow: inset 0 0 0 0.6px var(--umber);
+  animation: flyDrift 4.2s ease-in-out infinite;
+}
+/* The upright wing, and it is the whole read at this size — a pointed pale
+   wedge is what says "fly" where a rounded lump said "pebble with a stone on
+   it", which is what the first attempt looked like on screen. It sits at the
+   head end, on the left, because that is the end the line comes down to. */
+#bobber.tackle-fly::after {
+  content: ""; position: absolute; left: 1.6px; top: -4.4px;
+  width: 4.4px; height: 5.2px;
+  background: rgba(243,236,226,0.95);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  transform: rotate(-13deg);
+}
+/* the tail wisp, trailing behind the hook bend */
+#bobber.tackle-fly::before {
+  content: ""; position: absolute; right: -2.6px; top: 0.9px;
+  width: 3.2px; height: 1.1px; border-radius: 50%;
+  background: var(--bark);
+}
 /* F4: one word's worth of twitch on the bait. Short and sharp on purpose — the
    whole mechanic rests on a kid seeing their typing move something in the
    water, and a gentle wobble would not read as "I did that". It replaces the
@@ -320,6 +369,13 @@ h1 {
 }
 #bobber.plunge { animation: plunge 0.35s ease-in forwards; }
 @keyframes bobberBob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
+/* a fly is not lifted by the swell, it is carried by the surface: sideways and
+   a touch of yaw, no vertical travel */
+@keyframes flyDrift {
+  0%,100% { transform: translateX(0) rotate(0deg); }
+  35%     { transform: translateX(2.2px) rotate(3deg); }
+  70%     { transform: translateX(-1.4px) rotate(-2deg); }
+}
 @keyframes plunge { to { transform: translateY(14px); opacity: 0; } }
 
 /* ============ V1: WATER DEPTH ============

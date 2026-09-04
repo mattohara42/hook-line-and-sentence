@@ -30,25 +30,42 @@ it. Measured by shooting the waiting beat at every spot at five widths —
 
 It also fixed a verification tool that was lying: see the commit.
 
-## T2 — terminal tackle, per spot
+## T2 — terminal tackle, per spot ✅ (2026-09-04)
 
 **Done when:** the Pond floats a bobber, the Stream drifts a fly, the Ocean
 shows neither, and each survives a whole catch (cast, wait, twitch, bite,
-plunge) without the others' behaviour leaking in.
+plunge) without the others' behaviour leaking in. **All three play a full catch
+clean.**
 
-Today `#bobber` is one CSS circle used everywhere. It becomes a per-location
-choice driven from `config.js` the way every other "what exists here" question
-in this game is answered — a registry, not a filename convention or a class
-name assembled in JS (`CONFIG.fish.species`, `CONFIG.rig.poses`,
-`CONFIG.rig.gearArt` are the same idea three times).
+`CONFIG.tackle` keyed by spot; `null` is the Ocean's bare line. Four config
+traps, each watched failing. The bobber went from a flat 50/50 circle to a cork
+float with a warm dark outline and the colour break below the middle; the fly
+took two attempts, because the first read as *a pebble with a stone on it* on
+screen and only a pointed pale wing fixed it — at 20x13 screen px the wing is
+the entire read.
 
-The Ocean showing nothing is not a special case to code around: it is an entry
-with no tackle, the same way the free hat carries no `file` and the free hull
-carries no `tint`.
+**Two things it turned up, both fixed here:**
 
-The twitch, bob and plunge animations are F4's and are **not** being retuned —
-they are what makes a kid see their typing move something in the water. A fly
-needs its own idle (a drift, not a bob) but the twitch stays.
+- **F4's mechanic survives a spot with no float, and did not need helping.**
+  `twitchBait()` already rang the surface and pulled the rod as well as moving
+  the tackle, so at the Ocean the ring and the rod ARE the response to typing.
+  The idle ripple still runs there too, which makes the rings the only marker
+  for where the bait is. That was checked before writing anything to replace it.
+- **`play-check.mjs` waited on `#bobber.on`** to know the cast had landed, which
+  is the old "every spot floats something" assumption. It hung for 30s at the
+  Ocean and died. It now waits for the LINE's end to stop moving, which does not
+  care what is tied to it.
+
+`#bobber` was one CSS circle used everywhere. It is now a per-spot choice driven
+from `config.js` the way every other "what exists here" question in this game is
+answered — a registry, not a filename convention or a class name assembled in JS
+(`CONFIG.fish.species`, `CONFIG.rig.poses`, `CONFIG.rig.gearArt` are the same
+idea three times). The Ocean showing nothing is an entry with no tackle, the same
+shape as the free hat carrying no `file` and the free hull carrying no `tint`.
+
+The twitch and plunge are F4's and were **not** retuned. Only the idle differs
+per kind: a cork bobs on the swell, a dry fly rides the film and drifts
+sideways, which is also what tells a kid this spot fishes differently.
 
 ## T3 — junk trophies
 

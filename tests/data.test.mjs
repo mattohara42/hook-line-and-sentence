@@ -243,6 +243,26 @@ test("shop items have unique ids, sane file stems, and a free default each", () 
     "the free default hat has to be the bare head, so a kid can take a hat off");
 });
 
+// T2: CONFIG.tackle is the fourth registry in this game (fish.species,
+// rig.poses, rig.gearArt) and it fails the same way they do — a name nobody
+// draws looks exactly like a spot that deliberately floats nothing.
+test("every spot's tackle names a real location and a look the stylesheet draws", () => {
+  const css = readFileSync(new URL("../style.css", import.meta.url), "utf8");
+  const spots = CONFIG.tiers.map(t => t.location);
+  for (const spot of Object.keys(CONFIG.tackle))
+    assert.ok(spots.includes(spot), `CONFIG.tackle has "${spot}", which is not a fishing spot`);
+  for (const spot of spots)
+    assert.ok(spot in CONFIG.tackle,
+      `"${spot}" is missing from CONFIG.tackle — say null for a bare line, so it reads as a decision`);
+  for (const [spot, kind] of Object.entries(CONFIG.tackle)) {
+    if (kind === null) continue;                    // a bare line, on purpose
+    assert.ok(css.includes(`.tackle-${kind}`),
+      `${spot} asks for tackle "${kind}" and style.css draws no .tackle-${kind}`);
+  }
+  assert.ok(Object.values(CONFIG.tackle).some(Boolean),
+    "no spot floats anything, so nothing ever marks where the bait is");
+});
+
 // R5 debt: the boat shop was the last one still on its own older mechanism, and
 // it had quietly stopped working — every vessel was skinnable:false, so buying a
 // hull changed nothing at any spot and nothing caught it. These are the traps

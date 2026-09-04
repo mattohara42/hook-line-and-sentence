@@ -586,14 +586,24 @@ setInterval(() => {
 // bobber ripples while the line waits for a bite
 let bobberRippleTimer = null;
 function bobberIn() {
-  // R1: the bobber takes over exactly where the lure landed
-  el.bobber.style.left = (CONFIG.anim.cast.landing.x - el.bobber.offsetWidth / 2) + "px";
-  el.bobber.style.top = (CONFIG.anim.cast.landing.y - el.bobber.offsetHeight / 2) + "px";
-  el.bobber.classList.remove("plunge");
-  el.bobber.classList.add("on");
+  el.bobber.classList.remove("tackle-bobber", "tackle-fly", "plunge", "twitch");
+  // The rings run whether or not anything floats here. At the Ocean they are
+  // the ONLY thing marking where the bait is, and twitchBait()'s ring is what
+  // keeps F4's "a kid can see their typing move something" true at a spot with
+  // no float to move.
   ripple(A.cast.landing.x, A.cast.landing.y); // splash-in ring, then the idle rhythm
   bobberRippleTimer = setInterval(
     () => ripple(CONFIG.anim.cast.landing.x, CONFIG.anim.cast.landing.y), JUICE.bobberRippleMs);
+  // T2: what floats here is the spot's business, and the Ocean floats nothing.
+  const kind = CONFIG.tackle[save.location];
+  if (!kind) return;
+  // the kind decides the size, so it has to be on the element BEFORE the offsets
+  // are read — otherwise a fly is centred as if it were a cork float
+  el.bobber.classList.add("tackle-" + kind);
+  // R1: the tackle takes over exactly where the lure landed
+  el.bobber.style.left = (CONFIG.anim.cast.landing.x - el.bobber.offsetWidth / 2) + "px";
+  el.bobber.style.top = (CONFIG.anim.cast.landing.y - el.bobber.offsetHeight / 2) + "px";
+  el.bobber.classList.add("on");
 }
 function bobberOut(plunge) {
   clearInterval(bobberRippleTimer);

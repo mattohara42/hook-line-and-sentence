@@ -469,3 +469,15 @@ thwarts may well not be worth four generations.
 `boat-leaf.png`, `boat-purple.png` and `boat.png` are pixel-era files nothing
 loads any more. They are exactly the filenames the repaint prompt says to
 overwrite, which is the only reason they are still in the repo.
+
+## The wait puns are not location-aware (noticed during T2, 2026-09-04)
+
+`play-check --loc ocean` surfaced "The trout are impressed" and "Don't trout
+yourself now" while fishing the Ocean. `PUNS.wait` and friends are one shared
+pool per *moment*, and only phrases and sentences are filtered by
+`save.location` (`buildPhrasePool`). So freshwater jokes land at sea.
+
+Small and purely flavour, and the fix is a choice rather than a bug: either tag
+the handful of species-specific puns with a location the way `PHRASES` already
+are, or just reword the offenders to be water-agnostic. The second is cheaper
+and probably right — the pools are meant to be groan-first, not accurate.

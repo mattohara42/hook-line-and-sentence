@@ -107,8 +107,25 @@ async function typeWord() {
 console.log("cast word:", await word(), "| status:", await status());
 await shot("1-cast");
 await typeWord();
-// the lure is still in flight for backswingMs+flightMs; measure at rest
-await page.waitForFunction(() => document.getElementById("bobber").classList.contains("on"), { timeout: 8000 });
+// The lure is still in flight for backswingMs+flightMs; measure at rest.
+//
+// This used to wait for #bobber.on, which quietly assumed every spot floats
+// something. T2 gave each spot its own terminal tackle and the Ocean floats
+// NOTHING, so that wait could never come true there and the tool hung for 30s
+// and died. The end of the LINE is the signal that does not care what is tied
+// to it: it travels through the flight and stops at the landing.
+let prevEnd = null, settled = 0;
+for (let i = 0; i < 60 && settled < 2; i++) {
+  const now = await lineEnd();
+  settled = (now !== "(no line)" && now === prevEnd) ? settled + 1 : 0;
+  prevEnd = now;
+  await page.waitForTimeout(150);
+}
+if (settled < 2) {
+  console.error("the cast never came to rest — the line's end is still moving after 9s");
+  await browser.close();
+  process.exit(1);
+}
 await page.waitForTimeout(120);
 console.log("waiting   | line end:", await lineEnd(), "| status:", await status(), "| word:", await word());
 await shot("2-waiting");
