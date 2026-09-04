@@ -42,7 +42,7 @@ match /typingFishing/{profileId} {
 
   // Deliberately generous: this is an abuse ceiling, not a schema. It must not
   // start rejecting honest saves the next time a profile field is added.
-  // Today's real values: ~18 top-level keys, 30 fish, 10 badges, 26 letters.
+  // Today's real values: ~19 top-level keys, 33 fish, 12 badges, 26 letters, 4 junk.
   function sane() {
     return incoming().keys().size() <= 32
         && incoming().ownerUid is string
@@ -51,6 +51,7 @@ match /typingFishing/{profileId} {
         && (!('badges' in incoming()) || (incoming().badges is list   && incoming().badges.size() <= 64))
         && boundedMap(incoming().get('collection', {}), 200)
         && boundedMap(incoming().get('records',    {}), 200)
+        && boundedMap(incoming().get('junk',       {}), 200)
         && boundedMap(incoming().get('stats', {}).get('letters', {}), 64);
   }
 
