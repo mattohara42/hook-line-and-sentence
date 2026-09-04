@@ -9,9 +9,9 @@ something is the way it is, `git log` and the PR body have it in full.
 
 | | |
 |---|---|
-| **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. One rod is all that is left of the refresh. |
-| **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
-| **State** | both done-when clauses met. **20 of 21 painted and wired** — 12 hats, `rod-stick` x2, `rod-bamboo` x2, `rod-carbon` x3, `rod-deepsea` at the Pond. Left: **1 rod**, `rod-deepsea-stream`, prompt written out and ready to send. |
+| **Active milestone** | **none — the Art & Animation Refresh closed 2026-09-04.** The next one is Matt's call. |
+| **R7** | ✅ **21 of 21 gear pieces**, `BUILD_PLAN_REFRESH.md`. Both done-when clauses met: a bought hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand at every spot. |
+| **The epic** | ✅ **R1–R7 all shipped.** Every angler, vessel, background, fish and shop item is painted in the new direction. |
 | **Catch Feel** | ✅ **F1–F5 all shipped 2026-09-03**, `BUILD_PLAN_FEEL.md`. One thing left and it is Matt's: play it. |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 95/95 (`npm test`) |
@@ -20,54 +20,56 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**R7 has 1 rod left: `rod-deepsea-stream`.** Its prompt is written out whole in
-`ART.md` → *R7* → *The rods*, and the loop is four commands:
+**Nothing is half-finished.** Two epics closed in two days and the list below is
+all that is outstanding, none of it code: the play-tests are Matt's, and the
+carried debts are decisions rather than bugs.
 
-```
-python3 tools/gear-ref.py <pose>                  # the attachment
-#   ... paste that rod's prompt from ART.md, attach the ref ...
-python3 tools/gear-register.py <pose> <download>  # -> assets/reg-<name>.png
-python3 tools/cut-angler.py <pose> assets/reg-<name>.png --rod <stem>
-#   then add "<stem>-<pose>" to CONFIG.rig.gearArt, or it is never drawn
-```
+**The obvious next pieces of work, in rough order of how much they would be
+missed** — all in `BACKLOG.md` except the first, and none of them started:
 
-Eight rods have gone through it in nine generations. The pipeline is settled:
-the last five deliveries needed no tool changes at all, and every shipped rod
-re-cuts byte-identically.
+1. **The four shop hulls still do nothing** (carried from R5). `shop.boats`'
+   alternate hulls are pixel-era PNGs with no far/near split, so equipping one
+   is a no-op at every spot. R7's `gearArt` is now the pattern that fixes it —
+   a hull is a gear slot with a per-pose registry — and the boat shop is the one
+   shop kind still on its own older mechanism. Prompt and a cheaper CSS-tint
+   fallback: `ART.md` → *R5 debt*.
+2. **`cut-angler.py`'s despill should move to `cut-gear.py`'s unmix model.** It
+   reddens thin neutral pieces by about 11 points of R − B. Deliberately not
+   done inside a delivery, because it changes how every rod is cut and they all
+   re-cut byte-identically today (`BACKLOG.md` has the numbers).
+3. **`ART.md`'s *"no pure black"* delivery check is wrong as written** and would
+   reject every rod in the game, R4's included. The measure that means something
+   is the shaft's **interior** colour, not the presence of any (0,0,0) pixel.
 
-**Before your first cut in a fresh container:** `pip install Pillow numpy scipy`,
-and for the browser checks `cd /tmp && npm install playwright`.
-`tools/README.md` indexes all eleven tools.
+**Before any cut in a fresh container:** `pip install Pillow numpy scipy`, and
+for the browser checks `cd /tmp && npm install playwright`. `tools/README.md`
+indexes all eleven tools; the gear pipeline is `gear-ref.py` → prompt →
+`gear-register.py` → `cut-angler.py --rod` → one `rig.gearArt` line.
 
-**One judgement call is already made and should not be relitigated.**
-`rod-carbon-stream` cost the column's only reroll and was accepted warm on
-Matt's call: both attempts came back warm against a neutral Pond carbon, which
-points at `[STYLE]`'s "warm muted color palette" rather than the rod wording. At
-95 design px it reads dark and is nothing like the honey bamboo. **`rod-carbon-ocean`
-then came back grey first attempt on the same strengthened wording**, so the
-Stream is variance, not a broken prompt, and the accept stands. If a neutral
-colour is ever needed again, `[STYLE]` is still where to aim.
+**Two findings from the rod column worth keeping, because both cost real time:**
 
-**Two things the rods left behind, both written up where they belong:**
-`cut-angler.py`'s despill reddens thin neutral pieces and should move to
-`cut-gear.py`'s unmix model — deliberately not done, because it changes how every
-rod is cut (`BACKLOG.md`, with the numbers) · and `ART.md`'s *"no pure black"*
-delivery check is wrong as written and would reject every rod in the game, R4's
-included; the measure that means something is the shaft's **interior** colour,
-not the presence of any (0,0,0) pixel.
+- **A low "shaft inside the half-width" figure usually is not a shave.** The two
+  deepsea rods both posted ~30% of their paint outside the corridor; the Pond's
+  blank really was 3 px too fat and the Stream's fitted with room to spare. The
+  percentage cannot tell a fat rod from a rod with hardware on it — the guides
+  and reel land outside by design. Walk outward from the centreline until the
+  paint stops instead, and only then reach for `half`. No `--half` override
+  exists and none was needed.
+- **A layer defect hidden by the gate rod's own hardware stays invisible until
+  gear arrives without it.** The Ocean's brass reel left 2,766 px of itself in
+  the *body* layer from R4 until a reel-less rod exposed it. The Stream was
+  checked for the same thing when its multiplier moved above the hand, and is
+  clean.
 
-**The one habit worth carrying into the last three rods:** a layer defect hidden
-by the gate rod's own hardware stays invisible until gear arrives without it.
-The Ocean's brass reel had left 2,766 px of itself in the *body* layer since R4,
-and only a reel-less rod could ever have exposed it. Both remaining `deepsea`
-rods are the thickest and heaviest in the set, so the corridor's `half` was the
-one flag still open. **`rod-deepsea-pond` closed it:** the predicted shave was
-exact (1.99 design px of blank against a 1.82 corridor) and invisible at 65
-design px, so no `--half` override exists and the Stream, which has more room
-than the Pond, needs no special handling either. `ART.md` → that delivery's
-section, for why its 81.1% reads worse than it is.
+**One judgement call is made and should not be relitigated.**
+`rod-carbon-stream` cost R7's only reroll and was accepted warm on Matt's call:
+both attempts came back warm against a neutral Pond carbon, which points at
+`[STYLE]`'s "warm muted color palette" rather than the rod wording.
+`rod-carbon-ocean` then came back grey first attempt on the same strengthened
+wording, so the Stream is variance, not a broken prompt. If a neutral colour is
+ever needed again, `[STYLE]` is where to aim.
 
-## Waiting on Matt (none of it blocks R7)
+## Waiting on Matt (all of it, now — nothing is blocked on code)
 
 - **The new reel feel wants an eye test** (#135). The fish now tweens between
   words instead of jumping, and stays an unnamed shape until it is reeled close.
@@ -79,18 +81,17 @@ section, for why its 81.1% reads worse than it is.
   `main` — merging it would delete 3463 lines including R1, R2 and the whole
   refresh epic. Full evidence in PR #60. Its branch
   `claude/graphics-assets-plan-rza791` (a9e4e73) goes with it.
-- **Delete stale branches** (SHAs recorded so it is reversible):
-  `claude/advanced-game-progression-ejj4yx` (49f2abb) ·
-  `claude/docs-dynamic-intent-generation-p14kbx` (a50a15c) ·
-  `claude/epic-continuation-81tdvp` (69f79ea) ·
-  `claude/gemini-game-asset-prompts-aeopww` (c47e021) ·
-  `claude/next-steps-0v0xeg` (98762e7) · `claude/fish-work-lbjzkz` (53a68f6,
-  fully contained in `main`, so it is the safe one) · **`g1/layered-rig`**
-  (5e855b5 — ⚠️ Matt's own branch, confirm first; the parts that survived merged
-  via #42/#43). Two more are older and carry commits that are **not** ancestors
-  of `main` (July, pre-squash): `claude/game-ui-visuals-wt1amv` (73f76c8, 29
-  commits) and `claude/open-this-3wbx9w` (720ca36, 10). Their work looks landed
-  by squash, but check one before deleting either.
+- **Delete stale branches** (SHAs recorded so it is reversible). Safe:
+  `advanced-game-progression-ejj4yx` (49f2abb) ·
+  `docs-dynamic-intent-generation-p14kbx` (a50a15c) ·
+  `epic-continuation-81tdvp` (69f79ea) ·
+  `gemini-game-asset-prompts-aeopww` (c47e021) · `next-steps-0v0xeg` (98762e7) ·
+  `fish-work-lbjzkz` (53a68f6), all `claude/`-prefixed. Check first:
+  **`g1/layered-rig`** (5e855b5 — ⚠️ Matt's own; what survived merged via
+  #42/#43), and two July branches whose commits are **not** ancestors of `main`
+  (pre-squash, so the work looks landed but confirm one):
+  `claude/game-ui-visuals-wt1amv` (73f76c8) · `claude/open-this-3wbx9w`
+  (720ca36).
 - **The GitHub repo description still says "pixel-art"**, which R2 removed
   game-wide. It is the first thing a stranger reads.
 - **R1's line prototype wants an eye test.** Serve the repo, open
@@ -118,30 +119,6 @@ section, for why its 81.1% reads worse than it is.
   - **The catch card and plaque**, held until you type — the pacing after a
     catch is now yours rather than a timer's.
 
-## Three decisions R6 left behind, none blocking
-
-- **`data/fish.json`'s per-species `color` has almost no job left.** The painted
-  bodies run darker and duller than it, and now that all 33 have art it only
-  tints the collection blob for *uncaught* species — a silhouette. Either
-  re-pass the 33 values toward the paintings or decide the field is vestigial;
-  a data test still enforces `#rrggbb`.
-- **The two Ocean sheets are drawn tighter than the rest.** Tonal stdev 53–71
-  against the Pond and Stream's 26–45. It does not survive the downscale and at
-  54–78px they sit with the other twenty, so this is taste, not a defect.
-  `ART.md` → *R6 wave 3* has the numbers.
-- **Asset weight, a policy call rather than a bug.** A cut fish is ~150KB at
-  ~525px for something that renders at 54. Resampling to 320px is provably
-  invisible even at retina scene scale (mean channel diff ~1 of 255) and halves
-  it — ~2.4MB across the full roster. It would set the rule for the anglers and
-  vessels too, which is why it is a question rather than a commit.
-
-**Carried from R5, and still user-visible:** both painted vessels are
-`skinnable: false`, so equipping one of `shop.boats`' four alternate hulls does
-nothing at any spot. R7's `gearArt` is now the pattern that would fix it —
-a hull is a gear slot with a per-pose registry, and the boat shop is the one
-shop kind still on its own older mechanism. Worth folding in rather than
-re-solving. Prompt and a cheaper CSS-tint fallback: `ART.md` → *R5 debt*.
-
 ## Rules of thumb
 
 - **Verify visual and motion claims in a real browser, past the startup modal.**
@@ -155,12 +132,11 @@ re-solving. Prompt and a cheaper CSS-tint fallback: `ART.md` → *R5 debt*.
 - **A new test is worth nothing until you have watched it fail.** R7's five
   config traps were each checked by breaking the invariant they guard.
 - **When a delivery measures like a redraw, suspect the measurement first**, and
-  **get a control before you judge one.** `cut-gear.py` prints raw numbers with
-  no thresholds, so re-cut a committed delivery and compare: it is one command,
-  it comes back byte-identical, and it turns "14.3% of the body differs" from an
-  alarm into a normal reading (#128). The Stream hat cost a scare for want of
-  this: IoU 0.54 with 70% "changed", and a perfectly faithful edit whose fit was
-  keying on a landing net that had swung (#124).
+  **get a control before you judge one.** The cutting tools print raw numbers
+  with no thresholds, so re-cut a committed delivery and compare: one command,
+  byte-identical, and it turns an alarming figure into a normal one (#128, #124).
+  R7's rods went further — a low "shaft inside the half-width" is usually the
+  rod's own guides and reel falling outside by design, not a shave.
 - **Some bugs are only wrong for three frames.** All three F1 found were, and
   none would ever have failed an assertion. That is what `play-check` is for.
 - **A registry beats a filename convention.** `CONFIG.fish.species`,
@@ -181,7 +157,7 @@ re-solving. Prompt and a cheaper CSS-tint fallback: `ART.md` → *R5 debt*.
 | doc | owns |
 |---|---|
 | `SPEC.md` | the game's design, and its non-goals |
-| `BUILD_PLAN_REFRESH.md` | the active epic, R1–R7 — nine rods left |
+| `BUILD_PLAN_REFRESH.md` | the Art & Animation Refresh, R1–R7 — **closed 2026-09-04** |
 | `BUILD_PLAN_FEEL.md` | Catch Feel, F1–F5, shipped — and what each one measured |
 | `ART_DIRECTION.md` | what the art should **look like** |
 | `ANIMATION.md` | how the cast, line and reel **move** |
