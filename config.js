@@ -811,6 +811,11 @@ export const CONFIG = {
     catches: 25,          // "Reel Regular"
     accuracyPct: 95,      // "Sharp Shooter" — accuracy threshold…
     accuracyMinKeys: 200, // …over at least this many keystrokes
+    // T3: junk rolls at CONFIG.junk.chance, so this is the one badge threshold
+    // a kid cannot chase on purpose. Ten is roughly a few sessions of ordinary
+    // bad luck rather than a grind, which is the joke: you are rewarded for
+    // catching nothing.
+    junkPulls: 10,        // "Litter Picker"
   },
 
   // Every catch rolls a weight (lb) in its tier's range — pure flavor + a

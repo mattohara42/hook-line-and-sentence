@@ -342,6 +342,18 @@ test("the 🧪 dev shortcut can never be on in production", () => {
   assert.equal(CONFIG.dev.testShortcuts, false, "dev shortcuts leaked into a non-browser build");
 });
 
+// T3: three badges now hang off junk, and junk is the one thing in this game a
+// kid cannot go after on purpose — it rolls. So the ways they become unearnable
+// are config values a long way from the badge list.
+test("the junk badges can actually be earned", () => {
+  assert.ok(CONFIG.junk.chance > 0,
+    "junk never rolls, so Not a Fish, Litter Picker and Junk Collector are unearnable");
+  assert.ok(Number.isInteger(CONFIG.badges.junkPulls) && CONFIG.badges.junkPulls > 0,
+    "badges.junkPulls must be a positive whole number of pulls");
+  assert.ok(CONFIG.junk.items.length > 0,
+    "there is no junk to pull, so Junk Collector is earned by doing nothing");
+});
+
 test("junk config is well-formed", () => {
   assert.ok(CONFIG.junk.chance > 0 && CONFIG.junk.chance < 1, "junk.chance must be in (0,1)");
   const ids = CONFIG.junk.items.map(i => i.id);

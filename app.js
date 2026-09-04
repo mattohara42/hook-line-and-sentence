@@ -57,7 +57,11 @@ function blankProfile(name, avatar) {
     records: {},                                      // fishId → { weight (lb best), wpm (best, Stream+) } (A4)
     badges: [],                                       // earned badge ids (journal)
     stats: { letters: {}, wordsTyped: 0, escapes: 0, sessionCount: 0, lastPlayed: now },
-    jokesEndured: 0,                                  // reserved (backlog groan counter)
+    junk: {},                                         // T3: junkId → count, same shape as collection
+    // The lifetime groan total, and it is NOT the sum of `junk`: saves from
+    // before T3 counted pulls without recording which. Kept as the total it
+    // has always been rather than back-filled from nothing.
+    jokesEndured: 0,
     speedBest: null,                                  // Quick Cast: { wpm, accuracy, at } | null
   };
 }
@@ -1297,12 +1301,19 @@ function land(success) {
     el.fish.classList.add("landing");
     surfaceBreak();
     save.jokesEndured = (save.jokesEndured ?? 0) + 1;
+    // T3: which junk, not just how much of it. Same shape as save.collection so
+    // the sync story is the one FIRESTORE.md already describes — an increment
+    // on one key, folded into the write this catch was making anyway.
+    save.junk ??= {};
+    save.junk[junk.id] = (save.junk[junk.id] ?? 0) + 1;
+    const freshJunkBadges = evaluateBadges();
     persistSave();
     sfxEscape();
     const junkPun = pick(PUNS.junk).replace("{it}", junk.name);
     setStatus("");                      // the card carries it now, and announces it
     showCatchCard({ kind: "junk", files: [junk.file], box: CONFIG.card.junkBox,
                     name: junk.name, sub: "not a fish", pun: junkPun });
+    freshJunkBadges.forEach((b, i) => later(() => showBadgeToast(b), 300 + i * 1800));
     later(startCast, CONFIG.reel.recastDelayMs);
     return;
   }
@@ -2240,7 +2251,23 @@ const BADGES = [
   // A8: the capstone. "The Deep End" is any legendary; this one is *the* one.
   { id: "muskie",      name: "Muskie Master",     desc: "Land the legendary Muskie Quixote.",
     check: () => hasPrestige() },
+  // T3: the only badges you earn by catching NOTHING. Junk rolls at
+  // CONFIG.junk.chance and cannot be fished for on purpose, which is the joke.
+  { id: "notafish",    name: "Not a Fish",        desc: "Reel in something that isn't a fish.",
+    check: () => junkPulled() >= 1 },
+  { id: "litterpicker",name: "Litter Picker",     desc: `Reel in ${CONFIG.badges.junkPulls} pieces of junk.`,
+    check: () => junkPulled() >= CONFIG.badges.junkPulls },
+  { id: "junkslam",    name: "Junk Collector",    desc: "Pull up all four kinds of junk.",
+    check: () => CONFIG.junk.items.every(j => (save.junk?.[j.id] ?? 0) > 0) },
 ];
+
+// Junk pulled since T3 started recording which kind. Deliberately NOT
+// save.jokesEndured: that is the lifetime total and includes pulls from before
+// there was a breakdown, so counting it here would award "Junk Collector"'s
+// neighbours to a save that has never seen a boot.
+function junkPulled() {
+  return Object.values(save.junk ?? {}).reduce((n, c) => n + c, 0);
+}
 
 // mark any freshly-satisfied badges as earned; returns the newly-earned ones.
 // Does NOT persist — the caller's persistSave() flushes them in its normal write.
@@ -2283,6 +2310,38 @@ function renderJournal() {
       + `<div class="badge-name">${b.name}</div>`
       + `<div class="badge-desc">${b.desc}</div>`;
     grid.appendChild(card);
+  }
+  renderJunkShelf();
+}
+
+// T3: what you have dredged up. Junk is not a fish, so it has no place in the
+// collection grid — it lives here, under the badges it earns. A piece you have
+// never pulled stays locked rather than showing a dimmed sprite: the fish grid
+// teases with a silhouette because the SHAPE is the reward, and a boot's shape
+// is not. The gag is the surprise.
+function renderJunkShelf() {
+  const found = CONFIG.junk.items.filter(j => (save.junk?.[j.id] ?? 0) > 0).length;
+  const total = CONFIG.junk.items.length;
+  $("junk-summary").innerHTML =
+    `<b>${found}</b> / ${total} junk found`
+    + `<span class="jpulls">${junkPulled()} pulled in all</span>`;
+  const shelf = $("junk-shelf"); shelf.innerHTML = "";
+  for (const j of CONFIG.junk.items) {
+    const n = save.junk?.[j.id] ?? 0;
+    const cell = document.createElement("div");
+    cell.className = "junk-cell" + (n ? " found" : "");
+    const art = document.createElement("div");
+    art.className = "junk-art";
+    if (n) art.style.backgroundImage = `url("assets/${j.file}.png")`;
+    else art.textContent = "🔒";
+    const name = document.createElement("div");
+    name.className = "junk-name";
+    name.textContent = n ? j.name : "???";
+    const sub = document.createElement("div");
+    sub.className = "junk-sub";
+    sub.textContent = n ? `× ${n}` : "not yet";
+    cell.append(art, name, sub);
+    shelf.appendChild(cell);
   }
 }
 function toggleJournal(open) {
@@ -2555,6 +2614,7 @@ function activateProfile(id) {
   save.upgrades.owned.boat ??= ["classic"];
   save.upgrades.hat ??= "none";                      // back-compat: pre-R7 saves
   save.upgrades.owned.hat ??= ["none"];
+  save.junk ??= {};                                  // back-compat: pre-T3 saves
   recomputeLocations();                              // A0: derive rank/locations, migrates pre-A0 saves
   migrateRecords();                                  // A4: records number → { weight, wpm }
   localStorage.setItem(ACTIVE_KEY, id);

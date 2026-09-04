@@ -866,6 +866,28 @@ h1 {
 .badge-card.earned .badge-name { color: var(--gold); }
 .badge-desc { font-size: 10px; color: var(--dim); line-height: 1.4; }
 
+/* T3: the junk shelf, under the badges. Deliberately the same card language as
+   .badge-card next to it — dim and locked until found — because that is what it
+   sits beside, and a second visual idiom in one panel would read as a second
+   kind of thing. The sprite fills the medal's slot when it is found. */
+#junk-summary { font-size: 12px; color: var(--ink); margin-bottom: 10px; }
+#junk-summary b { color: var(--gold); }
+#junk-summary .jpulls { color: var(--dim); margin-left: 10px; font-size: 11px; }
+#junk-shelf { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+.junk-cell {
+  padding: 10px 6px 12px; border-radius: 10px; text-align: center;
+  background: rgba(var(--ink-rgb),0.04); border: 1px solid rgba(var(--ink-rgb),0.1);
+  opacity: 0.5;
+}
+.junk-cell.found { opacity: 1; border-color: rgba(var(--gold-rgb),0.5); background: rgba(var(--gold-rgb),0.08); }
+.junk-art {
+  height: 34px; margin-bottom: 6px; font-size: 22px; line-height: 34px;
+  background: center / contain no-repeat;
+}
+.junk-name { font-family: var(--display); font-size: 10px; color: var(--dim); margin-bottom: 3px; }
+.junk-cell.found .junk-name { color: var(--gold); }
+.junk-sub { font-size: 10px; color: var(--dim); }
+
 /* Badge-earned toast (non-modal, slides down under the HUD) */
 #badge-toast {
   position: fixed; left: 50%; top: 12px; transform: translate(-50%, -140%); z-index: 12;
