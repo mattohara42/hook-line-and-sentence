@@ -4,7 +4,9 @@ Ideas captured during design/build. Nothing here expands the current milestone.
 
 ## Flavor & fun
 - **Groan counter**: after each catch pun, a 🙄 button increments a lifetime "Dad Jokes Endured" stat per profile. Zero gameplay impact, maximum family lore.
-- Kids contribute puns: pun pools are one data structure; add a simple way for family to submit new ones.
+- Kids contribute puns: the pools are now `data/puns.json` (per spot), so a
+  submission is a line of JSON and a test already checks the shape. All that
+  is missing is the way to submit one.
 - Kid-drawn fish as real sprites (scan/photo → cleaned up to match
   `ART_DIRECTION.md`; the "pixel-ify" step retired with the pixel direction).
 
@@ -13,6 +15,20 @@ Ideas captured during design/build. Nothing here expands the current milestone.
 - Themed word packs; custom school spelling lists (parent-editable).
 - Accuracy-gated letter unlocks as an alternative to fish-count milestones.
 - Shift key as a late "letter unlock" (capitals).
+
+## Layout, found during the top-bar rework (2026-09-04)
+- **`#word` is pinned at `bottom: 250px` at every viewport size.** On a phone
+  held sideways (~360px tall) that puts the word box ~55px from the top, which
+  is why the pun bubble has to shrink under `max-height: 520px` and why `#word`
+  now outranks the top bar in z-order. A word box positioned as a share of the
+  free band (the way `#card-slot` already is) would take the constraint away.
+- **`tools/play-check.mjs` only ever shoots 1280x720.** Every overlap the top-bar
+  rework fixed was a phone-width bug, and none of them could have been caught by
+  the repo's own tool. A `--w/--h` flag is a few lines.
+- **The badge toast was landing on the HUD chips at phone width** (top-centre
+  versus a right-aligned HUD that wraps across most of the row). Moved below the
+  card band under 620px rather than redesigned; it is still a nowrap pill on a
+  wide screen and a wrapping one on a narrow.
 
 ## World
 - More ponds/locations; weather; real day/night tied to clock.

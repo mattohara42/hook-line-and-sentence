@@ -1,0 +1,202 @@
+{
+  "_readme": [
+    "The game's voice: dad jokes, one pool per moment (CLAUDE.md).",
+    "`shared` is every spot's fallback. `pond`/`stream`/`ocean` override a moment",
+    "with lines that belong to that water, so the Ocean never tells a pond joke.",
+    "A moment a spot does not name falls back to `shared`.",
+    "House rules, both checked by tests/data.test.mjs:",
+    "  - every `cast` line keeps the literal instruction, at every spot: it is the",
+    "    only thing on screen telling a beginner what to do.",
+    "  - `junk` lines carry {it}, replaced with the junk item's name.",
+    "`wiggle` is an instruction too (F4) and shows with the jokes off, same as",
+    "`cast`. `niceCast` (A4) is praise for an even fly-cast cadence and is never",
+    "a scolding; `fishRun` (A7) is drama during a fight where nothing is at risk.",
+    "Add a joke here, not in app.js. Nothing else has to change."
+  ],
+
+  "shared": {
+    "wiggle": [
+      "Nothing's biting. Type to wiggle the bait",
+      "Give it a wiggle: type the word",
+      "Type the word to jiggle the bait and look tasty",
+      "Wiggle wiggle! Type to twitch the line"
+    ],
+    "wiggleDone": [
+      "Ooh, something noticed…",
+      "That got its attention",
+      "Nice wiggling. Here it comes…",
+      "Somebody down there is interested now"
+    ],
+    "niceCast": [
+      "Smooth cast! You've got the rhythm 🎣",
+      "Ooh, buttery. That fly landed like a feather",
+      "Nice and even. Textbook fly cast",
+      "Smooth cast! Steady as a weightlifter's rep",
+      "Nice and even. Classic-rock steady beat",
+      "That's the rhythm! Totally Bluey-and-Bingo calm"
+    ],
+    "fishRun": [
+      "It's running! Hold steady…",
+      "Whoa, it's taking line!",
+      "It dove deep! Easy does it",
+      "Still fighting! You've got this",
+      "That's a strong one. Stay with it",
+      "It's not giving up yet!"
+    ],
+    "junk": [
+      "Aw shucks, you reeled up {it}. Water ya gonna do?",
+      "Just {it}. That's a load of pond scum!",
+      "You caught {it}?! Talk about a re-boot",
+      "{it}. Well, it's the sole of the lake…",
+      "Only {it}, not every cast's a jackpot. Cast again!",
+      "{it}! Dino-mite catch… for a lunchbox. Not so much a lake."
+    ]
+  },
+
+  "pond": {
+    "cast": [
+      "Type the word to cast. Reel easy does it",
+      "Type the word to cast. Any fin is possible",
+      "Type the word to cast. The lily pads are watching",
+      "Type the word to cast. Frogs first, fish second",
+      "Type the word to cast. Nice and gentle, it's only a pond"
+    ],
+    "wait": [
+      "Something's fishy down there…",
+      "Patience… good things come to those with bait",
+      "The lily pads are keeping secrets",
+      "A duck paddled past and said nothing. Typical",
+      "Vibing to some classic rock down there…",
+      "Twisting the wait away, Rubik's-cube style",
+      "Chill like Bluey on a lazy Sunday…"
+    ],
+    "bite": [
+      "A bite! Hook, line, and sinker!",
+      "Fish on! The lily pads are shaking!",
+      "Fish on! Bluegill-ieve it or not!",
+      "A bite! Cue the classic hip hop beat",
+      "Fish on! Pink and sparkly incoming"
+    ],
+    "catchCommon": [
+      "Caught it! Reel-y nice work",
+      "Landed! That was off the scale",
+      "Got it! You're quite the catch-er",
+      "Landed! Rubik's-cube fast",
+      "Caught it! The frogs are applauding"
+    ],
+    "catchRare": [
+      "✨ RARE! Holy carp! ✨",
+      "✨ RARE! Simply fin-tastic ✨",
+      "✨ RARE! Unicorn-sparkle rare ✨",
+      "✨ RARE! In a pond this size?! ✨"
+    ],
+    "escape": [
+      "It got away… but the pond is patient",
+      "Escaped! Off it hopped, frog-style",
+      "Gone. The lily pads aren't telling",
+      "It slipped away. Still in there somewhere, cast again"
+    ]
+  },
+
+  "stream": {
+    "cast": [
+      "Type the word to cast. Go with the flow",
+      "Type the word to cast. Let it drift, nice and easy",
+      "Type the word to cast. Current-ly the best spot around",
+      "Type the word to cast. The riffles are hiding something",
+      "Type the word to cast. Trout are picky, you're not"
+    ],
+    "wait": [
+      "The current is doing all the work right now",
+      "Somewhere upstream, a trout is thinking it over",
+      "Nothing yet. Rivers take their own sweet time",
+      "Just you, the water and a guitar solo…",
+      "A dragonfly landed on your rod. Rude"
+    ],
+    "niceCast": [
+      "Smooth cast! You've got the rhythm 🎣",
+      "Ooh, buttery. That fly landed like a feather",
+      "Nice and even. Textbook fly cast",
+      "That's the rhythm! The trout are impressed",
+      "Nice and even. Classic-rock steady beat",
+      "That's the rhythm! Totally Bluey-and-Bingo calm"
+    ],
+    "bite": [
+      "Fish on! Don't trout yourself now",
+      "A bite! It's heading upstream, hold on!",
+      "Fish on! That's one riffle-ing good take",
+      "Something took the fly! Comic-book-cover stuff",
+      "A bite! The whole river just woke up"
+    ],
+    "catchCommon": [
+      "Landed! Smooth as the current",
+      "Caught it! That one's up the creek now",
+      "Got it! Totally 80s-power-ballad worthy",
+      "Landed! You out-swam a river",
+      "Caught it! Trout of this world"
+    ],
+    "catchRare": [
+      "✨ RARE! O-fish-ally amazing ✨",
+      "✨ RARE! Simpsons-couch-gag rare ✨",
+      "✨ RARE! The river has never seen better ✨",
+      "✨ RARE! Fin-ally, a proper trophy ✨"
+    ],
+    "escape": [
+      "It got away… downstream it goes",
+      "Escaped! The current gave it a lift",
+      "Gone with the flow. The next one's yours",
+      "It slipped away. Rivers are like that"
+    ]
+  },
+
+  "ocean": {
+    "cast": [
+      "Type the word to cast. Let's get kraken",
+      "Type the word to cast. Deep breath, deeper water",
+      "Type the word to cast. The tide is on your side",
+      "Type the word to cast. Something big is down there",
+      "Type the word to cast. Whale, here goes nothing"
+    ],
+    "wait": [
+      "Waiting… just for the halibut",
+      "Any second now. I'm not squidding",
+      "Deep down, something is making up its mind",
+      "The gulls are watching. They're always watching",
+      "Somewhere out there: whale-sized plans"
+    ],
+    "niceCast": [
+      "Smooth cast! You've got the rhythm 🎣",
+      "Ooh, buttery. That one carried half the bay",
+      "Nice and even. Steady as the tide",
+      "That's the rhythm! Even the gulls are impressed",
+      "Smooth cast! Steady as a weightlifter's rep",
+      "Nice and even, and the swell is not even bothering you"
+    ],
+    "bite": [
+      "Fish on! Holy mackerel!",
+      "Oh my cod, reel it in!",
+      "A bite! Somebody grab the ketchup",
+      "Fish on! Something huge just said hello",
+      "A bite! Hyrule-legendary energy right now"
+    ],
+    "catchCommon": [
+      "Caught, and it wasn't even a fluke",
+      "Landed! Off the charts and off the scale",
+      "Got it! The whole ocean is clapping",
+      "Caught it! Comic-book-cover worthy",
+      "Landed! Deep water, deeper skills"
+    ],
+    "catchRare": [
+      "✨ RARE! Hyrule-legendary rare ✨",
+      "✨ RARE! Kraken-level rare ✨",
+      "✨ RARE! One in a krill-ion ✨",
+      "✨ RARE! The deep gave up a good one ✨"
+    ],
+    "escape": [
+      "It got away… cod it be worse?",
+      "Escaped! A missed oppor-tuna-ty",
+      "Gone… back to the deep with a story to tell",
+      "It slipped away. Better luck next tide"
+    ]
+  }
+}

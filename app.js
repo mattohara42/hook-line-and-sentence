@@ -12,6 +12,7 @@ let PHRASE_POOL = [];            // every entry from data/phrases.json (A1; Stre
 let PHRASES = [];                // phrases typeable with the unlocked letters
 let SENTENCE_POOL = [];          // every entry from data/sentences.json (A5; Ocean)
 let SENTENCES = [];              // sentences typeable with the unlocked letters
+let PUN_POOLS = { shared: {} };  // data/puns.json: the voice, per spot (see puns())
 let unlockedLetters = new Set();
 
 async function loadJson(path) {
@@ -249,100 +250,20 @@ function graduateLocations() {
   return CONFIG.tiers.filter(t => !before.has(t.location) && save.unlockedLocations.includes(t.location));
 }
 
-// Dad joke flavor text: one pool per moment, picked at random.
-// House rule: cast lines always keep the literal instruction for beginners.
-const PUNS = {
-  cast: [
-    "Type the word to cast. Reel easy does it",
-    "Type the word to cast. Let's get kraken",
-    "Type the word to cast. Any fin is possible",
-  ],
-  // F4: the wiggle prompt is an INSTRUCTION, so like the cast prompts it always
-  // keeps the literal thing to do in it (CLAUDE.md). A kid who has never seen a
-  // wiggle cast before has to be able to read one line and know what to press.
-  wiggle: [
-    "Nothing's biting. Type to wiggle the bait",
-    "Give it a wiggle: type the word",
-    "Type the word to jiggle the bait and look tasty",
-    "Wiggle wiggle! Type to twitch the line",
-  ],
-  wiggleDone: [
-    "Ooh, something noticed…",
-    "That got its attention",
-    "Nice wiggling. Here it comes…",
-    "Somebody down there is interested now",
-  ],
-  wait: [
-    "Something's fishy down there…",
-    "Waiting… just for the halibut",
-    "Any second now. I'm not squidding",
-    "Patience… good things come to those with bait",
-    "Vibing to some classic rock down there…",
-    "Twisting the wait away, Rubik's-cube style",
-    "Chill like Bluey on a lazy Sunday…",
-  ],
-  // A4: even fly-cast cadence (Stream+). Praise only, never shown as a miss.
-  niceCast: [
-    "Smooth cast! You've got the rhythm 🎣",
-    "Ooh, buttery. That fly landed like a feather",
-    "Nice and even. Textbook fly cast",
-    "That's the rhythm! The trout are impressed",
-    "Smooth cast! Steady as a weightlifter's rep",
-    "Nice and even. Classic-rock steady beat",
-    "That's the rhythm! Totally Bluey-and-Bingo calm",
-  ],
-  // A7: the fish makes a run mid-fight (Ocean). Drama, never a scolding, the
-  // kid hasn't done anything wrong, and nothing is lost while these show.
-  fishRun: [
-    "It's running! Hold steady…",
-    "Whoa, it's taking line!",
-    "It dove deep! Easy does it",
-    "Still fighting! You've got this",
-    "That's a strong one. Stay with it",
-    "It's not giving up yet!",
-  ],
-  bite: [
-    "Fish on! Holy mackerel!",
-    "Oh my cod, reel it in!",
-    "A bite! Hook, line, and sinker!",
-    "Fish on! Don't trout yourself now",
-    "Fish on! Somebody grab the ketchup",
-    "A bite! Cue the classic hip hop beat",
-    "Fish on! Pink and sparkly incoming",
-  ],
-  catchCommon: [
-    "Caught it! Reel-y nice work",
-    "Landed! That was off the scale",
-    "Caught, and it wasn't even a fluke",
-    "Got it! You're quite the catch-er",
-    "Caught it! Comic-book-cover worthy",
-    "Landed! Rubik's-cube fast",
-    "Got it! Totally 80s-power-ballad worthy",
-  ],
-  catchRare: [
-    "✨ RARE! Holy carp! ✨",
-    "✨ RARE! You're o-fish-ally amazing ✨",
-    "✨ RARE! Simply fin-tastic ✨",
-    "✨ RARE! Hyrule-legendary rare ✨",
-    "✨ RARE! Simpsons-couch-gag rare ✨",
-    "✨ RARE! Unicorn-sparkle rare ✨",
-  ],
-  escape: [
-    "It got away… cod it be worse?",
-    "Escaped! A missed oppor-tuna-ty",
-    "Gone… but the pond is patient",
-    "It slipped away. Better luck next tide",
-  ],
-  // {it} = the junk item's name (see CONFIG.junk.items)
-  junk: [
-    "Aw shucks, you reeled up {it}. Water ya gonna do?",
-    "Just {it}. That's a load of pond scum!",
-    "You caught {it}?! Talk about a re-boot",
-    "{it}. Well, it's the sole of the lake…",
-    "Only {it}, not every cast's a jackpot. Cast again!",
-    "{it}! Dino-mite catch… for a lunchbox. Not so much a lake.",
-  ],
-};
+// Dad joke flavor text: one pool per moment, picked at random. The pools live
+// in data/puns.json and are PER SPOT: the Ocean never tells a pond joke, and a
+// moment a spot does not override falls back to the shared pool. Add a joke to
+// the JSON, not here.
+//
+// House rule (CLAUDE.md): cast lines always keep the literal instruction, which
+// is exactly why the jokes toggle below cannot reach them. See setPun.
+function puns(moment) {
+  return PUN_POOLS[save?.location]?.[moment] ?? PUN_POOLS.shared?.[moment] ?? [];
+}
+function punFor(moment) {
+  const pool = puns(moment);
+  return pool.length ? pick(pool) : "";
+}
 
 // ---- State ----
 let phase = "cast";        // cast | wait | reel | done
@@ -399,7 +320,8 @@ function later(fn, delay) {
 const $ = id => document.getElementById(id);
 const el = { scene: $("scene"), word: $("word"), status: $("status"), fill: $("meter-fill"),
              caught: $("caught"), escaped: $("escaped"), coins: $("coins"), dist: $("dist"),
-             linePath: $("line-path"), lure: $("lure"), fish: $("fish"), bobber: $("bobber") };
+             linePath: $("line-path"), lure: $("lure"), fish: $("fish"), bobber: $("bobber"),
+             pun: $("pun"), punDismiss: $("pun-dismiss") };
 
 // scale the fixed 720x360 design-space canvas to cover the viewport (M9);
 // every pixel position in the game logic stays in that untouched coordinate
@@ -442,6 +364,12 @@ let actx = null, masterGain = null, sfxGain = null, musicGain = null, ambientNod
 // before they're worth hearing, and a kid shouldn't have to mute the game to
 // like it. The tackle-box toggle still turns it on and that choice sticks.
 let soundOn = localStorage.getItem("tf:soundOn") === "on";
+
+// The top-left jokes, on by default. Turning them off silences FLAVOUR only:
+// the cast and wiggle prompts carry the literal instruction and keep showing
+// whatever this says, so a kid who finds the puns annoying can be rid of them
+// without losing the one line on screen that says what to press.
+let punsOn = localStorage.getItem("tf:punsOn") !== "off";
 
 function ensureAudio() {
   if (actx) return;
@@ -641,7 +569,27 @@ function renderTension() {
   el.fill.style.background = tension > 66 ? "var(--ember)" : tension > 33 ? "var(--gold)" : "var(--moss)";
   el.fill.classList.toggle("danger", tension > 66);
 }
-function setStatus(t) { el.status.textContent = t; }
+// The top-left line, and the two ways into it. setStatus carries INSTRUCTIONS
+// (the cast and wiggle prompts, a change of spot, a load failure) and is always
+// shown; setPun carries flavour and obeys the jokes toggle. That split is the
+// whole reason a dismiss button can exist: the "x" only ever appears on a line
+// a kid is allowed to lose, so silencing the jokes can never leave a beginner
+// with nothing telling them to type.
+function setStatus(t, dismissable = false) {
+  el.status.textContent = t;
+  el.pun.classList.toggle("empty", !t);
+  el.punDismiss.hidden = !t || !dismissable;
+  if (t) popPun();
+}
+function setPun(t) { setStatus(punsOn ? t : "", true); }
+// Re-trigger the pop-in: a running animation only replays once the class has
+// been removed and the removal committed, the same trick #word.pop uses.
+function popPun() {
+  if (REDUCE_MOTION) return;
+  el.pun.classList.remove("pop");
+  void el.pun.offsetWidth;
+  el.pun.classList.add("pop");
+}
 
 // ---- Reel animation: the fish rises from the depths and is reeled toward the
 // boat, with the fishing line redrawn every frame from the rod tip to the
@@ -975,7 +923,7 @@ function startCast() {
   el.fish.style.removeProperty("--reveal");           // …and the next catch is a shape again
   el.fish.style.removeProperty("--flee");
   fish = junk = null;                                 // the next approach rolls its own
-  setStatus(pick(PUNS.cast));
+  setStatus(punFor("cast"));
   renderWord();
 }
 
@@ -987,7 +935,7 @@ function startWait() {
   // line, never a penalty, and the Pond casts exactly as before.
   const flyWater = save.location !== CONFIG.tiers[0].location;
   const niceCast = flyWater && logic.isEvenCadence(castIntervals, CONFIG.flyCast.minKeys, CONFIG.flyCast.maxCadenceCv);
-  setStatus(niceCast ? pick(PUNS.niceCast) : pick(PUNS.wait));
+  setPun(niceCast ? punFor("niceCast") : punFor("wait"));
   // R1: the rod loads, swings, and the lure flies, the splash, the bobber and
   // the wait for a bite all now hang off where and when the lure actually lands.
   castLine(() => {
@@ -1027,7 +975,11 @@ function startWiggle() {
   phase = "wiggle"; inputLocked = false;
   const [lo, hi] = CONFIG.wiggle.wordsRange;
   wigglesLeft = lo + Math.floor(Math.random() * (hi - lo + 1));   // inclusive both ends
-  setStatus(pick(PUNS.wiggle));
+  // F4: the wiggle prompt is an INSTRUCTION, so like the cast prompt it keeps
+  // the literal thing to do in it and is setStatus rather than setPun: a kid
+  // who has never seen a wiggle cast has to read one line and know what to
+  // press, jokes on or off.
+  setStatus(punFor("wiggle"));
   nextWiggleWord();
 }
 
@@ -1047,7 +999,7 @@ function wiggleComplete() {
   phase = "wait"; inputLocked = true;
   el.word.textContent = "";
   updateGuide(null);
-  setStatus(pick(PUNS.wiggleDone));
+  setPun(punFor("wiggleDone"));
   armBite(CONFIG.wiggle.biteDelayMsRange);
 }
 
@@ -1167,7 +1119,7 @@ function bite() {
   shakeScene();
   burst(A.cast.landing.x + 16, A.cast.landing.y + 4, CONFIG.fish.approach.biteParticles);
   sfxBite();
-  setStatus(pick(PUNS.bite));
+  setPun(punFor("bite"));
   startSwim();
   setTimeout(() => el.fish.classList.remove("hooked"), 350);
   if (reelMode === "phrase") renderWord(); else nextReelWord();
@@ -1235,7 +1187,7 @@ function fishRun(ms, then) {
   if (REDUCE_MOTION) { fishX = fishTX; fishY = fishTY; drawFish(fishTX, fishTY); }
   shakeScene();
   sfxBite();
-  setStatus(pick(PUNS.fishRun));
+  setPun(punFor("fishRun"));
   later(() => {
     setFishTarget();                      // …and back to where the kid actually reeled it to
     startPull(CONFIG.fish.pull.wordMs);
@@ -1309,7 +1261,7 @@ function land(success) {
     const freshJunkBadges = evaluateBadges();
     persistSave();
     sfxEscape();
-    const junkPun = pick(PUNS.junk).replace("{it}", junk.name);
+    const junkPun = punFor("junk").replace("{it}", junk.name);
     setStatus("");                      // the card carries it now, and announces it
     showCatchCard({ kind: "junk", files: [junk.file], box: CONFIG.card.junkBox,
                     name: junk.name, sub: "not a fish", pun: junkPun });
@@ -1355,7 +1307,7 @@ function land(success) {
     coinFloat(140, 200, amount);
     const isRare = fish.tier === "rare" || fish.tier === "legendary";
     (isRare ? sfxRareCatch : sfxCatch)();
-    const pun = isRare ? pick(PUNS.catchRare) : pick(PUNS.catchCommon);
+    const pun = isRare ? punFor("catchRare") : punFor("catchCommon");
     const sizeNote = `: ${fish.name} (${weight} lb`
       + (cls === "lunker" ? ", a LUNKER!" : cls === "little" ? ", a little one" : "")
       + ")";
@@ -1415,7 +1367,7 @@ function land(success) {
     el.escaped.textContent = save.stats.escapes;
     fleeOffscreen();
     sfxEscape();
-    const escPun = pick(PUNS.escape);
+    const escPun = punFor("escape");
     setStatus("");                      // the card carries it now, and announces it
     // No species on this one, deliberately: the reveal never tells you what a
     // fish was until it is close, and an escape is the fish you never found out
@@ -1471,6 +1423,7 @@ function showCatchCard({ kind, files = [], box, name, sub, pun, coins = 0, flags
   card.querySelector(".card-pun").textContent = pun ?? "";
   card.querySelector(".card-coins").textContent = coins ? `+${coins} coins` : "";
   $("card-slot").hidden = false;
+  el.pun.classList.add("behind-card");  // the card does the talking while it is up
   void card.offsetWidth;               // commit the resting state to animate FROM
   card.classList.add("in");
   cardUp = true;
@@ -1478,7 +1431,9 @@ function showCatchCard({ kind, files = [], box, name, sub, pun, coins = 0, flags
 
 function hideCatchCard() {
   cardGen++;                           // …and cancel any card still waiting on a banner
+  el.pun.classList.remove("behind-card");
   if (!cardUp) return;
+  if (el.status.textContent) popPun();  // the cast prompt pops back in as the card is yanked
   cardUp = false;
   const card = $("catch-card");
   card.classList.remove("in");
@@ -1778,6 +1733,23 @@ guideBtn.addEventListener("click", () => {
   guideBtn.classList.toggle("active", guideOn);
   guide.style.display = guideOn ? "block" : "none";
   updateGuide(guideOn && !inputLocked ? target[typed] : null);
+});
+
+// the jokes: a tackle-box toggle, and the "x" on the bubble itself, which is
+// the same switch reached from where the annoyance actually is
+const punBtn = $("pun-toggle");
+function setPunsOn(on) {
+  punsOn = on;
+  localStorage.setItem("tf:punsOn", on ? "on" : "off");
+  punBtn.textContent = on ? "ON" : "OFF";
+  punBtn.classList.toggle("active", on);
+}
+setPunsOn(punsOn);
+punBtn.addEventListener("click", () => setPunsOn(!punsOn));
+el.punDismiss.addEventListener("click", (e) => {
+  setPunsOn(false);
+  setStatus("");            // and the line they just dismissed goes now, not next cast
+  e.currentTarget.blur();   // or the next space/enter would press it again
 });
 
 const soundBtn = $("sound-toggle");
@@ -2637,9 +2609,10 @@ try {
   // NB: PHRASE_POOL/SENTENCE_POOL were declared back in A1 but never actually
   // fetched here: the Stream silently never reeled phrases (or capitals, or
   // WPM) at runtime despite A1-A4 shipping. Fixed alongside A5's sentences.
-  [FULL_POOL, FISH, PHRASE_POOL, SENTENCE_POOL] = await Promise.all([
+  [FULL_POOL, FISH, PHRASE_POOL, SENTENCE_POOL, PUN_POOLS] = await Promise.all([
     loadJson("data/words.json"), loadJson("data/fish.json"),
     loadJson("data/phrases.json"), loadJson("data/sentences.json"),
+    loadJson("data/puns.json"),
   ]);
   migrateLegacySave();
   showProfilePicker();

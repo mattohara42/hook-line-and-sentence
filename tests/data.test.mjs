@@ -16,6 +16,7 @@ const fish  = load("../data/fish.json");
 const phrases = load("../data/phrases.json");     // A1: Stream phrase content
 const sentences = load("../data/sentences.json"); // A5: Ocean sentence content
 const blocklist = new Set(load("../data/blocklist.json"));
+const puns = load("../data/puns.json");                 // the game's voice, per spot
 const TIERS = new Set(Object.keys(CONFIG.size.weightRangeByTier)); // source of truth
 
 // report the actual offenders, not just a count: a failing test should point at the row
@@ -143,6 +144,54 @@ test("every fight water has enough sentences to fill its longest fight without r
       assert.ok(pool.length >= segs,
         `"${f.id}" (${f.tier}, d${f.difficulty}) fights ${segs} segments but only ${pool.length} sentence(s) are reachable at ${loc}`);
     }
+  }
+});
+
+// ---- The voice (data/puns.json) ----------------------------------------
+// The pools moved out of app.js so the per-spot rule and the cast-prompt house
+// rule could actually be checked. A typo in a moment name used to be invisible:
+// puns() would fall through to nothing and the kid would get a blank line.
+const PUN_SPOTS = CONFIG.tiers.map(t => t.location);
+const punPools = Object.entries(puns).filter(([k]) => k !== "_readme");
+// what the game actually asks for, read off app.js's own punFor() calls
+const PUN_MOMENTS = [...new Set([...readFileSync(new URL("../app.js", import.meta.url), "utf8")
+  .matchAll(/punFor\("(\w+)"\)/g)].map(m => m[1]))];
+
+test("puns.json holds a pool per spot, and every pool is a list of real lines", () => {
+  assert.ok(PUN_MOMENTS.length >= 6, "no punFor() calls found: this test lost its grip on app.js");
+  assert.deepEqual(punPools.map(([k]) => k).sort(), ["shared", ...PUN_SPOTS].sort(),
+    "every spot needs its own pools, and nothing may name a spot that does not exist");
+  for (const [spot, pools] of punPools)
+    for (const [moment, lines] of Object.entries(pools)) {
+      assert.ok(Array.isArray(lines) && lines.length, `${spot}.${moment}: empty pool`);
+      assert.equal(offenders(lines, l => typeof l !== "string" || !l.trim()), "", `${spot}.${moment}: blank line`);
+      assert.equal(new Set(lines).size, lines.length, `${spot}.${moment}: duplicate line`);
+    }
+});
+
+test("every spot can serve every moment the game asks for", () => {
+  for (const spot of PUN_SPOTS)
+    for (const moment of PUN_MOMENTS)
+      assert.ok((puns[spot][moment] ?? puns.shared[moment])?.length,
+        `${spot} has nothing to say at "${moment}" and no shared pool to fall back on`);
+});
+
+// CLAUDE.md: cast prompts always keep the literal instruction. It is the only
+// line telling a beginner what to do, and it has to survive being rewritten
+// three times over for three spots.
+test("every cast line, at every spot, keeps the literal instruction", () => {
+  for (const spot of PUN_SPOTS) {
+    const lines = puns[spot].cast ?? puns.shared.cast;
+    assert.equal(offenders(lines, l => !/\btype\b.*\bcast\b/i.test(l)), "",
+      `${spot}: a cast prompt that does not tell the kid to type the word to cast`);
+  }
+});
+
+test("junk lines all carry the {it} the item name is spliced into", () => {
+  for (const [spot, pools] of punPools) {
+    const lines = pools.junk;
+    if (!lines) continue;
+    assert.equal(offenders(lines, l => !l.includes("{it}")), "", `${spot}: a junk line with no {it}`);
   }
 });
 
