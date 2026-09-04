@@ -145,6 +145,15 @@ export function earnsPrestige(prestigeCfg, fishId, alreadyHad) {
 // when the pool is too thin to fill minSize (e.g. stage 1's lone hard word).
 // Content-agnostic: works on any entry with a numeric `d`, so the phrase reel
 // (AD2) draws from data/phrases.json through the same difficulty machinery.
+// The game's voice, resolved for one moment at one spot (data/puns.json). Per
+// spot first, then the shared pool: a spot overrides the moments where the
+// water matters (the Ocean does not tell pond jokes) and inherits the rest.
+// Pure, so the fallback chain is testable without a browser; app.js picks a
+// line out of what comes back.
+export function punPool(pools, location, moment) {
+  return pools?.[location]?.[moment] ?? pools?.shared?.[moment] ?? [];
+}
+
 export function buildReelPool(entries, difficulty, minSize) {
   let floor = difficulty, pool;
   do {

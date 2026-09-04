@@ -147,6 +147,87 @@ test("every fight water has enough sentences to fill its longest fight without r
   }
 });
 
+// ---- Three whole-repo invariants ---------------------------------------
+// These exist because of what the top-bar rework (2026-09-04) could have broken
+// silently, and because of what R6/R7 DID break silently. Each one is a class of
+// bug that produces no error and no failed assertion: an element that is not
+// there, a colour that is not defined, a painting that was never delivered. The
+// game just quietly draws less than it should.
+const APP = readFileSync(new URL("../app.js", import.meta.url), "utf8");
+const HTML = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+const CSS = readFileSync(new URL("../style.css", import.meta.url), "utf8");
+const ASSETS = new Set(readdirSync(new URL("../assets", import.meta.url)));
+
+// Every id app.js reaches for has to exist in the markup. `$("who")` on a
+// missing element is `null`, and the failure lands later, somewhere else, as a
+// TypeError on a line that is not the mistake.
+test("every element app.js reaches for exists in index.html", () => {
+  const wanted = new Set([...APP.matchAll(/(?:\$|document\.getElementById)\(\s*"([A-Za-z0-9_-]+)"\s*\)/g)]
+    .map(m => m[1]));
+  assert.ok(wanted.size > 20, "no getElementById calls found: this test lost its grip on app.js");
+  const inHtml = new Set([...HTML.matchAll(/\bid="([A-Za-z0-9_-]+)"/g)].map(m => m[1]));
+  // …unless app.js builds it itself, which is a different (visible) contract
+  const built = new Set([...APP.matchAll(/\.id\s*=\s*"([A-Za-z0-9_-]+)"/g)].map(m => m[1]));
+  const missing = [...wanted].filter(id => !inHtml.has(id) && !built.has(id));
+  assert.deepEqual(missing, [], "app.js asks for ids that index.html does not have");
+});
+
+// A misspelled custom property is not an error: the declaration is simply
+// dropped and the element renders with no colour, or no duration.
+test("every CSS variable the stylesheet reads is defined somewhere", () => {
+  const used = new Set([...CSS.matchAll(/var\(\s*(--[a-z0-9-]+)/g)].map(m => m[1]));
+  const declared = new Set([...CSS.matchAll(/(--[a-z0-9-]+)\s*:/g)].map(m => m[1]));
+  // the rest are set from JS at runtime (a per-catch duration, a fish's colour)
+  const fromJs = new Set([...APP.matchAll(/setProperty\(\s*"(--[a-z0-9-]+)"/g)].map(m => m[1]));
+  const undef = [...used].filter(v => !declared.has(v) && !fromJs.has(v));
+  assert.deepEqual(undef, [], "CSS reads variables that nothing defines");
+  // and the reverse for the JS ones: a var app.js sets that the stylesheet
+  // never reads is dead, which is how a renamed hook goes unnoticed
+  const deadJs = [...fromJs].filter(v => !used.has(v));
+  assert.deepEqual(deadJs, [], "app.js sets custom properties the stylesheet does not read");
+});
+
+// R6 shipped a fishing line attached to nothing because a layer was named and
+// never delivered. Config naming a painting that is not in assets/ is invisible
+// until someone looks at the right fish at the right spot.
+test("every painting the game names actually exists in assets/", () => {
+  const png = stem => ASSETS.has(stem + ".png");
+  const missing = [];
+  const want = (stem, where) => { if (stem != null && !png(stem)) missing.push(`${where}: ${stem}.png`); };
+
+  for (const [pose, spec] of Object.entries(CONFIG.rig.poses)) {
+    for (const l of spec.layers ?? []) want(l.file, `rig.poses.${pose}`);
+  }
+  for (const [key, stem] of Object.entries(CONFIG.rig.gearArt ?? {})) want(stem, `rig.gearArt.${key}`);
+  for (const [name, v] of Object.entries(CONFIG.rig.vessels ?? {})) {
+    want(v.far, `rig.vessels.${name}.far`);
+    want(v.near, `rig.vessels.${name}.near`);
+  }
+  for (const [id, spec] of Object.entries(CONFIG.fish.species ?? {}))
+    for (const l of spec.layers ?? []) want(typeof l === "string" ? l : l.file, `fish.species.${id}`);
+  for (const item of CONFIG.junk?.items ?? []) want(item.file, `junk.items.${item.id}`);
+  // A shop item's `file` is a BASE stem: the real paintings are `<file>-<pose>`
+  // and rig.gearArt is the register of which ones were delivered (checked as
+  // files just above). So the thing worth asserting is that a piece a kid can
+  // BUY has art somewhere: without it, gearFile() falls back at every spot and
+  // the rod you saved 150 coins for is invisible, with nothing going wrong.
+  const poses = Object.keys(CONFIG.rig.poses);   // keyed by location (checked below)
+  for (const [list, items] of Object.entries(CONFIG.shop))
+    for (const item of items) {
+      if (!item.file) continue;                     // a bare head, a bait, a tinted hull
+      if (!poses.some(pose => (CONFIG.rig.gearArt ?? []).includes(`${item.file}-${pose}`)))
+        missing.push(`shop.${list}.${item.id}: no ${item.file}-<pose> in rig.gearArt`);
+    }
+  // …and the ones the stylesheet and the page name directly
+  for (const m of CSS.matchAll(/url\(\s*"assets\/([^"]+)"/g))
+    if (!ASSETS.has(m[1])) missing.push(`style.css: assets/${m[1]}`);
+  for (const m of HTML.matchAll(/(?:src|href)="((?:assets|[a-z0-9-]+\.(?:css|js)))([^"]*)"/g)) {
+    const path = m[1] + m[2];
+    if (path.startsWith("assets/") && !ASSETS.has(path.slice(7))) missing.push(`index.html: ${path}`);
+  }
+  assert.deepEqual(missing, [], "config or markup names paintings that are not in assets/");
+});
+
 // ---- The voice (data/puns.json) ----------------------------------------
 // The pools moved out of app.js so the per-spot rule and the cast-prompt house
 // rule could actually be checked. A typo in a moment name used to be invisible:

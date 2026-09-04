@@ -3,6 +3,7 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { CONFIG } from "../config.js";
 import {
   unlockedStageCount, lettersForStages, pickTier, weightClass, rollWeight, buildReelPool,
@@ -12,7 +13,7 @@ import {
   rankForProfile, earnsPrestige, speedTestPool, typingAccuracy,
   castArcPoint, lineSagPx, lineControlPoint, stepTug, rotateAboutPivot, easeIn, easeOut,
   easeInOut, reelProgressAtX, revealAt,
-  gearFile,
+  gearFile, punPool
 } from "../logic.js";
 
 const TIER_ORDER = ["legendary", "rare", "uncommon", "common"];   // hardest → easiest
@@ -333,6 +334,22 @@ test("a fight's segments never exceed the sentence pool's real content (A7 sanit
   assert.ok(most >= 1 && most <= 5, `segmentsByTier tops out at ${most}: that's a long fight for a kid`);
 });
 
+test("punPool prefers the spot's own lines and falls back to the shared pool", () => {
+  const pools = { shared: { cast: ["shared cast"], junk: ["shared junk"] },
+                  pond: { cast: ["pond cast"] }, ocean: {} };
+  assert.deepEqual(punPool(pools, "pond", "cast"), ["pond cast"], "a spot's own lines win");
+  assert.deepEqual(punPool(pools, "pond", "junk"), ["shared junk"], "a moment it does not override falls back");
+  assert.deepEqual(punPool(pools, "ocean", "cast"), ["shared cast"], "an empty spot pool still falls back");
+  // the three ways this gets called before there is anything to say: no profile
+  // yet, a spot the pools have never heard of, a moment nobody wrote. All of
+  // them have to be an empty list rather than undefined, because app.js picks
+  // out of the result and a crash here would be a crash mid-cast.
+  assert.deepEqual(punPool(pools, undefined, "cast"), ["shared cast"]);
+  assert.deepEqual(punPool(pools, "lagoon", "cast"), ["shared cast"]);
+  assert.deepEqual(punPool(pools, "pond", "nosuchmoment"), []);
+  assert.deepEqual(punPool(undefined, "pond", "cast"), []);
+});
+
 test("buildReelPool works on phrase entries too (content-agnostic on .d)", () => {
   const phrases = [{ text: "a sad lad", d: 1 }, { text: "a red hat", d: 2 }];
   assert.deepEqual(buildReelPool(phrases, 1, 1).map(e => e.text), ["a sad lad"]);
@@ -573,4 +590,17 @@ test("every tier is fully revealed before it is landed", () => {
     assert.equal(revealAt(furthestDrawn, startAt, fullAt), 1,
       `a ${tier} (${words} words) is only ${revealAt(furthestDrawn, startAt, fullAt)} revealed when it lands`);
   }
+});
+
+// A floor rather than a test of behaviour. logic.js is where the pure decisions
+// go as they come out of app.js (which is DOM-bound and cannot be imported
+// here), so the one thing that must not happen quietly is a function landing in
+// it with no test at all: that is how the untested half grows back.
+test("every function logic.js exports is exercised by this file", () => {
+  const src = readFileSync(new URL("../logic.js", import.meta.url), "utf8");
+  const exported = [...src.matchAll(/^export function ([A-Za-z0-9_]+)/gm)].map(m => m[1]);
+  assert.ok(exported.length > 20, "no exports found: this test lost its grip on logic.js");
+  const here = readFileSync(new URL(import.meta.url), "utf8");
+  const untested = exported.filter(name => !new RegExp(`\\b${name}\\b`).test(here));
+  assert.deepEqual(untested, [], "logic.js exports these with no test in logic.test.mjs");
 });

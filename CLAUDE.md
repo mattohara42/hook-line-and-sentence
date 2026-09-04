@@ -68,6 +68,11 @@ older still and is load-bearing for the pre-profiles migration.
   `style.css`, plus `config.js` and `data/*.json`. If a change seems to need
   a bundler or framework, stop and discuss instead.
 - **All tuning values live in `config.js`.** No magic numbers in game logic.
+- **Pure decisions go in `logic.js`, which is where the tests can reach them.**
+  `app.js` is DOM-bound and cannot be imported by `node --test`, so anything
+  that is really a rule (a fallback chain, a threshold, a shape) belongs next
+  door. A test enforces the floor: every function `logic.js` exports has to be
+  exercised by `tests/logic.test.mjs`.
 - **Firestore per `FIRESTORE.md`**: one read per launch, one write per
   catch, localStorage mirror. Do not add subcollections or per-keystroke
   writes.
@@ -148,6 +153,10 @@ older still and is load-bearing for the pre-profiles migration.
   it after every squash-merge too**: reusing a branch across merges makes its
   history diverge from `main` a little more each time, and the next PR conflicts
   against work that is already in.
+- **A chrome change is not done until `tools/ui-check.mjs` is green.** It sweeps
+  twelve viewport shapes for overlapping overlays and then drives the top bar.
+  Desktop is not the game's only shape: the tackle box sat on the HUD chips on
+  every phone for weeks because the only browser tools shot one 1280x720 window.
 - **Verify visual and motion claims in a real browser, and screenshot past the
   startup modal.** `#profiles` covers the whole viewport until an angler is
   created, so a screenshot taken on load is a picture of a scrim, not the game.

@@ -658,7 +658,12 @@ h1 {
    there when it clears. There is nothing to sequence. */
 #card-slot {
   position: fixed; left: 0; right: 0;
-  top: 52px;         /* clear of the HUD chips */
+  /* Clear of the top bar, MEASURED rather than guessed: app.js (fitTopbar)
+     keeps --card-top in step with what the bar actually is, because its height
+     moves with the chips' wrapping and with the stacked layout under 620px. A
+     fixed 52px was right for one HUD row and put the card under the tackle box
+     on a 320px phone. The fallback is that old value. */
+  top: var(--card-top, 52px);
   bottom: 312px;     /* clear of #word (bottom 250 + its 54px box + a margin) */
   z-index: 5;
   display: flex; align-items: center; justify-content: center;
@@ -784,22 +789,24 @@ h1 {
 /* the chips and the title stay click-through (the sky behind them is scenery
    worth not blocking); everything you can press does not */
 #topbar button, #controls { pointer-events: auto; }
+/* the left column takes what is left over, and the bubble's own max-width caps
+   it. Splitting the row by percentage instead wrapped the four chips onto two
+   rows at 740px, where the second row then sat on #word. */
 #topleft {
   display: flex; flex-direction: column; align-items: flex-start; gap: 7px;
-  min-width: 0; max-width: 54%;
+  flex: 1 1 auto; min-width: 0;
 }
 #topright {
   position: relative;        /* #controls hangs off this, so the tray follows
                                 the tackle box instead of guessing a `top` */
   display: flex; flex-direction: column; align-items: flex-end; gap: 8px;
-  flex: none; max-width: 46%;
+  flex: none;
 }
 #hud {
   display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end;
 }
 @media (max-width: 620px) {
   #topbar { flex-direction: column-reverse; align-items: stretch; gap: 10px; }
-  #topleft, #topright { max-width: 100%; }
 }
 /* A phone on its side: the whole game is squeezed between the HUD and the
    keyboard, and #word (at bottom: 250px) is only ~55px from the top. The
@@ -984,11 +991,24 @@ h1 {
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 #badge-toast.show { transform: translate(-50%, 0); opacity: 1; }
-@media (max-width: 620px) {
+/* Top-centre only works while there is room between the centre of the screen
+   and a right-aligned HUD: the pill is ~262px and the chips ~332px, so they
+   meet below ~954px of viewport. Under that it goes to the band between the
+   keyboard and #word and rises into place instead of dropping. The numbers are
+   measured, not guessed: #word's box ends 304px up and the guide panel's top
+   edge is 201px up at full size (it scales down below ~719px wide, which only
+   opens the gap further), so 208 clears both. It has to stay OUT of the card's
+   band, which ends 312px up: the first attempt at 316 was inside it. */
+@media (max-width: 980px) {
   #badge-toast {
-    top: auto; bottom: 316px;             /* clear of #word, below the card band */
-    transform: translate(-50%, 140%);     /* so it rises into place, not drops */
-    max-width: calc(100vw - 28px); white-space: normal; text-align: center;
+    top: auto; bottom: 208px;
+    transform: translate(-50%, 140%);
+    /* max-content, or a `left: 50%` box wraps at HALF the viewport (that is all
+       the room a fixed element has to its right) and the second line runs into
+       #word. It may still wrap, but only when the text really is wider than the
+       screen. */
+    width: max-content; max-width: calc(100vw - 28px);
+    white-space: normal; text-align: center;
   }
 }
 #badge-toast b { color: var(--gold); }
