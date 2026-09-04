@@ -310,7 +310,10 @@ function tickCastRhythm() {
 // run fn after delay unless the game moved on (profile switched) or picker opened
 function later(fn, delay) {
   const g = gameGen;
-  setTimeout(() => { if (g === gameGen && !pickerOpen) fn(); }, delay);
+  // Handing the timer back is what lets a REPEATING one go through here too:
+  // a self-rescheduling later() chain stops on its own the moment the game it
+  // belongs to is over, and the caller can still cancel it early.
+  return setTimeout(() => { if (g === gameGen && !pickerOpen) fn(); }, delay);
 }
 
 // ---- DOM ----
@@ -815,8 +818,14 @@ function bobberIn() {
   // keeps F4's "a kid can see their typing move something" true at a spot with
   // no float to move.
   ripple(A.cast.landing.x, A.cast.landing.y); // splash-in ring, then the idle rhythm
-  bobberRippleTimer = setInterval(
-    () => ripple(CONFIG.anim.cast.landing.x, CONFIG.anim.cast.landing.y), JUICE.bobberRippleMs);
+  // A setInterval outlives the game that started it: this one kept stacking
+  // rings behind the profile picker until the next startCast() cleared it.
+  // A later() chain is the same rhythm and stops itself instead.
+  const rippleTick = () => {
+    ripple(A.cast.landing.x, A.cast.landing.y);
+    bobberRippleTimer = later(rippleTick, JUICE.bobberRippleMs);
+  };
+  bobberRippleTimer = later(rippleTick, JUICE.bobberRippleMs);
   // T2: what floats here is the spot's business, and the Ocean floats nothing.
   const kind = CONFIG.tackle[save.location];
   if (!kind) return;
@@ -829,7 +838,7 @@ function bobberIn() {
   el.bobber.classList.add("on");
 }
 function bobberOut(plunge) {
-  clearInterval(bobberRippleTimer);
+  clearTimeout(bobberRippleTimer);
   if (plunge) {
     el.bobber.classList.add("plunge");
     ripple(A.cast.landing.x, A.cast.landing.y);
@@ -2478,10 +2487,8 @@ const accColor = acc => {
 
 function renderProgress() {
   const L = save.stats.letters || {};
-  let totalN = 0, totalErr = 0;
-  for (const k in L) { totalN += L[k].n; totalErr += L[k].errors; }
-  const attempts = totalN + totalErr;
-  const overall = attempts ? Math.round(100 * totalN / attempts) : 0;
+  const { pct, keys: attempts } = overallAccuracy();   // the same sum, already in logic.js
+  const overall = Math.round(pct * 100);
   // trouble keys = lowest accuracy among letters with enough samples to matter
   const trouble = Object.entries(L)
     .filter(([k, s]) => /[a-z]/.test(k) && s.n + s.errors >= 3)
@@ -2610,8 +2617,12 @@ function showBadgeToast(b) {
 let journalOpen = false;
 const journalRoot = $("journal");
 function renderJournal() {
-  evaluateBadges();          // backfill retroactively earned badges (old saves / pre-journal progress)
-  persistSave();
+  // Backfill badges earned retroactively (an old save, or progress from before
+  // the journal existed). The write is guarded on there being one, because
+  // opening a panel is not a game event: unconditionally, this was the only
+  // call site in the game that spent a Firestore write on somebody looking at
+  // a screen, against the one-write-per-catch budget `FIRESTORE.md` opens with.
+  if (evaluateBadges().length) persistSave();
   const earned = BADGES.filter(b => save.badges.includes(b.id)).length;
   // A8 also surfaces the kid's rank here: it was stored from A0 onward but
   // never actually shown anywhere, which made "you made Marlin!" a one-off toast
@@ -2829,15 +2840,21 @@ $("st-again").addEventListener("click", stBegin);
 $("st-close").addEventListener("click", () => toggleSpeed(false));
 $("st-done").addEventListener("click", () => toggleSpeed(false));
 
+// Escape closes ONE thing: the topmost. It used to close all of them at once,
+// so a panel opened from the tray took the tray with it and a kid backing out
+// of the shop landed on the water instead of on the menu they came from. Every
+// .overlay shares z-index 10, so "topmost" is DOM order in index.html, and this
+// list is that order reversed, with the tray (which sits under all of them)
+// last.
 document.addEventListener("keydown", (e) => {
   if (e.key !== "Escape") return;
-  if (collectionOpen) toggleCollection(false);
-  if (shopOpen) toggleShop(false);
-  if (nudgeOpen) toggleNudge(false);
-  if (progressOpen) toggleProgress(false);
-  if (journalOpen) toggleJournal(false);
-  if (speedOpen) toggleSpeed(false);
-  if (!controlsTray.hidden) toggleControls(false);
+  if (nudgeOpen) return toggleNudge(false);
+  if (speedOpen) return toggleSpeed(false);
+  if (progressOpen) return toggleProgress(false);
+  if (journalOpen) return toggleJournal(false);
+  if (shopOpen) return toggleShop(false);
+  if (collectionOpen) return toggleCollection(false);
+  if (!controlsTray.hidden) return toggleControls(false);
 });
 
 // ---- Profile picker (shown on launch; gates the game until a kid is chosen) ----
