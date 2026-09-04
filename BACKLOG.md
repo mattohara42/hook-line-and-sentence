@@ -233,6 +233,14 @@ them, 96px and 34px, against the originals: no visible difference.
   `data.test.mjs` guard fails if any blocklisted word reappears. Real words that
   merely *look* like junk were deliberately kept (`don`, `bob`, `jay`, `lee`,
   `ken`, `tom`, `sun`, `wed`, `mar`, `nil`, `gel`, `cod`, `chi`, `phi`, `psi`…).
+  - **✅ `hong` and `kong` went the same way (2026-09-04)**, found when one of
+    them landed in the word box of a screenshot taken for the repo's social
+    preview and read as a typo. "Hong Kong" split into two fragments, which is
+    the `sie` / `eau` class the pass above already removed rather than the
+    proper-noun question below. Pool 2851 → 2849. **`hong` is the arguable
+    one**: it is a real dictionary word (a foreign trading house in China), just
+    obscure enough that next to `kong` it reads as a fragment. One line in
+    `data/blocklist.json` and one entry in `data/words.json` to put back.
   - **Still deferred (a bigger, more subjective cut):** proper first names and
     place names (`jim`, `joe`, `dan`, `texas`, `china`, `john`…) are still in the
     pool. They're real and typeable, so removing them is a separate policy call,
