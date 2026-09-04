@@ -177,6 +177,123 @@ direction.
 
 ## Open art requests
 
+### T4: the four junk sprites — the last pixel-era art in the game
+
+`CONFIG.card.junkPx`'s comment has said it for a while: *"the four junk sprites
+are the last pixel-era art in the game — the refresh never reached them."* This
+is that. `assets/junk-boot.png`, `junk-can.png`, `junk-weed.png` and
+`junk-nugget.png` are overwritten in place, so **T4 needs no config change at
+all** — `CONFIG.junk.items` already names those files.
+
+**One sheet of four, not four generations, and the reason is not the count.**
+Registration does not apply here: unlike an angler's layers, four junk items
+never have to line up with each other. The reason is *consistency of treatment*.
+R6 found that four fish on one canvas came back with the same handling across
+the set, and these four are shown **side by side** in T3's journal shelf, which
+is exactly where four separately-generated styles would show up as four
+different games.
+
+**Sizes they have to survive**, because all three are small: **96px** on the
+catch card (`CONFIG.card.junkPx`), **~34px** in the journal shelf, and the
+scene's **62×41** `#fish` box while being reeled. Silhouette is most of the read
+at the bottom two.
+
+**The nugget is a family easter egg** (see the 2026-08-25 entry at the foot of
+this file) and its joke is the whole point: a dinosaur-shaped chicken nugget,
+with ketchup. Do not let it drift into a real dinosaur.
+
+```
+ART NEEDED: T4 — the four junk pulls, on one sheet
+Prompt:   [WHAT THIS IS]
+          Four separate game sprites of junk — the things you pull up when you
+          do NOT catch a fish — to be cut out and used in a children's video
+          game. Each one is a gentle joke, not a piece of grim litter: they are
+          funny to reel in, not sad. This is NOT a poster, NOT a diagram, NOT a
+          product photo. There is NO paper of any kind: no parchment, no aged
+          paper, no paper texture, no canvas texture, no vignette, no border.
+          There are NO captions, NO labels, NO handwriting and NO text anywhere
+          in the image.
+
+          [BACKDROP]
+          The four objects float on a solid magenta screen, the way a subject
+          stands in front of a photographer's backdrop. Every part of the image
+          that is not one of the four objects is one completely flat, even
+          magenta #FF00FF, edge to edge and into all four corners: a single flat
+          colour, no gradient, no texture, no vignette, no pattern, no shading.
+          No water, no ground, no shadow cast on the backdrop, no reflection.
+
+          [STYLE]
+          Soft painterly storybook illustration, warm muted color palette,
+          gentle diffused lighting, thin warm brown outlines rather than black,
+          cozy and inviting mood, no harsh shadows, no neon or saturated
+          colours. Soft two-tone shading with blended edges. NOT pixel art, NOT
+          flat vector art with even line weight, NOT thick black cartoon
+          linework, NOT a glossy 3D render, NOT a photograph.
+
+          [LAYOUT]
+          Four different objects on one canvas, one in each quarter: top-left,
+          top-right, bottom-left, bottom-right. Every object is fully separated
+          from every other by a wide band of empty background — nothing touches,
+          overlaps or crowds anything else, and nothing touches the edge of the
+          canvas. Each object roughly fills its own quarter.
+
+          [THEY WILL BE SEEN SMALL]
+          Each of these is shown at about 96 pixels, and at about 34 pixels in a
+          list. Its overall SHAPE is nearly the whole read at that size, so give
+          each one a clear, simple, instantly recognisable silhouette and keep
+          the surface detail soft and suggested rather than fine. No tiny
+          lettering, no logos, no brand names, no tiny mechanical detail.
+
+          [THE FOUR OBJECTS]
+          Top-left — AN OLD BOOT: a single scuffed leather work boot, soft warm
+          brown, seen from the side, toe pointing left, slumped and a bit
+          saggy the way a wet boot is. Laces trailing loose and untied. A little
+          worn at the toe. Waterlogged and comic, not rotten or filthy.
+          Top-right — A RUSTY CAN: a squat tin can standing slightly tilted, its
+          paper label long gone, in muted orange-brown rust over dull tin. The
+          lid is peeled half open and curled back like a little wave. A dent in
+          one side. Rusty and old, but not sharp or dangerous-looking.
+          Bottom-left — A CLUMP OF POND WEED: a loose tangled bundle of soft
+          green water weed, muted sage and olive, with a few long fronds
+          straggling out of the clump and a couple of tiny leaves. It should
+          read as a soft wet handful of green, not as a bush and not as seaweed
+          on a rock.
+          Bottom-right — A DINOSAUR CHICKEN NUGGET: a breadcrumbed chicken
+          nugget pressed into the shape of a cartoon dinosaur — a long-necked
+          sauropod standing side-on, facing left, with a fat body, four stubby
+          legs and a thick tail. Golden-tan breadcrumb coating with a slightly
+          bumpy edge, and a small blob of tomato ketchup on it. It is FOOD in a
+          dinosaur shape: no eyes, no scales, no teeth, no toy detail, and
+          absolutely not a real dinosaur.
+
+          [ALSO NOT IN THE PICTURE]
+          No fish, no hook, no line, no rod, no person, no hands, no scenery, no
+          text, no watermark, no border, no frame.
+
+          [CANVAS]
+          Return the image at 1400 by 1400 pixels. Output as PNG.
+Save as:  assets/Gemini_junk-sheet.jpg (the raw download, whatever extension it
+          arrives with, kept so the cut can be re-run)
+Wired in: nothing to wire — CONFIG.junk.items already names these four files, so
+          T4 is art only. The cut writes over the pixel-era sprites:
+            assets/junk-boot.png · junk-can.png · junk-weed.png · junk-nugget.png
+          THE CUTTER DOES NOT EXIST YET, deliberately. cut-fish.py's four
+          detectors were each written against a real sheet, and the same applies
+          here: a junk cut is simpler than a fish cut (four components keyed off
+          flat magenta, each saved as its own square crop — no peduncle, no tail
+          split), so write it when the sheet lands rather than guessing at it
+          now. Judge the delivery with `python3 tools/palette-check.py` first:
+          these are the first deliveries that gate exists for.
+```
+
+**Check before cutting**, in this order, because the cheap ones save the work of
+the later ones: backdrop bled into the subject → reroll · four separate
+components with nothing touching → if two touch, that is a reroll rather than a
+cut problem · each silhouette readable when you shrink it to 34px, which is the
+one that actually decides whether these are better than the pixel sprites ·
+palette per `tools/palette-check.py`.
+
+
 ### R7: gear, per pose (the wiring landed 2026-09-02; the prompts are below)
 
 **Read this before delivering any gear PNG.** R7's code half is in, so a gear

@@ -97,16 +97,31 @@ that is what it sits under. A piece never pulled stays **locked** rather than
 showing a dimmed sprite: the collection teases fish with a silhouette because
 the shape is the reward, and a boot's shape is not — the surprise is.
 
-## T4 — junk art
+## T4 — junk art (specified 2026-09-04; waiting on one generation)
 
 **Done when:** the four junk sprites are painted in the new direction and the
 game draws them.
 
-`CONFIG.card.junkPx`'s comment already calls these out: *"the four junk sprites
-are the last pixel-era art in the game — the refresh never [reached them]"*.
-Four prompts, Matt generates, and they are the only part of this epic that needs
-a generation. `tools/palette-check.py` is the gate they have to pass, and they
-are the first deliveries it will judge.
+**The prompt is written out whole in `ART.md` → *Open art requests* → *T4*.** It
+is the only part of this epic that needs a generation, and it is **one** sheet
+rather than four singles. Registration is not the reason (four junk items never
+have to line up with each other); *consistency of treatment* is, because T3 put
+all four side by side in the journal shelf, which is exactly where four
+separately-generated styles would read as four different games.
+
+**T4 needs no config change at all.** `CONFIG.junk.items` already names
+`junk-boot`, `junk-can`, `junk-weed` and `junk-nugget`, and the cut overwrites
+those files in place. Art only.
+
+The cutter does **not** exist yet, deliberately: `cut-fish.py`'s four detectors
+were each written against a real sheet, and a junk cut is simpler than a fish
+cut (four components keyed off flat magenta, each saved as its own square crop,
+no peduncle and no tail split). Write it when the sheet lands.
+
+`tools/palette-check.py` is the gate, and these are the first deliveries that
+gate exists for. The check that actually decides the milestone is cruder than
+any of it: **shrink each one to 34px and see whether you can still tell what it
+is**, because that is the size the journal shelf shows them at.
 
 ## Which doc owns what
 

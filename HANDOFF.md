@@ -9,7 +9,7 @@ something is the way it is, `git log` and the PR body have it in full.
 
 | | |
 |---|---|
-| **Active milestone** | **T4 — junk art**, `BUILD_PLAN_TACKLE.md`, and it is the only part needing a generation. T1–T3 shipped 2026-09-04. |
+| **Active milestone** | **T4 — junk art**, `BUILD_PLAN_TACKLE.md`. Prompt written, **waiting on one generation from Matt**. T1–T3 shipped 2026-09-04. |
 | **R7** | ✅ **21 of 21 gear pieces**, `BUILD_PLAN_REFRESH.md`. Both done-when clauses met: a bought hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand at every spot. |
 | **The epic** | **Tackle & Junk (T1–T4)**, opened 2026-09-04 — the bobber/fly/nothing per spot, and junk trophies plus the last pixel-era art. |
 | **The refresh** | ✅ **R1–R7 all shipped.** Every angler, vessel, background, fish and shop item is painted in the new direction. |
