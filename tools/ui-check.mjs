@@ -66,7 +66,7 @@ const OVERLAYS = ["h1", "pun", "hud", "tacklebox", "controls", "catch-card",
 
 // Overlaps that are correct, with the reason. Anything not in here is a bug.
 const ALLOWED = [
-  ["controls", "*",            "the tackle box tray is a menu the kid opened: it covers what is behind it"],
+  ["controls", "*",            "the tackle box tray is a menu the kid opened: it covers what is behind it. NB this is checked rather than assumed now, see meta.trayBlocked below: it was false for months"],
   ["unlock-banner", "catch-card", "CLAUDE.md/style.css: the banner deliberately plays OVER a held card"],
   ["unlock-banner", "word",    "the celebration is 2.6s and the word box is not going anywhere"],
   ["unlock-banner", "pun",     "same: a banner is a moment, the bubble is behind it"],
@@ -177,6 +177,36 @@ const measure = () => page.evaluate((ids) => {
   const trayBtns = [...document.querySelectorAll("#controls button")]
     .map(b => b.getBoundingClientRect()).filter(r => r.width && r.height);
   out.meta.trayMinH = trayBtns.length ? Math.round(Math.min(...trayBtns.map(r => r.height))) : null;
+  // …and whether a finger would actually reach it. Being the right size and in
+  // the right place is not enough: #word is z-index 7 and the tray lives inside
+  // a z-index 6 bar, so the word box painted over the middle of the tray and
+  // the button under it took no taps at all. Which button that was depended on
+  // how long the random cast word happened to be, which is why it read as a
+  // flake in this tool rather than as the bug it is. Ask the document what is
+  // on top; a button scrolled out of the tray's own overflow box is skipped,
+  // because a real tap scrolls it in first.
+  const tray = document.getElementById("controls");
+  out.meta.trayBlocked = [];
+  if (tray && !tray.hidden) {
+    const box = tray.getBoundingClientRect();
+    for (const b of tray.querySelectorAll("button")) {
+      const r = b.getBoundingClientRect();
+      if (!r.width || !r.height) continue;
+      const cy = r.y + r.height / 2;
+      if (cy < box.y || cy > box.bottom) continue;
+      // sample ACROSS the button, not just its middle: the word box reached to
+      // within 2px of the centre of the tray's buttons, so a centre-only probe
+      // called this clean while real taps were landing on #word.
+      for (const f of [0.1, 0.3, 0.5, 0.7, 0.9]) {
+        const top = document.elementFromPoint(r.x + r.width * f, cy);
+        if (top && top !== b && !b.contains(top)) {
+          out.meta.trayBlocked.push(`${b.id || b.textContent.trim().slice(0, 16)} is under`
+            + ` #${top.id || "." + top.className} at ${Math.round(f * 100)}% across it`);
+          break;
+        }
+      }
+    }
+  }
   return out;
 }, OVERLAYS);
 
@@ -212,6 +242,8 @@ async function checkViewport(vp) {
     if (meta.chipFont < 10) fail(vp, state, `HUD chips are ${meta.chipFont}px`);
     if (state === "tray" && meta.trayMinH !== null && meta.trayMinH < 28)
       fail(vp, state, `a tray button is only ${meta.trayMinH}px tall`);
+    for (const b of meta.trayBlocked ?? [])
+      fail(vp, state, `a tray button cannot be tapped: ${b}`);
     if (state === "busy") await page.screenshot({ path: `${outDir}/${vp.name}.png` });
   }
   await setState("idle");

@@ -856,6 +856,16 @@ h1 {
   backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
 }
 #controls[hidden] { display: none; }
+/* While the tray is open the bar outranks #word, and only then. #word is
+   z-index 7 so that a phone held sideways lets the word box win over the top
+   bar, which is right: the bar is chrome and the word is the game. But the tray
+   is not chrome, it is a menu the kid opened, and at z-index 6 inside this bar
+   #word painted straight over the middle of it: a button under the word box
+   could not be tapped at all, and which button that was depended on how long
+   the randomly-picked cast word happened to be. Raising #controls itself
+   cannot fix that, because this bar's own z-index makes a stacking context its
+   children can never climb out of, so the bar is what has to move. */
+#topbar:has(#controls:not([hidden])) { z-index: 8; }
 /* the tray is a menu on a touchscreen, so its rows are sized for a finger
    rather than for the corner of a desktop window */
 #controls .toggle-btn.nav { text-align: left; font-size: 12px; padding: 9px 12px; }
