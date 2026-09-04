@@ -10,7 +10,7 @@ something is the way it is, `git log` and the PR body have it in full.
 | | |
 |---|---|
 | **Active milestone** | **None.** T4 (junk art) is still open and still **waiting on one generation from Matt**. |
-| **Last change** | **The code-review backlog, nine of its ten findings**, 2026-09-04, on `claude/backlog-ksh09h`. See *Start here*. |
+| **Last change** | **The code-review backlog** (#176), then a `/repo-metadata` pass: the README (#177) and two junk words (#178). All merged 2026-09-04. |
 | **R7** | ✅ **21 of 21 gear pieces**, `BUILD_PLAN_REFRESH.md`. Both done-when clauses met: a bought hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand at every spot. |
 | **The epic** | **Tackle & Junk (T1–T4)**, opened 2026-09-04: the bobber/fly/nothing per spot, and junk trophies plus the last pixel-era art. |
 | **The refresh** | ✅ **R1–R7 all shipped.** Every angler, vessel, background, fish and shop item is painted in the new direction. |
@@ -22,7 +22,7 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**Nine of the code review's ten findings are fixed (2026-09-04).** One pass
+**Nine of the code review's ten findings are fixed (#176, 2026-09-04).** One pass
 over the section it left in `BACKLOG.md`; each fix is its own commit and the
 reasoning and the numbers are there.
 
@@ -134,8 +134,25 @@ broken prompt. If a neutral colour is ever needed again, aim at `[STYLE]`.
   (pre-squash, so the work looks landed but confirm one):
   `claude/game-ui-visuals-wt1amv` (73f76c8) · `claude/open-this-3wbx9w`
   (720ca36).
-- **The GitHub repo description still says "pixel-art"**, which R2 removed
-  game-wide. It is the first thing a stranger reads.
+- **The GitHub About panel: a paste, not a task.** All three fields are wrong
+  (description and `pixel-art` topic predate R2; the homepage is the pre-rename
+  URL). A session reaches the GitHub API fine but the proxy refuses this write:
+  `403 Repository settings writes are not permitted through this proxy`. Values
+  composed, production URL confirmed against Netlify:
+
+  ```
+  gh repo edit mattohara42/hook-line-and-sentence \
+    --description "A typing tutorial that's a fishing game. Or is it a fishing game that's a typing tutorial? Cozy painterly keyboard practice for kids: cast, reel and catch your way from single words up to full punctuated sentences. Vanilla JS, no build step." \
+    --homepage "https://hook-line-and-sentence.netlify.app" \
+    --remove-topic pixel-art \
+    --add-topic touch-typing --add-topic typing-practice
+  ```
+
+  "plays offline" is dropped rather than reworded: no service worker, no
+  manifest, and `BACKLOG.md` lists both as pre-release work.
+- **Upload the social preview** at Settings → General → Social preview. The
+  image is committed at `docs/images/social-preview.png` (#177) and is also the
+  README's header now. That field is web UI only.
 - **R1's line prototype wants an eye test.** Serve the repo, open
   `/prototype/line-animation.html`, cast it, drag the tension slider.
   `ANIMATION.md` flags its own assumption (a Bezier with a tension-driven
