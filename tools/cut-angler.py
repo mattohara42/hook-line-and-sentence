@@ -6,7 +6,13 @@ runtime and it is not a build step. It exists so the cut is reproducible: if a
 better source ever arrives (a larger canvas, a cleaner download), re-run this
 instead of redoing the work by hand.
 
-    python3 tools/cut-angler.py <pose> <source.jpg|png>
+    python3 tools/cut-angler.py <pose> <source.jpg|png> --rod <stem>   # a shop rod
+    python3 tools/cut-angler.py <pose> <source.jpg|png> --figure       # the whole angler
+
+One of the two is REQUIRED. --figure overwrites four committed paintings and is
+run once per pose; --rod saves only the swapped rod and is the R7 loop. Passing
+neither used to mean --figure, which made a rod delivery run without --rod
+destroy the pose. It now refuses.
 
 The source is REQUIRED and must be the raw delivered painting, on its flat
 magenta backdrop. It is not optional and there is no default: this tool writes
@@ -56,14 +62,38 @@ if "--rod" in argv:
         sys.exit("--rod needs the shop item's stem, e.g. --rod rod-stick")
     ROD_STEM = argv[i + 1]
     del argv[i:i + 2]
+# The full-figure cut is opt-in, and this is the third guard on one failure: the
+# tool rewriting the pose's four committed paintings when nobody asked it to.
+# The source argument was optional once (it defaulted to this tool's own
+# output), and a keyed PNG fed back in did the same, so both are refused above.
+# Neither catches a ROD delivery run without --rod, because as files a rod
+# delivery and an angler delivery are the same thing: an opaque raw painting on
+# magenta. Only intent separates them, so intent has to be stated. R7's nine
+# Wired-in lines said exactly that command for a day, and it exits 0 while
+# overwriting angler-<pose>.png, its body and arm layers and the gate rod.
+FIGURE = "--figure" in argv
+if FIGURE:
+    argv.remove("--figure")
 sys.argv = [sys.argv[0]] + argv
 pose_name = sys.argv[1] if len(sys.argv) > 1 else "pond"
 P = POSES[pose_name]
 if len(sys.argv) < 3:
-    sys.exit("usage: cut-angler.py <pose> <source.jpg|png> [--rod <stem>]\n"
+    sys.exit("usage: cut-angler.py <pose> <source.jpg|png> (--rod <stem> | --figure)\n"
              "  The source is the RAW delivered painting on flat magenta. There is no\n"
              "  default: assets/angler-%s.png is one of this tool's own outputs."
              % pose_name)
+if ROD_STEM and FIGURE:
+    sys.exit("--rod and --figure ask for different cuts; pass one.")
+if not ROD_STEM and not FIGURE:
+    sys.exit("refusing to cut: pass --rod <stem> or --figure.\n"
+             "  --rod rod-carbon   a swapped shop rod (R7). Saves ONLY <stem>-%s.png,\n"
+             "                     from a delivery registered by tools/gear-register.py.\n"
+             "                     This is what you want for gear.\n"
+             "  --figure           the whole angler (R4). OVERWRITES four committed\n"
+             "                     paintings: angler-%s.png, angler-%s-body.png,\n"
+             "                     angler-%s-arm.png and %s.png.\n"
+             "                     Once per pose, from that pose's own raw delivery."
+             % (pose_name, pose_name, pose_name, pose_name, P["rod_file"]))
 SRC = sys.argv[2]
 
 # The raw delivery is opaque on magenta. Anything with a transparent border is

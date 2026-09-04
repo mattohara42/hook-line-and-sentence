@@ -39,7 +39,7 @@ construction.
 
 | tool | milestone | cuts |
 |---|---|---|
-| `cut-angler.py <pose> <src> [--rod <stem>]` | R4, and R7's rods | one pose painting → `rod` / `arm` / `body` layers. `--rod` writes **only** a swapped shop rod |
+| `cut-angler.py <pose> <src> (--rod <stem> \| --figure)` | R4, and R7's rods | `--figure` cuts one pose painting → `rod` / `arm` / `body` layers, **overwriting four committed files**. `--rod` writes **only** a swapped shop rod. One of the two is required — neither is refused |
 | `cut-vessel.py` | R5 | one boat painting → `far` / `near` halves along the gunwale |
 | `cut-fish.py <sheet> [src]` | R6 | one sheet → each species' `body` and `tail` |
 | `cut-gear.py <pose> <stem> <src>` | R7 | a delivered **edit** of a pose → just the gear |
