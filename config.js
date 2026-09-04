@@ -746,6 +746,28 @@ export const CONFIG = {
     ],
   },
 
+  // T2: what sits where the line meets the water, per spot. A registry rather
+  // than a class assembled in JS — the config lists what exists and anything
+  // absent draws nothing, which is how every other "what exists here" question
+  // in this game is answered (fish.species, rig.poses, rig.gearArt).
+  //
+  // The Ocean's `null` is not a special case to code around. It is the same
+  // shape as the free hat carrying no `file` and the free hull carrying no
+  // `tint`: you fish the Ocean on a bare line, and nothing floats.
+  //
+  // The value names the look, drawn in style.css as `.tackle-<kind>`. The
+  // twitch and the plunge are shared; only the idle differs, because a cork
+  // float bobs and a dry fly rides the surface and drifts.
+  //
+  // F4's mechanic survives a spot with no float: twitchBait() rings the surface
+  // and pulls the rod as well as moving the tackle, and the idle ripple still
+  // runs, so at the Ocean the rings ARE the marker for where the bait is.
+  tackle: {
+    pond:   "bobber",
+    stream: "fly",
+    ocean:  null,
+  },
+
   // Junk catches — comedy fake catches (boot/can/weed/nugget) that roll in place of a
   // fish on a small fraction of bites. No coins, no collection entry, just a
   // groan pun. `file` is assets/<file>.png; `{it}` in PUNS.junk gets `name`.
