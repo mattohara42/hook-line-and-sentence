@@ -9,9 +9,9 @@ something is the way it is, `git log` and the PR body have it in full.
 
 | | |
 |---|---|
-| **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. Two rods are all that is left of the refresh. |
+| **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. One rod is all that is left of the refresh. |
 | **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
-| **State** | both done-when clauses met. **19 of 21 painted and wired** — 12 hats, `rod-stick` x2, `rod-bamboo` x2, `rod-carbon` at all three spots. Left: **2 rods**, both `rod-deepsea`, prompts written out and ready to send. |
+| **State** | both done-when clauses met. **20 of 21 painted and wired** — 12 hats, `rod-stick` x2, `rod-bamboo` x2, `rod-carbon` x3, `rod-deepsea` at the Pond. Left: **1 rod**, `rod-deepsea-stream`, prompt written out and ready to send. |
 | **Catch Feel** | ✅ **F1–F5 all shipped 2026-09-03**, `BUILD_PLAN_FEEL.md`. One thing left and it is Matt's: play it. |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 95/95 (`npm test`) |
@@ -20,9 +20,8 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**R7 has 2 rods left: `rod-deepsea` at the Pond and the Stream.** Every prompt is
-written out whole in `ART.md` → *R7* → *The rods*, and the loop per rod is four
-commands:
+**R7 has 1 rod left: `rod-deepsea-stream`.** Its prompt is written out whole in
+`ART.md` → *R7* → *The rods*, and the loop is four commands:
 
 ```
 python3 tools/gear-ref.py <pose>                  # the attachment
@@ -32,8 +31,8 @@ python3 tools/cut-angler.py <pose> assets/reg-<name>.png --rod <stem>
 #   then add "<stem>-<pose>" to CONFIG.rig.gearArt, or it is never drawn
 ```
 
-Seven rods have gone through it in eight generations. The pipeline is settled:
-the last four deliveries needed no tool changes at all, and every shipped rod
+Eight rods have gone through it in nine generations. The pipeline is settled:
+the last five deliveries needed no tool changes at all, and every shipped rod
 re-cuts byte-identically.
 
 **Before your first cut in a fresh container:** `pip install Pillow numpy scipy`,
@@ -61,12 +60,12 @@ not the presence of any (0,0,0) pixel.
 by the gate rod's own hardware stays invisible until gear arrives without it.
 The Ocean's brass reel had left 2,766 px of itself in the *body* layer since R4,
 and only a reel-less rod could ever have exposed it. Both remaining `deepsea`
-rods are the thickest and heaviest in the set, so the corridor's `half` — the
-one flag still open, and the one that only bites when a rod is *fatter* than the
-pose's — is what to check first there. **It has now been measured ahead of the
-delivery and the answer is the other way round: the Pond is the tight corridor,
-the Stream has room to spare.** Numbers, and the picture that adds what they
-missed, in `ART.md` → the `half` bullet.
+rods are the thickest and heaviest in the set, so the corridor's `half` was the
+one flag still open. **`rod-deepsea-pond` closed it:** the predicted shave was
+exact (1.99 design px of blank against a 1.82 corridor) and invisible at 65
+design px, so no `--half` override exists and the Stream, which has more room
+than the Pond, needs no special handling either. `ART.md` → that delivery's
+section, for why its 81.1% reads worse than it is.
 
 ## Waiting on Matt (none of it blocks R7)
 

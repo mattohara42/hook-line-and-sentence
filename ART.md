@@ -1340,6 +1340,14 @@ measured off each pose's own painted gate rod, and three of its entries describe
   The Stream has room to spare, which is the opposite of what 15 source px
   suggests. Measure the delivery the way `rod-carbon-stream` was measured (98.9%
   of the shaft inside the pose's half-width) before reading anything into it.
+  **✅ Answered by `rod-deepsea-pond` (2026-09-04), and the flag is retired.**
+  The prediction was exact — the delivered blank measures **1.99 design px**
+  against the corridor's 1.82, the same figure the Ocean's deepsea posts — and
+  it does not matter: at 65 design px the trimmed side is under a fifth of a
+  device pixel, checked at 8x on the real screen, and the rod still reads as the
+  thickest of the Pond's four. No `--half` override was needed and none was
+  written. See that delivery's own section for why 81.1% is not the number it
+  looks like.
 - **`rod_xmin`**, the Stream's hard left bound, which exists because that pose's
   butt passes close to the waders. A rod whose butt stops elsewhere may not need
   it, or may need it somewhere else.
@@ -1805,6 +1813,65 @@ Verified in Chromium past the startup modal, twice: the four Ocean rods side by
 side (all four read as different rods at 65 design px, and the reel is below the
 hand on this one and above it on the deepsea), and the Carp Whisperer at all
 three spots, which is the check R7's done-when actually asks for.
+
+
+#### ✅ `rod-deepsea-pond` landed first attempt (2026-09-04) — the corridor prediction was exact, and it did not matter
+
+**This is the delivery the `half` flag was waiting for, and it settles it both
+ways: the prediction was right to the decimal, and the thing it predicted is
+invisible.** #159 measured the Ocean's painted deepsea at 1.99 design px and
+said a deepsea at the Pond would meet a 1.82 ceiling. The delivered blank
+measures **1.99 design px**. The shave is real, it is all on the upper side
+exactly as the drawing said, and at 65 design px it removes under a fifth of a
+device pixel. Checked at 8x on the real screen: both edges are soft, there is no
+sliced edge, and the rod still reads as the thickest of the Pond's four, which
+is the whole identity of the top-tier item. **No `--half` override was needed
+and none was written.**
+
+**And the alarming number is not measuring what it looks like.** `gear-register`
+reported *81.1% of the shaft inside the pose's half-width* against the two
+shipped Pond rods' 96.9% and 94.8%, which reads like a third of the rod being
+thrown away. Walking outward from the centreline until the paint stops —
+rather than taking the widest paint anywhere in the row — separates the blank
+from the hardware:
+
+| rod | blank half-width, upper / lower | blank full width | all rod paint outside `half`=16 |
+|---|---|---|---|
+| **`rod-deepsea-pond`** | **19.0 / 16.0** | **1.99 design px** | **30.6%** |
+| `rod-carbon-pond` | 18.0 / 13.0 | 1.77 | 6.6% |
+| `rod-bamboo-pond` | 16.0 / 11.0 | 1.54 | 2.7% |
+
+The blank exceeds the corridor by 3 source px on one side. Nearly all of the
+rest of that 30.6% is the **chunky guides standing off the shaft**, which this
+rod has and the other two do not, and which the corridor is supposed to drop —
+the Stream's cane guide already falls outside its corridor and always has. A
+row-max measure cannot tell a fat rod from a rod with hardware on it, and the
+first reading of this delivery could not either. That is what the p90 gives
+away: 63.5 source px against a median of 18.3.
+
+**Registration, against both shipped Pond rods re-registered and re-cut in the
+same session:**
+
+| | `rod-bamboo-pond` | `rod-carbon-pond` | **this one** |
+|---|---|---|---|
+| backdrop bleed | 0 px | 0 px | **0 px** |
+| agreement off the rod | 0.9792 | 0.9706 | **0.9706** |
+| whole-figure IoU | 0.9560 | 0.9466 | **0.9306** |
+| median colour distance | 7.9 | 7.9 | **6.6** |
+| aligned to the committed body | IoU 0.9855 | IoU 0.9731 | **IoU 0.9831** |
+
+Both controls re-cut **byte-identically**; the fifth delivery in a row to need
+no tool change. The whole-figure IoU is the lowest of the three purely because
+this rod carries the most paint the reference does not have.
+
+**The Deep Endeavor is now the most consistent item in the shop across poses.**
+Shaft colour R − B **+65.1** at the Pond against **+67.9** at the Ocean, a gap of
+three points, where the carbon column spans +9.2 to +46.7. Against the Pond's own
+honey rods (stick +105.9, bamboo +136.5) it is unmistakably the dark one, and the
+brass reel sits on top at both spots.
+
+Verified in Chromium past the startup modal: the four Pond rods side by side, the
+8x crop above, and The Deep Endeavor at both spots that carry it.
 
 
 #### The coordinate space nobody had written down, and a tool that ate its own output
