@@ -430,3 +430,32 @@ Not done with the delivery it was found on, because it changes how **every** rod
 is cut and all six shipped ones would need re-cutting and re-verifying. Confine
 it to `--rod` mode and the committed angler layers stay untouched. Worth doing
 before any further neutral or very thin gear.
+
+## Three decisions R6 left behind (2026-09-02, none blocking)
+
+Carried out of `HANDOFF.md` when the refresh closed, because none of them is
+state — they are questions nobody has answered yet.
+
+- **`data/fish.json`'s per-species `color` has almost no job left.** The painted
+  bodies run darker and duller than it, and now that all 33 have art it only
+  tints the collection blob for *uncaught* species — a silhouette. Either
+  re-pass the 33 values toward the paintings or decide the field is vestigial;
+  a data test still enforces `#rrggbb`.
+- **The two Ocean sheets are drawn tighter than the rest.** Tonal stdev 53–71
+  against the Pond and Stream's 26–45. It does not survive the downscale and at
+  54–78px they sit with the other twenty, so this is taste, not a defect.
+  `ART.md` → *R6 wave 3* has the numbers.
+- **Asset weight, a policy call rather than a bug.** A cut fish is ~150KB at
+  ~525px for something that renders at 54. Resampling to 320px is provably
+  invisible even at retina scene scale (mean channel diff ~1 of 255) and halves
+  it — ~2.4MB across the full roster. It would set the rule for the anglers and
+  vessels too, which is why it is a question rather than a commit.
+
+## The four shop hulls still do nothing (carried from R5, user-visible)
+
+Both painted vessels are `skinnable: false`, so equipping one of `shop.boats`'
+four alternate hulls is a no-op at every spot: they are pixel-era PNGs with no
+far/near split. R7's `gearArt` is now the pattern that fixes it — a hull is a
+gear slot with a per-pose registry — and the boat shop is the one shop kind
+still on its own older mechanism, so fold it in rather than re-solving it.
+Prompt and a cheaper CSS-tint fallback: `ART.md` → *R5 debt*.

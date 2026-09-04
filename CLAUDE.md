@@ -16,28 +16,26 @@ open question 1 — Silkscreen is gone, game-wide, replaced by self-hosted Baloo
 **One thing is outstanding and it is Matt's: play it.** The wiggle's word count
 is the number most likely to be wrong.
 
-The current epic is again the **Art & Animation Refresh**, which has one
-milestone left — `BUILD_PLAN_REFRESH.md` (R1–R7, opened 2026-08-31; **R1–R6 shipped — all three
-anglers are painted, cut and rigged, both vessels are cut and wired under them,
-and all 33 fish have their own art. R7, the gear, is the last one: its code half
-is in and all 12 hats landed 2026-09-02, so what remains is the nine rods. Each
-painting that lands is one `CONFIG.rig.gearArt` line**). It is a
-significant piece of work: the whole visual layer is being restarted under two
-new source-of-truth docs, **`ART_DIRECTION.md`** (warm painterly, Ghibli-
-anchored, no pure black) and **`ANIMATION.md`** (the cast/line/reel motion the
-game has never had). It supersedes `BUILD_PLAN_VISUAL.md` (V2–V5) and
-`BUILD_PLAN_GRAPHICS.md`, both of which planned art in the old pixel style;
-V1's three-plane scene survives and is only retuned. **The engine is not being
-touched** — progression, the keyboard and the unlockables all stay as they are.
-`ART.md`'s open art requests were withdrawn with the old direction and replaced
-per milestone. `ART.md` carries the palette's real hex values, and its R6
-sections carry what the fish cost: 33 species in eight sheets and nine
-generations, one reroll. Its R7 sections carry what the hats cost: 12 hats from
-six paintings, because a hat painted at the Pond transplants onto the Stream's
-head for free (`tools/hat-transplant.py`), and no reroll — though one good
-delivery was rejected by mistake and had to be measured to be believed.
-A real kid playtest of the A7 fight beats is still outstanding (see
-`BACKLOG.md`).
+The **Art & Animation Refresh** — `BUILD_PLAN_REFRESH.md` (R1–R7, opened
+2026-08-31) — **closed 2026-09-04 and the epic is complete.** It replaced the
+game's entire visual layer: all three anglers painted, cut and rigged, both
+vessels cut and wired under them, all 33 fish with their own art, and **all 21
+gear pieces — 12 hats and 9 rods — so a bought hat or rod is what you see at
+every spot.** It ran under two source-of-truth docs, **`ART_DIRECTION.md`**
+(warm painterly, Ghibli-anchored, no pure black) and **`ANIMATION.md`** (the
+cast/line/reel motion the game has never had). It superseded
+`BUILD_PLAN_VISUAL.md` (V2–V5) and `BUILD_PLAN_GRAPHICS.md`, both of which
+planned art in the old pixel style; V1's three-plane scene survives and was only
+retuned. **The engine was not touched** — progression, the keyboard and the
+unlockables are as they were. `ART.md` carries the palette's real hex values and
+what each milestone cost: R6's 33 species in eight sheets and nine generations
+with one reroll; R7's 21 pieces in 16 generations with one reroll, the hats at
+12 from six paintings because a hat painted at the Pond transplants onto the
+Stream's head for free (`tools/hat-transplant.py`). **There is no active epic —
+the next milestone is Matt's call.** What is outstanding is in `HANDOFF.md` and
+is all his: the play-tests, including a real kid playtest of the A7 fight beats.
+The nearest piece of unfinished work is the four shop hulls, which still do
+nothing (`BACKLOG.md`).
 
 Work on exactly one milestone at a time. `ART.md` is the art pipeline: Claude
 writes Gemini prompts + filenames, Matt generates the PNGs. **`GEMINI_NOTES.md`

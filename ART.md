@@ -1874,6 +1874,70 @@ Verified in Chromium past the startup modal: the four Pond rods side by side, th
 8x crop above, and The Deep Endeavor at both spots that carry it.
 
 
+#### ✅ `rod-deepsea-stream` landed first attempt (2026-09-04) — the last of the 21, and it separates the shave from the hardware
+
+**R7's art is complete: 21 of 21 gear pieces, and with it the Art & Animation
+Refresh.** Landed first attempt; the sixth delivery in a row the pipeline took
+with no tool change.
+
+**The corridor prediction completes, and both halves of it were right.** #159
+said the Pond was the tight corridor and the Stream had room to spare, against
+the flag that named the Stream. Measured on the two deliveries:
+
+| | corridor | delivered blank | outcome |
+|---|---|---|---|
+| Pond | 1.82 design px | 1.99 (half 19.0 / 16.0 vs a 16 ceiling) | trimmed one side, invisible |
+| **Stream** | **2.51 design px** | **2.17 (half 13.0 / 13.0 vs a 15 ceiling)** | **fits, both sides, no shave** |
+
+**And this delivery is what proves the percentage was never measuring the
+shave.** `gear-register` reported *85.4% of the shaft inside the half-width*,
+against the shipped Stream rods' 97.3% and 98.2% — a figure that looks like the
+Pond's 81.1% and means something completely different. 29.0% of all this rod's
+paint falls outside `half`=15 while **the blank is entirely inside it**. Every
+bit of that 29% is the brass multiplier and the chunky guides, which the
+corridor routes around by design (the reel through `GEAR_REEL`, detected per
+delivery). At the Pond the same measure read 30.6% with a real 3 px trim; here
+it reads 29.0% with none at all. **The percentage cannot tell those two apart
+and the centreline walk can** — which is the thing to reach for next time a rod
+posts a low one, rather than reaching for `half`.
+
+**The reel-remnant check the Ocean taught us to do, and it passes.** This is the
+one pose where it could still have bitten: the Stream's gate cane carries a fly
+reel *below* the hand and this rod's multiplier sits *above* it, so anything
+`POSES["stream"]["reel"]` failed to cut out would now hang in mid-air beside a
+rod that has nothing there. Screenshotted against the reel-less
+`rod-stick-stream` at 8x, that area is completely clean. The Stream's radius of
+42 covers its painted reel fully, where the Ocean's 58 left a 2,766 px crescent
+in the body layer for four milestones.
+
+**Registration**, against the two shipped Stream rods that have deliveries
+(`rod-bamboo-stream` is the pose's gate rod, painted into R4, so there is none
+to re-register):
+
+| | `rod-stick-stream` | `rod-carbon-stream` | **this one** |
+|---|---|---|---|
+| backdrop bleed | 0 px | 0 px | **0 px** |
+| agreement off the rod | 0.9864 | 0.9690 | **0.9635** |
+| whole-figure IoU | 0.9223 | 0.8889 | **0.8812** |
+| median colour distance | 9.7 | 10.7 | **10.3** |
+| aligned to the committed body | — | — | **IoU 0.9770** |
+
+The one cosmetic difference worth recording: this delivery's backdrop is the
+least flat of the set (border stdev 9.5 / 19.8 / 8.9 against a typical 2–4, and
+426 px of enclosed pockets against the Pond deepsea's 68). It cost nothing —
+0 px of bleed and a clean key — but it is the first delivery where the flat-
+magenta convention came back visibly noisy.
+
+**The Deep Endeavor is the most consistent item in the shop.** Shaft R − B
+**+65.1 / +75.9 / +67.9** at the Pond, Stream and Ocean: a spread of 10.8 points
+across three separate generations, where the carbon column spans 37.5. Against
+the Stream's own honey rods (stick +114.3, bamboo +140.3) it is unmistakably the
+dark one, and the brass reel sits on top at all three spots.
+
+Verified in Chromium past the startup modal: the four Stream rods side by side,
+the 8x reel-remnant crop above, and The Deep Endeavor at all three spots.
+
+
 #### The coordinate space nobody had written down, and a tool that ate its own output
 
 Measuring the above turned up the thing that actually blocks the cut, and it is

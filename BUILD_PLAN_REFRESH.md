@@ -1,11 +1,11 @@
 # Hook, Line and Sentence — Art & Animation Refresh (R1–R7)
 
-**Status: active epic, opened 2026-08-31. This is a significant new body of
-work — the largest since the Advanced Progression epic — and it replaces the
-game's entire visual layer. R1 and R2 shipped 2026-08-31, R3, R4 and R5 on
-2026-09-01, and **R6 closed 2026-09-02 at 33 of 33 fish. R7 — gear — is the
-last milestone in the epic**, and the shop code already generalises, so it is
-mostly content.**
+**Status: ✅ COMPLETE, closed 2026-09-04.** A significant body of work — the
+largest since the Advanced Progression epic — and it replaced the game's entire
+visual layer. R1 and R2 shipped 2026-08-31, R3, R4 and R5 on 2026-09-01, R6
+closed 2026-09-02 at 33 of 33 fish, and **R7 closed 2026-09-04 at 21 of 21 gear
+pieces**. Every angler, vessel, background, fish and shop item in the game is
+now painted in the new direction.
 
 Two new documents are the source of truth for it:
 
@@ -535,7 +535,7 @@ against the placeholder while the art is being made, and the cut tool is written
 against the first delivered painting rather than guessed at — which is how
 `cut-angler.py` and `cut-vessel.py` were both built, and why their detectors work.
 
-### R7 — Gear in the new style (code half done 2026-09-02; **all 12 hats landed the same day; 3 rods remain, and the pipeline now takes a delivery unchanged**)
+### R7 — Gear in the new style ✅ (code half done 2026-09-02; **all 12 hats landed the same day, the nine rods over 2026-09-03 and 09-04 in ten generations; closed 2026-09-04**)
 
 Hats and rods re-cut for the shop, in the new direction, drawn against each
 pose. Was V5; the shop code (`renderShopList`) already generalizes, so this is
@@ -544,9 +544,10 @@ mostly content.
 **The code half is in, against no new art at all.** The shop sells four rods and
 five hats, equipping either rebuilds the rig, and both persist.
 
-**All 21 prompts are written out whole (`ART.md`, the R7 request). The 12 hats
-have landed; the nine rods are what the epic is still waiting on.** Two things about the shape of the ask are worth
-carrying past this milestone. Gear is the first art in the project asked for as
+**All 21 prompts were written out whole (`ART.md`, the R7 request), and all 21
+have landed** — 12 hats from six paintings, nine rods from ten generations, one
+reroll in the whole milestone. Two things about the shape of the ask are worth
+carrying past it. Gear is the first art in the project asked for as
 an **edit of a delivered painting** rather than a new one: the pose's own
 painting is attached and comes back with one thing changed, so registration
 costs nothing and a swapped rod stays on the axis `cut-angler.py` already has
@@ -648,7 +649,7 @@ body, and all of it survives a reload with no 404s anywhere in the run.
 | R4 | per pose: head, torso, arm, rod + a fingers overlay — all on one canvas, drawn from the torso |
 | R5 | ~~rowboat, Whaler + fighting chair, and a near-side layer for each~~ ✅ — four shop hull repaints outstanding |
 | R6 | ~~33 species × body/tail, in waves by biome~~ ✅ — 33 of 33, in eight sheets and nine generations |
-| R7 | 21 paintings, one per gear item per pose, each an **edit of that pose's own painting** (`ART.md` has all 21 prompts written out). **18 landed, 3 to go** — the hat column is complete and six non-gate rods are in kids' hands. A hat is one `tools/cut-gear.py` run and one `rig.gearArt` line; a rod is a `tools/cut-angler.py` run instead, because the shaft under the hand is where the two paintings agree |
+| R7 | ~~21 paintings, one per gear item per pose, each an **edit of that pose's own painting**~~ ✅ — 21 of 21, from 16 generations and one reroll. A hat is one `tools/cut-gear.py` run and one `rig.gearArt` line; a rod is a `tools/cut-angler.py` run instead, because the shaft under the hand is where the two paintings agree |
 
 ## Open questions
 
