@@ -46,7 +46,7 @@ ignores, the flat-magenta backdrop convention, the alpha-salvage recipes and the
 delivery checklist). Two rules from it shape every prompt: **position by edges
 and corners, never by percentage**, and **name a flat backdrop colour rather
 than asking for transparency — then detect the colour you actually got.**
-**`tools/README.md` indexes the eleven pipeline tools** — what each cuts, why the
+**`tools/README.md` indexes the twelve pipeline tools** — what each cuts, why the
 cutting family exists at all ("don't generate a piece you could cut"), and the
 dependencies a fresh container does not have. Read it before writing a twelfth.
 

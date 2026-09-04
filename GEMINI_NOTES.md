@@ -685,8 +685,13 @@ checking them first saves the work of the later ones.
    the finger-guide panel sits, and the rig's box at design x20–138, y140–224).
 4. **Registration** against whatever it has to line up with — and remember the
    layers must agree with *each other* before they agree with any nominal number.
-5. **Palette** against `ART_DIRECTION.md`'s table: no pure black, darks no deeper
-   than `#33291f`, sky no more saturated than `#b7cfd8`/`#f2ddbe`.
+5. **Palette** against `ART_DIRECTION.md`'s table, and *not* as the binary rule
+   this list used to give. Sky no more saturated than `#b7cfd8`/`#f2ddbe` still
+   holds; "no pure black" and "darks no deeper than `#33291f`" do not, and would
+   reject 23% and 70% of the art the game ships. Run
+   `python3 tools/palette-check.py <file>`: the gate is pure black that survives
+   a 3px erosion, because a black region does and an anti-aliased outline does
+   not. Its docstring carries the corpus the threshold came from.
 6. **Then** key it, and **composite locally at game scale before wiring
    anything.** This is the standing habit and it is how G1's misregistration got
    caught late instead of early.
