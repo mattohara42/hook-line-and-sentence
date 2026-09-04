@@ -370,17 +370,29 @@ function buildPhrasePool(difficulty) {
   return logic.buildReelPool(here, difficulty, CONFIG.reel.minPhrasePoolSize);
 }
 
-// ---- Audio: procedural synth, no external asset files (M10) ----
-// Web Audio oscillators/filters generate everything: a water-drone ambient
-// bed plus short SFX blips/chimes. Avoids sourcing/licensing audio for a
-// family project and needs no new files, matching the no-build-step rule.
-// Volumes/timing are CFG knobs; note pitches are sound-design content, kept
-// here next to PUNS rather than in config.js.
-let actx = null, masterGain = null, sfxGain = null, musicGain = null, ambientNodes = null;
-// Off by default (Matt, 2026-08-25): the generated ambience/SFX need tuning
-// before they're worth hearing, and a kid shouldn't have to mute the game to
-// like it. The tackle-box toggle still turns it on and that choice sticks.
-let soundOn = localStorage.getItem("tf:soundOn") === "on";
+// ---- Audio: procedural synth, no external asset files (M10; the ambience
+// rebuilt in S1) ----
+// Web Audio oscillators/filters generate everything: a per-spot ambient bed
+// plus short SFX blips/chimes. Avoids sourcing/licensing audio for a family
+// project and needs no new files, matching the no-build-step rule.
+//
+// S1 split the bed in two. One filtered-noise layer is what the game had, and
+// it read as white noise at every spot because that is what it was: the same
+// hiss whether you were at a pond or in the sea. Now the bed is per spot
+// (CONFIG.audio.ambience, with the same `shared` fallback the pun pools use)
+// and the character comes from VOICES, the one-shots scheduled at random gaps
+// on top of it: the frog, the dragonfly, the bubbles, the swell, the gull.
+// Levels and gaps are CFG knobs; the synths themselves are sound design and
+// live here next to the note pitches.
+let actx = null, masterGain = null, sfxGain = null, bedGain = null, voiceGain = null;
+let ambient = null;          // { nodes, timers, location } for the spot playing now
+let noiseBuffer = null;      // two seconds of white noise, shared by every layer
+// Sound is ON by default as of S1. It was turned off in 2026-08 because the
+// one-bed ambience "needed tuning before it was worth hearing", which is the
+// thing this milestone did. One line to put back if it is wrong on a real
+// device: `=== "on"` restores off-by-default, and a kid who has already
+// chosen keeps their choice either way.
+let soundOn = localStorage.getItem("tf:soundOn") !== "off";
 
 // The top-left jokes, on by default. Turning them off silences FLAVOUR only:
 // the cast and wiggle prompts carry the literal instruction and keep showing
@@ -395,9 +407,22 @@ function ensureAudio() {
   masterGain.gain.value = soundOn ? CONFIG.audio.masterVolume : 0;
   masterGain.connect(actx.destination);
   sfxGain = actx.createGain(); sfxGain.gain.value = CONFIG.audio.sfxVolume; sfxGain.connect(masterGain);
-  musicGain = actx.createGain(); musicGain.gain.value = CONFIG.audio.musicVolume; musicGain.connect(masterGain);
-  startAmbient();
+  bedGain = actx.createGain(); bedGain.gain.value = CONFIG.audio.bedVolume; bedGain.connect(masterGain);
+  voiceGain = actx.createGain(); voiceGain.gain.value = CONFIG.audio.voiceVolume; voiceGain.connect(masterGain);
+  startAmbient(audioLocation());
 }
+
+// A browser refuses to start an AudioContext until the kid has touched
+// something, and it suspends the one we have when the tab sleeps. Every key
+// and every click is a chance to open it: both calls are cheap no-ops once it
+// is running, and neither builds anything while the sound is off.
+function audioGesture() {
+  if (!soundOn) return;
+  ensureAudio();
+  if (actx.state === "suspended") actx.resume();
+}
+document.addEventListener("keydown", audioGesture);
+document.addEventListener("pointerdown", audioGesture);
 
 function setSoundOn(on) {
   soundOn = on;
@@ -407,34 +432,263 @@ function setSoundOn(on) {
   }
 }
 
-// gentle water ambience: filtered noise, not tonal oscillators, flat sine
-// drones read as an unpleasant hum rather than water. A soft lowpass "body"
-// (like a distant whoosh) plus a bandpass "shimmer" layer whose center
-// frequency slowly sweeps via an LFO (like sunlight glinting on ripples).
-function startAmbient() {
-  if (ambientNodes || !actx) return;
-  const bufferSize = actx.sampleRate * 2;
-  const buffer = actx.createBuffer(1, bufferSize, actx.sampleRate);
-  const data = buffer.getChannelData(0);
-  for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-  const noise = actx.createBufferSource();
-  noise.buffer = buffer; noise.loop = true;
+function audioLocation() { return save?.location ?? CONFIG.tiers[0].location; }
+function ambienceHere() { return logic.ambienceFor(CONFIG.audio.ambience, audioLocation()); }
 
-  const body = actx.createBiquadFilter(); body.type = "lowpass"; body.frequency.value = 340;
-  const bodyGain = actx.createGain(); bodyGain.gain.value = 0.55;
-
-  const shimmer = actx.createBiquadFilter(); shimmer.type = "bandpass";
-  shimmer.frequency.value = 1100; shimmer.Q.value = 0.7;
-  const shimmerGain = actx.createGain(); shimmerGain.gain.value = 0.3;
-  const lfo = actx.createOscillator(); lfo.type = "sine"; lfo.frequency.value = 0.06;
-  const lfoGain = actx.createGain(); lfoGain.gain.value = 350;
-  lfo.connect(lfoGain); lfoGain.connect(shimmer.frequency);
-
-  noise.connect(body); body.connect(bodyGain); bodyGain.connect(musicGain);
-  noise.connect(shimmer); shimmer.connect(shimmerGain); shimmerGain.connect(musicGain);
-  noise.start(); lfo.start();
-  ambientNodes = { noise, lfo };
+function whiteNoise() {
+  if (!noiseBuffer) {
+    const n = actx.sampleRate * 2;
+    noiseBuffer = actx.createBuffer(1, n, actx.sampleRate);
+    const data = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < n; i++) data[i] = Math.random() * 2 - 1;
+  }
+  const src = actx.createBufferSource();
+  src.buffer = noiseBuffer; src.loop = true;
+  return src;
 }
+
+// The always-on layer. Filtered noise rather than oscillators: a flat sine
+// drone reads as an unpleasant hum, never as water. A soft lowpass "body" (the
+// weight of the water) plus a bandpass "shimmer" whose centre frequency sweeps
+// on an LFO (light moving on ripples), and optionally a slow `swell` that
+// breathes the whole bed in and out, which is what makes the Ocean read as
+// open water rather than as a louder pond.
+function buildBed(cfg) {
+  const nodes = [];
+  const out = actx.createGain(); out.gain.value = cfg.gain ?? 0.5;
+  out.connect(bedGain);
+  const noise = whiteNoise();
+
+  const body = actx.createBiquadFilter();
+  body.type = "lowpass"; body.frequency.value = cfg.body.hz;
+  const bodyGain = actx.createGain(); bodyGain.gain.value = cfg.body.gain;
+  noise.connect(body); body.connect(bodyGain); bodyGain.connect(out);
+
+  if (cfg.shimmer) {
+    const sh = actx.createBiquadFilter();
+    sh.type = "bandpass"; sh.frequency.value = cfg.shimmer.hz; sh.Q.value = cfg.shimmer.q;
+    const shGain = actx.createGain(); shGain.gain.value = cfg.shimmer.gain;
+    const lfo = actx.createOscillator(); lfo.type = "sine"; lfo.frequency.value = cfg.shimmer.sweepHz;
+    const lfoGain = actx.createGain(); lfoGain.gain.value = cfg.shimmer.sweepDepth;
+    lfo.connect(lfoGain); lfoGain.connect(sh.frequency);
+    noise.connect(sh); sh.connect(shGain); shGain.connect(out);
+    lfo.start(); nodes.push(lfo);
+  }
+
+  if (cfg.swell) {
+    const lfo = actx.createOscillator(); lfo.type = "sine"; lfo.frequency.value = cfg.swell.hz;
+    const depth = actx.createGain(); depth.gain.value = (cfg.gain ?? 0.5) * cfg.swell.depth;
+    lfo.connect(depth); depth.connect(out.gain);
+    lfo.start(); nodes.push(lfo);
+  }
+
+  noise.start(); nodes.push(noise);
+  return nodes;
+}
+
+function startAmbient(loc) {
+  if (!actx || ambient) return;
+  const cfg = logic.ambienceFor(CONFIG.audio.ambience, loc);
+  if (!cfg) return;
+  const nodes = cfg.bed ? buildBed(cfg.bed) : [];
+  const timers = (cfg.voices ?? []).map(v => scheduleVoice(v));
+  ambient = { nodes, timers, location: loc };
+}
+
+function stopAmbient() {
+  if (!ambient) return;
+  ambient.timers.forEach(s => { s.live = false; clearTimeout(s.timer); });
+  ambient.nodes.forEach(n => { try { n.stop(); } catch { /* already stopped */ } });
+  ambient = null;
+}
+
+// Called whenever the kid changes water (applyScene). The bed belongs to the
+// spot the same way the costume and the tackle do.
+function refreshAmbient() {
+  if (!actx || ambient?.location === audioLocation()) return;
+  stopAmbient();
+  startAmbient(audioLocation());
+}
+
+// Each voice re-arms itself, so the gaps stay random forever rather than
+// repeating a pattern of however many were queued up front. The timer runs
+// even with the sound off: playVoice checks, so turning sound on mid-game
+// gets you a live pond rather than a bed with nothing in it.
+function scheduleVoice(v) {
+  const slot = { timer: null, live: true };
+  const arm = () => {
+    slot.timer = setTimeout(() => {
+      playVoice(v.id, v.gain);
+      if (slot.live) arm();
+    }, logic.nextVoiceDelayMs(v.everyMs));
+  };
+  arm();
+  return slot;
+}
+
+function playVoice(id, gain = 0.4) {
+  if (!actx || !soundOn || document.hidden) return;
+  VOICES[id]?.(gain);
+}
+
+// The Pond's idle ring is something moving under there, so it makes a noise.
+// The picture and the sound are one event rather than two schedules that drift
+// apart; a spot whose ambience names no rippleVoice keeps silent rings.
+function rippleHeard() {
+  const rv = ambienceHere()?.rippleVoice;
+  if (rv) playVoice(rv.id, rv.gain);
+}
+
+// ---- The voices. Each is a few seconds of one animal or one piece of water,
+// built from the same two ingredients as everything else (a filtered noise
+// source and an oscillator) and routed to voiceGain so the whole cast has one
+// level. The ids are the keys here and in CONFIG.audio.ambience, and a data
+// test holds the two lists to each other.
+function panTo(node, from, to, dur) {
+  if (!actx.createStereoPanner) return node;
+  const p = actx.createStereoPanner();
+  p.pan.setValueAtTime(from, actx.currentTime);
+  p.pan.linearRampToValueAtTime(to, actx.currentTime + dur);
+  node.connect(p);
+  return p;
+}
+
+// a drop of water: a pitch that falls fast, with a little splish of noise on it
+function voicePlop(gain) {
+  const t0 = actx.currentTime;
+  const osc = actx.createOscillator(); osc.type = "sine";
+  osc.frequency.setValueAtTime(760, t0);
+  osc.frequency.exponentialRampToValueAtTime(170, t0 + 0.09);
+  const env = actx.createGain();
+  env.gain.setValueAtTime(0.0001, t0);
+  env.gain.linearRampToValueAtTime(gain, t0 + 0.008);
+  env.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.13);
+  osc.connect(env); env.connect(voiceGain);
+  osc.start(t0); osc.stop(t0 + 0.15);
+
+  const noise = whiteNoise();
+  const lp = actx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 1400;
+  const ng = actx.createGain();
+  ng.gain.setValueAtTime(gain * 0.35, t0);
+  ng.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.09);
+  noise.connect(lp); lp.connect(ng); ng.connect(voiceGain);
+  noise.start(t0); noise.stop(t0 + 0.1);
+}
+
+// a frog: two croaks, each a falling note with a fast rasp AM on it. The rasp
+// is the whole trick, a clean triangle at this pitch is a toy trumpet.
+function voiceFrog(gain) {
+  const croak = (at, f0, f1, dur, g) => {
+    const osc = actx.createOscillator(); osc.type = "triangle";
+    osc.frequency.setValueAtTime(f0, at);
+    osc.frequency.exponentialRampToValueAtTime(f1, at + dur);
+    const rasp = actx.createGain(); rasp.gain.value = 0.55;
+    const lfo = actx.createOscillator(); lfo.type = "square"; lfo.frequency.value = 34;
+    const lfoGain = actx.createGain(); lfoGain.gain.value = 0.45;
+    lfo.connect(lfoGain); lfoGain.connect(rasp.gain);
+    const env = actx.createGain();
+    env.gain.setValueAtTime(0.0001, at);
+    env.gain.linearRampToValueAtTime(g, at + 0.03);
+    env.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+    const lp = actx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 1600;
+    osc.connect(rasp); rasp.connect(env); env.connect(lp); lp.connect(voiceGain);
+    osc.start(at); osc.stop(at + dur + 0.02);
+    lfo.start(at); lfo.stop(at + dur + 0.02);
+  };
+  const t0 = actx.currentTime;
+  croak(t0, 430, 330, 0.20, gain);
+  croak(t0 + 0.28, 400, 300, 0.16, gain * 0.8);
+}
+
+// a dragonfly: a detuned buzz that swells in, crosses the pond and leaves
+function voiceDragonfly(gain) {
+  const t0 = actx.currentTime, dur = 2.4;
+  const env = actx.createGain();
+  env.gain.setValueAtTime(0.0001, t0);
+  env.gain.linearRampToValueAtTime(gain, t0 + dur * 0.4);
+  env.gain.linearRampToValueAtTime(0.0001, t0 + dur);
+  const lp = actx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 1100;
+  const dir = Math.random() < 0.5 ? -1 : 1;
+  env.connect(lp);
+  panTo(lp, -0.8 * dir, 0.8 * dir, dur).connect(voiceGain);
+  for (const [type, hz, g] of [["sawtooth", 128, 0.5], ["sawtooth", 133, 0.35], ["square", 256, 0.12]]) {
+    const osc = actx.createOscillator(); osc.type = type;
+    osc.frequency.setValueAtTime(hz, t0);
+    osc.frequency.linearRampToValueAtTime(hz * 1.08, t0 + dur * 0.5);
+    osc.frequency.linearRampToValueAtTime(hz, t0 + dur);
+    const g2 = actx.createGain(); g2.gain.value = g;
+    osc.connect(g2); g2.connect(env);
+    osc.start(t0); osc.stop(t0 + dur);
+  }
+}
+
+// one bubble of a brook: a tiny pitch that rises. Hundreds of these a minute
+// are what "babbling" is; the bed alone is just a hiss.
+function voiceBubble(gain) {
+  const t0 = actx.currentTime;
+  const f0 = 700 + Math.random() * 1500;   // high and glassy: the tinkle is the top of a brook
+  const dur = 0.05 + Math.random() * 0.05;
+  const osc = actx.createOscillator(); osc.type = "sine";
+  osc.frequency.setValueAtTime(f0, t0);
+  osc.frequency.exponentialRampToValueAtTime(f0 * (1.7 + Math.random()), t0 + dur);
+  const env = actx.createGain();
+  env.gain.setValueAtTime(0.0001, t0);
+  env.gain.linearRampToValueAtTime(gain * (0.4 + Math.random() * 0.6), t0 + 0.006);
+  env.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  osc.connect(env);
+  panTo(env, (Math.random() * 2 - 1) * 0.6, (Math.random() * 2 - 1) * 0.6, dur).connect(voiceGain);
+  osc.start(t0); osc.stop(t0 + dur + 0.02);
+}
+
+// a wave: noise through a band that opens as it breaks and closes as it drains
+function voiceWave(gain) {
+  const t0 = actx.currentTime, dur = 3.6;
+  const noise = whiteNoise();
+  const bp = actx.createBiquadFilter(); bp.type = "bandpass"; bp.Q.value = 0.8;
+  bp.frequency.setValueAtTime(200, t0);
+  bp.frequency.linearRampToValueAtTime(720, t0 + dur * 0.34);
+  bp.frequency.linearRampToValueAtTime(180, t0 + dur);
+  // and the fizz off the top of it: a wave heard from a boat is mostly weight
+  const lp = actx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 2400;
+  const env = actx.createGain();
+  env.gain.setValueAtTime(0.0001, t0);
+  env.gain.linearRampToValueAtTime(gain, t0 + dur * 0.34);
+  env.gain.linearRampToValueAtTime(0.0001, t0 + dur);
+  noise.connect(bp); bp.connect(lp); lp.connect(env);
+  panTo(env, -0.35, 0.35, dur).connect(voiceGain);
+  noise.start(t0); noise.stop(t0 + dur + 0.05);
+}
+
+// a gull, far off: two or three falling cries with a vibrato in them, quiet
+// and lowpassed, because distance is mostly the absence of high frequencies
+function voiceGull(gain) {
+  const t0 = actx.currentTime;
+  const lp = actx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 2100;
+  const side = (Math.random() * 2 - 1) * 0.7;
+  panTo(lp, side, side, 0.01).connect(voiceGain);
+  const cries = 2 + Math.floor(Math.random() * 2);
+  for (let i = 0; i < cries; i++) {
+    const at = t0 + i * 0.42, dur = 0.26;
+    const osc = actx.createOscillator(); osc.type = "sawtooth";
+    osc.frequency.setValueAtTime(1500 - i * 90, at);
+    osc.frequency.exponentialRampToValueAtTime(820 - i * 60, at + dur);
+    const vib = actx.createOscillator(); vib.type = "sine"; vib.frequency.value = 15;
+    const vibGain = actx.createGain(); vibGain.gain.value = 45;
+    vib.connect(vibGain); vibGain.connect(osc.frequency);
+    const env = actx.createGain();
+    env.gain.setValueAtTime(0.0001, at);
+    env.gain.linearRampToValueAtTime(gain * (1 - i * 0.22), at + 0.05);
+    env.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+    osc.connect(env); env.connect(lp);
+    osc.start(at); osc.stop(at + dur + 0.02);
+    vib.start(at); vib.stop(at + dur + 0.02);
+  }
+}
+
+const VOICES = {
+  plop: voicePlop, frog: voiceFrog, dragonfly: voiceDragonfly,
+  bubble: voiceBubble, wave: voiceWave, gull: voiceGull,
+};
 
 // duck the ambient bed to silence while the tab is hidden, restore on return
 document.addEventListener("visibilitychange", () => {
@@ -459,7 +713,24 @@ function chime(freqs, opts = {}) {
   freqs.forEach((f, i) => tone(f, { ...opts, delay: (opts.delay || 0) + i * (opts.step ?? 0.09) }));
 }
 
-function sfxSplash()   { tone(180, { duration: 0.18, type: "sine", gain: 0.2 }); }
+// A fish coming up through the surface is water moving, not a note: it was a
+// bare 180Hz sine until S1, which is the sound a doorbell makes. Noise through
+// a lowpass that shuts, over the same falling pitch the plop uses.
+function sfxSplash() {
+  if (!actx || !soundOn) return;
+  const t0 = actx.currentTime;
+  const noise = whiteNoise();
+  const lp = actx.createBiquadFilter(); lp.type = "lowpass";
+  lp.frequency.setValueAtTime(3200, t0);
+  lp.frequency.exponentialRampToValueAtTime(500, t0 + 0.34);
+  const env = actx.createGain();
+  env.gain.setValueAtTime(0.0001, t0);
+  env.gain.linearRampToValueAtTime(0.5, t0 + 0.02);
+  env.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.4);
+  noise.connect(lp); lp.connect(env); env.connect(sfxGain);
+  noise.start(t0); noise.stop(t0 + 0.42);
+  tone(320, { duration: 0.16, type: "sine", gain: 0.14 });
+}
 function sfxBite()     { chime([392, 587], { duration: 0.14, type: "square", gain: 0.22 }); }
 function sfxWrong()    { tone(140, { duration: 0.15, type: "sawtooth", gain: 0.15 }); }
 function sfxWordTick() { tone(880, { duration: 0.06, type: "sine", gain: 0.12 }); }
@@ -526,10 +797,13 @@ setInterval(() => {
   setTimeout(() => s.remove(), 31000);
 }, JUICE.shadowEveryMs);
 
-// ambient ripples: the pond breathes even when nobody's fishing
+// ambient ripples: the pond breathes even when nobody's fishing. S1 gives the
+// ring a sound at the spots that have one, so the splash and the picture are
+// one event rather than two schedules drifting past each other.
 setInterval(() => {
   if (document.hidden) return;
   ripple(rand(80, 640), rand(230, 330));
+  rippleHeard();
 }, JUICE.ambientRippleMs);
 
 // bobber ripples while the line waits for a bite
@@ -1946,6 +2220,7 @@ function applyScene() {
   el.scene.classList.remove(...CONFIG.tiers.map(t => "loc-" + t.location));
   el.scene.classList.add("loc-" + loc);
   renderRig(loc);   // R4: the costume and the pose belong to the water, not to the boot
+  refreshAmbient(); // S1: and so does what it sounds like
 }
 tackleBtn.addEventListener("click", (e) => { e.stopPropagation(); toggleControls(); });
 // picking a nav item (collection/shop/…) closes the tray; the ON/OFF toggles leave it open

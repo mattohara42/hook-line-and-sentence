@@ -46,9 +46,9 @@ ignores, the flat-magenta backdrop convention, the alpha-salvage recipes and the
 delivery checklist). Two rules from it shape every prompt: **position by edges
 and corners, never by percentage**, and **name a flat backdrop colour rather
 than asking for transparency, then detect the colour you actually got.**
-**`tools/README.md` indexes the twelve pipeline tools**: what each cuts, why the
+**`tools/README.md` indexes the thirteen pipeline tools**: what each cuts, why the
 cutting family exists at all ("don't generate a piece you could cut"), and the
-dependencies a fresh container does not have. Read it before writing a twelfth.
+dependencies a fresh container does not have. Read it before writing a fourteenth.
 
 **GitHub repo:** owner `mattohara42`, repo name `hook-line-and-sentence`.
 Renamed from `WordsPerM...` on 2026-08-31, along with the game itself (it was

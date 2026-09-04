@@ -836,9 +836,71 @@ export const CONFIG = {
   // next to PUNS in app.js; these are the tunable levels/knobs.
   audio: {
     masterVolume: 0.6,
-    musicVolume: 0.32,
+    bedVolume: 0.30,            // the always-on water underneath everything
+    voiceVolume: 0.55,          // the critters living in it
     sfxVolume: 0.7,
     duckedVolumeMs: 400,        // fade time when tab hides/shows
+
+    // S1: what each spot SOUNDS like. A registry rather than a switch in
+    // app.js: the config lists what exists, and a spot with no entry falls
+    // back to `shared`, which is how every other "what is here" question in
+    // this game is answered (fish.species, rig.poses, tackle, the pun pools).
+    //
+    // Two layers, because one bed of filtered noise is exactly what the game
+    // had and it read as white noise at every spot. `bed` is the always-on
+    // texture; `voices` are the one-shots that turn a texture into a place. A
+    // voice fires once per random gap inside `everyMs`, so nothing ever lands
+    // on a beat, and its `id` names a synth in app.js next to the note
+    // pitches (a data test holds the two lists together).
+    //
+    // `rippleVoice` is the exception that earns itself: the Pond's occasional
+    // ring on the water is something moving under there, so it makes a noise
+    // rather than being scheduled separately and landing in silence.
+    ambience: {
+      // The fallback bed: a spot that exists before its sound design does is
+      // still quiet water rather than nothing.
+      shared: {
+        bed: { gain: 0.40, body: { hz: 300, gain: 0.55 },
+               shimmer: { hz: 900, q: 0.8, gain: 0.16, sweepHz: 0.05, sweepDepth: 260 } },
+        voices: [],
+      },
+
+      // Still water: almost no bed at all, and the interest is entirely in
+      // what lives around it. A pond that hisses is a pond next to a road.
+      pond: {
+        bed: { gain: 0.34, body: { hz: 240, gain: 0.5 },
+               shimmer: { hz: 760, q: 0.9, gain: 0.16, sweepHz: 0.05, sweepDepth: 220 } },
+        rippleVoice: { id: "plop", gain: 0.30 },
+        voices: [
+          { id: "frog",      everyMs: [7000, 19000],  gain: 0.42 },
+          { id: "dragonfly", everyMs: [16000, 44000], gain: 0.30 },
+        ],
+      },
+
+      // Moving water: the bed is brighter and busier, and the babble is not
+      // in the bed at all. It is a few hundred little pitched bubbles a
+      // minute, which is what a brook actually is.
+      stream: {
+        bed: { gain: 0.30, body: { hz: 420, gain: 0.50 },
+               shimmer: { hz: 2600, q: 0.55, gain: 0.14, sweepHz: 0.09, sweepDepth: 500 } },
+        voices: [
+          { id: "bubble", everyMs: [70, 480],       gain: 0.34 },
+          { id: "plop",   everyMs: [9000, 26000],   gain: 0.22 },
+        ],
+      },
+
+      // Open water: a low swell under everything, the sets rolling in on
+      // their own clock, and one bird a long way off.
+      ocean: {
+        bed: { gain: 0.30, body: { hz: 180, gain: 0.65 },
+               shimmer: { hz: 700, q: 0.5, gain: 0.12, sweepHz: 0.035, sweepDepth: 240 },
+               swell: { hz: 0.07, depth: 0.5 } },
+        voices: [
+          { id: "wave", everyMs: [5200, 9000],    gain: 0.46 },
+          { id: "gull", everyMs: [17000, 52000],  gain: 0.30 },
+        ],
+      },
+    },
   },
 
   // Firebase / Firestore sync (M4b). These values are public by design: a
