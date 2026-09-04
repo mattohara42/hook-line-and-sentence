@@ -13,7 +13,7 @@
   <div id="scene-viewport"><div id="scene-frame"><div id="scene">
     <!-- R3: the Pond's painted background, in the three parallax planes
          ART_DIRECTION.md calls for. They are elements rather than stacked
-         background-images on #scene because each one drifts on its own timer —
+         background-images on #scene because each one drifts on its own timer,
          a single element can only carry one animation, and the water layer is
          specified to "animate independently". #bg-fore is NOT here: it is the
          nearest plane, so it lives after #surface further down. -->
@@ -24,11 +24,11 @@
     <div id="hull-shadow"></div>
     <div id="rig">
       <!-- R5: the vessel and the angler's layers are both built here by
-           renderRig() from CONFIG.rig.poses — the hull's far side, then the
+           renderRig() from CONFIG.rig.poses: the hull's far side, then the
            rod/arm/body stack, then the hull's near side over the top. -->
     </div>
     <!-- R1: the fishing line is a curve, so it's an SVG <path> rather than the
-         rotated <div> it used to be — a div can only ever be straight, which is
+         rotated <div> it used to be: a div can only ever be straight, which is
          why the line "just appeared". It sits OUTSIDE #rig, in scene design
          space, because both of its ends move independently now: the rod tip
          swings with the cast and the bob, and the far end is a lure in flight
@@ -42,7 +42,7 @@
          is what makes the hull sit *in* the water and the fish read as under
          it; the landing is the fish rising up through this layer. -->
     <div id="surface"></div>
-    <!-- R3: the Pond's foreground plane — reeds, lily pads, the dock edge.
+    <!-- R3: the Pond's foreground plane, reeds, lily pads, the dock edge.
          After #surface and sharing its z-index, so it paints over the water
          wash and the mid plane (rig/fish) the way #surface already does, but
          still under the z-index 4 splashes and floating text, which must never
@@ -61,7 +61,7 @@
   </div></div></div>
 
   <!-- text/UI moments live as fixed-size viewport overlays, not inside the
-       scaled #scene-frame canvas — scaling them up with the background art
+       scaled #scene-frame canvas: scaling them up with the background art
        made them huge enough to collide with the hud/guide overlays -->
   <div id="status" aria-live="polite"></div>
   <div id="word"></div>
@@ -90,10 +90,10 @@
     <span class="chip">CAUGHT <b id="caught">0</b></span>
     <span class="chip coins">COINS <b id="coins">0</b></span>
     <span class="chip">ESCAPED <b id="escaped">0</b></span>
-    <span class="chip">REEL <b id="dist">—</b></span>
+    <span class="chip">REEL <b id="dist">–</b></span>
   </div>
 
-  <!-- the corner "tackle box" — one button that opens the menu tray below it,
+  <!-- the corner "tackle box": one button that opens the menu tray below it,
        so the corner stays calm until the kid reaches for their gear -->
   <button id="tacklebox" aria-label="Tackle box menu" aria-expanded="false" aria-controls="controls">🧰</button>
   <div id="controls" hidden>
@@ -132,7 +132,7 @@
         </div>
       </div>
       <div id="sync-bar">
-        <span id="sync-status">playing offline — saves on this device</span>
+        <span id="sync-status">playing offline: saves on this device</span>
         <button class="toggle-btn" id="sync-btn" hidden>SIGN IN TO SYNC</button>
       </div>
     </div>

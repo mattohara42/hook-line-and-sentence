@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Cut an angler's rig layers out of the one delivered painting per pose (R4).
 
-This is an ART PIPELINE tool, not part of the game — nothing loads it at
+This is an ART PIPELINE tool, not part of the game: nothing loads it at
 runtime and it is not a build step. It exists so the cut is reproducible: if a
 better source ever arrives (a larger canvas, a cleaner download), re-run this
 instead of redoing the work by hand.
@@ -19,7 +19,7 @@ magenta backdrop. It is not optional and there is no default: this tool writes
 assets/angler-<pose>.png as one of its OUTPUTS, so a default pointing there
 would make the tool eat its own output. Handed that file, it reads a keyed PNG
 whose backdrop is alpha, `convert("RGB")` turns that backdrop black, the flood
-keys on black instead of magenta, and every layer comes out wrong — over the
+keys on black instead of magenta, and every layer comes out wrong: over the
 top of the committed ones. The guard below refuses it now; before the guard it
 cost four committed files (recovered from git).
 
@@ -28,7 +28,7 @@ They share ONE canvas, so their box in CONFIG.rig.poses.<pose> is identical and
 the offsets are zero by construction.
 
 Every number a pose needs is in POSES below, measured off its own delivered
-painting — nothing here is shared between poses except the method. Scale is set
+painting: nothing here is shared between poses except the method. Scale is set
 by matching the HEAD, not the figure: the generator draws each pose to fill its
 frame, so the standing Stream kid came back only 2% taller than the seated Pond
 one. Scaling both alike would make a standing child no taller than a sitting
@@ -38,7 +38,7 @@ Method and its reasoning are in ART.md (the R4 section) and GEMINI_NOTES.md
 (the salvage recipes). The short version: flood the magenta backdrop in from
 the border, ramp the alpha across the fringe and unpremultiply, despill using a
 test derived from THIS subject's palette, then split the rod off geometrically
-along its fitted axis. The rod's occluded stretch — the part the hand covers —
+along its fitted axis. The rod's occluded stretch: the part the hand covers,
 is synthesised from the cross-section just above the hand, because the rod
 paints BEHIND the body and that stretch is never actually seen.
 """
@@ -160,7 +160,7 @@ if ROD_STEM:
     # `figure` is meant to be the child, and `perp0 > half*2` is only a safe test
     # for that while the rod is a bare pole. A fly rod's wire guides stand well
     # clear of the shaft, so on the Pond's bamboo delivery this mask reached row
-    # 23 instead of 94 and made the child 949 px tall against his real 878 —
+    # 23 instead of 94 and made the child 949 px tall against his real 878,
     # an 8% error in `scale`, which is the number every other one comes from.
     # In --rod mode the child is unchanged by definition, so measure him on the
     # copy that has no new hardware on it: the pose's own committed painting.
@@ -186,7 +186,7 @@ print("figure %d px tall -> scale %.5f; rod %.0f src px, tip (%.0f, %.0f)"
 # is a bare stick, and a fly reel there would fall outside the corridor and
 # simply not be in the layer.
 #
-# The obvious fix was a per-ITEM table — a reel as "how far along from the grip,
+# The obvious fix was a per-ITEM table: a reel as "how far along from the grip,
 # which side, how big", read through each pose's own axis, four rows instead of
 # nine circles. ART.md sketched exactly that. It is wrong, and the first two
 # paintings of the SAME rod say so: Bamboo Beauty's reel sits 8.68 design px
@@ -196,7 +196,7 @@ print("figure %d px tall -> scale %.5f; rod %.0f src px, tip (%.0f, %.0f)"
 #
 # So measure it from the delivery, which is the only thing that knows: the paint
 # this return adds that the reference did not have, off the shaft, near the
-# grip. Same idea as cut-fish.py's detectors — written against a real delivery
+# grip. Same idea as cut-fish.py's detectors: written against a real delivery
 # rather than guessed at, and self-correcting for the seven rods still to come.
 GEAR_REEL = None
 if ROD_STEM:
@@ -218,7 +218,7 @@ if ROD_STEM:
         if _best is None or _c.sum() > _best[0]:
             _best = (_c.sum(), _c, _xs.mean(), _ys.mean())
     if _best:
-        # The component itself, grown a little for the anti-aliased rim — NOT a
+        # The component itself, grown a little for the anti-aliased rim: NOT a
         # circle around it. The Pond's bamboo reel plus the cork grip flare below
         # the hand is one 4,734 px component whose enclosing circle needs radius
         # 69, and that circle swallows 4,521 px of the child's knee. The corridor
@@ -232,7 +232,7 @@ if ROD_STEM:
               % (_best[0], _cx, _cy, _bite.sum(),
                  "" if _bite.sum() < 400 else "  <-- check it, that is the child"))
     else:
-        print("this rod's own reel: none found — a rod with no reel, or none off the shaft")
+        print("this rod's own reel: none found, a rod with no reel, or none off the shaft")
 
 PAD_T = max(0, int(np.ceil(-tip[1])) + 8)
 PAD_R = max(0, int(np.ceil(tip[0] - W)) + 8)
@@ -299,7 +299,7 @@ t_edge = along((B, PAD_T))
 # Start the taper from the shaft's REAL half-width where the canvas cut it off,
 # not from the pose's nominal `half`. `half` is measured lower down where the rod
 # is fatter, so seeding the extension with it steps the shaft outward at the
-# seam and then runs a long needle down from there — which is what made the
+# seam and then runs a long needle down from there, which is what made the
 # Ocean's rod read as a spear rather than a rod.
 def half_at(t_):
     c = gripp + t_ * unit
@@ -350,7 +350,7 @@ armlayer[arm] = keyed[arm]
 # The corridor comes out of the ARM too, not just the body, and for the same
 # reason: it is the rod's own footprint, so whatever is painted in it belongs to
 # the rod layer. Leaving it in the arm is invisible while the pose's own gate rod
-# sits behind it filling the same silhouette — and it stops being invisible the
+# sits behind it filling the same silhouette, and it stops being invisible the
 # moment a rod without a reel is equipped. The Ocean's big brass reel had leaked
 # 1379 px into that pose's arm, and the first reel-less rod at the Ocean left a
 # dark crescent hanging in the air above the fist (R7, 2026-09-03). The Stream
@@ -380,7 +380,7 @@ def save(arr, name, crop=True):
 if ROD_STEM:
     # A swapped shop rod (R7). Only the rod is new: the body and the arm in this
     # source are the pose's own unchanged paint, arriving back through
-    # gear-register.py. So they are not saved — they are the RULER.
+    # gear-register.py. So they are not saved: they are the RULER.
     #
     # A rod layer is only in the right place if it shares the committed body's
     # box, and that box is the union of all three layers INCLUDING the
@@ -389,7 +389,7 @@ if ROD_STEM:
     # 1047x1464 against the committed 1048x1466 on a registration measuring
     # 0.9864 agreement, because a pixel of figure height moves `scale` and
     # `scale` moves everything. Chasing that pixel through the upstream fit made
-    # the fit worse — it is bounding-box matching again, which cut-gear.py
+    # the fit worse: it is bounding-box matching again, which cut-gear.py
     # already paid to learn is fragile.
     #
     # So align here, where the answer is exact and integral: the body this
@@ -456,7 +456,7 @@ top  = P["feet_y"] - (by.max()-Y0)*scale - RIG_Y
 def rig(pt, padded=True):
     return (left + (pt[0]-X0)*scale, top + (pt[1]+(PAD_T if padded else 0)-Y0)*scale)
 g, tp, ap = rig(P["grip"]), rig((tip[0], tip[1])), rig(A["pivot"])
-print("\n  CONFIG.rig.poses.%s — box %.0fx%.0f at rig (%.0f, %.0f)" % (pose_name, bw*scale, bh*scale, left, top))
+print("\n  CONFIG.rig.poses.%s: box %.0fx%.0f at rig (%.0f, %.0f)" % (pose_name, bw*scale, bh*scale, left, top))
 print("    layers x: %.0f  y: %.0f  w: %.0f  h: %.0f" % (left, top, bw*scale, bh*scale))
 print("    rodPivot   { x: %.0f, y: %.0f }" % g)
 print("    lineOrigin { x: %.0f, y: %.0f }" % tp)

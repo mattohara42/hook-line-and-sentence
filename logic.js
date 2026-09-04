@@ -1,4 +1,4 @@
-// logic.js — pure game math. No DOM, no module globals, no implicit RNG:
+// logic.js: pure game math. No DOM, no module globals, no implicit RNG:
 // everything a function needs comes in as an argument, so app.js can wire in
 // its live CONFIG/save/word pool while tests can pass fixtures and a seeded
 // roll. This is the layer worth unit-testing; app.js keeps thin wrappers.
@@ -42,7 +42,7 @@ export function rollWeight(sizeCfg, tier, rnd = Math.random) {
 
 // Tension after one processed keystroke while reeling. The SPEC's core rule:
 // tension reacts to errors only, never speed. A correct key relieves tension
-// (at any typing speed — slow-but-careful is always safe); a wrong key adds.
+// (at any typing speed: slow-but-careful is always safe); a wrong key adds.
 // Result is clamped to [0, escapeAt]; `escaped` is the game's one fail state,
 // true only when a wrong key pushes tension to the escape ceiling.
 export function applyTension(current, correct, reelCfg) {
@@ -59,7 +59,7 @@ export function catchReward(fishCoins, firstCatch, firstCatchBonus) {
   return fishCoins + (firstCatch ? firstCatchBonus : 0);
 }
 
-// A caught weight is a new personal best when it beats the stored record — or
+// A caught weight is a new personal best when it beats the stored record, or
 // when there is no record yet (previousBest undefined → treated as 0).
 export function isPersonalBest(previousBest, weight) {
   return weight > (previousBest ?? 0);
@@ -84,14 +84,14 @@ export function overallAccuracy(letters) {
 // R7: which painting a rig layer actually shows.
 //
 // A layer with no `gear` is fixed art and shows its own `file`. A gear layer
-// shows the EQUIPPED item of that kind, named <the item's file stem>-<pose> —
+// shows the EQUIPPED item of that kind, named <the item's file stem>-<pose>,
 // but only when that painting exists in `gearArt`. Otherwise it falls back to
 // the layer's own `file`, and a layer with neither shows nothing at all.
 //
 // The fallback is the point. Without it, equipping a rod whose art for the
 // current pose has not been painted yet asks for a PNG that isn't there and
 // hands a kid an invisible rod mid-cast. With it, they get the pose's own
-// painted rod until the real one lands — the same "wrong shirt rather than no
+// painted rod until the real one lands: the same "wrong shirt rather than no
 // angler" trade R4 made for poses and R6 made for fish.
 export function gearFile(layer, poseName, equippedId, items, gearArt) {
   if (!layer.gear) return layer.file ?? null;
@@ -105,7 +105,7 @@ export function gearFile(layer, poseName, equippedId, items, gearArt) {
 // Tiers are an ordered curriculum, so this is *cumulative*: owning a rod that
 // opens a later spot opens every spot up to it, even if the kid skipped that
 // tier's own rod. Without this, saving straight for the deep-sea rod (A6) would
-// unlock the Ocean while leaving the Stream shut — dropping the kid into
+// unlock the Ocean while leaving the Stream shut: dropping the kid into
 // punctuated sentences without the spacebar/capitals the Stream teaches, and
 // showing them a Stream group in the journal they couldn't fish. Returns tier
 // order (never rod order), so it's stable however the shop is arranged.
@@ -120,7 +120,7 @@ export function locationsForRods(tiers, rods, ownedRodIds) {
 // The earned rank: the furthest tier whose location the profile has unlocked.
 // tiers are ordered easiest→hardest; pond is always unlocked so this is never
 // below tiers[0].rank. (Muskie is a prestige rank awarded on the legendary
-// catch, not location-derived — see BUILD_PLAN_ADVANCED A8.)
+// catch, not location-derived: see BUILD_PLAN_ADVANCED A8.)
 export function rankForState(tiers, locations) {
   let rank = tiers[0].rank;
   for (const t of tiers) if (locations.includes(t.location)) rank = t.rank;
@@ -128,14 +128,14 @@ export function rankForState(tiers, locations) {
 }
 
 // The rank a profile actually wears (A8). Normally the furthest location it has
-// unlocked, but the prestige rank outranks all of them — it isn't a place you
+// unlocked, but the prestige rank outranks all of them: it isn't a place you
 // travel to, it's the legendary you landed, so it can't be derived from rods.
 export function rankForProfile(tiers, locations, prestigeCfg, hasPrestige) {
   return hasPrestige && prestigeCfg?.rank ? prestigeCfg.rank : rankForState(tiers, locations);
 }
 
 // Does landing this fish earn the prestige rank *right now* (A8)? Only the
-// prestige species, and only the first time — a second Muskie is a great day,
+// prestige species, and only the first time: a second Muskie is a great day,
 // not a second ceremony.
 export function earnsPrestige(prestigeCfg, fishId, alreadyHad) {
   return !!prestigeCfg?.fishId && !alreadyHad && fishId === prestigeCfg.fishId;
@@ -156,10 +156,10 @@ export function buildReelPool(entries, difficulty, minSize) {
 }
 
 // Split a reel string into ordered tokens for the token-at-a-time reel (AD2):
-//   { type:"word",  text } — a run of letters; the unit you type
-//   { type:"space", text } — the gap between words; a real (forgiving) key and
+//   { type:"word",  text }: a run of letters; the unit you type
+//   { type:"space", text }: the gap between words; a real (forgiving) key and
 //                            the reel-crank beat (replaces word-mode's auto pause)
-//   { type:"punct", text } — punctuation runs (A5 sentences), kept as their own
+//   { type:"punct", text }: punctuation runs (A5 sentences), kept as their own
 //                            token so the reel can pause on clause boundaries
 // A1 phrases are letters + single spaces only; punct is here for forward reach.
 export function tokenize(text) {
@@ -172,7 +172,7 @@ export function tokenize(text) {
   return tokens;
 }
 
-// How many typeable words a reel string holds — the number of reel segments a
+// How many typeable words a reel string holds: the number of reel segments a
 // phrase takes to land (its spaces are the beats between them).
 export function wordCount(text) {
   return tokenize(text).filter(t => t.type === "word").length;
@@ -180,7 +180,7 @@ export function wordCount(text) {
 
 // Typing speed for a reeled catch (A4), the classic "5 chars = 1 word" WPM over
 // the *active* typing time (idle gaps already excluded by the caller). A cozy
-// number to beat, never a gate — 0 for empty/degenerate input, never throws.
+// number to beat, never a gate: 0 for empty/degenerate input, never throws.
 export function computeWpm(chars, activeMs) {
   if (chars <= 0 || activeMs <= 0) return 0;
   return Math.round((chars / 5) / (activeMs / 60000));
@@ -212,7 +212,7 @@ export function isPersonalBestWpm(previousBestWpm, wpm) {
 }
 
 // Fly-cast rhythm (A4): were these inter-key gaps (ms) an even, steady cadence?
-// Cozy flavor only — needs at least minKeys gaps and a low spread (coefficient
+// Cozy flavor only: needs at least minKeys gaps and a low spread (coefficient
 // of variation = stddev/mean, at or under maxCv). Too few gaps or a stray idle
 // pause → false (we simply withhold praise; there is never a penalty).
 export function isEvenCadence(intervals, minKeys, maxCv) {
@@ -233,14 +233,14 @@ export function pickDistinct(items, n, rnd = Math.random) {
   if (!items.length || n <= 0) return [];
   const bag = [...items], out = [];
   while (out.length < n) {
-    if (!bag.length) bag.push(...items);            // pool exhausted — refill and keep going
+    if (!bag.length) bag.push(...items);            // pool exhausted: refill and keep going
     out.push(...bag.splice(Math.floor(rnd() * bag.length), 1));
   }
   return out;
 }
 
 // How many segments (sentences) a fish takes to land at a fight location (A7).
-// Unknown tiers — and every non-fight water — land in a single segment, so the
+// Unknown tiers (and every non-fight water) land in a single segment, so the
 // Pond and the Stream are untouched by the Ocean's fight pacing.
 export function segmentsForTier(fightCfg, location, tier) {
   if (!fightCfg?.fromLocations?.includes(location)) return 1;
@@ -261,13 +261,13 @@ export function tierWithFallback(tiersPresent, desired, order) {
 }
 
 // ---- R1: cast, line and reel motion (ANIMATION.md) ----------------------
-// Pure geometry only — the DOM side lives in app.js, and the prototype at
+// Pure geometry only: the DOM side lives in app.js, and the prototype at
 // prototype/line-animation.html imports these same functions, so what Matt
 // reviewed and what ships are the same math.
 
 // The lure in flight: a projectile arc from the rod tip to where it lands,
 // `t` in [0,1]. Linear in x, with a parabolic lift that peaks `apexPx` above
-// the straight chord at t=0.5 and is exactly 0 at both ends — so the lure
+// the straight chord at t=0.5 and is exactly 0 at both ends, so the lure
 // leaves the rod tip and arrives at the landing point no matter the apex.
 export function castArcPoint(from, to, apexPx, t) {
   const k = Math.min(1, Math.max(0, t));
@@ -280,7 +280,7 @@ export function castArcPoint(from, to, apexPx, t) {
 // How far the line's control point hangs below the straight rod-tip→end chord.
 // Tension only ever *tightens* it: 0 sags by `slackPx`, 100 pulls in to
 // `tautPx`. Tension rises on errors and nothing else (SPEC.md), so a taut line
-// reads as "you're making mistakes" — never as "you're typing too slowly".
+// reads as "you're making mistakes", never as "you're typing too slowly".
 export function lineSagPx(tension, slackPx, tautPx) {
   const t = Math.min(100, Math.max(0, tension ?? 0)) / 100;
   return slackPx + (tautPx - slackPx) * t;
@@ -294,7 +294,7 @@ export function lineControlPoint(from, to, sagPx) {
 }
 
 // One frame of the rod-tip tug: a damped spring pulling the rod back to rest.
-// A spring rather than a tween on purpose — fast typing stacks impulses into
+// A spring rather than a tween on purpose: fast typing stacks impulses into
 // an irregular judder, where a tween would keep restarting and read as
 // mechanical. Returns the next {angle, vel}; dtMs is clamped so a backgrounded
 // tab can't integrate one enormous step and fling the rod.
@@ -334,7 +334,7 @@ export function easeInOut(t) {
 
 // Where along the reel the fish is, read back out of its x. The reel path is a
 // straight run from `fromX` (deep and right, where it bites) to `toX` (the
-// boat), so the fish's own position IS the progress — no second counter to
+// boat), so the fish's own position IS the progress, no second counter to
 // keep in step with `wordsLeft`, and it moves smoothly because the fish does.
 export function reelProgressAtX(path, x) {
   const span = path.toX - path.fromX;
@@ -350,7 +350,7 @@ export function reelProgressAtX(path, x) {
 // `fullAt` is below 1 on purpose. The fish never renders at progress 1: the
 // last word calls land() in the same tick it sets that target, which stops the
 // swim and hands over to the landing arc, so the furthest it is ever DRAWN is
-// (wordsToLand - 1) / wordsToLand — 0.75 for a common, 0.875 for a legendary.
+// (wordsToLand - 1) / wordsToLand: 0.75 for a common, 0.875 for a legendary.
 // A reveal that finished at 1 would therefore never finish at all.
 export function revealAt(progress, startAt, fullAt = 1) {
   const s = Math.min(1, Math.max(0, startAt ?? 0));

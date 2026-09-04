@@ -1,6 +1,6 @@
 // Firestore security rules for Hook, Line and Sentence (M4b).
 //
-// ⚠️  DO NOT paste this whole file over your Family Hub rules — it would delete
+// ⚠️  DO NOT paste this whole file over your Family Hub rules: it would delete
 //     them and break Family Hub. This database is shared. Instead:
 //
 //   1. Firebase console → Firestore Database → Rules.
@@ -14,10 +14,10 @@
 // kids, and writes must stamp the caller's own uid. No sign-in → no access,
 // which is why the game falls back to localStorage when signed out.
 
-// ⚠️  KNOWN LIMIT — worth reading before sharing the game's URL with anyone.
+// ⚠️  KNOWN LIMIT: worth reading before sharing the game's URL with anyone.
 //     `request.auth != null` is *authentication, not authorisation for your
 //     family*: any Google account on earth can sign in and create documents
-//     here. Nobody can read or touch YOUR docs — ownership is enforced below —
+//     here. Nobody can read or touch YOUR docs: ownership is enforced below,
 //     but a stranger can create their own, and this database is shared with
 //     Family Hub. The shape checks below cap how big any one document can get.
 //     They cannot cap how MANY get created: Firestore rules can't count
@@ -30,7 +30,7 @@
 //          to create.
 //     Simplest of all: ship the public build with no Firebase config at all.
 //     The game is fully playable on localStorage, so strangers lose nothing but
-//     cross-device sync — and you collect no data about other people's children.
+//     cross-device sync, and you collect no data about other people's children.
 
 match /typingFishing/{profileId} {
   function incoming() { return request.resource.data; }
@@ -60,7 +60,7 @@ match /typingFishing/{profileId} {
   allow delete: if wasMine();
 }
 
-// ── For reference only — the shape your full ruleset should have after step 3.
+// ── For reference only: the shape your full ruleset should have after step 3.
 // ── (Your real Family Hub rules go where the comment is; don't lose them.)
 //
 // rules_version = '2';
@@ -74,4 +74,4 @@ match /typingFishing/{profileId} {
 // }
 //
 // (This used to repeat the rules inline, which promptly went stale the first
-// time they changed. Copy the real block above — there's only one of it now.)
+// time they changed. Copy the real block above: there's only one of it now.)

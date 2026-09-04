@@ -1,11 +1,11 @@
-# Hook, Line and Sentence — Art Direction
+# Hook, Line and Sentence: Art Direction
 
 > **Adopted 2026-08-31.** This is the source of truth for how the game looks
 > from here on. It replaces the pixel-art direction that `SPEC.md` shipped v1
 > with, and it retires the art strategy in `BUILD_PLAN_GRAPHICS.md` and
 > `BUILD_PLAN_VISUAL.md` (V2–V5). The work it implies is scoped in
 > `BUILD_PLAN_REFRESH.md`; the prompt mechanics live in `ART.md`.
-> Three decisions were taken when it was adopted — see
+> Three decisions were taken when it was adopted: see
 > **Decisions taken on adoption** at the bottom.
 
 ## Style anchor
@@ -33,9 +33,9 @@ One protagonist across all three levels, costume changes per environment rather 
 - Stream: waders, fly fishing vest
 - Ocean: fishing boat gear, life vest
 
-**The costumes are tied together by a warm terracotta accent garment** (R4): the shirt in the Pond, the fly vest in the Stream, the life vest in the Ocean. It is the one hue in the palette that holds a silhouette against teal-green water and green banks in all three levels, and it is the region the favorite-color accent tint filters — which is what keeps that tint a one-line filter instead of a per-costume tuning job.
+**The costumes are tied together by a warm terracotta accent garment** (R4): the shirt in the Pond, the fly vest in the Stream, the life vest in the Ocean. It is the one hue in the palette that holds a silhouette against teal-green water and green banks in all three levels, and it is the region the favorite-color accent tint filters, which is what keeps that tint a one-line filter instead of a per-costume tuning job.
 
-Rig as separate parts (head, torso, arm, rod) so casting and reeling can be animated by moving parts rather than swapping frames. (R4 settled how many parts and where they come from — see the open assumption below; a rig is three generations plus local cuts, not one generation per part.)
+Rig as separate parts (head, torso, arm, rod) so casting and reeling can be animated by moving parts rather than swapping frames. (R4 settled how many parts and where they come from: see the open assumption below; a rig is three generations plus local cuts, not one generation per part.)
 
 ## Fish roster
 
@@ -67,7 +67,7 @@ Full prompt set to be generated per costume, per fish, and per background follow
 ## Open assumptions (flag for review)
 
 - Assuming three background paintings (one per level) is sufficient, rather than separate paintings per time-of-day or weather variant.
-- ~~Assuming the character rig needs four pieces (head, torso, arm, rod) as a starting point, subject to revision once casting animation is prototyped.~~ **Answered in R4 (2026-09-01), and it was not an art question.** Any subdivision with no independent existence — a head off a torso, an arm off a shoulder — is a *local cut of one delivered painting*: it registers perfectly because it is the same pixels, and it costs no generation and no reroll risk. Only the rod (the shop swaps it) and the fingers that close over it must be generated apart from the body. So a pose is **three generations**, and how many layers the rig has is a code decision, free to revise later. The rule is in `ART.md`'s same-canvas section.
+- ~~Assuming the character rig needs four pieces (head, torso, arm, rod) as a starting point, subject to revision once casting animation is prototyped.~~ **Answered in R4 (2026-09-01), and it was not an art question.** Any subdivision with no independent existence (a head off a torso, an arm off a shoulder) is a *local cut of one delivered painting*: it registers perfectly because it is the same pixels, and it costs no generation and no reroll risk. Only the rod (the shop swaps it) and the fingers that close over it must be generated apart from the body. So a pose is **three generations**, and how many layers the rig has is a code decision, free to revise later. The rule is in `ART.md`'s same-canvas section.
 
 ## Decisions taken on adoption (2026-08-31)
 
@@ -79,19 +79,19 @@ question 1.)
 1. **How far the restyle reaches: everything except the keyboard grid.** The
    scene, the HUD, the tackle box, the shop, the badges *and* the collection
    screen's CSS-drawn fish icons all move to this palette and edge treatment.
-   The **ghost-hands finger keyboard is untouched** — it is the best part of the
+   The **ghost-hands finger keyboard is untouched**: it is the best part of the
    game and `CLAUDE.md` puts it off limits. Consequence: the game is no longer
    "pixel-art"; `image-rendering: pixelated` comes off every painterly asset,
    and `SPEC.md`'s vision line was rewritten rather than left contradicted.
-2. **One protagonist, costumes — the age + sex assignment is retired.** The
+2. **One protagonist, costumes: the age + sex assignment is retired.** The
    earlier decision (angler assigned from a kid's age and sex at profile setup,
    recorded in `BUILD_PLAN_VISUAL.md`) is dropped in favour of this doc's single
    character with three costumes: three rigs total instead of three per variant.
-   The **favorite-color accent tint survives** — it is a CSS filter on one
+   The **favorite-color accent tint survives**: it is a CSS filter on one
    region of a drawn sprite, so it costs no extra art and keeps the
    personalization that the assignment was there for.
 3. **The display face: Baloo 2, self-hosted (added F2, 2026-09-03).** This doc
-   never named a typeface, and the game kept Silkscreen — a pixel face — through
+   never named a typeface, and the game kept Silkscreen (a pixel face) through
    the whole refresh, carrying every pun, chip, banner and shop label at 10–13px
    over painterly backgrounds. It was `BUILD_PLAN_REFRESH.md`'s open question 1
    and Matt's call was to swap it game-wide. Baloo 2 was chosen by rendering five
@@ -100,15 +100,15 @@ question 1.)
    it and a light face disappears at 11px. It is **self-hosted** in `assets/`
    (SIL OFL 1.1) rather than linked from Google Fonts, which takes a third-party
    request off every page load and means a CDN it cannot reach can no longer
-   make the game silently render in fallback monospace. (One fewer, not zero —
+   make the game silently render in fallback monospace. (One fewer, not zero,
    the Firebase SDK still loads from gstatic while cloud saves are configured.) `.key` carries no
-   `font-family` at all and so the frozen keyboard is untouched — never point a
+   `font-family` at all and so the frozen keyboard is untouched, never point a
    `.key` rule at `--display`.
 
 4. **Fish: one rig per species, not shape families.** This doc assumes ~10 fish;
    the live roster in `data/fish.json` is **33 species** across the four ranks,
    currently served by four PNGs plus a hue-rotate. Matt's call is a rig per
-   species — every fish in the collection gets its own art. That is the single
+   species: every fish in the collection gets its own art. That is the single
    most expensive item in the refresh (~33 rigs, body/fin/tail each), so
    `BUILD_PLAN_REFRESH.md` R6 delivers it in **waves by biome**, with the
    existing tinted placeholder standing in for any species whose art has not

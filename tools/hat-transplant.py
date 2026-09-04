@@ -113,7 +113,7 @@ for _ in range(8):
 print("%s head onto %s head: scale %.4f, offset (%.1f, %.1f), head IoU %.4f"
       % (src_pose, dst_pose, k, tx, ty, best))
 if best < MIN_HEAD_IOU:
-    sys.exit("the two heads do not correspond well enough (%.3f < %.2f) — generate this "
+    sys.exit("the two heads do not correspond well enough (%.3f < %.2f): generate this "
              "one instead of transplanting it" % (best, MIN_HEAD_IOU))
 
 hat = Image.open(os.path.join(ROOT, "assets", "%s-%s.png" % (stem, src_pose))).convert("RGBA")

@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
 """Cut a wave of fish out of one delivered sheet (R6).
 
-An ART PIPELINE tool, not part of the game — nothing loads it at runtime and it
+An ART PIPELINE tool, not part of the game: nothing loads it at runtime and it
 is not a build step. Third of its family after cut-angler.py and cut-vessel.py,
 and the same argument as both: don't generate a piece you could cut.
 
     python3 tools/cut-fish.py <sheet> [source.jpg|png]
 
 A sheet carries several fish on one canvas, separated by the flat magenta
-backdrop, so they come apart as connected components — which is also why a sheet
+backdrop, so they come apart as connected components, which is also why a sheet
 is safe to ask for: the generator has no composition to get wrong, and painting
 four fish in one pass is the one thing it does BETTER than four passes, because
 they end up in the same style by construction.
 
-Each fish is then split in two at the CAUDAL PEDUNCLE — the narrowest vertical
+Each fish is then split in two at the CAUDAL PEDUNCLE: the narrowest vertical
 section of any fish, and the reason the cut can be *found* rather than traced,
 the way cut-vessel.py finds a sheer. Everything behind it is the tail layer,
 which the game sweeps about the cut; everything ahead is the body. Both halves
@@ -29,7 +29,7 @@ from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Which species are on which sheet, in READING ORDER — rows top to bottom, and
+# Which species are on which sheet, in READING ORDER: rows top to bottom, and
 # left to right within a row. That is the prompt's own layout written down, and
 # it is deliberately not a grid of quadrant names: sheet A is 2x2 and sheet B is
 # a row of three, and a list covers both without the table knowing which.
@@ -70,8 +70,8 @@ SHEETS = {
     ),
     # Wave 3, the Ocean, grouped so that each set of look-alikes shares a canvas:
     # the four silver pelagics on one, the three billfish-shaped rares on the
-    # other. The muskie goes alone because the fish it must not resemble — the
-    # Pond's northern pike — is in another biome and already generated, so no
+    # other. The muskie goes alone because the fish it must not resemble: the
+    # Pond's northern pike: is in another biome and already generated, so no
     # sheet can put them together.
     "ocean-shoal": dict(
         src="assets/Gemini_fish-ocean-shoal.jpg",
@@ -101,7 +101,7 @@ LENGTH_BY_TIER = {"common": 54, "uncommon": 64, "rare": 78, "legendary": 96}
 # sets how far the seam has to overlap: the tail rotates about the peduncle's
 # midpoint, so each corner of the cut swings (depth/2)*sin(deg) away from the
 # body, and anything past the overlap opens as a transparent wedge. A fixed
-# overlap gets this wrong at both ends — 3px was over-generous for the pike's
+# overlap gets this wrong at both ends: 3px was over-generous for the pike's
 # 39px peduncle and half a design pixel short on the koi's 90px one, which is
 # 2.7 device px of daylight on a retina screen, on the biggest fish in the Pond.
 TAIL_SWEEP_DEG = 7.0
@@ -132,7 +132,7 @@ dist = np.sqrt(((a - KEY) ** 2).sum(axis=2))
 print("sheet %s  %dx%d  key %s (stdev %s)"
       % (name, W, H, KEY.round(1), border.std(axis=0).round(1)))
 
-# 1. flood the backdrop from the border, then take the enclosed pockets too — the
+# 1. flood the backdrop from the border, then take the enclosed pockets too: the
 #    gap between a pectoral fin and a belly is backdrop the border cannot reach
 bg = np.zeros((H, W), dtype=bool)
 q = deque()
@@ -155,7 +155,7 @@ bg |= pockets
 # 2. alpha. `unmix` is the default for fish and it is not the vessel's edge case:
 #    fins are thin and the generator paints some backdrop THROUGH them, which the
 #    distance ramp reads as opaque violet. Taking alpha from how much key a pixel
-#    carries removes the key's contribution by construction — and leaves nothing
+#    carries removes the key's contribution by construction, and leaves nothing
 #    to despill, which matters here because a despill rule keyed on "blue above
 #    green is residue" would eat the pumpkinseed's blue-green cheek lines.
 if S["alpha"] == "unmix":
@@ -203,19 +203,19 @@ comps.sort(key=lambda c: -c[1])
 kept, dropped = comps[:want], comps[want:]
 ratio = kept[-1][1] / dropped[0][1] if dropped else float("inf")
 print("found %d components; keeping the %d largest (%d..%d px), dropping %d "
-      "(largest %d px) — separation %.1fx"
+      "(largest %d px): separation %.1fx"
       % (len(comps), want, kept[-1][1], kept[0][1], len(dropped),
          dropped[0][1] if dropped else 0, ratio))
 if ratio < MIN_SIZE_RATIO:
     sys.exit("  ✗ the smallest fish is only %.1fx the largest non-fish: too close to call"
              % ratio)
-for c in dropped:                      # captions, specks — never reach a sprite
+for c in dropped:                      # captions, specks, never reach a sprite
     lab[lab == c[0]] = 0
 comps = kept
 
 # Put the components into reading order so the layout list can name them. Rows
-# are found rather than assumed — cluster the centres by y, splitting wherever
-# the gap exceeds half the median fish height — so a 2x2 sheet and a row of
+# are found rather than assumed: cluster the centres by y, splitting wherever
+# the gap exceeds half the median fish height, so a 2x2 sheet and a row of
 # three both come out in the order the prompt listed them.
 def reading_order(comps):
     heights = sorted(y1 - y0 + 1 for _, _, _, y0, _, y1 in comps)
@@ -239,12 +239,12 @@ for (n, px, x0, y0, x1, y1), fid in zip(ordered, S["layout"]):
     m = lab == n
     fw, fh = x1 - x0 + 1, y1 - y0 + 1
     # a species' length comes from its RANK, so the design box is known before
-    # anything is measured — and the mouth is measured in that box, not in
+    # anything is measured, and the mouth is measured in that box, not in
     # source pixels then rounded into it
     scale = LENGTH_BY_TIER[FISH[fid]["tier"]] / fw
 
     # the peduncle: the narrowest vertical section in the rear of the fish. Found,
-    # not traced — and the depth either side of it is printed so a sheet whose
+    # not traced, and the depth either side of it is printed so a sheet whose
     # minimum is shallow (a fish drawn with no waist) shows up as a number.
     depth = m[:, x0:x1 + 1].sum(axis=0)
     lo, hi = int(fw * S["rear"][0]), int(fw * S["rear"][1])
@@ -253,7 +253,7 @@ for (n, px, x0, y0, x1, y1), fid in zip(ordered, S["layout"]):
     col = np.where(m[:, x0 + cut])[0]
     pivot = (cut, (col.min() + col.max()) / 2 - y0)
 
-    # the mouth, measured in DESIGN pixels — the unit the config stores and the
+    # the mouth, measured in DESIGN pixels: the unit the config stores and the
     # game draws in. Two things defeated simpler rules here, and both were found
     # by drawing the measured point onto the sprite rather than by reading the
     # number:
@@ -264,7 +264,7 @@ for (n, px, x0, y0, x1, y1), fid in zip(ordered, S["layout"]):
     #   head all of it, which fixes that.
     #
     #   a unicornfish leads with a HORN above its snout, so even the weighted
-    #   centre lands in open water between the two — 3.2 design px off the fish,
+    #   centre lands in open water between the two: 3.2 design px off the fish,
     #   where the line would attach to nothing. Holding that height and walking
     #   right to the first painted column finds the snout.
     #
@@ -311,5 +311,5 @@ for (n, px, x0, y0, x1, y1), fid in zip(ordered, S["layout"]):
                  % (fid, fw * scale, fh * scale, mouth_d[0], mouth_d[1],
                     pivot[0] * scale, pivot[1] * scale, fid, fid))
 
-print("\n  CONFIG.fish.species — measured, not tuned\n")
+print("\n  CONFIG.fish.species: measured, not tuned\n")
 print("\n".join(block))

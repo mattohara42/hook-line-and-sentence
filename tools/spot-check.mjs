@@ -11,7 +11,7 @@
 // Why this exists: CLAUDE.md requires visual claims to be checked in a browser
 // and screenshots to be taken PAST the startup modal, because #profiles covers
 // the viewport until an angler is created. app.js is an ES module, so nothing is
-// on `window` — the way in is to seed a profile in localStorage, reload, and
+// on `window`: the way in is to seed a profile in localStorage, reload, and
 // click the card. That was re-derived three times in one session before it got
 // written down. It also prints the rig's layer stack and any failed asset
 // request, which is how an unregistered gear PNG shows itself.

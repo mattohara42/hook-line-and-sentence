@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Hook, Line and Sentence — Visual Mockup</title>
+<title>Hook, Line and Sentence: Visual Mockup</title>
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    /* Dusk pond palette — locked, everything derives from these */
+    /* Dusk pond palette: locked, everything derives from these */
     --dusk-peach: #f5b78a;
     --ember:      #e8846b;
     --rose-dusk:  #c96a83;
@@ -235,7 +235,7 @@
 </style>
 </head>
 <body>
-  <h1>HOOK, LINE AND SENTENCE — VISUAL MOCKUP</h1>
+  <h1>HOOK, LINE AND SENTENCE: VISUAL MOCKUP</h1>
 
   <div id="scene">
     <div id="sky">
@@ -268,7 +268,7 @@
     <span class="chip">CAUGHT <b id="caught">0</b></span>
     <span class="chip coins">COINS <b id="coins">0</b></span>
     <span class="chip">ESCAPED <b id="escaped">0</b></span>
-    <span class="chip">REEL <b id="dist">—</b></span>
+    <span class="chip">REEL <b id="dist">–</b></span>
   </div>
 
   <div id="controls">
@@ -308,12 +308,12 @@
   };
   let WORDS = WORD_POOLS.stage1;
 
-  // Dad joke flavor text — one pool per moment, picked at random
+  // Dad joke flavor text: one pool per moment, picked at random
   const PUNS = {
     cast: [
-      "Type the word to cast — reel easy does it",
+      "Type the word to cast. Reel easy does it",
       "Type the word to cast. Let's get kraken",
-      "Type the word to cast — any fin is possible",
+      "Type the word to cast. Any fin is possible",
     ],
     wait: [
       "Something's fishy down there…",
@@ -323,14 +323,14 @@
     ],
     bite: [
       "Fish on! Holy mackerel!",
-      "Oh my cod — reel it in!",
+      "Oh my cod, reel it in!",
       "A bite! Hook, line, and sinker!",
       "Fish on! Don't trout yourself now",
     ],
     catchCommon: [
       "Caught it! Reel-y nice work",
       "Landed! That was off the scale",
-      "Caught — and it wasn't even a fluke",
+      "Caught, and it wasn't even a fluke",
       "Got it! You're quite the catch-er",
     ],
     catchRare: [
@@ -342,7 +342,7 @@
       "It got away… cod it be worse?",
       "Escaped! A missed oppor-tuna-ty",
       "Gone… but the pond is patient",
-      "It slipped away — better luck next tide",
+      "It slipped away. Better luck next tide",
     ],
   };
 
@@ -415,7 +415,7 @@
     phase = "cast"; inputLocked = false;
     target = pick(WORDS); typed = 0;
     tension = 0; renderTension();
-    el.dist.textContent = "—";
+    el.dist.textContent = "–";
     el.line.style.width = "0px";
     el.fish.style.opacity = 0;
     el.fish.classList.remove("rare", "landing");

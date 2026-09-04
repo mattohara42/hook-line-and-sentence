@@ -1,16 +1,16 @@
-# BUILD_PLAN_FEEL.md — the Catch Feel epic (F1–F5)
+# BUILD_PLAN_FEEL.md: the Catch Feel epic (F1–F5)
 
 *Opened 2026-09-03, from a play session. Everything in here was seen on screen
 before it was written down; the screenshots that prove each one are named in the
 milestone.*
 
 The Art & Animation Refresh (`BUILD_PLAN_REFRESH.md`) gave the game paintings.
-Playing it revealed that the **moment of the catch** — the thing all that art is
-for — is the weakest part of the loop. Four scene elements disagree about where
+Playing it revealed that the **moment of the catch**: the thing all that art is
+for: is the weakest part of the loop. Four scene elements disagree about where
 the fish is, and the payoff for landing one is a two-line pixel-font message in
 the corner that is gone in a second and a half.
 
-This epic fixes the moment. **R7's nine rods are paused, not cancelled** — they
+This epic fixes the moment. **R7's nine rods are paused, not cancelled**: they
 are the last of the refresh and they resume when F5 closes.
 
 ## The rules this epic inherits
@@ -25,14 +25,14 @@ Nothing here changes them, and each one has bitten a milestone below.
 - **An assertion proves the code ran, not that the picture is right.** Four of
   the five milestones below are only checkable by looking.
 
-## F1 — the water tells the truth
+## F1: the water tells the truth
 
 Three separate scene bugs, all of them "an element is not where the fish is".
 One milestone because they share one verification pass.
 
 1. **Two ripples on the landing word.** `pullFishOneWord()` fires a burst and a
    ripple at a hardcoded `(mid, 258)` / `(mid, 262)` on *every* word, including
-   the one that lands the fish — where `surfaceBreak()` fires its own splash at
+   the one that lands the fish: where `surfaceBreak()` fires its own splash at
    the waterline. So the catch ends with two rings stacked vertically, one in
    open water and one directly above it at the surface. Seen in `base-6-landing`.
 2. **The approach silhouette is the wrong fish.** `approach()` sets
@@ -43,7 +43,7 @@ One milestone because they share one verification pass.
    generic blob with a painted tail attached; the bite is the real fish. Seen in
    `base-3b-approach-late` and in `cls=[silhouette approaching] layers=2`.
 3. **The line lands at the far bank and then jumps.** `CONFIG.anim.cast.landing`
-   is `(394, 196)` — two px below the waterline, which in a scene whose water
+   is `(394, 196)`: two px below the waterline, which in a scene whose water
    recedes *toward* the viewer is the far shore. The fish bites at design y≈256.
    So the line's far end jumps ~70px down and ~65px right at the bite, from the
    horizon into the water in front of you. Seen in `base-2-waiting` against
@@ -61,19 +61,19 @@ lands at `(458, 224)` and the far end now moves 43px at the bite instead of 80,
 all of it the fish's mouth sitting below the bait. `tools/play-check.mjs` came
 out of this milestone and every later one should use it.
 
-## F2 — a face that matches the paintings
+## F2: a face that matches the paintings
 
 Answers **open question 1 of `BUILD_PLAN_REFRESH.md`**, which R2 left parked:
 Silkscreen is the last pixel-era thing in the game. Every pun, chip, banner and
 shop label is set in a 10–13px pixel face against warm painterly backgrounds,
-and the post-catch message is the place it hurts most — it is the longest string
+and the post-catch message is the place it hurts most: it is the longest string
 the game ever shows and the least readable.
 
 **Decision (Matt, 2026-09-03): swap it game-wide.** One warm rounded storybook
 face replaces `--display` everywhere.
 
 **The keyboard is not affected and must not be.** `.key` has never carried a
-`font-family` at all — it inherits `--mono` from `body` — so the frozen keyboard
+`font-family` at all (it inherits `--mono` from `body`) so the frozen keyboard
 comes through this untouched. Confirm that in a screenshot rather than trusting
 this paragraph.
 
@@ -84,17 +84,17 @@ the guide keyboard is pixel-for-pixel what it was.
 candidates into the real game on the same beat and looking: Quicksand vanished
 at 11px over the painting and Grandstander wrapped the longest catch message to
 two lines, which is the readability problem this milestone exists to fix.
-Self-hosted rather than pulled from Google Fonts — it removes the game's last
+Self-hosted rather than pulled from Google Fonts: it removes the game's last
 third-party request, and a CDN it cannot reach is exactly why Silkscreen was
 silently rendering as plain monospace in the build container. The keyboard was
 proved unchanged by element screenshot: same size, max channel difference 2 of
 255, zero pixels differing by more than 2 (water shimmer behind the translucent
 panel, not type).
 
-## F3 — the catch card
+## F3: the catch card
 
 The payoff, and the biggest piece of work in the epic. Today a catch produces
-`setStatus("NEW! " + pun + " — Pun-kinseed (0.3 lb, a little one)")` in the top
+`setStatus("NEW! " + pun + ": Pun-kinseed (0.3 lb, a little one)")` in the top
 -left corner at 12px, held for `reel.recastDelayMs` (1500ms) and then overwritten
 by the cast prompt. By the time it appears the fish has already arced off the
 screen, so there is nothing to look at and no time to read.
@@ -110,7 +110,7 @@ plaque, rather than queueing a second thing behind it.
   computed in `land()`; nothing new has to be tracked.
 - **It holds until the kid is ready.** No timer. It goes when the first
   keystroke of the next cast word arrives, and that keystroke still counts.
-- Junk catches and escapes raise the same card without the plaque frame — they
+- Junk catches and escapes raise the same card without the plaque frame: they
   have exactly the same unreadability problem and it is one surface, not three.
 - **The existing celebrations keep working around it.** The badge toast and the
   letter-unlock banner both fire on the same catch; the banner is centred at
@@ -127,13 +127,13 @@ path and shot, not faked: an ordinary catch, the plaque, a junk pull
 
 **The banner does not fit next to the card, so it moves in time instead.** The
 free band is 364px tall on a 720 screen and the two panels need 410 between
-them — measured. So when a letter unlock or the prestige capstone is due, the
+them: measured. So when a letter unlock or the prestige capstone is due, the
 celebration plays first and the card arrives as it clears, which is also the
 right order to read them in. With no banner due the card lands with the catch.
 A card still *waiting* on a banner is cancelled by `cardGen` if the kid changes
 spot during those 2.6 seconds.
 
-## F4 — the wait is something you do
+## F4: the wait is something you do
 
 Two changes to the pre-bite beat, which today is 1.2–3.2s of locked input and
 nothing to do.
@@ -146,8 +146,8 @@ nothing to do.
 wiggle words rather than biting anyway on a timer.
 
 **This is the first thing in the Pond that waits on the kid, so be careful with
-it.** It does not break the cozy guardrail — the words can be typed as slowly as
-you like, there is no tension, no timer and nothing to lose — but it *is* a
+it.** It does not break the cozy guardrail: the words can be typed as slowly as
+you like, there is no tension, no timer and nothing to lose, but it *is* a
 state a distracted kid can park the game in. Keep the ask small (a couple of
 short words), make the prompt say plainly what to do, and make the bait visibly
 respond to every word so the cause and effect is obvious.
@@ -168,7 +168,7 @@ a key. A real beginner is nearer 800–1000ms, which makes three four-letter wor
 about ten seconds of wiggling. `CONFIG.wiggle.wordsRange` is one line if that is
 too much; `chance` is the other.
 
-## F5 — eye test, docs, and back to the rods
+## F5: eye test, docs, and back to the rods
 
 Play it. Fold what each milestone decided into the doc that owns it
 (`SPEC.md` for the wiggle, `ANIMATION.md` for the card's motion,
@@ -199,13 +199,13 @@ worth arguing with is one line in `config.js`.
    moves.
 2. **Should the fish emerge higher?** `CONFIG.fish.approach.spawn.dy` was cut
    56 → 24 in #103 so the bite would clear the guide panel on a 2:1 screen. On
-   16:9 it still emerges half behind it (`base-3b-approach-late`). Not F1's job —
-   F1 moves the *line* to meet the fish — but it is the other half of the same
+   16:9 it still emerges half behind it (`base-3b-approach-late`). Not F1's job,
+   F1 moves the *line* to meet the fish, but it is the other half of the same
    complaint.
 3. **Should the escape get its own card treatment?** F3 gives it the plain card
    with the placeholder silhouette, keeping the species secret the way the reveal
    does. The parked "the one that got away" backlog item would make it a quest,
-   which is a different and larger thing — and the card is now the obvious place
+   which is a different and larger thing, and the card is now the obvious place
    to hang it.
 4. **The four junk sprites are the last pixel-era art in the game**, and F3's
    card is what made that visible. In `BACKLOG.md` with the mitigation that

@@ -16,7 +16,7 @@ Two things have to be undone, and skipping either looks like the generator
 missing the axis when it did not:
 
 1. **Scale and offset.** The generator ignores the canvas size every single
-   time — the first rod came back 992x1079 against the 1387x1510 asked — so the
+   time (the first rod came back 992x1079 against the 1387x1510 asked) so the
    return has to be fitted back onto the reference before any pose number means
    anything. The fit is `cut-gear.py`'s, and for the same reasons: maximise
    silhouette agreement OUTSIDE the region that legitimately changed, and pivot

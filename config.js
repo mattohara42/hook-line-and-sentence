@@ -1,4 +1,4 @@
-// config.js — every tuning knob in one place. No magic numbers elsewhere.
+// config.js: every tuning knob in one place. No magic numbers elsewhere.
 // Values marked [PROTO] were validated in the feel prototype; others are
 // starting guesses to be tuned at M8 against real kid typing.
 
@@ -13,11 +13,11 @@ export const CONFIG = {
     // reel words match the fish's difficulty; if the unlocked pool has fewer
     // candidates than this, easier difficulties are mixed in until it doesn't
     minReelPoolSize: 8,
-    minPhrasePoolSize: 4,   // same, for the Stream's phrase pool (a curated, thinner set — A1)
+    minPhrasePoolSize: 4,   // same, for the Stream's phrase pool (a curated, thinner set, A1)
     recastDelayMs: 1500,    // pause on the catch/escape message before recasting
   },
 
-  // Quick Cast — the timed typing-speed test. Deliberately OUTSIDE the
+  // Quick Cast: the timed typing-speed test. Deliberately OUTSIDE the
   // progression: the tackle box always offers it, whatever a kid has unlocked,
   // and it neither reads nor writes fishing stats (see app.js). Its only
   // persisted state is save.speedBest.
@@ -42,14 +42,14 @@ export const CONFIG = {
     },
   },
 
-  // F4: the wiggle. Some casts land the bait and nothing is interested yet — the
+  // F4: the wiggle. Some casts land the bait and nothing is interested yet, the
   // kid types a couple of short words to twitch it, and the fish comes when they
   // finish.
   //
   // MATT'S CALL, and the one thing here worth understanding before changing it:
   // NO WIGGLE, NO BITE. The cast waits for the words rather than biting anyway
   // on a timer. That makes this the first thing in the Pond that waits on the
-  // kid, so it was worth being sure it does not break the cozy guardrail — and
+  // kid, so it was worth being sure it does not break the cozy guardrail, and
   // it does not. The guardrail is "never punish SLOW typing, only carelessness":
   // wiggle words can be typed as slowly as you like, carry no tension, have no
   // clock and cannot lose you anything. Nothing is taken away; the game simply
@@ -58,16 +58,16 @@ export const CONFIG = {
   // and every word visibly moves the bobber so the cause and effect is obvious.
   wiggle: {
     chance: 0.34,           // how often a cast asks for one
-    wordsRange: [2, 3],     // "a few short words" — kept small on purpose
+    wordsRange: [2, 3],     // "a few short words", kept small on purpose
     maxWordLen: 4,          // "short": long enough to be a word, short enough to be a twitch
     // Once the bait is moving, something has noticed. The bite comes fast, and
-    // that speed IS the reward for wiggling — it is what stops the mechanic
+    // that speed IS the reward for wiggling: it is what stops the mechanic
     // reading as a toll on the way to the fishing.
     biteDelayMsRange: [500, 1300],
   },
 
   // Letter unlock: cumulative total catches required to reach each stage.
-  // Stage 1 is deliberately short — only 37 home-row words exist (see BUILD_PLAN M2).
+  // Stage 1 is deliberately short: only 37 home-row words exist (see BUILD_PLAN M2).
   unlock: {
     stages: [
       { letters: "asdfghjkl", catchesRequired: 0  },  // stage 1: home row
@@ -77,17 +77,17 @@ export const CONFIG = {
       { letters: "nc",        catchesRequired: 25 },
       { letters: "wmy",       catchesRequired: 40 },
       { letters: "pvb",       catchesRequired: 60 },
-      { letters: "qxz",       catchesRequired: 85 },  // legendary letters — Muskie Quixote territory
+      { letters: "qxz",       catchesRequired: 85 },  // legendary letters, Muskie Quixote territory
     ],
     celebrateMs: 2600,      // how long the "new letters!" banner holds the stage
   },
 
   // Advanced Progression tiers (BUILD_PLAN_ADVANCED A0). Ordered easiest→hardest.
   // A profile's rank derives from the furthest location it has unlocked (rods
-  // unlock locations — see shop.rods[].unlocksLocation); `location` is where the
+  // unlock locations: see shop.rods[].unlocksLocation); `location` is where the
   // kid is currently fishing. Pond/Minnow is always open and never changes (no
   // timers, no speed pressure). Muskie is a prestige rank awarded on the
-  // legendary catch (A8), not a location — so it isn't in this table.
+  // legendary catch (A8), not a location, so it isn't in this table.
   tiers: [
     { rank: "minnow",   location: "pond",   locationName: "the Pond",   label: "Minnow Wrangler", badge: "🐟" },
     { rank: "mackerel", location: "stream", locationName: "the Stream", label: "Mackerel Master", badge: "🎣" },
@@ -95,7 +95,7 @@ export const CONFIG = {
   ],
 
   // A8: the prestige capstone. Muskie is the one rank you don't buy your way
-  // into — it's earned by landing the Ocean's legendary, so it has no location
+  // into: it's earned by landing the Ocean's legendary, so it has no location
   // and isn't in the tiers table above. Held by *having caught* the fish rather
   // than a stored flag, so it can never desync from the collection and old saves
   // that already landed it are credited the moment they load.
@@ -104,19 +104,19 @@ export const CONFIG = {
     fishId: "muskie",          // must match an id in data/fish.json (a data test checks)
     label: "Muskie Master",
     badge: "🏆",
-    celebrateMs: 4200,         // held longer than a rank-up — this is the finish line
+    celebrateMs: 4200,         // held longer than a rank-up, this is the finish line
   },
 
   // Capitals (Shift) enter at the Stream (A2 / AD6): only phrases at graduated
-  // spots carry capital letters — the Pond stays lowercase-only (a v1 promise,
+  // spots carry capital letters: the Pond stays lowercase-only (a v1 promise,
   // and Shift is harmless there). The data test enforces that no capital appears
   // in content tagged for any other location.
   capitals: { fromLocations: ["stream", "ocean"] },
 
   // Punctuation (A5 / AD6): a new earned unlock track, one tier later than
-  // capitals — sentences (and their `. , ! ?`) start at the Ocean, while the
+  // capitals: sentences (and their `. , ! ?`) start at the Ocean, while the
   // Stream's phrases stay punctuation-free. Like a space, a punctuation mark
-  // is a real key the kid must press to advance, but it's forgiving — a
+  // is a real key the kid must press to advance, but it's forgiving: a
   // mismatch never touches tension (see handlePunct in app.js). The data test
   // enforces that no punctuation mark appears in content tagged for any other
   // location.
@@ -129,24 +129,24 @@ export const CONFIG = {
   // (stddev/mean); higher = more forgiving.
   flyCast: { minKeys: 2, maxCadenceCv: 0.5 },
 
-  // A7: the sport-fish "fight" — the Ocean's landing rhythm. A catch is reeled
+  // A7: the sport-fish "fight", the Ocean's landing rhythm. A catch is reeled
   // in *segments* (one sentence each), and the fish "runs" between them, and
   // again at each mid-sentence clause break. A run is pure theatre: it darts
   // the fish back on screen and beats for a moment, but **no progress is ever
-  // lost and tension is never touched** — slow + careful still always lands.
+  // lost and tension is never touched**: slow + careful still always lands.
   // Bigger fish take more segments, which is what makes a marlin feel like a
   // fight and a sardine feel like a snack. Set the *RunMs values to 0 to keep
   // the drama but drop the pause entirely.
   fight: {
     fromLocations: ["ocean"],
     segmentsByTier: { common: 1, uncommon: 1, rare: 2, legendary: 3 },
-    clauseRunMs: 550,    // beat at a comma — close to the established word beat
+    clauseRunMs: 550,    // beat at a comma, close to the established word beat
     segmentRunMs: 900,   // longer beat between whole sentences
     runSurgePx: 90,      // how far the fish darts back (design-space px, visual only)
   },
 
-  // G1: the angler is drawn as stacked layers inside #rig, not one baked sprite
-  // — which is what unblocks swappable hats/rods (R7). R4 makes it one stack
+  // G1: the angler is drawn as stacked layers inside #rig, not one baked sprite,
+  // which is what unblocks swappable hats/rods (R7). R4 makes it one stack
   // *per location*: one kid, three costumes (ART_DIRECTION.md decision 2), so
   // applyScene() re-renders the rig whenever the kid changes water.
   //
@@ -158,21 +158,21 @@ export const CONFIG = {
   //
   // `rodPivot` is the grip the rod swings about and `lineOrigin` is the tip the
   // line leaves from. Both belong to the *pose*, not to CONFIG.anim, because
-  // both are only meaningful against that pose's rod box — a standing angler
+  // both are only meaningful against that pose's rod box: a standing angler
   // holds the rod somewhere else. A data test keeps them on the box.
   rig: {
     // R5: a pose also owns its VESSEL and where the whole rig sits.
-    //   anchor  — #rig's position and the point it rocks about, in design px.
+    //   anchor : #rig's position and the point it rocks about, in design px.
     //             It was fixed in style.css until R5; a kid standing in a river
     //             does not sit where a kid in a rowboat does.
-    //   bob     — whether #rig rocks like a hull. True in a boat, false in
+    //   bob    : whether #rig rocks like a hull. True in a boat, false in
     //             waders: the Stream angler is standing on a riverbed.
-    //   vessel  — `far` paints behind the angler and `near` in FRONT of them,
+    //   vessel : `far` paints behind the angler and `near` in FRONT of them,
     //             which is V1's front-plane trick applied to the hull so the kid
     //             sits down *in* it rather than on it. `near` may be null until
     //             that art lands; a missing PNG paints nothing. `skinnable`
     //             marks the vessel that shop.boats reskins, and `shadow` is the
-    //             smudge of dark water under the hull — a box rather than a
+    //             smudge of dark water under the hull: a box rather than a
     //             flag, because it has to move and stretch when the hull does.
     //             null = no vessel, which is the Stream.
     //
@@ -180,14 +180,14 @@ export const CONFIG = {
     // today: R4's art is requested in ART.md and has not landed, so the Stream
     // and the Ocean are still the Pond kid in pond clothes. Giving them their
     // own entries now, pointing at files that do not exist, would render an
-    // invisible angler in two of the three levels — worse than the wrong shirt.
+    // invisible angler in two of the three levels: worse than the wrong shirt.
     defaultPose: "pond",
     // R7: which gear paintings actually exist, as `assets/<file>.png` stems.
     // The same switch as CONFIG.fish.species and CONFIG.rig.poses, for the same
     // reason: a stem listed here is drawn, a stem absent from it falls back to
     // the layer's own `file` (the pose's painted rod) or to nothing (a hat).
     // That is what lets the shop sell all four rods and all five hats before
-    // any of the grid is painted — you get the pose's own rod rather than an
+    // any of the grid is painted: you get the pose's own rod rather than an
     // invisible one, and the milestone never blocks on a generation.
     //
     // Today it holds only R4's diagonal: each pose was painted holding its own
@@ -196,7 +196,7 @@ export const CONFIG = {
       "rod-stick-pond", "rod-bamboo-stream", "rod-deepsea-ocean",
       // The first non-gate rod. Cut from a delivery registered back into the
       // pose's coordinates by tools/gear-register.py, then aligned to the
-      // committed body layer — a rod only lands right if it shares that box.
+      // committed body layer: a rod only lands right if it shares that box.
       "rod-stick-stream", "rod-stick-ocean",
       "rod-bamboo-pond", "rod-bamboo-ocean",
       "rod-carbon-pond", "rod-carbon-stream", "rod-carbon-ocean",
@@ -213,7 +213,7 @@ export const CONFIG = {
     poses: {
       // R4's painted angler. Both layers are cuts of ONE delivered painting
       // (assets/angler-pond.png), so they share one canvas and one box and the
-      // offsets are zero by construction — change the box and both move
+      // offsets are zero by construction: change the box and both move
       // together, which is the whole point of the same-canvas rule.
       //
       // The rod paints BEHIND the body because that is how the art is drawn:
@@ -233,14 +233,14 @@ export const CONFIG = {
         //
         // Skinnable, and it is the only vessel that is: shop.boats sells rowboat
         // colours, and rowboat paint has no business on a Boston Whaler. A skin
-        // tints BOTH halves — a red hull with a brown near gunwale in front of
-        // the kid is not a red boat — which is why the tint lives on the vessel
+        // tints BOTH halves: a red hull with a brown near gunwale in front of
+        // the kid is not a red boat, which is why the tint lives on the vessel
         // element rather than on a swapped file.
         vessel: { far: "boat-pond-far", near: "boat-pond-near",
                   x: -16, y: 2, w: 156, h: 42, skinnable: true,
                   shadow: { x: 24, y: 212, w: 116 } },
         // rod → arm → body. The hand is painted in front of the pole, and the
-        // forearm's cut end tucks behind the knee, which the body carries — so
+        // forearm's cut end tucks behind the knee, which the body carries, so
         // the arm sits between them.
         //
         // Rod files are named rod-<shop id>-<pose>, because a pose's default rod
@@ -251,8 +251,8 @@ export const CONFIG = {
         //
         // R7: `gear` on a layer means "draw the equipped item here, if its art
         // for this pose exists"; `file` is what to draw when it doesn't. So the
-        // rod falls back to the pose's own painted gate rod, and the hat — which
-        // has no `file` — falls back to nothing, which is the bare head R4
+        // rod falls back to the pose's own painted gate rod, and the hat, which
+        // has no `file`: falls back to nothing, which is the bare head R4
         // deliberately painted. Array order is paint order, so the hat is last:
         // over the head, not under it.
         layers: [
@@ -269,24 +269,24 @@ export const CONFIG = {
         // Measured off the canvas, not tuned in the browser: the grip is where
         // the hand closes on the pole and the tip is the rod's point, both
         // carried through the same crop-and-scale as the art. They are no
-        // longer box corners — the rod shares the body's canvas, so its box is
+        // longer box corners: the rod shares the body's canvas, so its box is
         // the whole pose and the rod crosses it diagonally at 48.0 deg.
         //
         // The delivered painting ran the rod off the canvas corner, so the
         // frame decided its length and it came out at 51% of the old rig's.
         // tools/cut-angler-pond.py now extends the shaft along its own axis to
-        // a length set in design px, which is why this is 65 — the same 130%
+        // a length set in design px, which is why this is 65: the same 130%
         // of the kid's height the old browser-tuned rig had.
         rodPivot:   { x: 65, y:    5 },
         lineOrigin: { x: 108, y: -44 },
         // The angler's upper arm and elbow are hidden behind the drawn-up knee,
-        // so the layer is forearm + hand and it pivots where they vanish — the
+        // so the layer is forearm + hand and it pivots where they vanish: the
         // cut end barely moves and stays tucked. 6.2 design px from here to the
         // grip, so the arm carries the rod as well as swinging itself.
         armPivot:   { x: 60, y:  8.5 },
       },
       // R4's Stream angler: the same kid standing in the water in waders and a
-      // fly vest, holding Bamboo Beauty — the rod that unlocks this spot.
+      // fly vest, holding Bamboo Beauty: the rod that unlocks this spot.
       // A different POSE, not a recolour, so every number here was measured off
       // its own painting. It is taller than the Pond's because scale comes from
       // matching the two HEADS: the generator drew both figures to fill their
@@ -297,14 +297,14 @@ export const CONFIG = {
         anchor: { x: 20, y: 168, pivot: { x: 59, y: 30 } },
         // No hull, so no rocking: he is standing on a riverbed. This replaces
         // the one-line `.loc-stream #boat { display: none }` R4 borrowed from
-        // R5 — the pose says it now, rather than a CSS special case.
+        // R5: the pose says it now, rather than a CSS special case.
         bob: false,
         vessel: null,
         layers: [
           { id: "rod",  gear: "rod", file: "rod-bamboo-stream",  x: 38, y: -70, w: 88, h: 123 },
           { id: "arm",              file: "angler-stream-arm",  x: 38, y: -70, w: 88, h: 123 },
           { id: "body",             file: "angler-stream-body", x: 38, y: -70, w: 88, h: 123 },
-          // the pose's whole painted canvas, not the angler's crop — see the
+          // the pose's whole painted canvas, not the angler's crop: see the
           // Pond's hat layer for why. Written by tools/cut-gear.py.
           { id: "hat",  gear: "hat",                            x: 10.2, y: -70.7, w: 116.4, h: 126.7 },
         ],
@@ -316,12 +316,12 @@ export const CONFIG = {
         armPivot:   { x: 56, y:   7 },
       },
       // R4's Ocean angler: the same kid braced back as if in the fighting
-      // chair, in a life vest, holding The Deep Endeavor — the rod that unlocks
+      // chair, in a life vest, holding The Deep Endeavor: the rod that unlocks
       // this spot. The chair itself is deliberately NOT drawn: it is a vessel,
       // and R5 paints vessels as a near-side layer in FRONT of the angler, so
       // baking it into the body here would stop R5 seating the kid in it.
       //
-      // Seated like the Pond, and it measures like it too — 51 design px
+      // Seated like the Pond, and it measures like it too: 51 design px
       // against 50, by the same head match. It is the first pose whose arm
       // bends visibly enough to need two segments in the cut tool; the other
       // two hide their upper arm behind a knee or a vest.
@@ -337,7 +337,7 @@ export const CONFIG = {
         // the rowboat. NOT skinnable, and this one never will be: shop.boats
         // sells paint for a rowboat.
         //
-        // x/y seat the kid rather than centre the boat — they put the chair's
+        // x/y seat the kid rather than centre the boat: they put the chair's
         // seat pan under his hips, measured off the painting (its pan is 326,122
         // into a 1510x465 crop). The waterline the painting itself carries (the
         // cool grey below the cream topsides, 85% down) then lands on the
@@ -349,7 +349,7 @@ export const CONFIG = {
           { id: "rod",  gear: "rod", file: "rod-deepsea-ocean",  x: 38, y: -48, w: 71, h: 82 },
           { id: "arm",              file: "angler-ocean-arm",   x: 38, y: -48, w: 71, h: 82 },
           { id: "body",             file: "angler-ocean-body",  x: 38, y: -48, w: 71, h: 82 },
-          // the pose's whole painted canvas, not the angler's crop — see the
+          // the pose's whole painted canvas, not the angler's crop: see the
           // Pond's hat layer for why. Written by tools/cut-gear.py.
           { id: "hat",  gear: "hat",                            x: 33.3, y: -48.4, w: 76.3, h: 84.4 },
         ],
@@ -361,7 +361,7 @@ export const CONFIG = {
   },
 
   // R6: per-species fish art. The same shape as CONFIG.rig.poses, and for the
-  // same reason — the config is the registry, so a species listed here renders
+  // same reason: the config is the registry, so a species listed here renders
   // its own art and a species absent from it renders the tier placeholder. That
   // is the only switch between them, which is what makes a half-finished roster
   // a playable state rather than a broken one.
@@ -369,7 +369,7 @@ export const CONFIG = {
   // An entry is written by tools/cut-fish.py off the delivered painting and
   // never tuned in the browser: `w`/`h` are the box in design px, `mouth` is
   // where the line attaches (the leftmost opaque column at its own vertical
-  // centre), and `tail` is the pivot the tail layer sweeps about — the midpoint
+  // centre), and `tail` is the pivot the tail layer sweeps about: the midpoint
   // of the caudal peduncle, which is where the cut was made. Both cuts share one
   // canvas, so their offsets are zero by construction and `layers` is only paint
   // order.
@@ -382,13 +382,13 @@ export const CONFIG = {
     placeholder: { w: 62, h: 41, mouth: { x: 6, y: 20 } },
     // A species' length comes from its RANK, not from its painting. The
     // generator draws every subject to fill its frame, so a minnow and a pike
-    // come back the same size — the same trap GEMINI_NOTES.md records for the
+    // come back the same size: the same trap GEMINI_NOTES.md records for the
     // standing and seated anglers. The cut tool scales each painting to this and
     // a data test holds landed art to it, which is what stops 33 separate
     // generations drifting into 33 separate scales.
     lengthByTier: { common: 54, uncommon: 64, rare: 78, legendary: 96 },
     // the tail sweep: how far it swings each way, and how long a full there-and-
-    // back cycle takes. Small on purpose — a fish at 60px reads as swimming from
+    // back cycle takes. Small on purpose: a fish at 60px reads as swimming from
     // a few degrees, and more looks like a fish in trouble.
     swim: { tailDeg: 7, tailPeriodMs: 1100 },
     // The reel path: where a hooked fish starts and where it is landed, in
@@ -399,13 +399,13 @@ export const CONFIG = {
     path: { fromX: 430, toX: 150, fromY: 232, toY: 216 },
     // Every move the fish makes is a tween with a real duration, eased in and
     // out (logic.easeInOut). It used to CHASE its target with a per-frame
-    // exponential instead — `fishX += (fishTX - fishX) * 0.08` — which was both
+    // exponential instead: `fishX += (fishTX - fishX) * 0.08`, which was both
     // frame-rate dependent (that 0.08 is per frame, so a 120Hz screen reeled
     // twice as fast) and, worse, fastest on its very first frame: a word
     // completing threw the fish a third of the way to its new mark in ~100ms
     // and then crept. That is seen as a jump, not a swim.
     pull: {
-      wordMs: 420,    // one word reeled in — inside reel.wordPauseMs (450), so it settles before the next word
+      wordMs: 420,    // one word reeled in, inside reel.wordPauseMs (450), so it settles before the next word
       biteMs: 520,    // the hook: up out of the depths to the reel's first mark
       runOutMs: 300,  // A7's fish run darting away; its return home uses wordMs
     },
@@ -415,7 +415,7 @@ export const CONFIG = {
     wobble: { xPx: 5, xHz: 0.9, yPx: 7, yHz: 1.6, y2Px: 2, y2Hz: 3.7 },
     // How late the fish becomes recognisable. The approach silhouette used to
     // end at the bite, so the moment a fish took the hook it was fully painted,
-    // fully coloured and glowing its tier — at the far end of the scene, where
+    // fully coloured and glowing its tier: at the far end of the scene, where
     // "what is it?" is the whole of the tension. Now the murk carries through
     // the hook and clears as the fish is reeled in.
     //
@@ -424,7 +424,7 @@ export const CONFIG = {
     // is done. fullAt is below 1 because the fish is never DRAWN at 1: the last
     // word lands the catch in the tick that sets that target, so the furthest
     // it ever gets is (wordsToLand - 1) / wordsToLand, which is 0.75 for a
-    // common — the cheapest tier and therefore the binding one. At 0.3/0.7 a
+    // common: the cheapest tier and therefore the binding one. At 0.3/0.7 a
     // common is a shape for its first word, resolving over its third; a
     // legendary gets two words of shape and three of clearing.
     reveal: { startAt: 0.3, fullAt: 0.7 },
@@ -433,7 +433,7 @@ export const CONFIG = {
     // the fish did not escape so much as cease to exist. `toX` is off the right
     // edge of the 720-wide canvas, and the flee is a CSS transition (the same
     // way the approach drifts) because the JS loop is gone by then. The reveal
-    // rides back down to 0 with it — a fish disappearing into deep water goes
+    // rides back down to 0 with it: a fish disappearing into deep water goes
     // back to being a shape, and you never do find out what it was.
     escape: { toX: 760, ms: 700 },
     // R6: the fish is SEEN before it bites. It drifts up out of the depths as a
@@ -443,7 +443,7 @@ export const CONFIG = {
     // the bite it shows itself (clamped to the bite delay, so a fast bait still
     // gets a tease, just a shorter one), `from` is where it enters, and `spawn`
     // is the offset from the reel's first target that both the drift ends at and
-    // the hooked fish starts at — one number, so the tease and the hook cannot
+    // the hooked fish starts at: one number, so the tease and the hook cannot
     // be two fish in slightly different places.
     // `rise` is measured FROM the spawn rather than from the canvas, because the
     // only reliably visible water is relative to where the fish already appears:
@@ -456,7 +456,7 @@ export const CONFIG = {
     //
     // `spawn` moved up with it (dy 56 → 24, unchanged dx). It is the same offset
     // the hooked fish has always used, and at 56 the bite itself emerged fully
-    // behind the panel on a 2:1 screen and swam out of it — the fish now appears
+    // behind the panel on a 2:1 screen and swam out of it: the fish now appears
     // where it can be seen. The reel is untouched: it still eases to the same
     // targets from wherever the fish starts.
     // `biteParticles` is the splash the bait throws as the fish takes it. It
@@ -465,16 +465,16 @@ export const CONFIG = {
     approach: { leadMs: 1100, rise: { dx: 12, dy: 44 }, spawn: { dx: 30, dy: 24 }, biteParticles: 10 },
     // and the other end of it: the fish breaks the surface on the way to the
     // boat. y is the waterline every biome's art is painted to and #surface
-    // starts at (55% of the 360px canvas) — a splash under the water is what
+    // starts at (55% of the 360px canvas): a splash under the water is what
     // this used to be, and it read as nothing at all.
     surface: { y: 198, splashParticles: 18 },
     // The wake a hooked fish throws as it is hauled one word closer. These were
     // hardcoded in pullFishOneWord as 258 and 262. It is a fixed row rather
-    // than the fish's own y on purpose — the fish starts at 256 and reels up to
+    // than the fish's own y on purpose: the fish starts at 256 and reels up to
     // 216, so tracking it would put the first rings behind the guide panel.
     // See BUILD_PLAN_FEEL.md, open question 1.
     wake: { y: 258, rippleDy: 4, particles: 4 },
-    // Filled a wave at a time — see ART.md. Every entry below was printed by
+    // Filled a wave at a time: see ART.md. Every entry below was printed by
     // tools/cut-fish.py off the delivered sheet; none of it was tuned in the
     // browser, and re-running the tool reproduces it exactly.
     species: {
@@ -514,8 +514,8 @@ export const CONFIG = {
                               { id: "body", file: "fish-koi-body" }] },
 
       // ---- the Stream ----
-      // The dace was drawn against the Pond's fathead minnow on purpose — same
-      // rank, same 54px box, nearly the same colour in fish.json — so it carries
+      // The dace was drawn against the Pond's fathead minnow on purpose: same
+      // rank, same 54px box, nearly the same colour in fish.json, so it carries
       // a rosy blush and a crisper band. The six trout came on ONE canvas, which
       // is what finally separated the rainbow from the steelhead: they are the
       // same species, and only a shared sheet can ask for a difference.
@@ -595,8 +595,8 @@ export const CONFIG = {
       // to itself: the fish it must not resemble is the Pond's northern pike,
       // which lives in another biome and was generated three waves earlier, so
       // no sheet could put the two of them together. The prompt inverted the
-      // pattern instead — dark bars on a pale flank against the pike's pale
-      // spots on a dark one — and at 96px beside the pike's 78 they read as
+      // pattern instead: dark bars on a pale flank against the pike's pale
+      // spots on a dark one, and at 96px beside the pike's 78 they read as
       // different fish. Retires the A8 hero sprite: fish-muskie.png and its
       // CSS width override are gone with this entry.
       muskie:        { w: 96, h: 28, mouth: { x: 2, y: 14 }, tail: { x: 78, y: 14 },
@@ -606,18 +606,18 @@ export const CONFIG = {
   },
 
   // R1 (ANIMATION.md): the cast, the line and the reel now move. Every number
-  // the motion uses lives here — app.js owns no timings. Design-space px on the
+  // the motion uses lives here: app.js owns no timings. Design-space px on the
   // 720x360 canvas, ms for durations, degrees for the rod.
   anim: {
     rod: {
       // The rod rotates about the grip so the tip swings while the hand stays
       // put. *Where* the grip is belongs to the pose (CONFIG.rig.poses.<loc>
-      // .rodPivot) — it moves with the costume; only the angles live here.
+      // .rodPivot): it moves with the costume; only the angles live here.
       backswingDeg: -15,   // anticipation: tip lifts back over the angler
       forwardDeg: 20,      // the swing that releases the lure (tip toward the water)
       // R4: how much of the rod's swing the ARM contributes rather than the
-      // wrist. The two split the same total, so R1's tuned angles are unchanged
-      // — but the arm rotating about its own pivot carries the grip with it,
+      // wrist. The two split the same total, so R1's tuned angles are unchanged,
+      // but the arm rotating about its own pivot carries the grip with it,
       // which is what "moves the arm and rod, not the whole kid" asks for.
       // 0 disables it, and a pose with no armPivot falls back to that.
       armFollow: 0.35,
@@ -627,14 +627,14 @@ export const CONFIG = {
       // this three times (bobber CSS, the splash at 400,195, the ripple at
       // 394,196); now it is one point and those all derive from it.
       //
-      // F1: this used to be (394, 196) — two px below fish.surface.y, the
+      // F1: this used to be (394, 196), two px below fish.surface.y, the
       // waterline the background art is painted to. In a scene whose water
       // recedes TOWARD the viewer, that line is the far bank: the lure sat on
       // the horizon and the line's far end then jumped ~80px down and ~65px
       // right the instant a fish took it at y≈256. It now lands just above
       // where the fish rises, so a bite moves the line by the fish's own swim
       // and nothing else. Both numbers are matched to fish.path.fromX/fromY
-      // plus fish.approach.spawn — move those and this has to move with them.
+      // plus fish.approach.spawn: move those and this has to move with them.
       // It cannot simply BE the bite point: that is y≈276, inside the
       // guide-panel band, and a bobber behind the keyboard is not a bobber.
       //
@@ -654,16 +654,16 @@ export const CONFIG = {
     },
     line: {
       // sag of the quadratic's control point: the visible dip is half this.
-      idleSagPx: 26,       // waiting on a bite — a lazy hanging line
+      idleSagPx: 26,       // waiting on a bite, a lazy hanging line
       slackSagPx: 30,      // reeling at zero tension
-      tautSagPx: 3,        // reeling at max tension — nearly straight
+      tautSagPx: 3,        // reeling at max tension, nearly straight
       castSagPx: 12,       // in flight, while the lure is still travelling
       // Fishing line is finer than the rod it comes off, and at 1.6 this read as
       // a pale cord heavier than the rod tip. 0.5 is 3.2x thinner. It is paired
       // with the stroke's alpha in style.css (#line-path, 0.72 -> 0.9) and the
       // two are ONE decision: thinning alone made it vanish against the Ocean's
       // pale sky, which is the worst of the three backgrounds for it. Measured
-      // by shooting the waiting beat at every spot — 0.5 at 0.9 reads more
+      // by shooting the waiting beat at every spot: 0.5 at 0.9 reads more
       // clearly there than 0.6 at 0.72 did.
       widthPx: 0.5,
     },
@@ -681,11 +681,11 @@ export const CONFIG = {
   shop: {
     // `unlocksLocation` graduates the profile to a new fishing spot on purchase
     // (A0): bamboo opens the Stream, deep-sea opens the Ocean (A6). Carbon sits
-    // between them as a pure luck upgrade — the deep-sea rod is both the Ocean
+    // between them as a pure luck upgrade: the deep-sea rod is both the Ocean
     // gate and the best odds in the game. Every rodLevel here needs a matching
     // bite.tierOddsByRod entry (a data test enforces it).
     //
-    // R7: `file` is the stem of the rod's art, and renderRig appends the pose —
+    // R7: `file` is the stem of the rod's art, and renderRig appends the pose,
     // `rod-bamboo` + `-stream` = assets/rod-bamboo-stream.png. One PNG per rod
     // per pose, because a rod drawn for a seated kid does not sit in a standing
     // kid's hand. R4 already delivered the diagonal of that grid (each pose is
@@ -705,7 +705,7 @@ export const CONFIG = {
     ],
     // Cosmetic only, and a hull skin is a TINT rather than its own painting:
     // `tint` is a CSS filter applied to BOTH halves of the pose's own painted
-    // vessel. There is no per-skin PNG and no `file` — the pixel-era
+    // vessel. There is no per-skin PNG and no `file`: the pixel-era
     // boat-red/blue/leaf/purple.png are no longer referenced by anything.
     //
     // Chosen over four repaints of boat-pond.png after shooting both in the
@@ -713,7 +713,7 @@ export const CONFIG = {
     // and no registration check, and at these saturations it reads as warm
     // muted painted timber. Its one cost is that the thwarts and the interior
     // tint along with the planking, where the repaint prompt asks for bare
-    // timber — Matt's call was to ship this now and keep the repaints as a
+    // timber: Matt's call was to ship this now and keep the repaints as a
     // later option, so ART.md keeps that prompt.
     //
     // The numbers are eyeballed against ART_DIRECTION's "no neon": the first
@@ -732,7 +732,7 @@ export const CONFIG = {
       { id: "leaf",    name: "Lily Pad",     cost: 40, tint: "hue-rotate(72deg) saturate(0.5)"                    },
       { id: "purple",  name: "Purple Reign", cost: 60, tint: "hue-rotate(248deg) saturate(0.45) brightness(1.02)" },
     ],
-    // R7: cosmetic only, and named the same way rods are — `hat-straw` plus the
+    // R7: cosmetic only, and named the same way rods are, `hat-straw` plus the
     // pose. The free default paints NOTHING: R4 drew all three anglers
     // bare-headed on purpose so hats could be drawn against those paintings, so
     // "Just Hair" is the state the game has always shipped in and also the way
@@ -747,7 +747,7 @@ export const CONFIG = {
   },
 
   // T2: what sits where the line meets the water, per spot. A registry rather
-  // than a class assembled in JS — the config lists what exists and anything
+  // than a class assembled in JS: the config lists what exists and anything
   // absent draws nothing, which is how every other "what exists here" question
   // in this game is answered (fish.species, rig.poses, rig.gearArt).
   //
@@ -768,10 +768,10 @@ export const CONFIG = {
     ocean:  null,
   },
 
-  // Junk catches — comedy fake catches (boot/can/weed/nugget) that roll in place of a
+  // Junk catches: comedy fake catches (boot/can/weed/nugget) that roll in place of a
   // fish on a small fraction of bites. No coins, no collection entry, just a
   // groan pun. `file` is assets/<file>.png; `{it}` in PUNS.junk gets `name`.
-  // F3: the post-catch card — the moment a catch pays out. It has no display
+  // F3: the post-catch card, the moment a catch pays out. It has no display
   // duration on purpose: it is dismissed by the kid typing, not by a clock,
   // which is the whole complaint it answers. The old message lived for
   // reel.recastDelayMs (1500) and was then overwritten by the cast prompt,
@@ -781,7 +781,7 @@ export const CONFIG = {
     yankMs: 260,     // …and is yanked up off the top the moment typing starts
     fishPx: 148,     // how long the fish is drawn on the card, in card px
     // A junk pull is drawn smaller: a boot is a gag, not a trophy, and the four
-    // junk sprites are the last pixel-era art in the game — the refresh never
+    // junk sprites are the last pixel-era art in the game: the refresh never
     // repainted them, and 148px is a magnifying glass held over that. See
     // BACKLOG.md; this is a mitigation, not the fix.
     junkPx: 96,
@@ -809,7 +809,7 @@ export const CONFIG = {
   badges: {
     wordsTyped: 100,      // "Hooked on Typing"
     catches: 25,          // "Reel Regular"
-    accuracyPct: 95,      // "Sharp Shooter" — accuracy threshold…
+    accuracyPct: 95,      // "Sharp Shooter", accuracy threshold…
     accuracyMinKeys: 200, // …over at least this many keystrokes
     // T3: junk rolls at CONFIG.junk.chance, so this is the one badge threshold
     // a kid cannot chase on purpose. Ten is roughly a few sessions of ordinary
@@ -818,7 +818,7 @@ export const CONFIG = {
     junkPulls: 10,        // "Litter Picker"
   },
 
-  // Every catch rolls a weight (lb) in its tier's range — pure flavor + a
+  // Every catch rolls a weight (lb) in its tier's range: pure flavor + a
   // personal-best-per-species chase. No effect on coins or difficulty.
   size: {
     weightRangeByTier: {
@@ -831,7 +831,7 @@ export const CONFIG = {
     littleFrac: 0.15,   // bottom 15% lands as "a little one"
   },
 
-  // Procedural audio (Web Audio synth, no external asset files — see M10 in
+  // Procedural audio (Web Audio synth, no external asset files: see M10 in
   // BUILD_PLAN.md). Note pitches/melodies are sound-design content and live
   // next to PUNS in app.js; these are the tunable levels/knobs.
   audio: {
@@ -841,12 +841,12 @@ export const CONFIG = {
     duckedVolumeMs: 400,        // fade time when tab hides/shows
   },
 
-  // Firebase / Firestore sync (M4b). These values are public by design — a
+  // Firebase / Firestore sync (M4b). These values are public by design: a
   // Firebase web config is an identifier, not a secret; access is controlled
   // by the Firestore security rules (see firestore.rules). Reuses the Family
   // Hub project. Sync is optional: with no sign-in the game runs on
   // localStorage alone.
-  // Self-hosting? Replace this block with your own project's config —
+  // Self-hosting? Replace this block with your own project's config,
   // see FIRESTORE.md → "Cloud saves setup (self-hosting)".
   firebase: {
     sdkVersion: "10.14.1",        // gstatic CDN version; bump here if an import 404s
@@ -867,13 +867,13 @@ export const CONFIG = {
     oauthClientId: "1023822683234-e0pslac1cag5ju2o26gl5c9kq36udr7q.apps.googleusercontent.com",
   },
 
-  // Dev/test affordances for the BUILD + PLAYTEST phase — not for real players.
+  // Dev/test affordances for the BUILD + PLAYTEST phase, not for real players.
   // When `testShortcuts` is on, the tackle box shows a clearly-labelled 🧪 button
   // that grants every rod (unlocking every fishing spot) and jumps to the
   // furthest one, so a playtest reaches the advanced tiers without grinding.
   //
   // This is *derived from where the game is running*, not a flag anyone has to
-  // remember to flip — the button was live on the production site for a while
+  // remember to flip: the button was live on the production site for a while
   // precisely because a flag is easy to forget. Local dev and Netlify deploy
   // previews get it; the real site never does, and it fails closed anywhere
   // unfamiliar. To play with shortcuts on production for a moment, use DevTools
@@ -883,7 +883,7 @@ export const CONFIG = {
 
 // Split in two so the decision is a pure, testable function of the hostname and
 // only the lookup touches globals (there is no `location` in Node, where the
-// data tests import this file — an unknown host is treated as production).
+// data tests import this file: an unknown host is treated as production).
 export function currentHostname() {
   return typeof location === "undefined" ? "" : (location.hostname || "");
 }
