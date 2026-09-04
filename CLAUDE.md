@@ -34,8 +34,9 @@ with one reroll; R7's 21 pieces in 16 generations with one reroll, the hats at
 Stream's head for free (`tools/hat-transplant.py`). **There is no active epic —
 the next milestone is Matt's call.** What is outstanding is in `HANDOFF.md` and
 is all his: the play-tests, including a real kid playtest of the A7 fight beats.
-The nearest piece of unfinished work is the four shop hulls, which still do
-nothing (`BACKLOG.md`).
+R5's last debt was paid on 2026-09-04 — the four shop hulls work, as CSS tints
+of the Pond rowboat rather than four repaints (`ART.md` → *R5 debt*); the
+repaints stay an option in `BACKLOG.md`.
 
 Work on exactly one milestone at a time. `ART.md` is the art pipeline: Claude
 writes Gemini prompts + filenames, Matt generates the PNGs. **`GEMINI_NOTES.md`

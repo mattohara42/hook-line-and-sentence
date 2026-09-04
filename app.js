@@ -1885,19 +1885,28 @@ function renderRig(loc) {
     shEl.style.width = sh.w + "px";
   }
 
-  // the hull behind the angler; its near side goes on after the layers, so the
-  // kid sits down IN it rather than on it
+  // The hull behind the angler; its near side goes on after the layers, so the
+  // kid sits down IN it rather than on it.
+  //
+  // A shop hull is a TINT of this pose's own painting, not a painting of its
+  // own, so both halves always draw the pose's files and the skin only adds a
+  // filter. That fixes three things the swapped-file version got wrong, none of
+  // which could show while every vessel was skinnable:false — it skinned the
+  // `far` half only, leaving a brown near gunwale in front of a red kid; it
+  // pointed the free `classic` at the pixel-era boat.png, so equipping the
+  // default would have painted the OLD boat over the painted one; and a skin
+  // with no far/near split had no way to fill the near half at all.
   const vessel = (which) => {
     const v = pose.vessel;
     if (!v || !v[which]) return;
-    const file = (which === "far" && v.skinnable && save?.upgrades?.boat)
-      ? (CONFIG.shop.boats.find(b => b.id === save.upgrades.boat)?.file ?? v.far)
-      : v[which];
     const d = document.createElement("div");
     d.className = "vessel vessel-" + which;
     d.style.left = v.x + "px"; d.style.top = v.y + "px";
     d.style.width = v.w + "px"; d.style.height = v.h + "px";
-    d.style.backgroundImage = `url("assets/${file}.png")`;
+    d.style.backgroundImage = `url("assets/${v[which]}.png")`;
+    const skin = v.skinnable
+      ? CONFIG.shop.boats.find(b => b.id === save?.upgrades?.boat) : null;
+    if (skin?.tint) d.style.filter = skin.tint;
     rig.appendChild(d);
   };
   vessel("far");
@@ -2030,9 +2039,9 @@ function hatHint(hat)   { return hat.file ? "just for the look of it" : "no hat 
 // Show whatever is equipped, on the angler (also called on load).
 // R5: the vessel is a rig layer now, not a standalone #boat, so equipping a
 // skin rebuilds the rig. Poses whose vessel isn't `skinnable` ignore it — a
-// rowboat skin has no business on a Boston Whaler. R7 puts rods and hats
-// through the same door, which is why this is no longer applyBoatSkin(): one
-// rebuild reads every equipped slot at once.
+// rowboat skin has no business on a Boston Whaler, and the Stream has no
+// vessel at all. R7 puts rods and hats through the same door, which is why this
+// is no longer applyBoatSkin(): one rebuild reads every equipped slot at once.
 function applyGear() { renderRig(); }
 
 function renderShop() {

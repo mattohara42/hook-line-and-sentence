@@ -3757,15 +3757,35 @@ register by construction. The pivot the tail sweeps about is the midpoint of tha
 section, and the mouth the line attaches to is the leftmost opaque column at its
 own vertical centre. All three numbers are measured, not tuned.
 
-### R5 debt — the four shop hulls (open — the only art R5 still owes)
+### R5 debt — the four shop hulls (✅ shipped 2026-09-04 as a CSS tint; the repaints below stay an option)
 
-`shop.boats` sells five rowboats and only one of them exists in the new style.
-Both painted vessels are `skinnable: false`, so **buying and equipping a hull
-changes nothing at any spot** — a shop item that has quietly stopped working.
+`shop.boats` sold five rowboats and only one existed in the new style: both
+painted vessels were `skinnable: false`, so **buying and equipping a hull
+changed nothing at any spot** — a shop item that had quietly stopped working.
 The Whaler is not part of this and never will be: rowboat paint does not go on a
 Boston Whaler, and `skinnable` is how the pose says so.
 
-**Do not prompt these from scratch.** Four fresh rowboats would be four
+**Fixed without any art, by the alternative this section already carried.** Both
+were shot in the real game before choosing, which is what settled it: at
+`saturate(0.5)` on the three cool hues the tinted hulls read as warm muted
+painted timber, and the first pass at 0.85–1.45 read as candy. The tints are
+`CONFIG.shop.boats[].tint`, applied to **both halves** of the pose's own
+painting. Its one cost is that the thwarts and the interior tint along with the
+planking, where the prompt below asks for bare timber. **Matt's call was to ship
+the tint now and keep the repaints as a later option**, so the prompt stays
+written out.
+
+**Three code faults came out with it, none of which could show while every
+vessel was `skinnable: false`:** the skin was applied to the `far` half only, so
+a red hull would have kept a brown near gunwale in front of the kid · the free
+`classic` pointed at the pixel-era `boat.png`, so equipping the default would
+have painted the *old* boat over the painted one · and a skin PNG had no
+far/near split to fill the near half with at all. Two `tests/data.test.mjs`
+traps now cover the shape, and the one that matters is *"every vessel is
+`skinnable:false`, so the boat shop sells a no-op at every spot"* — the
+assertion that would have caught the original bug.
+
+**If the repaints are ever wanted, do not prompt them from scratch.** Four fresh rowboats would be four
 different boats — a different sheer, a different crop, a different length — and
 the vessel box (`x/y/w/h`) belongs to the *pose*, not the skin, so they would
 each land somewhere slightly different under the same kid. This is the
@@ -3794,9 +3814,13 @@ Prompt:   Repaint this exact rowboat in <COLOUR>. Keep everything else identical
           purple → a dusty muted heather purple   (shop id `purple`, Purple Reign)
 Save as:  assets/boat-red.png, boat-blue.png, boat-leaf.png, boat-purple.png
           (overwriting the pixel-era files, whose names shop.boats already uses)
-Wired in: not yet — cut each with `python3 tools/cut-vessel.py boat-pond <file>`
-          after pointing its output name at the skin, then flip
-          CONFIG.rig.poses.pond.vessel.skinnable back to true.
+Wired in: not yet, and it is now a bigger change than it was — the tint
+          shipped instead, so `shop.boats` carries no `file` at all and the
+          vessel always draws the pose's own halves. Taking this path means
+          cutting each with `python3 tools/cut-vessel.py boat-pond <file>` into
+          `boat-<skin>-far/-near`, adding a per-pose registry the way
+          CONFIG.rig.gearArt does it, and dropping the `tint` field. The pond's
+          `skinnable` is already true.
 ```
 
 **Check registration before anything else when they land:** composite each
@@ -3805,12 +3829,15 @@ skin's sheer has moved more than a pixel or two, the shared anchors stop being
 shared and this becomes four cut entries instead of one — reroll rather than
 carry that.
 
-**The cheaper alternative, if the rerolls fight back:** tint the existing painted
-layers in CSS — a `filter: hue-rotate()` + `saturate()` on `.vessel` driven by a
-per-skin class needs no art at all, and a painted hull is exactly the kind of
-flat colour shift a filter does well. It would tint the thwarts along with the
-planking, which is the reason to try the repaints first, not a reason to rule it
-out. Worth ten minutes before spending four generations.
+**The cheaper alternative — and the one that shipped.** Tinting the painted
+layers in CSS needed no art at all, and a painted hull turned out to be exactly
+the kind of flat colour shift a filter does well. It tints the thwarts along
+with the planking, which was the reason to look at the repaints first rather
+than a reason to rule it out. **The ten minutes this section asked for were
+worth it and answered the question**, and the filter went on the vessel element
+from `CONFIG.shop.boats[].tint` rather than on a per-skin class — the hull sits
+at hue 23°, so `red` barely rotates and gains saturation while the other three
+rotate far and lose it.
 
 ### ✅ R5 — the two vessels (landed and wired 2026-09-01)
 

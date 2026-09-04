@@ -232,12 +232,45 @@ test("shop items have unique ids, sane file stems, and a free default each", () 
     // every kind needs something a new profile can start in, at no cost
     assert.ok(items.some(i => i.cost === 0), `${kind}: no free default`);
   }
-  for (const b of CONFIG.shop.boats) assert.ok(b.file, `boat "${b.id}" missing sprite file`);
+  // Boats carry no `file` at all: a hull skin is a tint of the pose's own
+  // painting, so it is exempt from the stem rule the same way baits are.
+  assert.equal(offenders(CONFIG.shop.boats, b => b.file != null), "",
+    "boats have no sprite files — a hull skin is a tint, see CONFIG.shop.boats");
   // R7: a rod is always in the angler's hand, so every one of them needs art to
   // aim at. A hat may legitimately have none — that is the bare head.
   for (const r of CONFIG.shop.rods) assert.ok(r.file, `rod "${r.id}" missing sprite file`);
   assert.ok(CONFIG.shop.hats.some(h => h.cost === 0 && !h.file),
     "the free default hat has to be the bare head, so a kid can take a hat off");
+});
+
+// R5 debt: the boat shop was the last one still on its own older mechanism, and
+// it had quietly stopped working — every vessel was skinnable:false, so buying a
+// hull changed nothing at any spot and nothing caught it. These are the traps
+// that would have.
+test("a bought hull can actually show up somewhere", () => {
+  const tinted = CONFIG.shop.boats.filter(b => b.tint);
+  assert.ok(tinted.length > 0, "the boat shop sells nothing that changes anything");
+  const skinnable = Object.entries(CONFIG.rig.poses).filter(([, p]) => p.vessel?.skinnable);
+  assert.ok(skinnable.length > 0,
+    "every vessel is skinnable:false, so the boat shop sells a no-op at every spot");
+  // a tint needs BOTH halves to land on, or a red hull keeps a brown near
+  // gunwale in front of the kid
+  for (const [name, pose] of skinnable)
+    assert.ok(pose.vessel.far && pose.vessel.near,
+      `${name}: a skinnable vessel needs both halves, or a skin only tints one of them`);
+});
+
+test("hull tints are plain CSS filters, and the free default has none", () => {
+  const free = CONFIG.shop.boats.filter(b => b.cost === 0);
+  assert.equal(free.length, 1, "exactly one free hull, or there is no way back to bare timber");
+  assert.ok(!free[0].tint, `the free hull "${free[0].id}" must carry no tint — it is how you take a colour off`);
+  for (const b of CONFIG.shop.boats.filter(b => b.cost > 0)) {
+    assert.ok(b.tint, `hull "${b.id}" costs coins and does nothing`);
+    // it goes straight into style.filter, so keep it to filter functions —
+    // url() would fetch, and anything else is a typo that fails silently
+    assert.ok(/^(?:(?:hue-rotate|saturate|brightness|contrast|sepia|grayscale)\([-0-9.a-z]+\) ?)+$/.test(b.tint),
+      `hull "${b.id}" tint is not a plain filter list: ${b.tint}`);
+  }
 });
 
 // R7: three names have to agree for a gear slot to resolve — the layer's
