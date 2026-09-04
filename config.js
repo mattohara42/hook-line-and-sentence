@@ -658,7 +658,14 @@ export const CONFIG = {
       slackSagPx: 30,      // reeling at zero tension
       tautSagPx: 3,        // reeling at max tension — nearly straight
       castSagPx: 12,       // in flight, while the lure is still travelling
-      widthPx: 1.6,
+      // Fishing line is finer than the rod it comes off, and at 1.6 this read as
+      // a pale cord heavier than the rod tip. 0.5 is 3.2x thinner. It is paired
+      // with the stroke's alpha in style.css (#line-path, 0.72 -> 0.9) and the
+      // two are ONE decision: thinning alone made it vanish against the Ocean's
+      // pale sky, which is the worst of the three backgrounds for it. Measured
+      // by shooting the waiting beat at every spot — 0.5 at 0.9 reads more
+      // clearly there than 0.6 at 0.72 did.
+      widthPx: 0.5,
     },
     tug: {
       // damped spring (logic.stepTug). Impulses stack, so fast typing reads as

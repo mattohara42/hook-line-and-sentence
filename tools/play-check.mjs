@@ -50,7 +50,7 @@ await page.evaluate(([loc, catches]) => {
     totalCatches: catches, stage: 5, coins: 900, rank: "Angler", location: loc,
     unlockedLocations: ["pond", "stream", "ocean"],
     upgrades: { rod: "carbon", bait: "worm", boat: "classic", hat: "straw",
-      owned: { rod: ["stick", "bamboo", "carbon"], bait: ["worm"], boat: ["classic"], hat: ["none", "straw"] } },
+      owned: { rod: ["stick", "bamboo", "carbon", "deepsea"], bait: ["worm"], boat: ["classic"], hat: ["none", "straw"] } },
     collection: catches ? { pumpkinseed: catches } : {}, records: {}, badges: [],
     stats: { letters: {}, wordsTyped: 0, escapes: 0, sessionCount: 1, lastPlayed: now },
     jokesEndured: 0, speedBest: null,
@@ -62,6 +62,20 @@ await page.reload();
 await page.waitForTimeout(900);
 await page.click(".profile-cell:not(.add)");
 await page.waitForTimeout(1000);
+
+// app.js recomputes unlockedLocations from the OWNED RODS and silently falls
+// back to the Pond when the saved location is not among them (app.js, applyDerived).
+// So a seed that owns up to `carbon` plays the POND however `--loc ocean` is
+// spelled, and this tool printed nothing that would show it. It does now, and it
+// refuses rather than shooting a spot you did not ask for.
+const scene = await page.evaluate(() => document.getElementById("scene").className);
+console.log("scene     |", scene);
+if (scene !== `loc-${loc}`) {
+  console.error(`asked for --loc ${loc} and got ${scene}. The seeded profile cannot`
+    + ` reach that spot — check owned.rod against shop.rods[].unlocksLocation.`);
+  await browser.close();
+  process.exit(1);
+}
 
 const shot = n => page.screenshot({ path: `${outDir}/${tag}-${n}.png` });
 const word = () => page.evaluate(() => document.getElementById("word").textContent.trim());

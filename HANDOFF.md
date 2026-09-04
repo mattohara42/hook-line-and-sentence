@@ -9,9 +9,10 @@ something is the way it is, `git log` and the PR body have it in full.
 
 | | |
 |---|---|
-| **Active milestone** | **none — the Art & Animation Refresh closed 2026-09-04.** The next one is Matt's call. |
+| **Active milestone** | **T2 — terminal tackle per spot**, `BUILD_PLAN_TACKLE.md`. T1 (the thin line) shipped 2026-09-04. |
 | **R7** | ✅ **21 of 21 gear pieces**, `BUILD_PLAN_REFRESH.md`. Both done-when clauses met: a bought hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand at every spot. |
-| **The epic** | ✅ **R1–R7 all shipped.** Every angler, vessel, background, fish and shop item is painted in the new direction. |
+| **The epic** | **Tackle & Junk (T1–T4)**, opened 2026-09-04 — the bobber/fly/nothing per spot, and junk trophies plus the last pixel-era art. |
+| **The refresh** | ✅ **R1–R7 all shipped.** Every angler, vessel, background, fish and shop item is painted in the new direction. |
 | **Catch Feel** | ✅ **F1–F5 all shipped 2026-09-03**, `BUILD_PLAN_FEEL.md`. One thing left and it is Matt's: play it. |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 95/95 (`npm test`) |
@@ -157,6 +158,7 @@ ever needed again, `[STYLE]` is where to aim.
 | doc | owns |
 |---|---|
 | `SPEC.md` | the game's design, and its non-goals |
+| `BUILD_PLAN_TACKLE.md` | **the active epic**, T1–T4 — tackle per spot, and junk |
 | `BUILD_PLAN_REFRESH.md` | the Art & Animation Refresh, R1–R7 — **closed 2026-09-04** |
 | `BUILD_PLAN_FEEL.md` | Catch Feel, F1–F5, shipped — and what each one measured |
 | `ART_DIRECTION.md` | what the art should **look like** |
