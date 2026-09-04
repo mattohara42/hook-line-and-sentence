@@ -9,8 +9,8 @@ something is the way it is, `git log` and the PR body have it in full.
 
 | | |
 |---|---|
-| **Active milestone** | **T4: junk art**, `BUILD_PLAN_TACKLE.md`. Prompt written, **waiting on one generation from Matt**. T1–T3 shipped 2026-09-04. |
-| **Last change** | **A whole-repo code review** (2026-09-04), findings backlogged, no code touched. Before it: the top bar (#170) and the tests, both outside the epic. |
+| **Active milestone** | **None.** T4 (junk art) is still open and still **waiting on one generation from Matt**; S1 and P1 below were asked for directly and are done. |
+| **Last change** | **S1 (sound) and P1 (tabbed panels)**, 2026-09-04, on `claude/gameplay-polish-sound-o6s0yn`. Both want a play: see *Waiting on Matt*. |
 | **R7** | ✅ **21 of 21 gear pieces**, `BUILD_PLAN_REFRESH.md`. Both done-when clauses met: a bought hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand at every spot. |
 | **The epic** | **Tackle & Junk (T1–T4)**, opened 2026-09-04: the bobber/fly/nothing per spot, and junk trophies plus the last pixel-era art. |
 | **The refresh** | ✅ **R1–R7 all shipped.** Every angler, vessel, background, fish and shop item is painted in the new direction. |
@@ -22,41 +22,37 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**Nothing is half-finished.** Two epics closed in two days. The play-tests below
+**The sound is per spot now, and the panels have tabs (S1 and P1, 2026-09-04).**
+Both came straight from Matt and neither belongs to an epic.
+
+- **S1**: the ambience was one bed of filtered noise at all three spots, which
+  is why it sounded like white noise. `CONFIG.audio.ambience` is a registry per
+  spot now (a `bed`, plus `voices` fired at random gaps): the Pond's frog and
+  dragonfly, the Stream's bubbles, the Ocean's swell and gull. Sound is **on by
+  default** now. New tool, `tools/audio-check.mjs`: a playable `.webm` and a
+  spectrogram per spot.
+- **P1**: the four browsable panels share a head that does not scroll, with the
+  close in the **top-left corner**, and tabs instead of one long column.
+  Nothing scrolls at 320x568 any more. `ui-check.mjs` grew a **third pass** for
+  it (every panel at all twelve shapes), which found two real overflow bugs on
+  its first run.
+- **What to build next is Matt's call**, and the shortlist he asked for is at
+  the top of `BACKLOG.md`: living water first (the frogs and dragonflies you can
+  now hear but not see), then weather, then a daily goal, with the argument for
+  *not* adding modes, gates or an idle earner.
+
+**Nothing else is half-finished.** Two epics closed in two days. The play-tests below
 are Matt's and the carried debts are decisions rather than bugs, but the
 2026-09-04 code review did find real code work: it is all in `BACKLOG.md` and
 none of it is started.
 
-**The top bar was reworked on 2026-09-04** (#170: the tackle box sat on the HUD
-chips on any phone; the game's voice was 12px of bare text). `#topbar` is one
-flex row holding both corners and it stacks below 620px; the pun pools moved to
-`data/puns.json` and are **per spot**; the bubble can be dismissed. **Two knobs
-are Matt's to judge, both one line:** the bubble's type size (`#status`,
-`clamp(17px, 2.4vw, 22px)`) and how many of the three spots' lines land as
-jokes. The rules that hold it together are in `CLAUDE.md`.
-
-**Then the tests were reviewed, because that PR was checked at four viewports by
-hand.** `tools/ui-check.mjs` is the answer: twelve shapes swept for overlapping
-overlays, then a pass that drives the top bar. It found seven more real
-collisions the hand check had missed, all now fixed, at sizes from a 320px phone
-to a tablet. Three node tests came with it, for the classes of bug that produce
-no error at all: an id `app.js` reaches for that the markup does not have, a
-`var(--typo)` that silently renders nothing, and config naming a painting that
-was never delivered. `logic.js` also has a coverage floor now.
-
-**The catch card's subtitle was the last thing out of that review** and is
-fixed: it read `3.7 lb · a LUNKER! · · 257 wpm` at every Stream and Ocean catch,
-because two of its pieces each carried the separator. The join is
-`logic.catchSubtitle` now, tested, with the doubled dot as its own case.
-
-**R5's last debt is paid too: the four shop hulls work** (2026-09-04). They are
-CSS tints of the Pond rowboat's own painting, chosen over four repaints after
-shooting both in the real game; the repaints stay an option in `BACKLOG.md` if
-the tinted thwarts bother you once you have played it.
-
-**The delivery palette check was wrong and is fixed** (2026-09-04): it rejected
-23% of the art the game ships. `tools/palette-check.py` is the runnable version
-and `--corpus` is its control.
+**Landed just before these and all merged**, one line each, reasoning in the PR:
+the top bar is one flex row and the pun pools are per spot in `data/puns.json`
+(#170) · `tools/ui-check.mjs` and three node tests came out of checking that by
+hand, and it found seven more collisions (#171) · the catch card's doubled
+separator, now `logic.catchSubtitle` (#172) · the four shop hulls work, as CSS
+tints of the Pond rowboat (R5's last debt) · `tools/palette-check.py` was
+rejecting 23% of the art the game ships and is fixed.
 
 **The work left, all in `BACKLOG.md` and none of it started:**
 
@@ -75,7 +71,7 @@ and `--corpus` is its control.
 
 **Before any cut in a fresh container:** `pip install Pillow numpy scipy`, and
 for the browser checks `cd /tmp && npm install playwright`. `tools/README.md`
-indexes all twelve tools; the gear pipeline is `gear-ref.py` → prompt →
+indexes all thirteen tools; the gear pipeline is `gear-ref.py` → prompt →
 `gear-register.py` → `cut-angler.py --rod` → one `rig.gearArt` line.
 
 **Two findings from the rod column worth keeping, because both cost real time:**
@@ -93,16 +89,22 @@ indexes all twelve tools; the gear pipeline is `gear-ref.py` → prompt →
   checked for the same thing when its multiplier moved above the hand, and is
   clean.
 
-**One judgement call is made and should not be relitigated.**
-`rod-carbon-stream` cost R7's only reroll and was accepted warm on Matt's call:
-both attempts came back warm against a neutral Pond carbon, which points at
-`[STYLE]`'s "warm muted color palette" rather than the rod wording.
-`rod-carbon-ocean` then came back grey first attempt on the same strengthened
-wording, so the Stream is variance, not a broken prompt. If a neutral colour is
-ever needed again, `[STYLE]` is where to aim.
+**Settled, do not relitigate:** `rod-carbon-stream` is warm on Matt's call, and
+the Ocean's came back grey on the same wording, so it was variance rather than a
+broken prompt. If a neutral colour is ever needed again, aim at `[STYLE]`.
 
 ## Waiting on Matt (all of it, now: nothing is blocked on code)
 
+- **Listen to the game** (S1). Every level in it came from a spectrogram, never
+  from ears, so the judgement calls are all open. The knobs are one line each in
+  `CONFIG.audio.ambience`, and the first to disagree with is that the Stream
+  sits louder than the other two (medians 22 / 50 / 33): a brook is continuous
+  and the other two are quiet water with events in them. Sound is also **on by
+  default** now, which is one line in `app.js` to put back.
+- **The panels want a thumb** (P1). Swept at twelve shapes by `ui-check.mjs`
+  pass 3, never touched. Two judgement calls: the collection is a tab per spot,
+  so you cannot see all 33 fish at once any more, and Quick Cast deliberately
+  kept its own big buttons rather than taking the new top-left close.
 - **The new reel feel wants an eye test** (#135). The fish now tweens between
   words instead of jumping, and stays an unnamed shape until it is reeled close.
   Every number was picked from measurement, never from watching a kid play:
@@ -137,10 +139,12 @@ ever needed again, `[STYLE]` is where to aim.
 - **A7 fight beats have never been tested on a real kid.**
   `CONFIG.fight.clauseRunMs` (550) and `segmentRunMs` (900) were picked by feel.
 - **The new top bar wants a play on a real phone** (2026-09-04). Swept at twelve
-  viewport shapes by `ui-check.mjs`, but never touched with a thumb. The known
-  limit to look at: a phone held sideways has ~55px of sky, and the catch card
-  does not fit there at all (`BACKLOG.md` has the numbers, and it is a design
-  call rather than a bug to nudge).
+  viewport shapes by `ui-check.mjs`, but never touched with a thumb. Two knobs
+  are yours and both are one line: the bubble's type size (`#status`,
+  `clamp(17px, 2.4vw, 22px)`) and how many of the three spots' lines land as
+  jokes. The known limit: a phone held sideways has ~55px of sky and the catch
+  card does not fit there at all (`BACKLOG.md` has the numbers, and it is a
+  design call rather than a bug to nudge).
 - **The Firebase blast-radius decision**, in `BACKLOG.md`.
 - **The whole Catch Feel epic wants a play** (F1–F5, 2026-09-03). Netlify is
   manual, so none of it is live. Four things to look at, each one line in
@@ -206,7 +210,7 @@ ever needed again, `[STYLE]` is where to aim.
 | `ANIMATION.md` | how the cast, line and reel **move** |
 | `ART.md` | the art **pipeline** and the open requests |
 | `GEMINI_NOTES.md` | how the **generator** behaves, and how to salvage it |
-| `tools/README.md` | **what the pipeline tools are** (and `ui-check.mjs`), and the deps a fresh box lacks |
+| `tools/README.md` | **what the pipeline tools are** (`ui-check.mjs` and `audio-check.mjs` included), and the deps a fresh box lacks |
 | `BACKLOG.md` | everything deliberately not being done yet |
 | `FIRESTORE.md` | the sync contract |
 | this file | state and pointers, nothing else |
