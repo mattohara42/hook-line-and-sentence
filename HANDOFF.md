@@ -9,9 +9,9 @@ something is the way it is, `git log` and the PR body have it in full.
 
 | | |
 |---|---|
-| **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. Three rods are all that is left of the refresh. |
+| **Active milestone** | **R7 — gear in the new style**, `BUILD_PLAN_REFRESH.md`. Two rods are all that is left of the refresh. |
 | **Done when** | buying and equipping a hat changes the angler everywhere and persists, and the rod you bought is the rod in your hand |
-| **State** | both done-when clauses met. **18 of 21 painted and wired** — 12 hats, `rod-stick` x2, `rod-bamboo` x2, `rod-carbon` at the Pond and Stream. Left: **3 rods**, prompts written out and ready to send. |
+| **State** | both done-when clauses met. **19 of 21 painted and wired** — 12 hats, `rod-stick` x2, `rod-bamboo` x2, `rod-carbon` at all three spots. Left: **2 rods**, both `rod-deepsea`, prompts written out and ready to send. |
 | **Catch Feel** | ✅ **F1–F5 all shipped 2026-09-03**, `BUILD_PLAN_FEEL.md`. One thing left and it is Matt's: play it. |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 95/95 (`npm test`) |
@@ -20,9 +20,9 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**R7 has 3 rods left: `rod-carbon-ocean`, and `rod-deepsea` at the Pond and the
-Stream.** Every prompt is written out whole in `ART.md` → *R7* → *The rods*, and
-the loop per rod is four commands:
+**R7 has 2 rods left: `rod-deepsea` at the Pond and the Stream.** Every prompt is
+written out whole in `ART.md` → *R7* → *The rods*, and the loop per rod is four
+commands:
 
 ```
 python3 tools/gear-ref.py <pose>                  # the attachment
@@ -32,9 +32,9 @@ python3 tools/cut-angler.py <pose> assets/reg-<name>.png --rod <stem>
 #   then add "<stem>-<pose>" to CONFIG.rig.gearArt, or it is never drawn
 ```
 
-Six rods went through it on 2026-09-03 in seven generations. The pipeline is
-settled: the last three deliveries needed no tool changes at all, and every
-shipped rod re-cuts byte-identically.
+Seven rods have gone through it in eight generations. The pipeline is settled:
+the last four deliveries needed no tool changes at all, and every shipped rod
+re-cuts byte-identically.
 
 **Before your first cut in a fresh container:** `pip install Pillow numpy scipy`,
 and for the browser checks `cd /tmp && npm install playwright`.
@@ -42,10 +42,12 @@ and for the browser checks `cd /tmp && npm install playwright`.
 
 **One judgement call is already made and should not be relitigated.**
 `rod-carbon-stream` cost the column's only reroll and was accepted warm on
-Matt's call: both attempts came back at R−B +39 against the Pond carbon's +2,
-which points at `[STYLE]`'s "warm muted color palette" rather than the rod
-wording. At 95 design px it reads dark and is nothing like the honey bamboo
-(+137). If a neutral colour is ever needed again, `[STYLE]` is where to aim.
+Matt's call: both attempts came back warm against a neutral Pond carbon, which
+points at `[STYLE]`'s "warm muted color palette" rather than the rod wording. At
+95 design px it reads dark and is nothing like the honey bamboo. **`rod-carbon-ocean`
+then came back grey first attempt on the same strengthened wording**, so the
+Stream is variance, not a broken prompt, and the accept stands. If a neutral
+colour is ever needed again, `[STYLE]` is still where to aim.
 
 **Two things the rods left behind, both written up where they belong:**
 `cut-angler.py`'s despill reddens thin neutral pieces and should move to

@@ -1738,6 +1738,75 @@ true grey with no red, no brown and no purple in it, the colour of graphite or
 wet slate."* The Pond proved the original wording *can* produce grey, so this is
 variance being narrowed rather than a prompt that never worked.
 
+#### ✅ `rod-carbon-ocean` landed first attempt (2026-09-04) — the strengthened wording works, and the Stream stays the outlier
+
+**The carbon column is complete, and its colour question now has an answer
+rather than a suspicion.** `rod-carbon-stream` was rejected once for coming back
+plum and accepted warm the second time, on the reading that `[STYLE]`'s "warm
+muted color palette" was the cause rather than the rod wording. This is the
+first test of that: the same strengthened `[THE ROD]` block — *"a NEUTRAL
+charcoal grey ... no red, no brown and no purple in it, the colour of graphite
+or wet slate"* — at a third pose, and it came back grey first attempt.
+
+Measured on one consistent centreline sample across the whole shipped column, so
+the six numbers are comparable to each other rather than to earlier readings
+taken different ways:
+
+| rod | shaft RGB | R − B |
+|---|---|---|
+| `rod-carbon-pond` | (97, 93, 88) | **+9.2** |
+| **`rod-carbon-ocean`** | **(114, 104, 98)** | **+16.2** |
+| `rod-carbon-stream` | (141, 95, 94) | +46.7 |
+| `rod-deepsea-ocean` | (112, 67, 45) | +67.9 |
+| `rod-stick-ocean` | (199, 137, 71) | +127.5 |
+| `rod-bamboo-ocean` | (197, 111, 55) | +141.6 |
+
+Two of three carbons are neutral and one is not, which is variance in the
+generator rather than a prompt that does not work. **Matt's accept on the Stream
+stands and is not reopened by this** — nobody sees two spots at once, and a third
+generation on one rod still is not worth the gain.
+
+**Every registration figure sits between two shipped controls, which is the only
+reason any of them can be read.** Both other Ocean deliveries were re-registered
+and re-cut in the same session:
+
+| | `rod-stick-ocean` | `rod-bamboo-ocean` | **this one** |
+|---|---|---|---|
+| backdrop bleed | 0 px | 0 px | **0 px** |
+| agreement off the rod | 0.9887 | 0.9671 | **0.9638** |
+| whole-figure IoU | 0.9147 | 0.8861 | **0.8871** |
+| median colour distance | 8.2 | 8.7 | **8.2** |
+| shaft inside the half-width | 95.6% | 98.6% | **98.9%** |
+| aligned to the committed body | IoU 0.9862 | IoU 0.9835 | **IoU 0.9828** |
+
+98.9% ties `rod-carbon-stream` for the best figure any rod has posted. Both
+controls re-cut **byte-identically**, so no tool changed for this delivery
+either — the third in a row.
+
+**One number the controls turned from a reading into a constant.** "9.7% differs
+by >40 (a redraw shows here)" came back *identical* on all three Ocean
+deliveries, so at this pose it measures the rescale and the outline, not the
+return. A first delivery's figure would have had nothing to be judged against.
+
+**The delivered rod is longer than the attachment's and it cost nothing**, which
+is the case `gear-register.py` exists for. It reaches much nearer the top-right
+corner than the reference does, in violation of `[WHERE THE ROD GOES]`. Cropping
+the pad puts the shaft off the top of the frame where `t_edge` assumes it, and
+the axis leaves the canvas at **t=568 for every Ocean rod** — the two controls
+print the same number — so half the length is synthesised at this pose by
+construction and always has been.
+
+**The taper starts at half-width 7.5 px against the stick's 19.5 and the
+bamboo's 17.0.** That is the slimmest blank in the set, which is what a carbon
+rod should be, and it is also the number that says the corridor caught the real
+shaft rather than a sliver of it.
+
+Verified in Chromium past the startup modal, twice: the four Ocean rods side by
+side (all four read as different rods at 65 design px, and the reel is below the
+hand on this one and above it on the deepsea), and the Carp Whisperer at all
+three spots, which is the check R7's done-when actually asks for.
+
+
 #### The coordinate space nobody had written down, and a tool that ate its own output
 
 Measuring the above turned up the thing that actually blocks the cut, and it is
