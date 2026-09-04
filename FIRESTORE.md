@@ -58,7 +58,15 @@ cheap and the offline/localStorage fallback trivial (the doc IS the save file).
     lastPlayed: <timestamp>,
   },
 
-  jokesEndured: 0                  // reserved for the groan counter (backlog)
+  // junk: junkId → count (T3). Same shape as `collection`, same write path: an
+  // increment on one key, folded into the write the catch was making anyway.
+  // Absent key = never pulled, which is what the journal's shelf shows locked.
+  junk: { boot: 6, can: 2 },
+
+  // The LIFETIME groan total, and deliberately not the sum of `junk`: saves
+  // from before T3 counted pulls without recording which kind, so the two
+  // legitimately disagree on an old save. Junk badges count `junk`, never this.
+  jokesEndured: 8
 }
 ```
 
@@ -67,6 +75,9 @@ cheap and the offline/localStorage fallback trivial (the doc IS the save file).
 - **On catch (the only hot path):** one `update()` with increments — 
   `totalCatches`, `coins`, `collection.{fishId}`, merged letter stats 
   accumulated locally during the fight. Firestore `increment()` for counters.
+- **On a junk pull:** the same single write, incrementing `junk.{junkId}` and
+  `jokesEndured` instead of the fish keys. A junk pull earns no coins and no
+  collection entry, so it is a cheaper write, not an extra one.
 - **On shop purchase / stage unlock:** one update each. Rare events.
 - **Letter stats batching:** accumulate in memory during reeling; flush with
   the catch write. Never write per-keystroke.

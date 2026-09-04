@@ -67,15 +67,35 @@ The twitch and plunge are F4's and were **not** retuned. Only the idle differs
 per kind: a cork bobs on the swell, a dry fly rides the film and drifts
 sideways, which is also what tells a kid this spot fishes differently.
 
-## T3 — junk trophies
+## T3 — junk trophies ✅ (2026-09-04)
 
 **Done when:** pulling a boot is recorded, badges exist for it, and the journal
-shows which junk you have found.
+shows which junk you have found. **All three, verified in the browser at two
+save states.**
 
-`save.jokesEndured` counts junk pulls today and nothing reads it. Junk becomes
-per-item counts, badges hang off those counts, and the journal grows a shelf
-beside the badge grid. The save migration has to be idempotent and has to leave
-`jokesEndured` alone — it is in live cloud saves.
+`save.junk` is junkId → count, the same shape as `save.collection` and on the
+same write path — an increment on one key folded into the write the catch was
+making anyway (`FIRESTORE.md`). Migration is `save.junk ??= {}`, and every read
+is optional-chained, so a pre-T3 save renders the shelf without it.
+
+**`jokesEndured` is left exactly alone and is deliberately NOT the sum of
+`junk`.** It is the lifetime groan total and it is in live cloud saves; pulls
+from before T3 were counted without recording which kind, so on an old save the
+two legitimately disagree. The badges count `junk`, never `jokesEndured` —
+otherwise a save with three old pulls and no breakdown would be most of the way
+to "Litter Picker" for junk it can no longer name.
+
+Three badges, and they are the only ones in the game you earn by catching
+NOTHING: **Not a Fish** (one pull), **Litter Picker** (`CONFIG.badges.junkPulls`,
+10), **Junk Collector** (all four kinds). Junk rolls at `CONFIG.junk.chance` and
+cannot be fished for on purpose, which is the joke. Two traps guard the ways
+that stops being true — a `junk.chance` of 0 makes all three unearnable, and
+they were watched failing.
+
+The shelf uses the same card language as the badge grid it sits under, because
+that is what it sits under. A piece never pulled stays **locked** rather than
+showing a dimmed sprite: the collection teases fish with a silhouette because
+the shape is the reward, and a boot's shape is not — the surprise is.
 
 ## T4 — junk art
 
