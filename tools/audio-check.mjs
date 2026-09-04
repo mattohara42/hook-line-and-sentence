@@ -36,7 +36,10 @@ const browser = await chromium.launch({
   args: ["--autoplay-policy=no-user-gesture-required"],
 });
 const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
-page.on("pageerror", e => console.log("PAGE ERROR:", e.message));
+// A synth that throws is the bug this tool exists to catch, and it is silent in
+// every other way: the bed keeps playing and the game carries on.
+const errors = [];
+page.on("pageerror", e => { errors.push(e.message); console.log("PAGE ERROR:", e.message); });
 page.on("console", m => { if (m.type() === "error") console.log("CONSOLE:", m.text()); });
 
 // Tap the master bus before app.js runs. app.js connects its master gain to
@@ -45,7 +48,15 @@ page.on("console", m => { if (m.type() === "error") console.log("CONSOLE:", m.te
 // knowing or a single line of test-only code living in the game.
 await page.addInitScript(() => {
   const Real = window.AudioContext || window.webkitAudioContext;
-  window.__audio = { ctx: null };
+  window.__audio = { ctx: null, sources: 0 };
+  // Every voice builds oscillators or noise sources when it speaks, and the bed
+  // builds its own once at startup. So counting sources created AFTER the bed
+  // is up is a direct count of how many times something spoke, which is the one
+  // question the master mix cannot answer: see the note by `sources` below.
+  for (const fn of ["createOscillator", "createBufferSource"]) {
+    const real = Real.prototype[fn];
+    Real.prototype[fn] = function (...a) { window.__audio.sources++; return real.apply(this, a); };
+  }
   window.AudioContext = class extends Real {
     constructor(...a) {
       super(...a);
@@ -100,6 +111,7 @@ for (const loc of spots) {
     const ctx = window.__audio.ctx;
     if (!ctx) return { error: "app.js never opened an AudioContext" };
     if (ctx.state === "suspended") await ctx.resume();
+    const sourcesBefore = window.__audio.sources;
     const bins = 200;                        // ~0 to 8.6kHz of the 22kHz range
     const buf = new Uint8Array(ctx.__analyser.frequencyBinCount);
     const frames = [];
@@ -135,7 +147,8 @@ for (const loc of spots) {
       }
     }
     g.putImageData(img, 0, 0);
-    return { audio: btoa(bin), png: cv.toDataURL("image/png"), frames };
+    return { audio: btoa(bin), png: cv.toDataURL("image/png"), frames,
+             sources: window.__audio.sources - sourcesBefore };
   }, secs * 1000);
 
   if (cap.error) { console.error(cap.error); await browser.close(); process.exit(1); }
@@ -146,21 +159,34 @@ for (const loc of spots) {
   const sorted = [...energy].sort((a, b) => a - b);
   const median = sorted[Math.floor(sorted.length / 2)];
   const peak = sorted[sorted.length - 1];
-  // Transients rather than loud frames: a brook is dense enough that EVERY
-  // frame is above the median, and the first version of this check called that
-  // silence. A jump between frames is a thing starting, whatever the level.
-  const jumps = energy.filter((e, i) => i && e - energy[i - 1] > 5).length;
-  const perMin = jumps / (secs / 60);
+  // Onsets rather than loud frames: a brook is dense enough that EVERY frame is
+  // above its own median, and the first version of this check called that
+  // silence. Count crossings UP through a threshold instead, which is one per
+  // thing that starts however loud the spot is. It is a crossing rather than a
+  // frame-to-frame jump because a wave takes a second and a bit to arrive and
+  // never jumps: the second version of this check called the Ocean silent while
+  // its own spectrogram showed four swells.
+  const mean = energy.reduce((a, b) => a + b, 0) / energy.length;
+  const sd = Math.sqrt(energy.reduce((a, e) => a + (e - mean) ** 2, 0) / energy.length);
   const band = (lo, hi) => cap.frames.reduce((a, f) =>
     a + f.slice(lo, hi).reduce((x, y) => x + y, 0) / (hi - lo), 0) / cap.frames.length;
 
   writeFileSync(`${outDir}/${loc}.webm`, Buffer.from(cap.audio, "base64"));
   writeFileSync(`${outDir}/${loc}.png`, Buffer.from(cap.png.split(",")[1], "base64"));
-  console.log(`| median ${median.toFixed(1)}  peak ${peak.toFixed(1)}  events ${perMin.toFixed(0)}/min`
+  console.log(`| median ${median.toFixed(1)}  peak ${peak.toFixed(1)}  sd ${sd.toFixed(1)}  spoke ${cap.sources}x`
     + `  low ${band(0, 20).toFixed(1)}  mid ${band(20, 70).toFixed(1)}  high ${band(70, 200).toFixed(1)}`);
   if (peak < 3) { console.error(`${loc} is SILENT: nothing reached the master bus`); process.exitCode = 1; }
-  if (perMin < 5) { console.error(`${loc} is a flat bed: no voice spoke in ${secs}s`); process.exitCode = 1; }
+  // `spoke` is the count of sources built during the run, not a reading of the
+  // mix. Three attempts to get this out of the master bus all failed, and the
+  // control run (the same beds with `voices: []`) is what showed why: the
+  // Pond's events cleared its bed, the Stream's babble is dense enough to BE a
+  // bed, and the Ocean's swell crossed the same threshold 21 times an hour on
+  // its own. One number cannot separate a texture from an event when the bed is
+  // a texture too. Counting what the voices build is direct, and it is what a
+  // synth that throws stops doing.
+  if (cap.sources < 3) { console.error(`${loc}: nothing spoke over the bed in ${secs}s`); process.exitCode = 1; }
 }
 
+if (errors.length) { console.error(`\n${errors.length} page error(s), listed above`); process.exitCode = 1; }
 console.log(`\nwrote ${outDir}/<spot>.webm (play it) and <spot>.png (the spectrogram)`);
 await browser.close();

@@ -216,13 +216,21 @@ the whole band: you can see whether a voice ever spoke without hearing it.
 
 It taps the master bus by subclassing `AudioContext` in an init script, so the
 game has no test-only code in it: app.js connects to `actx.destination` and the
-subclass answers with a gain of its own. Two things fail it, and they are the
-two that are genuinely checkable: a spot that is silent (nothing reached the
-bus at all) and a spot whose bed plays with no voice over it in the whole run,
-which is what a synth that throws leaves behind. It counts **transients**
-rather than loud frames to decide that: a brook is dense enough that every
-frame is above its own median, and the first version of the check called that
-silence.
+subclass answers with a gain of its own. The same init script counts the
+oscillators and noise sources the page builds, which is where the assertions
+come from. Three things fail it: a page error (a synth that throws is exactly
+the bug this exists for, and it is silent in every other way, since the bed
+keeps playing), a spot where nothing reached the bus at all, and a spot where
+**nothing spoke over the bed** in the whole run.
+
+That last number is a count of sources built, not a reading of the mix, and
+that is worth knowing before trying to improve it. Three attempts to get it out
+of the master bus all failed, and the control (the same beds with `voices: []`)
+is what showed why: the Pond's events clear its bed easily, the Stream's babble
+is dense enough to *be* a bed, and the Ocean's slow swell crosses any level
+threshold you pick on its own. No single reading of the output separates a
+texture from an event when the bed is a texture too. Counting what the voices
+build is direct, and a bed with no voices reads 0.
 
 ## Not art pipeline
 

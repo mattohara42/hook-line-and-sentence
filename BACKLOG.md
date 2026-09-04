@@ -2,6 +2,57 @@
 
 Ideas captured during design/build. Nothing here expands the current milestone.
 
+## What next, now the look and the sound are done (asked 2026-09-04)
+
+Matt asked what would make it worth playing again, and whether the answer is
+more modes, more gates, birds and frogs, or an idle earner. This is the
+shortlist and the order I would do it in. Nothing here is started and none of
+it is an active milestone: the next one is Matt's call.
+
+**1. Living water (do this one first).** Each spot gets ambient *actors* to go
+with the voices S1 gave it: a dragonfly that crosses the pond while it buzzes,
+a frog on a lily pad that puffs when it croaks, a heron that stalks the reeds
+and leaves when you cast, leaves riding the stream, a gull crossing the ocean
+sky on its cry, a sail on the horizon. It is DOM and CSS on the planes that
+already exist, it needs no new system (`CONFIG.audio.ambience` is already a
+per-spot registry of what lives here, and this is the same list with a sprite
+on it), and it makes the sound work land twice: right now a frog croaks and
+nothing on screen agrees. Highest value per line in this file. The rule the
+scene already has holds: nothing may land in the bottom-centre guide panel.
+
+**2. Weather and time of day.** One tint layer over the three planes plus a
+matching bed, rolled per session: morning gold, overcast, light rain, dusk.
+The variety a kid actually notices ("it's raining today") for a fraction of
+what a fourth fishing spot costs, and rain is the easiest procedural sound in
+the game. If it should touch gameplay at all, it is one multiplier on the tier
+odds ("the big ones come out in the rain"), never a lockout.
+
+**3. A reason to come back tomorrow, without a streak.** One rotating goal, in
+the journal: a species to find, or three fish at the Stream, worth bonus coins.
+No timer, no streak, nothing lost by missing a day. This is the whole of what a
+"daily" should be in a game for a six-year-old.
+
+**What I would not build, and why.** *More modes*: Quick Cast is deliberately
+the only one outside the progression (`SPEC.md`), and a second one splits a
+small kid's attention rather than deepening anything. *More stage gates*: there
+are already three waters, four rods, the letter ladder, four tiers, phrases,
+sentences, badges, junk and a prestige fish; another gate can only block a kid
+who is enjoying themselves. Side goals that are visible and voluntary do the
+same job without the lockout. *An idle earner* (a trap that pays out while you
+are away): it pays coins for not typing, which inverts the one economy the game
+has, and it trains coming back for a payout rather than for the fishing. The
+honest version of that idea is flavour, not currency: a line on return saying
+what the pond got up to while you were gone.
+
+**Before it is "released" to anyone outside the family**, four things that are
+not features: it should work offline and add to a home screen (a manifest and
+a service worker over 166 assets, and this is the one that makes it feel like
+an app on an iPad); a new kid is dropped straight into "type the word to cast"
+with nothing explaining the ghost hands; sound is one ON/OFF and wants a
+volume; and a phone held sideways is a known-broken layout (above, and in
+`ui-check.mjs`'s KNOWN list). The Firebase blast-radius decision under *Release
+hygiene* is still the gate on sharing the URL at all.
+
 ## Flavor & fun
 - **Groan counter**: after each catch pun, a 🙄 button increments a lifetime "Dad Jokes Endured" stat per profile. Zero gameplay impact, maximum family lore.
 - Kids contribute puns: the pools are now `data/puns.json` (per spot), so a
@@ -117,8 +168,12 @@ probably belong in one pass.
   is visible as soon as an Ocean sentence is on screen against a Baloo 2 HUD.
 
 ## World
-- More ponds/locations; weather; real day/night tied to clock.
-- Sound design pass beyond ambient loop.
+- More ponds/locations; weather; real day/night tied to clock (see the shortlist
+  at the top: weather is the cheap half of this and is ranked second).
+- **✅ The ambient loop is per spot now (S1, 2026-09-04)**, with voices over it
+  and `tools/audio-check.mjs` to see them. What is left of a sound pass: the
+  SFX for the bite, the catch and the unlock are still musical chimes from M10,
+  a volume control (it is ON/OFF today), and rain if weather ever lands.
 
 ## Playtest before anything else (A7/A8, 2026-08-22)
 - **The fight beats are guesses.** `CONFIG.fight.clauseRunMs` (550) and
