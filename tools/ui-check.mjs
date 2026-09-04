@@ -66,7 +66,7 @@ const OVERLAYS = ["h1", "pun", "hud", "tacklebox", "controls", "catch-card",
 
 // Overlaps that are correct, with the reason. Anything not in here is a bug.
 const ALLOWED = [
-  ["controls", "*",            "the tackle box tray is a menu the kid opened: it covers what is behind it"],
+  ["controls", "*",            "the tackle box tray is a menu the kid opened: it covers what is behind it. NB this is checked rather than assumed now, see meta.trayBlocked below: it was false for months"],
   ["unlock-banner", "catch-card", "CLAUDE.md/style.css: the banner deliberately plays OVER a held card"],
   ["unlock-banner", "word",    "the celebration is 2.6s and the word box is not going anywhere"],
   ["unlock-banner", "pun",     "same: a banner is a moment, the bubble is behind it"],
@@ -177,6 +177,36 @@ const measure = () => page.evaluate((ids) => {
   const trayBtns = [...document.querySelectorAll("#controls button")]
     .map(b => b.getBoundingClientRect()).filter(r => r.width && r.height);
   out.meta.trayMinH = trayBtns.length ? Math.round(Math.min(...trayBtns.map(r => r.height))) : null;
+  // …and whether a finger would actually reach it. Being the right size and in
+  // the right place is not enough: #word is z-index 7 and the tray lives inside
+  // a z-index 6 bar, so the word box painted over the middle of the tray and
+  // the button under it took no taps at all. Which button that was depended on
+  // how long the random cast word happened to be, which is why it read as a
+  // flake in this tool rather than as the bug it is. Ask the document what is
+  // on top; a button scrolled out of the tray's own overflow box is skipped,
+  // because a real tap scrolls it in first.
+  const tray = document.getElementById("controls");
+  out.meta.trayBlocked = [];
+  if (tray && !tray.hidden) {
+    const box = tray.getBoundingClientRect();
+    for (const b of tray.querySelectorAll("button")) {
+      const r = b.getBoundingClientRect();
+      if (!r.width || !r.height) continue;
+      const cy = r.y + r.height / 2;
+      if (cy < box.y || cy > box.bottom) continue;
+      // sample ACROSS the button, not just its middle: the word box reached to
+      // within 2px of the centre of the tray's buttons, so a centre-only probe
+      // called this clean while real taps were landing on #word.
+      for (const f of [0.1, 0.3, 0.5, 0.7, 0.9]) {
+        const top = document.elementFromPoint(r.x + r.width * f, cy);
+        if (top && top !== b && !b.contains(top)) {
+          out.meta.trayBlocked.push(`${b.id || b.textContent.trim().slice(0, 16)} is under`
+            + ` #${top.id || "." + top.className} at ${Math.round(f * 100)}% across it`);
+          break;
+        }
+      }
+    }
+  }
   return out;
 }, OVERLAYS);
 
@@ -212,6 +242,8 @@ async function checkViewport(vp) {
     if (meta.chipFont < 10) fail(vp, state, `HUD chips are ${meta.chipFont}px`);
     if (state === "tray" && meta.trayMinH !== null && meta.trayMinH < 28)
       fail(vp, state, `a tray button is only ${meta.trayMinH}px tall`);
+    for (const b of meta.trayBlocked ?? [])
+      fail(vp, state, `a tray button cannot be tapped: ${b}`);
     if (state === "busy") await page.screenshot({ path: `${outDir}/${vp.name}.png` });
   }
   await setState("idle");
@@ -234,6 +266,29 @@ const st = () => page.evaluate(() => document.getElementById("status").textConte
 const word = () => page.evaluate(() => document.getElementById("word").textContent.trim());
 const typeWord = async () => { for (const c of (await word()).replace(/\u2423/g, " ")) {
   await page.keyboard.press(c === " " ? "Space" : c); await page.waitForTimeout(35); } };
+// Where the line's far end is, read off the rendered <path>, and a wait for it
+// to stop there. The lure is still in flight for backswingMs+flightMs after the
+// last key of a cast, and NOTHING about the wait is decided until it lands:
+// startWait() sets the wait flavour immediately, then castLine's callback rolls
+// the wiggle and may replace that line with an instruction. Reading the bubble
+// before the landing is what made this pass fail about one run in three
+// (BACKLOG.md, 2026-09-04: 4 runs in 12, which is CONFIG.wiggle.chance to the
+// run). The end of the LINE is the signal that does not care what each spot
+// floats, which is why play-check.mjs waits on the same thing.
+const lineEnd = () => page.evaluate(() => {
+  const d = document.getElementById("line-path").getAttribute("d");
+  return d ? d.split(" ").slice(-2).join(",") : "(no line)";
+});
+const castLands = async () => {
+  let prev = null, settled = 0;
+  for (let i = 0; i < 60 && settled < 2; i++) {
+    const now = await lineEnd();
+    settled = (now !== "(no line)" && now === prev) ? settled + 1 : 0;
+    prev = now;
+    await page.waitForTimeout(150);
+  }
+  return settled >= 2;
+};
 const enter = async () => { await page.reload(); await page.waitForTimeout(750);
   await page.click(".profile-cell:not(.add)"); await page.waitForTimeout(600); };
 
@@ -270,24 +325,30 @@ async function behaviour() {
   }
 
   // the jokes: dismissable, and the instruction survives it
-  const cast = await st();
   check(await page.evaluate(() => document.getElementById("pun-dismiss").hidden),
     "no dismiss x is offered on the cast instruction");
   await typeWord();
-  await page.waitForFunction(t => document.getElementById("status").textContent !== t, cast, { timeout: 9000 });
-  const after = await st();
-  const isInstruction = POOLS.shared.wiggle.includes(after);
-  check((await page.evaluate(() => document.getElementById("pun-dismiss").hidden)) === isInstruction,
-    isInstruction ? "no dismiss x on the wiggle instruction either" : "the dismiss x is offered on a flavour line");
-  if (!isInstruction) {
-    await page.click("#pun-dismiss"); await page.waitForTimeout(150);
-    check((await st()) === "", "dismissing clears the line it was on");
-    await enter();
-    check(await page.evaluate(() => localStorage.getItem("tf:punsOn") === "off"), "the choice survives a reload");
-    check(/\btype\b.*\bcast\b/i.test(await st()), "…and the cast instruction is still there with the jokes off");
-    await page.evaluate(() => localStorage.setItem("tf:punsOn", "on"));
-    await enter();
+  check(await castLands(), "the cast comes to rest before the bubble is judged");
+  // F4: about a third of casts land on a wiggle, whose prompt is an instruction
+  // and carries no x. Type it out rather than skipping the rest of this block,
+  // which is what the old branch did: the line the wait settles on afterwards
+  // is flavour either way (wiggleDone, or the bite), so the dismiss path is now
+  // exercised on every run instead of on two runs in three.
+  const wiggled = POOLS.shared.wiggle.includes(await st());
+  check((await page.evaluate(() => document.getElementById("pun-dismiss").hidden)) === wiggled,
+    wiggled ? "no dismiss x on the wiggle instruction either" : "the dismiss x is offered on a flavour line");
+  for (let i = 0; i < 8 && POOLS.shared.wiggle.includes(await st()); i++) {
+    await typeWord(); await page.waitForTimeout(200);
   }
+  check(!(await page.evaluate(() => document.getElementById("pun-dismiss").hidden)),
+    "the dismiss x is offered on the flavour line the wait settles on");
+  await page.click("#pun-dismiss"); await page.waitForTimeout(150);
+  check((await st()) === "", "dismissing clears the line it was on");
+  await enter();
+  check(await page.evaluate(() => localStorage.getItem("tf:punsOn") === "off"), "the choice survives a reload");
+  check(/\btype\b.*\bcast\b/i.test(await st()), "…and the cast instruction is still there with the jokes off");
+  await page.evaluate(() => localStorage.setItem("tf:punsOn", "on"));
+  await enter();
 
   // a real catch, at both ends of the range: the card, and the bubble standing down
   for (const [w, h] of [[390, 844], [1440, 900]]) {

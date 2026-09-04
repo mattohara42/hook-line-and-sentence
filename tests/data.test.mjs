@@ -676,6 +676,11 @@ test("no pure black anywhere in the stylesheet", () => {
 // character doing a different job.
 test("no em-dashes anywhere in the repo's own text", () => {
   const root = new URL("..", import.meta.url);
+  // An HTML entity renders as a real em-dash and walked straight past the
+  // character check: three of them sat in index.html for as long as the rule
+  // has existed, two in strings a kid reads. The alternation is what keeps this
+  // line from matching itself.
+  const ENTITY = /&(mdash|#8212|#x2014);/i;
   const SKIP = new Set([".git", "node_modules", "assets", ".github"]);
   const EXT = /\.(md|js|mjs|py|css|html|json|txt|rules)$/;
   const offences = [];
@@ -686,7 +691,8 @@ test("no em-dashes anywhere in the repo's own text", () => {
       if (e.isDirectory()) { walk(new URL(e.name + "/", dir), here); continue; }
       if (!EXT.test(e.name)) continue;
       readFileSync(new URL(e.name, dir), "utf8").split("\n").forEach((line, i) => {
-        if (line.includes("\u2014")) offences.push(`${here}:${i + 1}: ${line.trim().slice(0, 70)}`);
+        if (line.includes("\u2014") || ENTITY.test(line))
+          offences.push(`${here}:${i + 1}: ${line.trim().slice(0, 70)}`);
       });
     }
   };
