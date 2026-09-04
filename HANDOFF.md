@@ -29,19 +29,21 @@ CSS tints of the Pond rowboat's own painting, chosen over four repaints after
 shooting both in the real game; the repaints stay an option in `BACKLOG.md` if
 the tinted thwarts bother you once you have played it.
 
-**The obvious next pieces of work**, both in `BACKLOG.md` and neither started:
+**The delivery palette check was wrong and is fixed** (2026-09-04): it rejected
+23% of the art the game ships. `tools/palette-check.py` is the runnable version
+and `--corpus` is its control.
 
-1. **`cut-angler.py`'s despill should move to `cut-gear.py`'s unmix model.** It
-   reddens thin neutral pieces by about 11 points of R − B. Deliberately not
-   done inside a delivery, because it changes how every rod is cut and they all
-   re-cut byte-identically today (`BACKLOG.md` has the numbers).
-2. **`ART.md`'s *"no pure black"* delivery check is wrong as written** and would
-   reject every rod in the game, R4's included. The measure that means something
-   is the shaft's **interior** colour, not the presence of any (0,0,0) pixel.
+**The one piece of work left on the list**, in `BACKLOG.md` and not started:
+
+- **`cut-angler.py`'s despill should move to `cut-gear.py`'s unmix model.** It
+  reddens thin neutral pieces by about 11 points of R − B. Deliberately not
+  done inside a delivery, because it changes how every rod is cut and they all
+  re-cut byte-identically today (`BACKLOG.md` has the numbers). It is the only
+  thing left on this list.
 
 **Before any cut in a fresh container:** `pip install Pillow numpy scipy`, and
 for the browser checks `cd /tmp && npm install playwright`. `tools/README.md`
-indexes all eleven tools; the gear pipeline is `gear-ref.py` → prompt →
+indexes all twelve tools; the gear pipeline is `gear-ref.py` → prompt →
 `gear-register.py` → `cut-angler.py --rod` → one `rig.gearArt` line.
 
 **Two findings from the rod column worth keeping, because both cost real time:**

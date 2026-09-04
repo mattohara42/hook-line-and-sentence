@@ -334,8 +334,19 @@ because they are the ones an edit can fail in a way a fresh painting cannot:
 6. **A rod must be on the pose's own axis**, checked by cutting it with that
    pose's unchanged `cut-angler.py` corridor and recompositing. If the corridor
    misses it, the axis moved.
-7. **Palette** against the table above: no pure black, nothing darker than
-   `#33291f`.
+7. **Palette**, and the rule is not the binary one this list used to state.
+   Run `python3 tools/palette-check.py <file>`: the gate is **pure black
+   surviving a 3px erosion, under 2% of the interior**. Raw (0,0,0) pixels are
+   not a rejection and never were — 25 of the 109 pieces the game loads carry
+   some, `rod-bamboo-ocean` carries 3,136 of them, and they are anti-aliased
+   outline and JPEG ringing rather than paint anyone chose. Nor is "nothing
+   darker than `#33291f`": 70% of shipped pieces carry paint below umber,
+   because a painting has gradients and umber is the darkest tone anyone
+   *picks*. What the direction cares about is that **nothing reads as black** —
+   no black linework, no black shadow — and a region of it survives erosion
+   where an outline does not. The tool prints the shipped corpus as a control
+   with `--corpus`, and flags cool darks as a *look*, not a failure: deep water
+   and a silver fish are supposed to be cool.
 
 #### ✅ `hat-straw-pond` landed first attempt (2026-09-02), and the edit shape holds
 

@@ -1,4 +1,4 @@
-# tools/ — the art pipeline, two browser checks, and one word generator
+# tools/ — the art pipeline, a palette gate, two browser checks, and one word generator
 
 **None of this is the game.** Nothing in here is loaded at runtime, nothing is a
 build step, and the no-build-step rule in `CLAUDE.md` is not bent by any of it.
@@ -8,7 +8,7 @@ a command instead of redoing the work by hand.
 
 Each tool's own docstring is the real reference, and it carries the reasoning
 and the numbers that set its constants. This file is the index, so a new session
-knows what exists before inventing an eleventh one.
+knows what exists before inventing a thirteenth one.
 
 ## Which doc owns what
 
@@ -19,7 +19,7 @@ others should restate it.
 ## Dependencies, and a fresh container has none of them
 
 ```
-pip install Pillow numpy scipy          # every cut-*.py, gear-ref.py, hat-transplant.py
+pip install Pillow numpy scipy          # every cut-*.py, gear-ref.py, hat-transplant.py, palette-check.py
 cd /tmp && npm install playwright       # spot-check.mjs and play-check.mjs
 ```
 
@@ -97,6 +97,24 @@ are.
 is the one that is not upright — so it declines that pair rather than producing
 a perched hat. That threshold sits between two real measurements rather than at
 a round number someone liked. In R7 it turned nine hats into six generations.
+
+## Judging a delivery's darks
+
+`palette-check.py <file.png> …` · `palette-check.py --corpus`
+
+The check `ART.md` and `GEMINI_NOTES.md` used to state as *"no pure black,
+nothing darker than `#33291f`"*, which was wrong in both halves and would have
+rejected the game's own art: 25 of the 109 pieces the game loads carry a (0,0,0)
+pixel and 76 carry paint below umber. `rod-bamboo-ocean` has 3,136 black pixels
+and is a perfectly good rod — they are anti-aliased outline and JPEG ringing.
+
+**The gate is pure black that survives a 3px erosion**, because a black *region*
+does and an outline does not. That splits the two populations with no overlap:
+what the game ships tops out at 0.820% of the eroded interior, and pixel-era art
+with real black linework starts at 14.394%. The threshold sits at 2% in the
+middle of a 17x gap. Everything else it prints — the raw black count, the share
+below umber, whether those darks read warm — is context rather than a verdict,
+and `--corpus` prints the shipped corpus so a delivery's number has a control.
 
 ## Verification
 
