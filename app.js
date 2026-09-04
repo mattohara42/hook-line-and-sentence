@@ -1,4 +1,4 @@
-// app.js — Hook, Line and Sentence core loop (cast → wait → reel → catch).
+// app.js: Hook, Line and Sentence core loop (cast → wait → reel → catch).
 // All tuning values come from config.js. Words come from data/words.json,
 // filtered to the unlocked letter set; Stream phrases (data/phrases.json) and
 // Ocean sentences (data/sentences.json) are the same idea, gated by location.
@@ -22,9 +22,9 @@ async function loadJson(path) {
 
 // ---- Profiles (localStorage mirror; M4b layers Firestore sync on top) ----
 // One document per kid, shaped per FIRESTORE.md. localStorage keys:
-//   tf:profile:{id} — the save document (which IS the offline save file)
-//   tf:profiles     — lightweight index for the picker [{id,name,avatar,updatedAt}]
-//   tf:active       — last-picked profile id
+//   tf:profile:{id}: the save document (which IS the offline save file)
+//   tf:profiles    : lightweight index for the picker [{id,name,avatar,updatedAt}]
+//   tf:active      : last-picked profile id
 // All reads/writes funnel through here so M4b can add Firestore in one place.
 const AVATARS = ["🐸", "🐟", "🐠", "🦆", "🐢", "🦖", "🐙", "🦈", "⭐", "🍀", "🐳", "🦑"];
 // These key names predate the rename to Hook, Line and Sentence and are kept
@@ -147,7 +147,7 @@ async function syncInit() {
       }
     });
   } catch (err) {
-    // Offline, blocked, or misconfigured — stay local-only and silent.
+    // Offline, blocked, or misconfigured: stay local-only and silent.
     console.info("Sync unavailable; playing offline on localStorage.", err?.message || err);
     setSyncStatus("sync-off");
   }
@@ -182,10 +182,10 @@ async function pullProfiles() {
     const rem = remote[id];
     const locT = loc?.updatedAt ?? 0, remT = rem?.updatedAt ?? 0;
     if (rem && remT > locT) {
-      // remote is newer — adopt it locally, but never yank a kid mid-game
+      // remote is newer: adopt it locally, but never yank a kid mid-game
       if (!(save && save.id === id && !pickerOpen)) localStorage.setItem(PROFILE_KEY(id), JSON.stringify(rem));
     } else if (loc && locT >= remT) {
-      // local is newer or remote-missing — back it up
+      // local is newer or remote-missing: back it up
       setDoc(doc(fb.db, COL, id), { ...loc, ownerUid: fb.uid }, { merge: true }).catch(() => {});
     }
   }
@@ -205,7 +205,7 @@ function unlockedStageCount(total) { return logic.unlockedStageCount(CONFIG.unlo
 function recomputeUnlocks() {
   // The 🧪 shortcut unlocks the whole keyboard as well as the spots: the letter
   // stages are earned by catch count alone, so a fresh test profile standing in
-  // the Ocean still only had the home row — which filters out every sentence
+  // the Ocean still only had the home row, which filters out every sentence
   // and silently drops the reel back to single words. Dev hosts only; a synced
   // save carrying the flag is ignored in production.
   const allKeys = CONFIG.dev?.testShortcuts && save?.devAllKeys;
@@ -249,25 +249,25 @@ function graduateLocations() {
   return CONFIG.tiers.filter(t => !before.has(t.location) && save.unlockedLocations.includes(t.location));
 }
 
-// Dad joke flavor text — one pool per moment, picked at random.
+// Dad joke flavor text: one pool per moment, picked at random.
 // House rule: cast lines always keep the literal instruction for beginners.
 const PUNS = {
   cast: [
-    "Type the word to cast — reel easy does it",
+    "Type the word to cast. Reel easy does it",
     "Type the word to cast. Let's get kraken",
-    "Type the word to cast — any fin is possible",
+    "Type the word to cast. Any fin is possible",
   ],
   // F4: the wiggle prompt is an INSTRUCTION, so like the cast prompts it always
   // keeps the literal thing to do in it (CLAUDE.md). A kid who has never seen a
   // wiggle cast before has to be able to read one line and know what to press.
   wiggle: [
-    "Nothing's biting — type to wiggle the bait",
+    "Nothing's biting. Type to wiggle the bait",
     "Give it a wiggle: type the word",
     "Type the word to jiggle the bait and look tasty",
-    "Wiggle wiggle — type to twitch the line",
+    "Wiggle wiggle! Type to twitch the line",
   ],
   wiggleDone: [
-    "Ooh — something noticed…",
+    "Ooh, something noticed…",
     "That got its attention",
     "Nice wiggling. Here it comes…",
     "Somebody down there is interested now",
@@ -281,29 +281,29 @@ const PUNS = {
     "Twisting the wait away, Rubik's-cube style",
     "Chill like Bluey on a lazy Sunday…",
   ],
-  // A4: even fly-cast cadence (Stream+). Praise only — never shown as a miss.
+  // A4: even fly-cast cadence (Stream+). Praise only, never shown as a miss.
   niceCast: [
     "Smooth cast! You've got the rhythm 🎣",
     "Ooh, buttery. That fly landed like a feather",
-    "Nice and even — textbook fly cast",
+    "Nice and even. Textbook fly cast",
     "That's the rhythm! The trout are impressed",
     "Smooth cast! Steady as a weightlifter's rep",
-    "Nice and even — classic-rock steady beat",
+    "Nice and even. Classic-rock steady beat",
     "That's the rhythm! Totally Bluey-and-Bingo calm",
   ],
-  // A7: the fish makes a run mid-fight (Ocean). Drama, never a scolding — the
+  // A7: the fish makes a run mid-fight (Ocean). Drama, never a scolding, the
   // kid hasn't done anything wrong, and nothing is lost while these show.
   fishRun: [
     "It's running! Hold steady…",
-    "Whoa — it's taking line!",
+    "Whoa, it's taking line!",
     "It dove deep! Easy does it",
     "Still fighting! You've got this",
-    "That's a strong one — stay with it",
+    "That's a strong one. Stay with it",
     "It's not giving up yet!",
   ],
   bite: [
     "Fish on! Holy mackerel!",
-    "Oh my cod — reel it in!",
+    "Oh my cod, reel it in!",
     "A bite! Hook, line, and sinker!",
     "Fish on! Don't trout yourself now",
     "Fish on! Somebody grab the ketchup",
@@ -313,7 +313,7 @@ const PUNS = {
   catchCommon: [
     "Caught it! Reel-y nice work",
     "Landed! That was off the scale",
-    "Caught — and it wasn't even a fluke",
+    "Caught, and it wasn't even a fluke",
     "Got it! You're quite the catch-er",
     "Caught it! Comic-book-cover worthy",
     "Landed! Rubik's-cube fast",
@@ -331,15 +331,15 @@ const PUNS = {
     "It got away… cod it be worse?",
     "Escaped! A missed oppor-tuna-ty",
     "Gone… but the pond is patient",
-    "It slipped away — better luck next tide",
+    "It slipped away. Better luck next tide",
   ],
   // {it} = the junk item's name (see CONFIG.junk.items)
   junk: [
-    "Aw shucks — you reeled up {it}. Water ya gonna do?",
+    "Aw shucks, you reeled up {it}. Water ya gonna do?",
     "Just {it}. That's a load of pond scum!",
     "You caught {it}?! Talk about a re-boot",
     "{it}. Well, it's the sole of the lake…",
-    "Only {it} — not every cast's a jackpot. Cast again!",
+    "Only {it}, not every cast's a jackpot. Cast again!",
     "{it}! Dino-mite catch… for a lunchbox. Not so much a lake.",
   ],
 };
@@ -351,9 +351,9 @@ let typed = 0;
 let tension = 0;
 let fish = null;           // roster entry currently on the line
 let junk = null;           // junk item on the line instead of a fish (comedy), or null
-let hookedTier = "common"; // the tier that was rolled for it — set at the approach, used at the bite
+let hookedTier = "common"; // the tier that was rolled for it: set at the approach, used at the bite
 let reelPool = [];         // words matched to the hooked fish's difficulty
-let reelMode = "words";    // "words" (Pond) | "phrase" (Stream, A1) — set at each bite
+let reelMode = "words";    // "words" (Pond) | "phrase" (Stream, A1): set at each bite
 let reelSegments = [];     // A7: the sentences this catch is fought over (1 outside the Ocean)
 let segIndex = 0;          // which of those we're currently reeling
 let wordsToLand = 0;
@@ -362,13 +362,13 @@ let inputLocked = false;
 let pickerOpen = true;     // the profile picker gates play until a kid is chosen
 let gameGen = 0;           // bumped on each profile activation; stales old timers
 
-// silent typing stats (feeds the v2 adaptive meter — kids never see these)
+// silent typing stats (feeds the v2 adaptive meter: kids never see these)
 let lastKeyTime = 0;                 // 0 = start of a word, don't time the first letter
 const MAX_LATENCY_MS = 5000;         // ignore gaps this long (kid stepped away)
 function statLetter(l) { return (save.stats.letters[l] ??= { n: 0, errors: 0, msTotal: 0 }); }
 
 // A4: per-catch reel timing for a self-paced WPM (phrase mode only). Active
-// typing time — idle gaps excluded — so a kid who pauses isn't punished. Reset
+// typing time (idle gaps excluded) so a kid who pauses isn't punished. Reset
 // at each bite; read at land. Separate from the stats' lastKeyTime above.
 let reelChars = 0, reelActiveMs = 0, reelLastKeyMs = 0;
 function tickReelWpm() {
@@ -379,7 +379,7 @@ function tickReelWpm() {
   reelChars++;
 }
 
-// A4: fly-cast rhythm — inter-key gaps while typing a cast word, for a cozy
+// A4: fly-cast rhythm, inter-key gaps while typing a cast word, for a cozy
 // "nice cast" line on graduated (fly-fishing) waters. Reset at each cast.
 let castIntervals = [], castLastKeyMs = 0;
 function tickCastRhythm() {
@@ -416,7 +416,7 @@ const pick = a => a[Math.floor(Math.random() * a.length)];
 const rand = (a, b) => a + Math.random() * (b - a);
 const TIER_ORDER = ["legendary", "rare", "uncommon", "common"];   // rarity, hardest → easiest (A3 fish fallback)
 
-// thin wrappers over logic.js — supply the live CONFIG / equipped rod / word pool
+// thin wrappers over logic.js: supply the live CONFIG / equipped rod / word pool
 function rollWeight(tier)           { return logic.rollWeight(CONFIG.size, tier); }
 function pickTier()                 { return logic.pickTier(CONFIG.bite.tierOddsByRod[equippedRod().rodLevel]); }
 function buildReelPool(difficulty)  { return logic.buildReelPool(WORDS, difficulty, CONFIG.reel.minReelPoolSize); }
@@ -424,7 +424,7 @@ function buildReelPool(difficulty)  { return logic.buildReelPool(WORDS, difficul
 // difficulty (same widening machinery as words). Phrases and sentences share
 // one tag schema (AD1), so they merge into a single content pool here; only
 // the entries tagged for save.location survive (Stream phrases at "stream",
-// A5 sentences at "ocean" — never both at once). Empty unless something
+// A5 sentences at "ocean", never both at once). Empty unless something
 // typeable is tagged for this spot.
 function buildPhrasePool(difficulty) {
   const here = [...PHRASES, ...SENTENCES].filter(p => p.location === save.location);
@@ -432,7 +432,7 @@ function buildPhrasePool(difficulty) {
 }
 
 // ---- Audio: procedural synth, no external asset files (M10) ----
-// Web Audio oscillators/filters generate everything — a water-drone ambient
+// Web Audio oscillators/filters generate everything: a water-drone ambient
 // bed plus short SFX blips/chimes. Avoids sourcing/licensing audio for a
 // family project and needs no new files, matching the no-build-step rule.
 // Volumes/timing are CFG knobs; note pitches are sound-design content, kept
@@ -462,7 +462,7 @@ function setSoundOn(on) {
   }
 }
 
-// gentle water ambience: filtered noise, not tonal oscillators — flat sine
+// gentle water ambience: filtered noise, not tonal oscillators, flat sine
 // drones read as an unpleasant hum rather than water. A soft lowpass "body"
 // (like a distant whoosh) plus a bandpass "shimmer" layer whose center
 // frequency slowly sweeps via an LFO (like sunlight glinting on ripples).
@@ -536,8 +536,8 @@ function burst(x, y, n) {
   }
 }
 // R6: the fish breaks the surface on its way to the boat. The splash goes where
-// it actually crosses the waterline — under its own middle, on the line #surface
-// starts at — rather than at the fixed point below the water this used to be,
+// it actually crosses the waterline: under its own middle, on the line #surface
+// starts at: rather than at the fixed point below the water this used to be,
 // where it read as nothing at all.
 function surfaceBreak() {
   const x = parseInt(el.fish.style.left) + fishBox().w / 2;
@@ -546,7 +546,7 @@ function surfaceBreak() {
   sfxSplash();
 }
 
-// visual-cadence constants (rendering only — gameplay tuning stays in config.js)
+// visual-cadence constants (rendering only: gameplay tuning stays in config.js)
 const JUICE = { shadowEveryMs: 6000, bobberRippleMs: 1700, ambientRippleMs: 6500, rippleLifeMs: 1700 };
 
 function ripple(x, y) {
@@ -574,7 +574,7 @@ setInterval(() => {
   const s = document.createElement("div");
   s.className = "fish-shadow";
   s.style.width = rand(30, 70) + "px";
-  s.style.top = rand(258, 348) + "px";   // the water band in scene coords — these
+  s.style.top = rand(258, 348) + "px";   // the water band in scene coords: these
   s.style.left = "-90px";                // used to be relative to the #water div
   s.style.animationDuration = rand(16, 30) + "s";
   el.scene.appendChild(s);
@@ -602,7 +602,7 @@ function bobberIn() {
   const kind = CONFIG.tackle[save.location];
   if (!kind) return;
   // the kind decides the size, so it has to be on the element BEFORE the offsets
-  // are read — otherwise a fly is centred as if it were a cork float
+  // are read: otherwise a fly is centred as if it were a cork float
   el.bobber.classList.add("tackle-" + kind);
   // R1: the tackle takes over exactly where the lure landed
   el.bobber.style.left = (CONFIG.anim.cast.landing.x - el.bobber.offsetWidth / 2) + "px";
@@ -651,11 +651,11 @@ const REDUCE_MOTION = matchMedia("(prefers-reduced-motion: reduce)").matches;
 let swimRAF = null, swimStart = 0;
 let fishX = 0, fishY = 0, fishTX = 0, fishTY = 0;   // current + target fish position
 // the tween carrying it from one to the other: where it left, when, and for how
-// long. See CONFIG.fish.pull — this replaced a per-frame exponential chase.
+// long. See CONFIG.fish.pull: this replaced a per-frame exponential chase.
 let pullFrom = { x: 0, y: 0 }, pullT0 = 0, pullMs = 1;
 
 // target for the current reel progress: starts deep-and-right, ends near the
-// boat at the surface, so reeling pulls the fish up and in. Pure — it moves
+// boat at the surface, so reeling pulls the fish up and in. Pure: it moves
 // nothing; startPull() is what makes the fish travel to it.
 function setFishTarget(progress = 1 - wordsLeft / wordsToLand) {   // 0 at bite, 1 at land
   const p = CONFIG.fish.path;
@@ -679,12 +679,12 @@ function startPull(ms) {
 // The line used to be a rotated <div>: straight by construction, sized by a CSS
 // width transition, which is why it read as *appearing* rather than travelling.
 // It's now an SVG quadratic Bezier redrawn every frame between two ends that
-// both move — the rod tip (which swings with the cast, the tug and the boat's
+// both move: the rod tip (which swings with the cast, the tug and the boat's
 // bob) and whatever is on the other end (a lure in flight, the bobber, a fish).
 // The maths is in logic.js and the numbers are in CONFIG.anim; this is only the
 // DOM half.
 const A = CONFIG.anim;
-// R5: #rig's transform-origin is the pose's anchor pivot, not a constant — the
+// R5: #rig's transform-origin is the pose's anchor pivot, not a constant, the
 // hull it rocks about moves with the vessel.
 const rigPivot = () => pose.anchor.pivot;
 let rodAngle = 0, rodVel = 0;               // the tug spring, in degrees
@@ -702,7 +702,7 @@ let pose = poseFor();                       // R4: the active costume, re-read o
 // grip and its own rod tip, because a standing angler in waders holds the rod
 // somewhere a seated one doesn't. All three are painted now; a location with no
 // pose of its own would still fall back to the default rather than render an
-// empty rig — the wrong shirt rather than no angler at all.
+// empty rig: the wrong shirt rather than no angler at all.
 //
 // R7 needs the pose's KEY as well as its stack, because gear art is named
 // <stem>-<pose>. One function owns the fallback rule so the name and the object
@@ -715,9 +715,9 @@ function poseFor(loc) { return CONFIG.rig.poses[poseNameFor(loc)]; }
 
 // The rod tip in scene coords, through everything that moves it: the rod's own
 // rotation about the grip, then #rig's live CSS transform (the boat's bob).
-// Reading the matrix each frame is the point — the old build resolved the rod
+// Reading the matrix each frame is the point: the old build resolved the rod
 // tip once at load, so any rod that moved would have left the line behind.
-// R4: the rod's swing is split between the wrist and the arm — see swingParts.
+// R4: the rod's swing is split between the wrist and the arm, see swingParts.
 // The arm rotates about its own pivot and carries the grip with it, so the tip
 // is two rotations composed, not one.
 function swingParts() {
@@ -760,7 +760,7 @@ function drawLine() {
 
 // Both layers take their transform-origin from the ARM's pivot, so the arm is a
 // plain rotation and the rod is the same rotation with its own wrist turn about
-// the grip nested inside it. One transform each, no DOM nesting — which matters
+// the grip nested inside it. One transform each, no DOM nesting, which matters
 // because the paint order (rod behind the arm) forbids making one a child of
 // the other.
 function applySwing() {
@@ -774,7 +774,7 @@ function applySwing() {
 }
 
 // Reduced motion runs no animation loop, so anything that changes the line's
-// shape between fish movements — a tug, a tension change — has to ask for its
+// shape between fish movements (a tug, a tension change) has to ask for its
 // own single redraw. The line still ends up in the right place; it just gets
 // there in one step instead of over frames.
 function lineChanged() { if (REDUCE_MOTION && lineMode !== "off") drawLine(); }
@@ -864,7 +864,7 @@ const fishArt = (f) => (f ? CONFIG.fish.species[f.id] : null) ?? null;
 // Where the mouth and the middle are. The placeholder's numbers are the ones
 // drawFish() and pullFishOneWord() used to hardcode, so a species without art
 // behaves exactly as it did. Every species in fish.json now has art, so the
-// fallback serves nothing today — it stays because it is what keeps a species
+// fallback serves nothing today: it stays because it is what keeps a species
 // added ahead of its painting playable rather than invisible.
 const fishBox = () => fishArt(fish) ?? CONFIG.fish.placeholder;
 
@@ -873,7 +873,7 @@ function renderFish(f) {
   el.fish.querySelectorAll(".fish-layer").forEach(n => n.remove());
   el.fish.classList.toggle("rigged", !!art);
   if (!art) {
-    // let the stylesheet own the box again — a legendary's box is wider than
+    // let the stylesheet own the box again: a legendary's box is wider than
     // the placeholder's, and an inline width would quietly shrink it
     el.fish.style.removeProperty("width");
     el.fish.style.removeProperty("height");
@@ -945,7 +945,7 @@ function stopSwim() {
 
 // The one that got away, darting off into deep water. land() has already
 // stopped the swim RAF by the time this runs, so the move is handed to a CSS
-// transition — the same way the approach drifts in — rather than being set
+// transition (the same way the approach drifts in) rather than being set
 // straight onto `left`, which is what used to make an escape a disappearance.
 function fleeOffscreen() {
   const esc = CONFIG.fish.escape;
@@ -962,7 +962,7 @@ function startCast() {
   target = pick(WORDS).w; typed = 0; lastKeyTime = 0;
   castIntervals = []; castLastKeyMs = 0;   // A4: fresh fly-cast rhythm window
   tension = 0; renderTension();
-  el.dist.textContent = "—";
+  el.dist.textContent = "–";
   lineOff();                         // line's in; the next cast throws it back out
   bobberOut(false);
   el.fish.style.opacity = 0;
@@ -984,11 +984,11 @@ function startWait() {
   el.word.textContent = "";
   updateGuide(null);
   // A4: on graduated (fly-fishing) waters, an even casting cadence earns a cozy
-  // line — never a penalty, and the Pond casts exactly as before.
+  // line, never a penalty, and the Pond casts exactly as before.
   const flyWater = save.location !== CONFIG.tiers[0].location;
   const niceCast = flyWater && logic.isEvenCadence(castIntervals, CONFIG.flyCast.minKeys, CONFIG.flyCast.maxCadenceCv);
   setStatus(niceCast ? pick(PUNS.niceCast) : pick(PUNS.wait));
-  // R1: the rod loads, swings, and the lure flies — the splash, the bobber and
+  // R1: the rod loads, swings, and the lure flies, the splash, the bobber and
   // the wait for a bite all now hang off where and when the lure actually lands.
   castLine(() => {
     burst(A.cast.landing.x + 6, A.cast.landing.y - 1, A.cast.splashParticles);
@@ -1003,7 +1003,7 @@ function startWait() {
 }
 
 // R6: the fish shows itself before it bites. A fast bait shortens the tease
-// rather than losing it — the approach never starts before the cast lands.
+// rather than losing it: the approach never starts before the cast lands.
 // F4 pulled this out of startWait because the end of a wiggle arms a bite the
 // same way, just from a much shorter range.
 function armBite(range) {
@@ -1015,7 +1015,7 @@ function armBite(range) {
 // ---- F4: the wiggle ----
 // The wait used to be locked input and nothing to do. On a wiggle cast the kid
 // types a couple of short words to twitch the bait, and the fish comes when
-// they finish — no wiggle, no bite (Matt's call; the reasoning and why it does
+// they finish, no wiggle, no bite (Matt's call; the reasoning and why it does
 // not break the cozy guardrail are on CONFIG.wiggle).
 //
 // It is deliberately the plainest possible use of the machinery already here:
@@ -1031,7 +1031,7 @@ function startWiggle() {
   nextWiggleWord();
 }
 
-// Short words only — a twitch, not a cast. Falls back to the whole unlocked
+// Short words only: a twitch, not a cast. Falls back to the whole unlocked
 // pool if a stage somehow has none: stage 1 is 37 home-row words and a filter
 // that comes back empty must never be able to strand the cast.
 function nextWiggleWord() {
@@ -1053,7 +1053,7 @@ function wiggleComplete() {
 
 // One word's worth of twitch. The whole mechanic rests on a kid being able to
 // SEE their typing move something in the water, so every word moves the bobber,
-// rings the surface and pulls the rod — the same three things a reeled word
+// rings the surface and pulls the rod: the same three things a reeled word
 // already does, aimed at the bait instead of at a fish.
 function twitchBait() {
   el.bobber.classList.remove("twitch"); void el.bobber.offsetWidth;
@@ -1064,7 +1064,7 @@ function twitchBait() {
 }
 
 // What is on its way up. Rolled at the START of the approach rather than at the
-// bite, so the silhouette a kid sees is the fish that actually takes the hook —
+// bite, so the silhouette a kid sees is the fish that actually takes the hook,
 // the odds are untouched, only the moment they are asked.
 function chooseCatch() {
   junk = Math.random() < CONFIG.junk.chance ? pick(CONFIG.junk.items) : null;
@@ -1080,7 +1080,7 @@ function chooseCatch() {
 }
 
 // R6: the fish rises out of the depths as a silhouette before it bites, behind
-// #surface — which is the front plane V1 was built for and has never had
+// #surface, which is the front plane V1 was built for and has never had
 // anything to put behind it. It drifts to exactly where the hooked fish starts,
 // so the tease and the hook are one fish rather than two that line up.
 //
@@ -1098,8 +1098,8 @@ function approach() {
   // renderFish sets `.rigged` and this line would wipe it. It did, for as long
   // as the approach has existed: `#fish:not(.rigged)` paints the old shared
   // fish-common.png placeholder, so the tease was that generic body showing
-  // through behind the two real species layers, and the bite — which calls
-  // renderFish again, after its own class work — was where the real fish
+  // through behind the two real species layers, and the bite, which calls
+  // renderFish again, after its own class work: was where the real fish
   // finally appeared. One shape rises, the same shape takes the hook.
   el.fish.className = "silhouette";
   renderFish(fish);
@@ -1122,15 +1122,15 @@ function bite() {
   el.fish.style.removeProperty("--drift");
 
   // Content unit for this catch (AD2): reel a phrase when typeable phrase content
-  // is tagged for this spot (the Stream, A1); otherwise word-at-a-time — the Pond,
+  // is tagged for this spot (the Stream, A1); otherwise word-at-a-time: the Pond,
   // and junk everywhere (a boot doesn't earn a phrase). Empty phrase pool falls
   // back to words, so a missing/short data set never blocks a catch.
   const phrasePool = junk ? [] : buildPhrasePool(fish.difficulty);
   reelMode = phrasePool.length ? "phrase" : "words";
   reelChars = 0; reelActiveMs = 0; reelLastKeyMs = 0;   // A4: fresh WPM window per catch
   if (reelMode === "phrase") {
-    // A7: at a fight location a bigger fish takes more segments — one sentence
-    // each — so a marlin is a fight and a sardine is a snack. Everywhere else
+    // A7: at a fight location a bigger fish takes more segments, one sentence
+    // each, so a marlin is a fight and a sardine is a snack. Everywhere else
     // this is 1, leaving the Stream's single-phrase catch exactly as it was.
     const segs = logic.segmentsForTier(CONFIG.fight, save.location, tier);
     reelSegments = logic.pickDistinct(phrasePool, segs);
@@ -1155,7 +1155,7 @@ function bite() {
   el.fish.classList.add("submerged");   // V1: seen through the water until it's landed
   lineMode = "reel";                    // R1: the curve now answers to tension
   setFishTarget();
-  // emerge deep and right of the finger panel, then rise up-and-in — and this is
+  // emerge deep and right of the finger panel, then rise up-and-in, and this is
   // the point the silhouette has just drifted to, from the same config
   fishX = fishTX + CONFIG.fish.approach.spawn.dx;
   fishY = fishTY + CONFIG.fish.approach.spawn.dy;
@@ -1207,13 +1207,13 @@ function wordComplete() {
   later(() => { inputLocked = false; nextReelWord(); }, CONFIG.reel.wordPauseMs);
 }
 
-// The reel content's last unit was just typed — land it. Word mode defers to
+// The reel content's last unit was just typed: land it. Word mode defers to
 // wordComplete's 450ms beat; a phrase pulls its final word straight to the boat
 // (its beats already happened at each typed space).
 function reelComplete() {
   if (reelMode !== "phrase") return wordComplete();
   pullFishOneWord();
-  // A7: a fight runs across several sentences — land only once the last one is
+  // A7: a fight runs across several sentences, land only once the last one is
   // in. (wordsToLand spans every segment, so these two agree; the || keeps a
   // short-count from ever hanging the catch mid-fight.)
   if (wordsLeft <= 0 || segIndex + 1 >= reelSegments.length) return land(true);
@@ -1223,7 +1223,7 @@ function reelComplete() {
   });
 }
 
-// A7: the fish makes a run. Pure theatre — it darts back on screen and the reel
+// A7: the fish makes a run. Pure theatre, it darts back on screen and the reel
 // beats for a moment, but `wordsLeft` is untouched, so **no progress is lost**
 // and tension never moves. The swim RAF already tweens fishX toward fishTX, so
 // nudging the target outward and restoring it afterwards is the whole animation.
@@ -1247,7 +1247,7 @@ function fishRun(ms, then) {
 }
 
 // Forgiving spacebar (A1): it only ever advances between the words of a phrase,
-// and it never touches tension — a mistimed or missing space can't cost the
+// and it never touches tension: a mistimed or missing space can't cost the
 // catch, so "slow + careful always lands" still holds. Anything else is a no-op.
 function handleSpace() {
   if (phase === "reel" && reelMode === "phrase" && target[typed] === " ") {
@@ -1259,7 +1259,7 @@ function handleSpace() {
   }
 }
 
-// Forgiving punctuation (A5): same spirit as the spacebar — a real key the
+// Forgiving punctuation (A5): same spirit as the spacebar, a real key the
 // kid must press (it's genuinely part of the sentence), but a wrong key while
 // a mark is due is a silent no-op, and a correct mark never touches tension.
 // Unlike a space, a mark can be the very last character of a sentence, so it
@@ -1276,11 +1276,11 @@ function handlePunct(key) {
     else if (fightWater()) fishRun(CONFIG.fight.clauseRunMs);
   }
 }
-// A7: fight pacing is a property of the water, not the fish — the Stream's
+// A7: fight pacing is a property of the water, not the fish, the Stream's
 // phrases carry no punctuation anyway, so it never sees a clause run.
 function fightWater() { return CONFIG.fight.fromLocations.includes(save.location); }
 
-// Shared tail of "the current reel content is fully typed" — reached either
+// Shared tail of "the current reel content is fully typed": reached either
 // by a letter (the common case) or by a sentence-final punctuation mark (A5).
 function finishReelUnit() {
   save.stats.wordsTyped++;
@@ -1296,13 +1296,13 @@ function land(success) {
   el.word.textContent = "";
   updateGuide(null);
   if (success && junk) {
-    // comedy catch: no coins, no collection — just a groan
+    // comedy catch: no coins, no collection, just a groan
     el.fish.classList.remove("submerged");   // breaks the surface, snaps into focus
     el.fish.classList.add("landing");
     surfaceBreak();
     save.jokesEndured = (save.jokesEndured ?? 0) + 1;
     // T3: which junk, not just how much of it. Same shape as save.collection so
-    // the sync story is the one FIRESTORE.md already describes — an increment
+    // the sync story is the one FIRESTORE.md already describes: an increment
     // on one key, folded into the write this catch was making anyway.
     save.junk ??= {};
     save.junk[junk.id] = (save.junk[junk.id] ?? 0) + 1;
@@ -1324,12 +1324,12 @@ function land(success) {
     const stagesBefore = unlockedStageCount(totalCatches());
     const firstCatch = !save.collection[fish.id];
     // A8: asked *before* the collection is credited, since prestige is derived
-    // from it — a second Muskie is a great day, not a second ceremony
+    // from it: a second Muskie is a great day, not a second ceremony
     const prestigeNow = logic.earnsPrestige(CONFIG.prestige, fish.id, hasPrestige());
     const amount = logic.catchReward(fish.coins, firstCatch, CONFIG.economy.firstCatchBonus);
     save.coins += amount;
     save.collection[fish.id] = (save.collection[fish.id] ?? 0) + 1;
-    // the collection just changed, so the derived rank may have too (A8) —
+    // the collection just changed, so the derived rank may have too (A8),
     // refresh it now so persistSave below stores the Muskie rank, rather than
     // it only appearing after the next reload
     if (prestigeNow) recomputeLocations();
@@ -1339,7 +1339,7 @@ function land(success) {
     const rec = save.records[fish.id];          // { weight, wpm } | undefined
     const newBest = logic.isPersonalBest(rec?.weight, weight);
     // A4: per-species WPM, tracked & shown on Stream+ (phrase) catches only. A
-    // slower-than-best run is never a fail — it just isn't flagged as a best.
+    // slower-than-best run is never a fail: it just isn't flagged as a best.
     const wpm = reelMode === "phrase" ? logic.computeWpm(reelChars, reelActiveMs) : 0;
     const newWpmBest = reelMode === "phrase" && logic.isPersonalBestWpm(rec?.wpm, wpm);
     save.records[fish.id] = {
@@ -1356,7 +1356,7 @@ function land(success) {
     const isRare = fish.tier === "rare" || fish.tier === "legendary";
     (isRare ? sfxRareCatch : sfxCatch)();
     const pun = isRare ? pick(PUNS.catchRare) : pick(PUNS.catchCommon);
-    const sizeNote = ` — ${fish.name} (${weight} lb`
+    const sizeNote = `: ${fish.name} (${weight} lb`
       + (cls === "lunker" ? ", a LUNKER!" : cls === "little" ? ", a little one" : "")
       + ")";
     const wpmNote = (reelMode === "phrase" && wpm > 0)
@@ -1365,7 +1365,7 @@ function land(success) {
     const weightBestNote = (newBest && !firstCatch) ? " ★ new best!" : "";
     // F3: the same three facts the old corner message carried, on a card big
     // enough to read. A first catch is trivially a personal best, so it flies
-    // the one flag that is actually news — exactly as the old string did.
+    // the one flag that is actually news: exactly as the old string did.
     const flags = [];
     if (firstCatch) flags.push("NEW SPECIES");
     else if (newBest) flags.push("NEW RECORD");
@@ -1393,7 +1393,7 @@ function land(success) {
       celebrating = true;
     }
     // A8: the capstone queues *after* any letter banner, so the two celebrations
-    // never land on top of each other — and the recast waits for both
+    // never land on top of each other, and the recast waits for both
     if (prestigeNow) {
       later(showPrestige, delay);
       delay += CONFIG.prestige.celebrateMs;
@@ -1401,7 +1401,7 @@ function land(success) {
     }
     // F3: the card is the LAST thing to arrive when a banner is due. The banner
     // and the card are both full-width panels in the same band and they do not
-    // both fit — measured, not guessed: the band is 364px tall on a 720 screen
+    // both fit: measured, not guessed: the band is 364px tall on a 720 screen
     // and they need 410 between them. So the celebration plays first and the
     // card is what is left on screen when it clears, which is also the right
     // order to read them in. With no banner due there is nothing to wait for.
@@ -1429,7 +1429,7 @@ function land(success) {
 // ---- F3: the catch card ----
 // The payoff. This used to be one setStatus line in the top-left corner at
 // 12px, held for reel.recastDelayMs (1500ms) and then overwritten by the cast
-// prompt — by which point the fish had already arced off the screen, so there
+// prompt: by which point the fish had already arced off the screen, so there
 // was nothing to look at and no time to read what you had caught.
 //
 // ONE surface with three dresses (Matt's call): a plain card for a junk pull or
@@ -1438,16 +1438,16 @@ function land(success) {
 // nothing to sequence against anything else.
 //
 // It has no timer. It is dismissed by the kid starting the next word, and that
-// keystroke still counts — see the keydown handler.
+// keystroke still counts: see the keydown handler.
 let cardUp = false;
 // Bumped by anything that invalidates a card, including one still WAITING on a
-// celebration banner — a kid can reach the location buttons during those 2.6s,
+// celebration banner: a kid can reach the location buttons during those 2.6s,
 // and the Ocean should not then be handed the Pond's trophy.
 let cardGen = 0;
 
 // `files` is the paint order, same as CONFIG.fish.species[].layers: the fish's
 // own cut layers for a catch, one sprite for junk, none for an escape. CSS
-// paints the FIRST background-image on top, so the list is reversed here — the
+// paints the FIRST background-image on top, so the list is reversed here: the
 // same trick the journal grid uses, and the reason a card fish has its tail.
 function showCatchCard({ kind, files = [], box, name, sub, pun, coins = 0, flags = [] }) {
   const card = $("catch-card");
@@ -1459,7 +1459,7 @@ function showCatchCard({ kind, files = [], box, name, sub, pun, coins = 0, flags
     ? files.map(f => `url("assets/${f}.png")`).reverse().join(", ")
     : "";
   // Drawn from the species' own box so every fish arrives at the same LENGTH
-  // and keeps its own proportions — the card is where a kid finally sees the
+  // and keeps its own proportions: the card is where a kid finally sees the
   // thing at a size worth painting, and 33 species at 33 scales would undo R6.
   const px = kind === "junk" ? CONFIG.card.junkPx : CONFIG.card.fishPx;
   const scale = box ? px / box.w : 1;
@@ -1502,7 +1502,7 @@ function showBanner(title, big, ms = CONFIG.unlock.celebrateMs) {
   return banner;
 }
 
-// A8: the Muskie capstone — the biggest moment in the game. Same banner as a
+// A8: the Muskie capstone, the biggest moment in the game. Same banner as a
 // rank-up, but held longer, gold-trimmed, and with confetti that keeps coming.
 // Fires once, on the first Muskie Quixote ever landed.
 function showPrestige() {
@@ -1513,7 +1513,7 @@ function showPrestige() {
   sfxRareCatch();
   // rolling confetti across the scene, rather than the single burst a rank-up gets
   for (let i = 0; i < 6; i++) later(() => burst(140 + i * 90, 110 + (i % 3) * 55, 14), i * 280);
-  later(() => showBadgeToast({ name: `${p.label} — you landed Muskie Quixote` }), p.celebrateMs - 1100);
+  later(() => showBadgeToast({ name: `${p.label}, you landed Muskie Quixote` }), p.celebrateMs - 1100);
 }
 
 // the "new letter!" moment: banner over the pond, fresh keys pulse on the guide
@@ -1533,7 +1533,7 @@ function showRankUp(tier) {
   save.location = tier.location;
   applyScene();
   showBanner("NEW SPOT UNLOCKED!", (tier.badge + " " + tier.locationName).toUpperCase());
-  later(() => showBadgeToast({ name: `${tier.label} — now fishing ${tier.locationName}` }),
+  later(() => showBadgeToast({ name: `${tier.label}, now fishing ${tier.locationName}` }),
         CONFIG.unlock.celebrateMs);
   persistSave();
 }
@@ -1557,7 +1557,7 @@ document.addEventListener("keydown", (e) => {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (e.key.length !== 1) return;
   // F3: starting the next word yanks the catch card off. It happens here, above
-  // the hit/miss logic, so the keystroke that dismisses it is not swallowed —
+  // the hit/miss logic, so the keystroke that dismisses it is not swallowed,
   // and so a wrong first letter dismisses it too, because the kid has still
   // started typing. inputLocked above means keys during the recast pause do
   // nothing at all, card included.
@@ -1573,8 +1573,8 @@ document.addEventListener("keydown", (e) => {
   // (mirrors handleSpace/handlePunct's own no-op when the wrong key shows up)
   if (!/[a-z]/i.test(expected ?? "")) return;
   // Case matters only for a capital target (A2): a capital must be typed with
-  // Shift (exact match). A lowercase target accepts either case, so the Pond —
-  // lowercase-only forever — behaves exactly as before (a stray Shift is harmless).
+  // Shift (exact match). A lowercase target accepts either case, so the Pond,
+  // lowercase-only forever: behaves exactly as before (a stray Shift is harmless).
   const hit = expected === expected.toLowerCase()
     ? e.key.toLowerCase() === expected
     : e.key === expected;
@@ -1652,7 +1652,7 @@ KB.rows.forEach((row, r) => {
 // OPPOSITE hand's pinky on Shift, so the guide can animate that reach.
 const SHIFT_KEYS = [
   { id: "lshift", x: 0, w: KB.rows[2].off },
-  // sits just past the end of the bottom row — derived, not a hardcoded key
+  // sits just past the end of the bottom row: derived, not a hardcoded key
   // count, so adding `,./` (A5-guide) moved it automatically
   { id: "rshift", x: KB.rows[2].off + KB.rows[2].keys.length * KB.pitch, w: S(64) },
 ];
@@ -1684,7 +1684,7 @@ Object.entries(FINGER_HOMES).forEach(([f, home]) => {
 
 // Size the guide from what actually got laid out, rather than the constants it
 // used to carry. #guide-panel is overflow:hidden, so a row that outgrows a
-// hardcoded width silently loses its rightmost keys — which is exactly what
+// hardcoded width silently loses its rightmost keys, which is exactly what
 // adding `,./` + the shifted right Shift would have done (A5-guide).
 {
   const keys = [...guide.querySelectorAll(".key")];
@@ -1700,15 +1700,15 @@ Object.entries(FINGER_HOMES).forEach(([f, home]) => {
 }
 
 // Shrink the guide to fit a narrow window instead of letting the panel crop it.
-// The panel is overflow:hidden, so without this the rightmost key — the right
-// Shift, the very key a capital tells you to press — just disappears below
+// The panel is overflow:hidden, so without this the rightmost key: the right
+// Shift, the very key a capital tells you to press: just disappears below
 // ~700px. Mirrors fitScene above. The panel is sized explicitly because a CSS
 // transform doesn't change layout size, so it would otherwise still reserve
 // (and crop at) the guide's natural width.
 const guidePanel = $("guide-panel");
 const PANEL_MARGIN = 20;   // matches #guide-panel's max-width: calc(100vw - 20px)
 function fitGuide() {
-  // padding + border come from the stylesheet, not a constant here — the panel
+  // padding + border come from the stylesheet, not a constant here: the panel
   // is border-box, so forgetting its 1px border silently crops a key
   const cs = getComputedStyle(guidePanel);
   const px = (...v) => v.reduce((a, p) => a + parseFloat(cs[p]), 0);
@@ -1725,7 +1725,7 @@ fitGuide();
 
 // dim keys the player hasn't unlocked yet. The ghost keys (";" anchor, `,` `.`
 // `/`) and the Shift keys aren't letters in the unlock ladder, so they're never
-// "locked" — they just sit quiet until something calls for them.
+// "locked": they just sit quiet until something calls for them.
 function renderKeyLocks() {
   guide.querySelectorAll(".key").forEach(k => {
     const ch = k.dataset.ch;
@@ -1747,8 +1747,8 @@ function reachFinger(finger, posId) {
 // Which physical key a target character is typed on, and whether it needs
 // Shift. Three cases share one path: a plain letter or `,` `.` (press the key),
 // a capital (Shift + the lowercase key, A2), and shifted punctuation like `?`
-// (Shift + `/`, A5). Anything with no key on the rendered board — `!`, which
-// lives on the number row — comes back unmapped and simply isn't guided.
+// (Shift + `/`, A5). Anything with no key on the rendered board: `!`, which
+// lives on the number row: comes back unmapped and simply isn't guided.
 function keyForTarget(ch) {
   if (SHIFTED_PUNCT[ch]) return { key: SHIFTED_PUNCT[ch], shift: true };
   const lower = ch.toLowerCase();
@@ -1763,7 +1763,7 @@ function updateGuide(letter) {
   const finger = LETTER_FINGER[key];
   if (!finger) return;                        // not on the rendered board (e.g. "!")
   reachFinger(finger, key);
-  // A2: a shifted character also needs Shift — the OPPOSITE hand's pinky reaches
+  // A2: a shifted character also needs Shift, the OPPOSITE hand's pinky reaches
   // for it, so the same hand isn't asked to do two things at once
   if (shift) {
     const leftHand = finger[0] === "l";
@@ -1802,7 +1802,7 @@ function toggleControls(open) {
 
 // ---- Dev/test shortcut (build + playtest phase only) ----------------------
 // Gated by CONFIG.dev.testShortcuts. A clearly-labelled 🧪 tackle-box button
-// that grants every rod (owning the location-unlocking ones opens their spots —
+// that grants every rod (owning the location-unlocking ones opens their spots,
 // AD4) and jumps to the furthest unlocked spot, so a playtest reaches the
 // advanced tiers instantly instead of grinding there. Remove this block, or set
 // CONFIG.dev.testShortcuts = false, before a real release.
@@ -1818,7 +1818,7 @@ function setupDevTools() {
 function unlockAllSpotsForTest() {
   if (!save) return;
   // every letter, so the Stream's phrases and the Ocean's sentences are
-  // actually typeable — capitals and punctuation still ride on the content
+  // actually typeable: capitals and punctuation still ride on the content
   // tagging (CONFIG.capitals/punctuation.fromLocations), so the Stream stays
   // letters-and-spacebar and only the Ocean serves punctuation
   save.devAllKeys = true;
@@ -1837,7 +1837,7 @@ function unlockAllSpotsForTest() {
   applyScene();
   if (shopOpen) renderShop();
   const here = CONFIG.tiers.find(t => t.location === save.location);
-  setStatus(`🧪 Test: all spots + all letters unlocked — now fishing ${here.locationName}.`);
+  setStatus(`🧪 Test: all spots + all letters unlocked, now fishing ${here.locationName}.`);
 }
 setupDevTools();
 
@@ -1867,21 +1867,21 @@ function switchLocation(loc) {
 }
 
 // R7: which shop list each `gear` slot draws from. The layer says "hat", the
-// shop stores hats under `hats`, and the save equips one at `upgrades.hat` — a
+// shop stores hats under `hats`, and the save equips one at `upgrades.hat`: a
 // data test holds all three to each other, because a typo in any of them is a
 // slot that silently never resolves.
 const GEAR_LISTS = { rod: "rods", hat: "hats" };
-// thin wrapper over logic.gearFile — supplies the live CONFIG and save
+// thin wrapper over logic.gearFile: supplies the live CONFIG and save
 function layerFile(L, poseName) {
   return logic.gearFile(L, poseName, save?.upgrades?.[L.gear],
                         CONFIG.shop[GEAR_LISTS[L.gear]], CONFIG.rig.gearArt);
 }
 
 // G1: draw the angler as layers from the active pose's stack. Called at boot,
-// again from applyScene() whenever the kid changes water (R4 — the costume
+// again from applyScene() whenever the kid changes water (R4: the costume
 // belongs to the location), and by the hat/rod shop (R7) on equip, which is the
-// whole point of the split. R1: the line is no longer a child of #rig — it's an
-// SVG in scene space — and the rod layer gets the pivot it rotates about, so
+// whole point of the split. R1: the line is no longer a child of #rig, it's an
+// SVG in scene space, and the rod layer gets the pivot it rotates about, so
 // the cast and the tug swing the rod rather than the whole angler.
 function renderRig(loc) {
   const poseName = poseNameFor(loc);
@@ -1912,7 +1912,7 @@ function renderRig(loc) {
   // A shop hull is a TINT of this pose's own painting, not a painting of its
   // own, so both halves always draw the pose's files and the skin only adds a
   // filter. That fixes three things the swapped-file version got wrong, none of
-  // which could show while every vessel was skinnable:false — it skinned the
+  // which could show while every vessel was skinnable:false: it skinned the
   // `far` half only, leaving a brown near gunwale in front of a red kid; it
   // pointed the free `classic` at the pixel-era boat.png, so equipping the
   // default would have painted the OLD boat over the painted one; and a skin
@@ -1942,7 +1942,7 @@ function renderRig(loc) {
     d.style.width = L.w + "px"; d.style.height = L.h + "px";
     d.style.backgroundImage = `url("assets/${file}.png")`;
     // Both swinging layers rotate about the arm's pivot when there is one, so
-    // the rod's wrist turn can nest inside the arm's — see applySwing().
+    // the rod's wrist turn can nest inside the arm's: see applySwing().
     if (L.id === "rod" || L.id === "arm") {
       const o = pose.armPivot ?? pose.rodPivot;
       d.style.transformOrigin = `${o.x - L.x}px ${o.y - L.y}px`;
@@ -1998,18 +1998,18 @@ function renderCollection() {
       const count = save.collection[f.id] ?? 0;
       const cell = document.createElement("div");
       // R2: the tier rides on the cell so a caught rare/legendary glows here the
-      // way it does in the scene. It mattered more once the palette was muted —
+      // way it does in the scene. It mattered more once the palette was muted,
       // the loudest fish used to be legendary by sheer colour, and now nothing is
       // loud, so rarity needs to be said rather than implied.
       cell.className = "cell" + (count ? " tier-" + f.tier : " unknown");
       const shape = document.createElement("div");
       shape.className = "cfish";
       if (count) shape.style.setProperty("--fish-color", f.color);
-      // R6: a caught species with its own art shows the real body sprite here —
+      // R6: a caught species with its own art shows the real body sprite here,
       // this is the half of "reads as 33 different fish" that isn't the scene.
       // An uncaught one keeps the tinted blob however much art exists: the
       // silhouette is the tease, and the grid would spoil every fish otherwise.
-      // ALL of its layers, not just the body — the tail is a separate cut and a
+      // ALL of its layers, not just the body: the tail is a separate cut and a
       // fish without one is a fish with its tail chopped off. CSS paints the
       // first background-image in the list on top, so the pose's paint order
       // (tail first, body over it) is the list reversed. Both cuts share one
@@ -2059,7 +2059,7 @@ function hatHint(hat)   { return hat.file ? "just for the look of it" : "no hat 
 
 // Show whatever is equipped, on the angler (also called on load).
 // R5: the vessel is a rig layer now, not a standalone #boat, so equipping a
-// skin rebuilds the rig. Poses whose vessel isn't `skinnable` ignore it — a
+// skin rebuilds the rig. Poses whose vessel isn't `skinnable` ignore it: a
 // rowboat skin has no business on a Boston Whaler, and the Stream has no
 // vessel at all. R7 puts rods and hats through the same door, which is why this
 // is no longer applyBoatSkin(): one rebuild reads every equipped slot at once.
@@ -2107,7 +2107,7 @@ function renderShopList(items, container, kind, hint) {
         save.coins -= item.cost;
         save.upgrades.owned[kind].push(item.id);
         save.upgrades[kind] = item.id;
-        // A0: a rod may unlock a new fishing spot — graduate + celebrate
+        // A0: a rod may unlock a new fishing spot, graduate + celebrate
         const freshTiers = kind === "rod" ? graduateLocations() : [];
         const freshBadges = evaluateBadges();   // e.g. "Tackle Box Tycoon" on the last rod
         persistSave();
@@ -2141,7 +2141,7 @@ function maybeShowRodNudge() {
   if (save.stats.rodNudgeShown || totalCatches() < CONFIG.economy.rodNudgeAt) return;
   save.stats.rodNudgeShown = true;
   persistSave();
-  if (save.upgrades.rod !== "stick") return;   // already upgraded — no need to nag
+  if (save.upgrades.rod !== "stick") return;   // already upgraded, no need to nag
   toggleNudge(true);
 }
 $("nudge-shop").addEventListener("click", () => { toggleNudge(false); toggleShop(true); });
@@ -2150,7 +2150,7 @@ $("nudge-close").addEventListener("click", () => toggleNudge(false));
 // ---- Parent progress view: per-key accuracy heatmap from stats.letters ----
 let progressOpen = false;
 const progressRoot = $("progress");
-// R2: same red→green meaning, muted into the warm palette (ART_DIRECTION.md —
+// R2: same red→green meaning, muted into the warm palette (ART_DIRECTION.md,
 // nothing in the game is saturated any more, the heatmap included). Saturation
 // and lightness ease across the ramp so the middle doesn't go acid yellow.
 const accColor = acc => {
@@ -2210,7 +2210,7 @@ $("progress-close").addEventListener("click", () => toggleProgress(false));
 const fishTierOf = id => FISH.find(f => f.id === id)?.tier;
 function hasLegendary() { return Object.keys(save.collection).some(id => fishTierOf(id) === "legendary"); }
 // A8: the prestige rank is *held by having caught the fish*, not by a saved
-// flag — so it can never drift from the collection, and a save that landed the
+// flag, so it can never drift from the collection, and a save that landed the
 // legendary before A8 existed is credited the moment it loads.
 function hasPrestige() { return (save?.collection?.[CONFIG.prestige.fishId] ?? 0) > 0; }
 // the rank a kid wears, for display. Ranks were stored but never shown anywhere
@@ -2270,7 +2270,7 @@ function junkPulled() {
 }
 
 // mark any freshly-satisfied badges as earned; returns the newly-earned ones.
-// Does NOT persist — the caller's persistSave() flushes them in its normal write.
+// Does NOT persist: the caller's persistSave() flushes them in its normal write.
 function evaluateBadges() {
   save.badges ??= [];
   const newly = [];
@@ -2283,7 +2283,7 @@ function evaluateBadges() {
 
 const badgeToast = $("badge-toast");
 function showBadgeToast(b) {
-  badgeToast.innerHTML = `<span class="badge-medal">🎖️</span> Badge earned — <b>${b.name}</b>`;
+  badgeToast.innerHTML = `<span class="badge-medal">🎖️</span> Badge earned: <b>${b.name}</b>`;
   badgeToast.classList.add("show");
   sfxUnlock();
   clearTimeout(badgeToast._timer);
@@ -2296,7 +2296,7 @@ function renderJournal() {
   evaluateBadges();          // backfill retroactively earned badges (old saves / pre-journal progress)
   persistSave();
   const earned = BADGES.filter(b => save.badges.includes(b.id)).length;
-  // A8 also surfaces the kid's rank here — it was stored from A0 onward but
+  // A8 also surfaces the kid's rank here: it was stored from A0 onward but
   // never actually shown anywhere, which made "you made Marlin!" a one-off toast
   // with no lasting record. Now every rank has a home, Muskie included.
   $("journal-summary").innerHTML =
@@ -2315,7 +2315,7 @@ function renderJournal() {
 }
 
 // T3: what you have dredged up. Junk is not a fish, so it has no place in the
-// collection grid — it lives here, under the badges it earns. A piece you have
+// collection grid: it lives here, under the badges it earns. A piece you have
 // never pulled stays locked rather than showing a dimmed sprite: the fish grid
 // teases with a silhouette because the SHAPE is the reward, and a boot's shape
 // is not. The gag is the surprise.
@@ -2358,7 +2358,7 @@ $("journal-close").addEventListener("click", () => toggleJournal(false));
 // comparable to each other as they unlock letters (CONFIG.speedTest).
 //
 // It is also deliberately SEALED OFF from the fishing save. It never touches
-// save.stats, save.collection, coins or badges — "Hooked on Typing" counts
+// save.stats, save.collection, coins or badges: "Hooked on Typing" counts
 // words reeled from real fish, and a timed run must not farm it. Under a clock
 // a kid mistypes more than they ever would while fishing, so folding those keys
 // into the Grown-ups heatmap would misreport which keys they actually struggle
@@ -2383,7 +2383,7 @@ function stBestLine() {
   const b = save?.speedBest;
   $("st-best").textContent = b?.wpm
     ? `Your best so far: ${b.wpm} wpm · ${b.accuracy}% accurate`
-    : "No score yet — set one!";
+    : "No score yet. Set one!";
 }
 
 // A long queue up front so the run never pauses to think, topped up as it drains.
@@ -2600,7 +2600,7 @@ function setSyncStatus(state, detail) {
     syncStatus.textContent = detail || "play saves on this device";
     syncBtn.textContent = "SIGN IN TO SYNC";
   } else {
-    syncStatus.textContent = "playing offline — saves on this device";
+    syncStatus.textContent = "playing offline, saved on this device";
   }
 }
 syncBtn.addEventListener("click", () => { fb?.uid ? signOutSync() : signIn(); });
@@ -2635,7 +2635,7 @@ function activateProfile(id) {
 
 try {
   // NB: PHRASE_POOL/SENTENCE_POOL were declared back in A1 but never actually
-  // fetched here — the Stream silently never reeled phrases (or capitals, or
+  // fetched here: the Stream silently never reeled phrases (or capitals, or
   // WPM) at runtime despite A1-A4 shipping. Fixed alongside A5's sentences.
   [FULL_POOL, FISH, PHRASE_POOL, SENTENCE_POOL] = await Promise.all([
     loadJson("data/words.json"), loadJson("data/fish.json"),

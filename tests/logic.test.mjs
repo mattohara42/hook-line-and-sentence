@@ -1,4 +1,4 @@
-// Unit tests for the pure game math in logic.js. Deterministic — RNG is
+// Unit tests for the pure game math in logic.js. Deterministic: RNG is
 // injected, so no browser and no flakiness. Run with `node --test`.
 
 import { test } from "node:test";
@@ -91,7 +91,7 @@ test("buildReelPool keeps to the exact difficulty when the pool is deep enough",
 });
 
 test("buildReelPool mixes in easier words only when the pool is too thin", () => {
-  // one hard word, several easy — minSize forces the easier tier in
+  // one hard word, several easy: minSize forces the easier tier in
   const words = [{ w: "hard", d: 3 }, ...Array.from({ length: 8 }, (_, i) => ({ w: "e" + i, d: 1 }))];
   const thin = buildReelPool(words, 3, 8);
   assert.ok(thin.length >= 8, "should have widened to reach minSize");
@@ -178,7 +178,7 @@ test("locationsForRods: pond is always open; rods add their locations", () => {
                    ["pond", "stream", "ocean"]);
 });
 
-test("locationsForRods is cumulative — a skipped tier still opens (A6)", () => {
+test("locationsForRods is cumulative: a skipped tier still opens (A6)", () => {
   // saving straight for the deep-sea rod must not leave the Stream shut behind
   // it: the Ocean's sentences build on the phrases/capitals the Stream teaches
   assert.deepEqual(locationsForRods(tiers, rods, ["stick", "deepsea"]),
@@ -270,7 +270,7 @@ test("rankForProfile: prestige outranks any location-derived rank (A8)", () => {
   // without it, rank is exactly what the locations say
   assert.equal(rankForProfile(tiers, ["pond"], prestige, false), "minnow");
   assert.equal(rankForProfile(tiers, ["pond", "stream", "ocean"], prestige, false), "marlin");
-  // with it, prestige wins from anywhere — it isn't a place you travel to
+  // with it, prestige wins from anywhere: it isn't a place you travel to
   assert.equal(rankForProfile(tiers, ["pond", "stream", "ocean"], prestige, true), "muskie");
   assert.equal(rankForProfile(tiers, ["pond"], prestige, true), "muskie");
   // a missing/!rank prestige config must never blank out a real rank
@@ -280,14 +280,14 @@ test("rankForProfile: prestige outranks any location-derived rank (A8)", () => {
 
 test("earnsPrestige fires once, for the right fish only (A8)", () => {
   assert.equal(earnsPrestige(prestige, "muskie", false), true);    // the moment
-  assert.equal(earnsPrestige(prestige, "muskie", true), false);    // already had it — no encore
+  assert.equal(earnsPrestige(prestige, "muskie", true), false);    // already had it, no encore
   assert.equal(earnsPrestige(prestige, "tuna", false), false);     // wrong fish
   assert.equal(earnsPrestige(prestige, "koi", false), false);      // a legendary, but not THE one
   assert.equal(earnsPrestige(undefined, "muskie", false), false);  // no config → never throws
   assert.equal(earnsPrestige({}, "muskie", false), false);
 });
 
-test("the prestige rank is not one of the location tiers (A8 — it can't be bought)", () => {
+test("the prestige rank is not one of the location tiers (A8: it can't be bought)", () => {
   assert.ok(!CONFIG.tiers.some(t => t.rank === CONFIG.prestige.rank),
     "prestige rank must stay out of CONFIG.tiers, or a rod could grant it");
 });
@@ -318,7 +318,7 @@ test("segmentsForTier scales the fight by tier, and only at fight waters (A7)", 
   assert.equal(segmentsForTier(cfg, "ocean", "legendary"), 3);
   assert.equal(segmentsForTier(cfg, "ocean", "rare"), 2);
   assert.equal(segmentsForTier(cfg, "ocean", "common"), 1);
-  // the Pond and the Stream never fight — one segment whatever the tier
+  // the Pond and the Stream never fight: one segment whatever the tier
   assert.equal(segmentsForTier(cfg, "stream", "legendary"), 1);
   assert.equal(segmentsForTier(cfg, "pond", "legendary"), 1);
   // unknown tier, missing config, and a bad count all defend to a single segment
@@ -330,7 +330,7 @@ test("segmentsForTier scales the fight by tier, and only at fight waters (A7)", 
 test("a fight's segments never exceed the sentence pool's real content (A7 sanity)", () => {
   // guards the config against asking for more sentences than the Ocean has
   const most = Math.max(...Object.values(CONFIG.fight.segmentsByTier));
-  assert.ok(most >= 1 && most <= 5, `segmentsByTier tops out at ${most} — that's a long fight for a kid`);
+  assert.ok(most >= 1 && most <= 5, `segmentsByTier tops out at ${most}: that's a long fight for a kid`);
 });
 
 test("buildReelPool works on phrase entries too (content-agnostic on .d)", () => {
@@ -423,7 +423,7 @@ test("a tug decays back to rest and never runs away", () => {
     s = stepTug(s.angle, s.vel, 16.7, cfg);
     peak = Math.max(peak, Math.abs(s.angle));
   }
-  assert.ok(peak < 12, `tug peaked at ${peak}deg — too wild for a rod tip`);
+  assert.ok(peak < 12, `tug peaked at ${peak}deg: too wild for a rod tip`);
   assert.ok(Math.abs(s.angle) < 0.05, `rod never settled (${s.angle}deg)`);
   // a long stall between frames is clamped, not integrated in one lurch
   const lurch = stepTug(0, -46, 5000, cfg);
@@ -458,7 +458,7 @@ test("the cast easings are clamped and end where they should", () => {
 // grid of <item> x <pose> paintings is filled in one delivery at a time. So the
 // interesting cases are all the MISSING ones: what a kid sees between buying a
 // rod and that rod being painted for the water they're standing in. Getting
-// this wrong doesn't throw — it 404s into an invisible rod mid-cast, which is
+// this wrong doesn't throw: it 404s into an invisible rod mid-cast, which is
 // the failure R4 refused to ship for poses and R6 for fish.
 test("a gear layer falls back rather than pointing at a painting that isn't there", () => {
   const rods = [
@@ -500,7 +500,7 @@ test("a gear layer falls back rather than pointing at a painting that isn't ther
 
 // ---- The reel pull, and the reveal riding on it ----
 // The bug these guard: the reel used to chase its target with `fishX +=
-// (fishTX - fishX) * 0.08` once per FRAME. Two faults in one line — the speed
+// (fishTX - fishX) * 0.08` once per FRAME. Two faults in one line: the speed
 // depended on the monitor's refresh rate, and an exponential's velocity peaks
 // on its first frame, so a completed word threw the fish a third of the way to
 // its new mark in ~100ms from a standstill and then crept. That is seen as a
@@ -521,7 +521,7 @@ test("the reel easing leaves and arrives at rest, which is what stops the jump",
   }
   // THE point: the first tenth of the tween covers a small fraction of the
   // travel, where the old exponential covered ~28% of it in the same tenth.
-  assert.ok(easeInOut(0.1) < 0.05, `opens too fast (${easeInOut(0.1)}) — that reads as a jump`);
+  assert.ok(easeInOut(0.1) < 0.05, `opens too fast (${easeInOut(0.1)}): that reads as a jump`);
   const exponentialInAFrame = 1 - Math.pow(1 - 0.08, 6);   // the old curve, 6 frames ≈ 100ms
   assert.ok(easeInOut(0.1) < exponentialInAFrame / 4);
   // …and it decelerates into the mark rather than creeping at it forever
@@ -562,7 +562,7 @@ test("the species stays a shape until the fish is close", () => {
 
 // The reveal has to COMPLETE, and it is not the reel that decides where it
 // stops. land() fires in the same tick the last word sets its target, so the
-// fish is never drawn at progress 1 — the furthest it reaches is one word
+// fish is never drawn at progress 1: the furthest it reaches is one word
 // short of the boat, and the cheapest tier reaches the least. Setting fullAt
 // to 1 left a common fish 36% revealed when it broke the surface, which is
 // what this catches.

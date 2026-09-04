@@ -1,6 +1,6 @@
-/* style.css — Hook, Line and Sentence.
+/* style.css: Hook, Line and Sentence.
    R2 PALETTE (Art & Animation Refresh). This replaces the locked M7.5 "dusk
-   pond" scheme, which was a saturated cool dusk — right for pixel art, wrong
+   pond" scheme, which was a saturated cool dusk: right for pixel art, wrong
    for the warm painterly storybook `ART_DIRECTION.md` now calls for. Every UI
    colour is below or derived from it.
 
@@ -18,7 +18,7 @@
    straight past it. Never point a .key rule at --display. */
 
 :root {
-  /* Sky and light. REFERENCE VALUES — nothing consumes these yet: the sky and
+  /* Sky and light. REFERENCE VALUES: nothing consumes these yet: the sky and
      the sun are painted into the background art, not drawn in CSS. They are
      here because R3's three background paintings have to match this palette,
      and a prompt is easier to write against a number than a description. */
@@ -39,7 +39,7 @@
   --water-deep: #375c58;
   --foam:       #e6eee4;
 
-  /* warm darks — these replace every near-black blue the old scheme used.
+  /* warm darks: these replace every near-black blue the old scheme used.
      --umber is the deepest tone in the game and stands in for the old
      --abyss (#122736); it is a warm brown, not a black. */
   --bark:       #7a6350;
@@ -47,7 +47,7 @@
   --umber:      #33291f;
 
   /* channel triples, for the translucent panels and shadows that need an alpha.
-     Same colours as above — CSS can't take an alpha off a hex token without
+     Same colours as above: CSS can't take an alpha off a hex token without
      color-mix, and these are read often enough that one place to retune them
      is worth the pair. */
   --umber-rgb:  51,41,31;
@@ -76,7 +76,7 @@
      Baloo 2 was picked by rendering five candidates into the real game on
      the same beat and looking (Baloo 2, Fredoka, Nunito, Grandstander,
      Quicksand). It has weight, which matters when type is laid straight
-     over a painting — Quicksand vanished at 11px — and the longest string
+     over a painting (Quicksand vanished at 11px) and the longest string
      the game shows, a catch message with a size class and a best flag,
      fits on one line where Grandstander wrapped it.
 
@@ -122,13 +122,13 @@ h1 {
 }
 /* The title is top-left and #hud is top-right, so a long title runs into the
    HUD on a narrow window. "HOOK, LINE AND SENTENCE" is ~1.5x the width of the
-   old "TYPING FISHING", which pushed that collision up from ~380px to ~500px —
+   old "TYPING FISHING", which pushed that collision up from ~380px to ~500px,
    so shrink the chip rather than let it overlap. */
 @media (max-width: 560px) {
   h1 { font-size: 8px; letter-spacing: 0.04em; padding: 4px 7px; }
 }
 /* Below ~400px even the shrunk chip runs into the HUD (the old short title did
-   too, by a few px — this is the pre-existing overlap, now fixed rather than
+   too, by a few px: this is the pre-existing overlap, now fixed rather than
    inherited). The title is decorative: dim, pointer-events:none, and the game
    is already on screen. Drop it and give the HUD the room. */
 @media (max-width: 400px) {
@@ -136,7 +136,7 @@ h1 {
 }
 
 /* ============ THE POND (full-screen) ============ */
-/* #scene keeps its original 720x360 design-space coordinate system — every
+/* #scene keeps its original 720x360 design-space coordinate system: every
    bobber/line/fish/particle position tuned earlier assumes it. #scene-frame
    scales+centers that fixed canvas to cover the viewport ("background-size:
    cover" style); #scene-viewport crops whatever spills past the real edges.
@@ -166,7 +166,7 @@ h1 {
    level"). These carry the Pond by default; the .loc-* rules further down swap
    their images for the Stream and the Ocean. ─────────────────────────────────
    Separate elements, not three background-images on #scene, because each drifts
-   on its own timer and one element can only carry one animation — the water
+   on its own timer and one element can only carry one animation: the water
    layer is specified to animate *independently*.
 
    The drift is deliberately tiny and slow: the milestone asks for parallax that
@@ -198,7 +198,7 @@ h1 {
 @keyframes drift-fore  { from { background-position: calc(50% + 5px) center; }
                          to   { background-position: calc(50% - 5px) center; } }
 
-/* R3: the Stream, repainted as three layers. The planes just swap their images —
+/* R3: the Stream, repainted as three layers. The planes just swap their images,
    no per-location framing, no scale, no offset, because the new art was
    generated (and then fitted) to put its waterline on the same row as the
    Pond's.
@@ -213,7 +213,7 @@ h1 {
 #scene.loc-stream #bg-water { background-image: url("assets/background-stream-water.png"); }
 #scene.loc-stream #bg-fore  { background-image: url("assets/background-stream-fore.png"); }
 
-/* R3: the Ocean, repainted as three layers — the last of the nine, so every
+/* R3: the Ocean, repainted as three layers, the last of the nine, so every
    level now works the same way and no scene carries a framing patch. */
 #scene.loc-ocean #bg-far   { background-image: url("assets/background-ocean-far.png"); }
 #scene.loc-ocean #bg-water { background-image: url("assets/background-ocean-water.png"); }
@@ -227,7 +227,7 @@ h1 {
 /* The water used to carry an animated SVG wave stack and a glitter strip, both
    sized to the pond's flat painted waterline. The stream and ocean paintings
    have their own surf, and the overlay just banded them with dark horizontal
-   stripes at the wrong height — so it's gone, and the painted water is the
+   stripes at the wrong height, so it's gone, and the painted water is the
    water. Ambient ripples and fish shadows still play on top (from app.js). */
 
 .fish-shadow {
@@ -237,11 +237,11 @@ h1 {
 }
 @keyframes shadowDrift { from { transform: translateX(0); } to { transform: translateX(820px); } }
 
-/* boat rig bobs as one unit — sits at the waterline (#water starts at top: 55%) */
+/* boat rig bobs as one unit: sits at the waterline (#water starts at top: 55%) */
 /* V1: the boat ROCKS rather than slides. The pivot is the hull's centre at the
    waterline (rig-relative 59,30), so it tips the way a hull tips instead of
    translating the whole rig up and down over a static water plane. The heave is
-   deliberately small — the sitting-in-water read comes from #surface cutting
+   deliberately small: the sitting-in-water read comes from #surface cutting
    the hull, not from movement. */
 /* R5: position, pivot and whether it rocks all come from the pose now
    (CONFIG.rig.poses.<loc>.anchor / .bob), set by renderRig(). The bob is a class
@@ -256,22 +256,22 @@ h1 {
    px, tuned so the boat sits on the waterline and the kid rides in it. The
    kid sprite has the rod baked in, so #line originates at the sprite's rod tip
    (upper-right of the kid image). */
-/* R5: the vessel is built by renderRig() from the pose, in two halves — `far`
+/* R5: the vessel is built by renderRig() from the pose, in two halves, `far`
    behind the angler and `near` in front, so the kid sits down IN the hull. That
    is V1's front-plane trick (the one that made #surface work) applied to the
    boat. Geometry comes from the pose; this only says how they paint. */
 .vessel { position: absolute; background: center / contain no-repeat; }
-/* G1: the angler is a stack of these — body, hat, rod — built by renderRig()
+/* G1: the angler is a stack of these (body, hat, rod) built by renderRig()
    from CONFIG.rig.layers, which owns the geometry so one config edit swaps a
    hat. Paint order is DOM order. (R1: the line is no longer one of these
-   children — it's #line-svg below, in scene space, so it can curve.) */
+   children: it's #line-svg below, in scene space, so it can curve.) */
 .rig-layer {
   position: absolute;
   background: center / contain no-repeat;
 }
 /* R1: the line is an SVG path in scene design space (720x360), redrawn every
-   frame by app.js from the rod tip's live position to whatever it's attached to
-   — the lure in flight, the bobber, or a hooked fish. It's a quadratic Bezier
+   frame by app.js from the rod tip's live position to whatever it's attached to:
+   the lure in flight, the bobber, or a hooked fish. It's a quadratic Bezier
    whose control point sags, and during a reel that sag tightens with tension.
    No z-index: it sits between #rig and #surface in DOM order, so the stretch of
    line below the waterline is tinted by the water like everything else. */
@@ -280,7 +280,7 @@ h1 {
   pointer-events: none; overflow: visible;
 }
 /* The alpha is paired with CONFIG.anim.line.widthPx and the two are one
-   decision — see the note there. A 0.5px line at 0.72 disappears against the
+   decision: see the note there. A 0.5px line at 0.72 disappears against the
    Ocean's pale sky; at 0.9 it reads more clearly than the old 1.6px did. */
 #line-path { fill: none; stroke: rgba(245,236,224,0.9); }
 /* R1: the lure/hook on the end of the line while it's in the air. The bobber
@@ -295,13 +295,13 @@ h1 {
    the angle is set per frame in JS, so there's no transition to fight. */
 .rig-layer[data-id="rod"] { will-change: transform; }
 
-/* T2: terminal tackle — what sits where the line meets the water during the
+/* T2: terminal tackle, what sits where the line meets the water during the
    wait. ONE element with one look per spot, chosen from CONFIG.tackle: the Pond
    floats a cork, the Stream drifts a dry fly, and the Ocean names nothing so
    this never turns on there. The size belongs to the look, which is why
    bobberIn() applies the kind before it reads offsetWidth to centre it. */
 #bobber {
-  /* left/top are set from CONFIG.anim.cast.landing by app.js (R1) — the lure
+  /* left/top are set from CONFIG.anim.cast.landing by app.js (R1): the lure
      lands and the tackle takes its place, so the two can't drift apart. */
   position: absolute;
   opacity: 0; transition: opacity 0.3s;
@@ -327,7 +327,7 @@ h1 {
 }
 
 /* The Stream's dry fly. A hackled body riding ON the surface with a pale wing
-   standing up off it — at this size that silhouette is the whole read, so the
+   standing up off it: at this size that silhouette is the whole read, so the
    wing is the thing worth the pixels. It does not bob: a dry fly sits in the
    film and drifts, which is also what tells a kid this spot fishes differently
    from the Pond. */
@@ -338,7 +338,7 @@ h1 {
   box-shadow: inset 0 0 0 0.6px var(--umber);
   animation: flyDrift 4.2s ease-in-out infinite;
 }
-/* The upright wing, and it is the whole read at this size — a pointed pale
+/* The upright wing, and it is the whole read at this size: a pointed pale
    wedge is what says "fly" where a rounded lump said "pebble with a stone on
    it", which is what the first attempt looked like on screen. It sits at the
    head end, on the left, because that is the end the line comes down to. */
@@ -355,7 +355,7 @@ h1 {
   width: 3.2px; height: 1.1px; border-radius: 50%;
   background: var(--bark);
 }
-/* F4: one word's worth of twitch on the bait. Short and sharp on purpose — the
+/* F4: one word's worth of twitch on the bait. Short and sharp on purpose, the
    whole mechanic rests on a kid seeing their typing move something in the
    water, and a gentle wobble would not read as "I did that". It replaces the
    idle bob for its third of a second and the bob resumes underneath. */
@@ -379,7 +379,7 @@ h1 {
 @keyframes plunge { to { transform: translateY(14px); opacity: 0; } }
 
 /* ============ V1: WATER DEPTH ============
-   The scene used to be one flat plane — every sprite painted on top of the
+   The scene used to be one flat plane: every sprite painted on top of the
    backdrop, nothing ever in front of anything. That's why the boat floated and
    the fish never looked submerged. #surface is the front plane: translucent
    water from the waterline down, painted over the rig and the fish. The 55%
@@ -389,7 +389,7 @@ h1 {
   z-index: 3; pointer-events: none;
   /* Not an even wash: the read comes from the first 30px. A bright lip on the
      line, a darker band just under it, then it opens back up before deepening
-     with distance — the way a real surface catches light at the waterline and
+     with distance: the way a real surface catches light at the waterline and
      shades whatever is sitting in it. An even gradient just fogs the scene. */
   background: linear-gradient(180deg,
     rgba(168, 206, 190, 0.30) 0px,
@@ -401,7 +401,7 @@ h1 {
 /* contact: without a shadow the hull has nothing to sit on. It lives outside
    #rig so it stays flat on the water while the boat rocks, and behind #surface
    so it dims like anything else underwater. */
-/* left/top/width come from the pose's vessel.shadow — see renderRig() */
+/* left/top/width come from the pose's vessel.shadow: see renderRig() */
 #hull-shadow {
   position: absolute; height: 10px;
   z-index: 2; pointer-events: none;
@@ -451,12 +451,12 @@ h1 {
    Three tier images cover four tiers: common+uncommon share the common
    sprite, rare and legendary get their own. */
 /* left/top are driven every frame by the reel RAF (so the line can stay glued
-   to the fish), so NO left/top transition here — a transition would smear the
+   to the fish), so NO left/top transition here: a transition would smear the
    fish behind its per-frame target. Only opacity eases. */
 /* R6: a species with its own art renders as cut layers INSIDE #fish (renderFish
    sets `.rigged` and the box), and a species without one keeps the tier
    placeholder below. Every placeholder rule is scoped `:not(.rigged)` rather
-   than ordered after the art, so the two can never fight over specificity — the
+   than ordered after the art, so the two can never fight over specificity: the
    glow and the submerged treatment stay unscoped, because rarity and being
    underwater are true of a fish whatever it is drawn from. */
 #fish {
@@ -470,7 +470,7 @@ h1 {
 }
 #fish:not(.rigged) { background: url("assets/fish-common.png") center / contain no-repeat; }
 .fish-layer { position: absolute; inset: 0; background: center / contain no-repeat; }
-/* the tail sweeps about the peduncle it was cut at — transform-origin and both
+/* the tail sweeps about the peduncle it was cut at: transform-origin and both
    custom properties are set inline from CONFIG.fish (the pivot is per species,
    the swing is not). `alternate` is why the duration is half a cycle. */
 .fish-layer[data-id="tail"] {
@@ -480,7 +480,7 @@ h1 {
   from { transform: rotate(calc(var(--tail-deg) * -1)); }
   to   { transform: rotate(var(--tail-deg)); }
 }
-/* V1: while it's below the waterline the fish is seen THROUGH water — softer,
+/* V1: while it's below the waterline the fish is seen THROUGH water, softer,
    bluer, less contrasty. Removed when it's landed, so breaking the surface is
    the moment the fish snaps into focus. Written out per tier rather than
    composed from custom properties, because `filter` doesn't cascade: naming the
@@ -514,21 +514,21 @@ h1 {
           drop-shadow(0 0 12px rgba(var(--gold-rgb), calc(0.6 * var(--reveal))));
 }
 /* uncommon shares the common sprite but hue-shifted so it reads as a
-   different fish. This is a placeholder trick and nothing else — real art is
+   different fish. This is a placeholder trick and nothing else: real art is
    already the colour the species should be, so it is scoped away from it. */
 #fish:not(.rigged).tier-uncommon { filter: hue-rotate(150deg) saturate(1.2); }
 #fish:not(.rigged).tier-rare { background-image: url("assets/fish-rare.png"); }
 #fish.tier-rare { filter: drop-shadow(0 0 8px rgba(var(--gold-rgb),0.7)); }
 #fish:not(.rigged).tier-legendary { background-image: url("assets/fish-legendary.png"); }
 #fish.tier-legendary { filter: drop-shadow(0 0 12px rgba(var(--gold-rgb),0.9)); }
-/* R6: before it bites, the fish is a shape in the water rather than a fish —
+/* R6: before it bites, the fish is a shape in the water rather than a fish,
    dark, soft-edged and low-contrast, seen through #surface. Warm dark, never
    black (ART_DIRECTION.md): brightness on a warm sprite stays warm, which a
    grayscale or a flat fill would not. Declared after the tier rules so it wins
    any tie; the approach deliberately carries no tier class of its own. */
 #fish.silhouette { filter: brightness(0.42) saturate(0.35) contrast(0.85) blur(1.4px); opacity: 0.8; }
 /* the drift itself. --drift is set inline from CONFIG.fish.approach.leadMs, and
-   the opacity fade keeps its own timing — a fish that took a second to appear
+   the opacity fade keeps its own timing: a fish that took a second to appear
    would arrive already half way across. */
 #fish.approaching { transition: left var(--drift) ease-out, top var(--drift) ease-out, opacity 0.3s ease; }
 /* the escape, and the mirror of the approach: it accelerates AWAY (ease-in,
@@ -568,10 +568,10 @@ h1 {
 }
 @keyframes rise { to { transform: translateY(-52px); opacity: 0; } }
 
-/* Text/UI moments — fixed-size viewport overlays (not scaled with the
+/* Text/UI moments: fixed-size viewport overlays (not scaled with the
    #scene-frame canvas; that was blowing status/word text up 2-3x and
    colliding with the hud/guide overlays). */
-/* anchored left/below the title rather than centered across the viewport —
+/* anchored left/below the title rather than centered across the viewport,
    centering collided with #hud/#controls whenever their actual (content-
    driven, not vw-capped) width ate into the centered zone on narrower
    windows */
@@ -591,7 +591,7 @@ h1 {
 }
 #word .done { color: var(--moss); }
 #word .todo { color: var(--ink); }
-/* the space you're about to type in a phrase (A1) — a soft, pulsing ␣ cue so the
+/* the space you're about to type in a phrase (A1): a soft, pulsing ␣ cue so the
    spacebar is obvious; letters use the plain .todo colour above */
 #word .cur.space { color: var(--gold); opacity: 0.9; animation: spacecue 1s ease-in-out infinite; }
 @keyframes spacecue { 50% { opacity: 0.4; } }
@@ -607,13 +607,13 @@ h1 {
 
    Two things about the geometry, both of them rules from CLAUDE.md rather than
    taste. Nothing may reach the bottom-center finger-guide panel, and #word sits
-   at bottom: 250px — so the card is not positioned, it is CENTRED IN A SLOT
+   at bottom: 250px, so the card is not positioned, it is CENTRED IN A SLOT
    that spans exactly the free band between the HUD and the word. A fixed `top`
    would collide with one or the other on some window shape; a slot cannot.
 
    The unlock banner (z-index 6) deliberately still sits ABOVE this (z-index 5).
    The two land on the same catch, the banner is a 2.6s celebration and the card
-   waits for the kid — so the banner plays over the card and the card is still
+   waits for the kid, so the banner plays over the card and the card is still
    there when it clears. There is nothing to sequence. */
 #card-slot {
   position: fixed; left: 0; right: 0;
@@ -632,7 +632,7 @@ h1 {
   backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px);
   opacity: 0; transform: translateY(16px) scale(0.95);
 }
-/* in: it rises under the catch. out: it is YANKED off the top — the word Matt
+/* in: it rises under the catch. out: it is YANKED off the top, the word Matt
    used, and the reason this isn't a fade. A fade reads as the card giving up;
    a yank reads as the kid clearing it to get on with fishing. */
 #catch-card.in {
@@ -650,7 +650,7 @@ h1 {
 /* An escape has no species: the reveal (CONFIG.fish.reveal) never tells you
    what a fish is until it is close, and the one that got away is the one you
    never found out about. So the card shows the shared placeholder body under
-   the same treatment #fish.silhouette uses — the shape that rose out of the
+   the same treatment #fish.silhouette uses: the shape that rose out of the
    depths, and nothing more. Not a blank space, which is what an empty box
    looked like, and not the species, which would give away the secret the whole
    reel is built on. */
@@ -707,7 +707,7 @@ h1 {
 @keyframes bannerpop { 0% { transform: translate(-50%, -50%) scale(0.6); } 70% { transform: translate(-50%, -50%) scale(1.08); } }
 #unlock-banner .banner-title { font-family: var(--display); font-size: 12px; color: var(--ink); letter-spacing: 0.08em; }
 #unlock-banner .letters { font-family: var(--display); font-size: 34px; color: var(--gold); letter-spacing: 0.3em; margin-top: 4px; text-shadow: 0 0 14px rgba(var(--gold-rgb),0.6); }
-/* A8: the Muskie capstone wears the same banner, turned up — a gold frame and a
+/* A8: the Muskie capstone wears the same banner, turned up, a gold frame and a
    slow glow, so the finish line doesn't look like just another letter unlock */
 #unlock-banner.prestige {
   border-color: var(--gold); border-width: 2px; padding: 20px 34px;
@@ -783,12 +783,12 @@ h1 {
 }
 .toggle-btn.active { color: var(--umber); background: var(--gold); border-color: var(--gold); }
 .toggle-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-/* dev/test-only affordance (CONFIG.dev.testShortcuts) — dashed so it reads as
+/* dev/test-only affordance (CONFIG.dev.testShortcuts): dashed so it reads as
    "not a real player button"; the whole thing goes away when the flag is off */
 .toggle-btn.dev { border-style: dashed; border-color: rgba(var(--gold-rgb),0.55); color: var(--gold); }
 
 /* ============ FINGER GUIDE (semi-transparent overlay, pinned to the bottom) ============ */
-/* R2: the keyboard is EXEMPT from the palette refresh (CLAUDE.md — it is the
+/* R2: the keyboard is EXEMPT from the palette refresh (CLAUDE.md, it is the
    best part of the game and stays exactly as it is). Everything in this block
    therefore uses the frozen --kb-* tokens and never the scene palette, so a
    future palette change cannot reach it by accident. */
@@ -816,7 +816,7 @@ h1 {
 /* A2: the two Shift keys sit quietly like the ghost anchor until a capital lights them */
 .key.shift-key { opacity: 0.35; }
 .key.shift-key.target { opacity: 1; }
-/* A5-guide: same for the ghost keys — the ";" anchor and the `,` `.` `/`
+/* A5-guide: same for the ghost keys, the ";" anchor and the `,` `.` `/`
    punctuation keys stay quiet at the Pond and come up to full when a sentence
    actually calls for one. Needs its own rule because .key.target sets colour,
    not opacity, so the 0.35 above would otherwise win. */
@@ -836,7 +836,7 @@ h1 {
      backgrounds landed, so it was judged and lightened 0.75 -> 0.45. The scrim
      buys focus, not legibility: .overlay-panel below is fully opaque, so every
      word in a modal sits on solid umber and nothing reads better at 0.75. At
-     that weight it was halving a scene that is now worth seeing — the profile
+     that weight it was halving a scene that is now worth seeing: the profile
      picker is the first thing a kid looks at. */
   background: rgba(var(--umber-rgb),0.45);
   display: flex; align-items: center; justify-content: center;
@@ -851,7 +851,7 @@ h1 {
 .overlay-title { font-family: var(--display); font-size: 13px; color: var(--gold); letter-spacing: 0.12em; margin-bottom: 16px; }
 .nudge-text { font-size: 13px; line-height: 1.5; color: var(--ink); max-width: 380px; margin: 0 auto 18px; }
 
-/* Fishing journal — badge grid */
+/* Fishing journal: badge grid */
 #journal-summary { font-size: 12px; color: var(--ink); margin-bottom: 16px; }
 #journal-summary b { color: var(--gold); }
 #journal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
@@ -867,7 +867,7 @@ h1 {
 .badge-desc { font-size: 10px; color: var(--dim); line-height: 1.4; }
 
 /* T3: the junk shelf, under the badges. Deliberately the same card language as
-   .badge-card next to it — dim and locked until found — because that is what it
+   .badge-card next to it (dim and locked until found) because that is what it
    sits beside, and a second visual idiom in one panel would read as a second
    kind of thing. The sprite fills the medal's slot when it is found. */
 #junk-summary { font-size: 12px; color: var(--ink); margin-bottom: 10px; }
@@ -900,7 +900,7 @@ h1 {
 #badge-toast b { color: var(--gold); }
 #badge-toast .badge-medal { font-size: 15px; display: inline; margin: 0; }
 
-/* Parent progress view — per-key accuracy heatmap */
+/* Parent progress view: per-key accuracy heatmap */
 #progress-summary { font-size: 12px; color: var(--ink); line-height: 1.7; margin-bottom: 14px; }
 #progress-summary b { color: var(--gold); }
 #progress-kb { display: flex; flex-direction: column; gap: 6px; align-items: center; margin-bottom: 14px; }
@@ -933,7 +933,7 @@ h1 {
 }
 /* R2: rare and legendary catches carry the same gold the scene gives them when
    they're on the line, so the grid says rarity in the same language the water
-   does. Deliberately quiet — a warm rim, not a neon badge. */
+   does. Deliberately quiet: a warm rim, not a neon badge. */
 .cell.tier-rare { border-color: rgba(var(--gold-rgb),0.32); }
 .cell.tier-legendary {
   border-color: rgba(var(--gold-rgb),0.55);
@@ -960,7 +960,7 @@ h1 {
   background: radial-gradient(circle at 65% 35%, var(--umber) 0 35%, var(--foam) 40% 100%);
 }
 /* R6: once a species has its own art AND has been caught, the cell shows the
-   real body sprite instead of the shape above — which is the whole point of
+   real body sprite instead of the shape above, which is the whole point of
    "the collection reads as 33 different fish". An UNCAUGHT cell keeps the blob
    whatever art exists: the silhouette is the tease, and spoiling it would cost
    more than the art buys. The box keeps the blob's total footprint (40 + 3 + 5
@@ -1067,7 +1067,7 @@ h1 {
 #st-word .done { color: var(--moss); }
 #st-word .todo { color: var(--ink); }
 #st-word .cur  { color: var(--gold); }
-/* its own shake — #word's keyframes bake in the translateX(-50%) that centres
+/* its own shake: #word's keyframes bake in the translateX(-50%) that centres
    the fixed in-game word, which would fling this one out of the panel */
 #st-word.shakeword { animation: stshake 0.16s; }
 @keyframes stshake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }

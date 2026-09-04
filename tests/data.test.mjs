@@ -1,12 +1,12 @@
-// Content + config invariant tests. Zero dependencies — Node's built-in
+// Content + config invariant tests. Zero dependencies: Node's built-in
 // runner: `node --test` (or `npm test`). These guard the hand-edited JSON and
 // tuning knobs, the stuff a bad merge or a fat-fingered edit silently breaks
 // (e.g. the "junk word 'sie'" class of bug in BACKLOG.md). Pure game logic
-// still lives inside app.js (DOM-bound, not importable) — see the README note.
+// still lives inside app.js (DOM-bound, not importable): see the README note.
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { CONFIG, isDevHost } from "../config.js";
 import { wordCount, buildReelPool } from "../logic.js";
 
@@ -18,7 +18,7 @@ const sentences = load("../data/sentences.json"); // A5: Ocean sentence content
 const blocklist = new Set(load("../data/blocklist.json"));
 const TIERS = new Set(Object.keys(CONFIG.size.weightRangeByTier)); // source of truth
 
-// report the actual offenders, not just a count — a failing test should point at the row
+// report the actual offenders, not just a count: a failing test should point at the row
 const offenders = (arr, bad, show = x => JSON.stringify(x)) =>
   arr.filter(bad).slice(0, 5).map(show).join("  |  ");
 
@@ -48,7 +48,7 @@ test("no blocklisted non-word slips into the pool (the 'sie' class of bug)", () 
 
 test("phrases.json is a non-empty array of well-formed entries (A1/A2)", () => {
   assert.ok(Array.isArray(phrases) && phrases.length > 0);
-  // letters (either case, A2 capitals) joined by single spaces, 2+ words — this
+  // letters (either case, A2 capitals) joined by single spaces, 2+ words: this
   // also rules out leading/trailing/double spaces and any non-alpha character
   assert.equal(offenders(phrases, p => !/^[A-Za-z]+( [A-Za-z]+)+$/.test(p.text), p => p.text), "",
     "phrase.text must be words joined by single spaces, 2+ words");
@@ -82,7 +82,7 @@ test("no blocklisted non-word slips into a phrase (same guard as the word pool)"
 test("sentences.json is a non-empty array of well-formed entries (A5)", () => {
   assert.ok(Array.isArray(sentences) && sentences.length > 0);
   // words (optionally comma-suffixed) joined by single spaces, ending in . ! or ?
-  // — rules out leading/trailing/double spaces and any other stray character
+  // It rules out leading/trailing/double spaces and any other stray character
   const shapeOk = text => /^([A-Za-z]+,? )*[A-Za-z]+[.!?]$/.test(text);
   assert.equal(offenders(sentences, s => !shapeOk(s.text), s => s.text), "",
     "sentence.text must be words joined by single spaces, ending in . ! or ?");
@@ -128,7 +128,7 @@ test("the prestige fish exists, is legendary, and lives at a fight water (A8)", 
   assert.ok(p, `prestige.fishId "${CONFIG.prestige.fishId}" matches no fish in fish.json`);
   assert.equal(p.tier, "legendary", `the capstone fish "${p.id}" should be legendary`);
   assert.ok(CONFIG.fight.fromLocations.includes(p.location),
-    `the capstone "${p.id}" lives at "${p.location}", which isn't a fight water — it should be the hardest catch in the game`);
+    `the capstone "${p.id}" lives at "${p.location}", which isn't a fight water: it should be the hardest catch in the game`);
 });
 
 test("every fight water has enough sentences to fill its longest fight without repeats (A7)", () => {
@@ -235,16 +235,16 @@ test("shop items have unique ids, sane file stems, and a free default each", () 
   // Boats carry no `file` at all: a hull skin is a tint of the pose's own
   // painting, so it is exempt from the stem rule the same way baits are.
   assert.equal(offenders(CONFIG.shop.boats, b => b.file != null), "",
-    "boats have no sprite files — a hull skin is a tint, see CONFIG.shop.boats");
+    "boats have no sprite files: a hull skin is a tint, see CONFIG.shop.boats");
   // R7: a rod is always in the angler's hand, so every one of them needs art to
-  // aim at. A hat may legitimately have none — that is the bare head.
+  // aim at. A hat may legitimately have none: that is the bare head.
   for (const r of CONFIG.shop.rods) assert.ok(r.file, `rod "${r.id}" missing sprite file`);
   assert.ok(CONFIG.shop.hats.some(h => h.cost === 0 && !h.file),
     "the free default hat has to be the bare head, so a kid can take a hat off");
 });
 
 // T2: CONFIG.tackle is the fourth registry in this game (fish.species,
-// rig.poses, rig.gearArt) and it fails the same way they do — a name nobody
+// rig.poses, rig.gearArt) and it fails the same way they do: a name nobody
 // draws looks exactly like a spot that deliberately floats nothing.
 test("every spot's tackle names a real location and a look the stylesheet draws", () => {
   const css = readFileSync(new URL("../style.css", import.meta.url), "utf8");
@@ -253,7 +253,7 @@ test("every spot's tackle names a real location and a look the stylesheet draws"
     assert.ok(spots.includes(spot), `CONFIG.tackle has "${spot}", which is not a fishing spot`);
   for (const spot of spots)
     assert.ok(spot in CONFIG.tackle,
-      `"${spot}" is missing from CONFIG.tackle — say null for a bare line, so it reads as a decision`);
+      `"${spot}" is missing from CONFIG.tackle: say null for a bare line, so it reads as a decision`);
   for (const [spot, kind] of Object.entries(CONFIG.tackle)) {
     if (kind === null) continue;                    // a bare line, on purpose
     assert.ok(css.includes(`.tackle-${kind}`),
@@ -264,7 +264,7 @@ test("every spot's tackle names a real location and a look the stylesheet draws"
 });
 
 // R5 debt: the boat shop was the last one still on its own older mechanism, and
-// it had quietly stopped working — every vessel was skinnable:false, so buying a
+// it had quietly stopped working: every vessel was skinnable:false, so buying a
 // hull changed nothing at any spot and nothing caught it. These are the traps
 // that would have.
 test("a bought hull can actually show up somewhere", () => {
@@ -283,24 +283,24 @@ test("a bought hull can actually show up somewhere", () => {
 test("hull tints are plain CSS filters, and the free default has none", () => {
   const free = CONFIG.shop.boats.filter(b => b.cost === 0);
   assert.equal(free.length, 1, "exactly one free hull, or there is no way back to bare timber");
-  assert.ok(!free[0].tint, `the free hull "${free[0].id}" must carry no tint — it is how you take a colour off`);
+  assert.ok(!free[0].tint, `the free hull "${free[0].id}" must carry no tint: it is how you take a colour off`);
   for (const b of CONFIG.shop.boats.filter(b => b.cost > 0)) {
     assert.ok(b.tint, `hull "${b.id}" costs coins and does nothing`);
-    // it goes straight into style.filter, so keep it to filter functions —
+    // it goes straight into style.filter, so keep it to filter functions,
     // url() would fetch, and anything else is a typo that fails silently
     assert.ok(/^(?:(?:hue-rotate|saturate|brightness|contrast|sepia|grayscale)\([-0-9.a-z]+\) ?)+$/.test(b.tint),
       `hull "${b.id}" tint is not a plain filter list: ${b.tint}`);
   }
 });
 
-// R7: three names have to agree for a gear slot to resolve — the layer's
+// R7: three names have to agree for a gear slot to resolve, the layer's
 // `gear`, the shop list it draws from, and the save key it equips. app.js maps
 // them through one table (GEAR_LISTS); nothing checks the mapping at runtime,
 // and a mismatch is a slot that silently never swaps. So check the shape here.
 test("every gear slot names a shop list that exists", () => {
   const slots = new Set(Object.values(CONFIG.rig.poses)
     .flatMap(p => p.layers.map(l => l.gear).filter(Boolean)));
-  assert.ok(slots.size > 0, "no gear slots at all — R7's whole point is missing");
+  assert.ok(slots.size > 0, "no gear slots at all: R7's whole point is missing");
   for (const slot of slots) {
     // the convention app.js encodes: a "hat" slot is served by shop.hats
     assert.ok(Array.isArray(CONFIG.shop[slot + "s"]),
@@ -316,7 +316,7 @@ test("every gear slot names a shop list that exists", () => {
 
 // R7: gearArt is the switch that decides whether a bought item shows up. An
 // entry that matches no item, or no pose, is art that was delivered and then
-// silently never drawn — which looks exactly like the art not arriving.
+// silently never drawn, which looks exactly like the art not arriving.
 test("every delivered gear painting names a real item and a real pose", () => {
   const poses = Object.keys(CONFIG.rig.poses);
   const stems = Object.values(CONFIG.shop).flat().map(i => i.file).filter(Boolean);
@@ -343,7 +343,7 @@ test("the 🧪 dev shortcut can never be on in production", () => {
 });
 
 // T3: three badges now hang off junk, and junk is the one thing in this game a
-// kid cannot go after on purpose — it rolls. So the ways they become unearnable
+// kid cannot go after on purpose: it rolls. So the ways they become unearnable
 // are config values a long way from the badge list.
 test("the junk badges can actually be earned", () => {
   assert.ok(CONFIG.junk.chance > 0,
@@ -363,7 +363,7 @@ test("junk config is well-formed", () => {
 
 // The Stream's phrases and the Ocean's sentences are filtered by the kid's
 // unlocked letters, so content using a letter no stage ever grants is content
-// nobody can reel — it silently drops the reel back to single words. (That's
+// nobody can reel: it silently drops the reel back to single words. (That's
 // the shape of the bug the 🧪 shortcut had: full spots, home-row keys.)
 test("every phrase and sentence is typeable once all letter stages are unlocked", () => {
   const all = new Set(CONFIG.unlock.stages.flatMap(s => [...s.letters]));
@@ -377,18 +377,18 @@ test("every phrase and sentence is typeable once all letter stages are unlocked"
 // stack per location, so every pose gets checked, not just the one on screen.
 test("every CONFIG.rig pose is a well-formed paint stack", () => {
   const poses = Object.entries(CONFIG.rig.poses);
-  assert.ok(poses.length > 0, "no poses at all — the angler would not render");
+  assert.ok(poses.length > 0, "no poses at all: the angler would not render");
   for (const [name, pose] of poses) {
     const layers = pose.layers;
     assert.ok(Array.isArray(layers) && layers.length > 0, `${name}: no layers`);
     // Paint order is a property of the art, not a rule: R4's angler is drawn
     // with the hand in front of the pole, so the rod paints BEHIND the body.
-    // What must hold is that both pieces exist — a pose missing either renders
+    // What must hold is that both pieces exist: a pose missing either renders
     // a kid with no rod, or a rod with no kid, and neither throws.
     assert.ok(layers.some(l => l.id === "body"), `${name}: no body layer`);
     assert.ok(layers.some(l => l.id === "rod"), `${name}: no rod layer`);
     assert.equal(new Set(layers.map(l => l.id)).size, layers.length, `${name}: duplicate layer id`);
-    // R7: a GEAR layer may legitimately carry no `file` — that is a slot whose
+    // R7: a GEAR layer may legitimately carry no `file`, that is a slot whose
     // fallback is to paint nothing, which is what a bare head is. Every other
     // layer is fixed art and must name a real one, or it paints `undefined.png`.
     assert.equal(offenders(layers, l => l.gear ? false : !/^[a-z0-9-]+$/.test(l.file ?? "")), "",
@@ -401,8 +401,8 @@ test("every CONFIG.rig pose is a well-formed paint stack", () => {
 });
 
 // R5: the pose's vessel and its shadow are written straight into inline styles
-// by renderRig(), so a leftover from an older shape — `shadow: true` from before
-// it became a box — does not throw, it writes `left: undefinedpx` and the shadow
+// by renderRig(), so a leftover from an older shape: `shadow: true` from before
+// it became a box: does not throw, it writes `left: undefinedpx` and the shadow
 // silently stacks up in the scene's top-left corner.
 test("every vessel is a well-formed hull with a placed shadow", () => {
   for (const [name, pose] of Object.entries(CONFIG.rig.poses)) {
@@ -439,7 +439,7 @@ test("rig poses are keyed by real locations, and the fallback exists", () => {
 
 // R1 (ANIMATION.md): the rod rotates about the grip for the cast and the tug,
 // and the line leaves the tip. Both points are config, and both are only
-// meaningful relative to the rod layer's box — so a rod swapped in by the gear
+// meaningful relative to the rod layer's box, so a rod swapped in by the gear
 // shop (R7) with a different box, or a retuned layer, must move them together.
 // Getting this wrong doesn't throw: it detaches the line from a rod that is
 // visibly swinging, which is exactly the bug R1 exists to fix.
@@ -499,21 +499,49 @@ test("no pure black anywhere in the stylesheet", () => {
     "ART_DIRECTION.md: shadows and outlines are warm dark browns, never pure black");
 });
 
+// Matt's house style: no em-dashes, anywhere. A period, a comma, a colon or
+// parentheses instead. This is exactly the kind of rule that is easy to break by
+// habit months from now and invisible in a diff, so it is checked rather than
+// trusted, the same way the pure-black rule above is. The 1,619 that were in
+// here on 2026-09-04 went out in one pass; this stops them coming back one at a
+// time. The HUD's "no value" chip keeps an EN dash (–), which is a different
+// character doing a different job.
+test("no em-dashes anywhere in the repo's own text", () => {
+  const root = new URL("..", import.meta.url);
+  const SKIP = new Set([".git", "node_modules", "assets", ".github"]);
+  const EXT = /\.(md|js|mjs|py|css|html|json|txt|rules)$/;
+  const offences = [];
+  const walk = (dir, rel = "") => {
+    for (const e of readdirSync(new URL(dir), { withFileTypes: true })) {
+      if (SKIP.has(e.name)) continue;
+      const here = rel ? `${rel}/${e.name}` : e.name;
+      if (e.isDirectory()) { walk(new URL(e.name + "/", dir), here); continue; }
+      if (!EXT.test(e.name)) continue;
+      readFileSync(new URL(e.name, dir), "utf8").split("\n").forEach((line, i) => {
+        if (line.includes("\u2014")) offences.push(`${here}:${i + 1}: ${line.trim().slice(0, 70)}`);
+      });
+    }
+  };
+  walk(root);
+  assert.equal(offences.join("\n"), "",
+    "em-dashes are out of house style: use a period, a comma, a colon or parentheses");
+});
+
 test("the ghost-hands keyboard stays exempt from the palette", () => {
   const css = readFileSync(new URL("../style.css", import.meta.url), "utf8");
   const start = css.indexOf("/* R2: the keyboard is EXEMPT");
   const end = css.indexOf("/* ============ OVERLAY SCREENS");
-  assert.ok(start > 0 && end > start, "the keyboard block's markers moved — update this test");
+  assert.ok(start > 0 && end > start, "the keyboard block's markers moved: update this test");
   const block = css.slice(start, end);
   // it may reference its own frozen tokens and nothing else from the palette
   const scenePalette = [...block.matchAll(/var\(--([a-z-]+)/g)].map(m => m[1])
     .filter(name => !name.startsWith("kb-"));
   assert.deepEqual([...new Set(scenePalette)], [],
-    "CLAUDE.md: the keyboard is off limits — it must use only the frozen --kb-* tokens");
+    "CLAUDE.md: the keyboard is off limits, it must use only the frozen --kb-* tokens");
 });
 
 // R6: CONFIG.fish.species is the registry that decides whether a species renders
-// its own art or the tier placeholder, so every entry in it has to be complete —
+// its own art or the tier placeholder, so every entry in it has to be complete,
 // a half-written one renders a fish with no mouth for the line to attach to, or
 // a tail that sweeps about the box's corner. The suite is deliberately written
 // to pass on an EMPTY registry: that is the correct state until a wave lands,
@@ -532,7 +560,7 @@ test("every landed fish species is a well-formed rig", () => {
     // both are measured off the painting, so both must land on the box
     const on = p => p && p.x >= 0 && p.x <= art.w && p.y >= 0 && p.y <= art.h;
     assert.ok(on(art.mouth), `${id}: the mouth is off the fish's box`);
-    assert.ok(art.mouth.x < art.w / 2, `${id}: the mouth is not on the leading half — is the art facing right?`);
+    assert.ok(art.mouth.x < art.w / 2, `${id}: the mouth is not on the leading half, is the art facing right?`);
     if (art.layers.some(l => l.id === "tail")) {
       assert.ok(on(art.tail), `${id}: a tail layer with no pivot on the box`);
       assert.ok(art.tail.x > art.w / 2, `${id}: the tail pivot is not on the trailing half`);
@@ -540,7 +568,7 @@ test("every landed fish species is a well-formed rig", () => {
   }
 });
 
-// A species' length comes from its RANK, not from its painting — the generator
+// A species' length comes from its RANK, not from its painting: the generator
 // draws every subject to fill its frame, so scaling from the source would make a
 // minnow and a pike the same size (GEMINI_NOTES.md records the same trap for the
 // standing and seated anglers). This is what stops 33 separate generations
@@ -557,7 +585,7 @@ test("a fish's box length is the one its rank calls for", () => {
 });
 
 // The placeholder is what every unlanded species renders as, which is most of
-// them for the length of R6 — so it stays well-formed the whole time.
+// them for the length of R6, so it stays well-formed the whole time.
 test("the fish placeholder still has a box and a mouth", () => {
   const p = CONFIG.fish.placeholder;
   assert.ok(p.w > 0 && p.h > 0, "the placeholder has no box");
@@ -590,16 +618,16 @@ test("the fish rises into water the panel isn't covering, and breaks a real surf
 
 test("wiggle config is a sane, small ask (F4)", () => {
   const w = CONFIG.wiggle;
-  assert.ok(w.chance > 0 && w.chance < 1, `wiggle.chance ${w.chance} must be between 0 and 1 — at 1 every cast gates`);
+  assert.ok(w.chance > 0 && w.chance < 1, `wiggle.chance ${w.chance} must be between 0 and 1: at 1 every cast gates`);
   const [lo, hi] = w.wordsRange;
   assert.ok(Number.isInteger(lo) && Number.isInteger(hi), "wiggle.wordsRange must be whole words");
   assert.ok(lo >= 1 && lo <= hi, `wiggle.wordsRange ${JSON.stringify(w.wordsRange)} must ascend from at least 1`);
-  assert.ok(hi <= 4, `wiggle.wordsRange asks for up to ${hi} words — "a few short words", not a second reel`);
+  assert.ok(hi <= 4, `wiggle.wordsRange asks for up to ${hi} words: "a few short words", not a second reel`);
   assert.ok(w.maxWordLen >= 3, `wiggle.maxWordLen ${w.maxWordLen} is shorter than the shortest useful word`);
   const [bLo, bHi] = w.biteDelayMsRange;
   assert.ok(bLo >= 0 && bLo <= bHi, "wiggle.biteDelayMsRange must ascend");
   assert.ok(bHi <= CONFIG.bite.delayMsRange[0],
-    `a wiggled bait (${bHi}ms) must bite sooner than an un-wiggled one (${CONFIG.bite.delayMsRange[0]}ms) — the speed IS the reward`);
+    `a wiggled bait (${bHi}ms) must bite sooner than an un-wiggled one (${CONFIG.bite.delayMsRange[0]}ms): the speed IS the reward`);
 });
 
 test("every unlock stage has short words to wiggle with (F4)", () => {

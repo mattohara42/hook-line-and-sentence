@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>R1 prototype — cast, line and reel motion</title>
+<title>R1 prototype: cast, line and reel motion</title>
 <!--
-  R1 (ANIMATION.md) prototype. The spec flags one open assumption — that a
+  R1 (ANIMATION.md) prototype. The spec flags one open assumption: that a
   Bezier line with a tension-driven control point is enough fidelity, rather
-  than a physics rope — and asks for it to be prototyped once and reviewed
+  than a physics rope, and asks for it to be prototyped once and reviewed
   before it is treated as final. This is that prototype.
 
   It imports the REAL ../logic.js math and the REAL ../config.js numbers, so
@@ -70,11 +70,11 @@
 </style>
 </head>
 <body>
-  <h1>R1 — cast, line and reel motion</h1>
+  <h1>R1: cast, line and reel motion</h1>
   <p class="sub">
     The question this is here to answer: <strong>is a Bezier line with a
     tension-driven control point enough</strong>, or does the line want a real
-    rope simulation? Cast it, then drag the tension slider while it is reeling —
+    rope simulation? Cast it, then drag the tension slider while it is reeling,
     that slider is the same 0–100 the tension meter already tracks. Tension in
     the game rises on <em>mistakes only</em>, never on slow typing.
   </p>
@@ -134,7 +134,7 @@ let castStart = { x: 124, y: 140 };            // where the lure leaves from, at
 
 // The rod tip in scene coords, through everything moving it: the rig's own bob
 // (a live CSS animation), plus the rod's rotation about the grip. This is the
-// bit the game gets wrong today — LINE_ORIGIN is read once at load.
+// bit the game gets wrong today: LINE_ORIGIN is read once at load.
 function rodTip() {
   const tip = rotateAboutPivot(POSE.lineOrigin, POSE.rodPivot, swing + rodAngle);
   const m = new DOMMatrix(getComputedStyle(rig).transform);

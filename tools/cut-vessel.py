@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Cut a vessel's far and near halves out of one delivered painting (R5).
 
-An ART PIPELINE tool, not part of the game — nothing loads it at runtime and it
+An ART PIPELINE tool, not part of the game: nothing loads it at runtime and it
 is not a build step. Companion to cut-angler.py and the same idea: don't
 generate a piece you could cut. A side-on boat already contains both halves, so
 asking for two images that have to register would invent a problem this doesn't
@@ -9,7 +9,7 @@ have.
 
     python3 tools/cut-vessel.py <name> <source.jpg|png>
 
-The cut follows the NEAR gunwale's inner edge — the sheer. Everything below it
+The cut follows the NEAR gunwale's inner edge: the sheer. Everything below it
 (the rail and the topsides) becomes `-near.png`, which paints in FRONT of the
 angler so the kid sits down IN the hull; everything above (the interior, the
 thwarts, the far gunwale, the stem) becomes `-far.png`, behind them. That is

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Judge a delivery's darks against the art direction — the check ART.md used to
+"""Judge a delivery's darks against the art direction: the check ART.md used to
 state wrongly.
 
 An ART PIPELINE tool, not part of the game. Nothing loads it at runtime.
@@ -18,7 +18,7 @@ against the 109 pieces the game actually loads, **both are false**:
 
 Every rod in the game fails the first, R4's own painted deepsea included, and
 `rod-bamboo-ocean` carries 3,136 pure-black pixels. They are anti-aliased
-outline and JPEG ringing — paint nobody chose — and rejecting a delivery for
+outline and JPEG ringing (paint nobody chose) and rejecting a delivery for
 them would have cost real generations. The rule `ART_DIRECTION.md` actually
 cares about is that **nothing reads as black**: no black linework, no black
 shadow. A handful of black pixels on an outline is neither.
@@ -33,7 +33,7 @@ populations with no overlap at all:
     pixel-era art, which really did
     use black linework       (n=11)    14.394%  mildest, 23.152% worst
 
-That is a 17x gap, so the gate sits at **2%** — 2.4x above the worst piece the
+That is a 17x gap, so the gate sits at **2%**: 2.4x above the worst piece the
 game ships and 7x below the mildest piece that genuinely fails. The worst
 survivor is `fish-anchovy-body`, and drawing its flagged pixels shows exactly
 what you would want to survive: the pupil, and the fine linework on the gill
@@ -46,7 +46,7 @@ WHAT IS REPORTED BUT NOT GATED, AND WHY
   of the interior. A painting has gradients; umber is the darkest tone anyone
   *picks*, not a floor the generator respects. Informational.
 - **Whether those darks read warm.** They do everywhere it matters: of 109
-  pieces only four have cool sub-umber paint, and all four should —
+  pieces only four have cool sub-umber paint, and all four should,
   `background-ocean-water` (R-B -44), `background-stream-water` (-39) and the
   two silver schooling fish, `fish-mackerel-body` (-10) and `fish-herring-body`
   (-7). So a cool reading is a "go and look", never a rejection: deep water and
@@ -63,7 +63,7 @@ from scipy import ndimage
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 UMBER = np.array([0x33, 0x29, 0x1f], dtype=float)
-UMBER_L = UMBER.mean()          # 41.0 — the darkest tone ART_DIRECTION.md names
+UMBER_L = UMBER.mean()          # 41.0: the darkest tone ART_DIRECTION.md names
 BLACK_L = 8.0                   # "reads as black" rather than "is exactly (0,0,0)"
 ERODE = 3                       # kills an outline and its anti-aliasing, keeps a region
 GATE = 2.0                      # % of the eroded interior; see the docstring
@@ -92,7 +92,7 @@ def measure(path):
 
 
 def game_art():
-    """Every piece the game can draw — read from config.js rather than a glob, so
+    """Every piece the game can draw: read from config.js rather than a glob, so
     a new registry line is covered the day it lands."""
     import json, re, subprocess
     js = """import('%s/config.js').then(m => { const C = m.CONFIG, f = new Set();
@@ -125,12 +125,12 @@ if argv[0] == "--corpus":
     rows = [(f, measure(f)) for f in game_art()]
     rows = [(f, m) for f, m in rows if m]
     v = sorted(m["inner_black"] for _, m in rows)
-    print("the control — %d pieces the game loads:" % len(rows))
+    print("the control: %d pieces the game loads:" % len(rows))
     print("  eroded pure-black share   min %.3f%%  median %.3f%%  worst %.3f%%   (gate is %.1f%%)"
           % (v[0], v[len(v) // 2], v[-1], GATE))
-    print("  pieces carrying any (0,0,0) at all: %d of %d — which is why that is not the rule"
+    print("  pieces carrying any (0,0,0) at all: %d of %d, which is why that is not the rule"
           % (sum(1 for _, m in rows if m["black"]), len(rows)))
-    print("  pieces carrying paint below umber:  %d of %d — nor is that"
+    print("  pieces carrying paint below umber:  %d of %d, nor is that"
           % (sum(1 for _, m in rows if m["sub"] > 0), len(rows)))
     worst = sorted(rows, key=lambda r: -r[1]["inner_black"])[:3]
     print("  worst three:")

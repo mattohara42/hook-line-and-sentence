@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-// generate-words.mjs — builds data/words.json for Hook, Line and Sentence.
+// generate-words.mjs: builds data/words.json for Hook, Line and Sentence.
 // Usage: node generate-words.mjs <input-wordlist.txt> <output.json>
 // Input: one word per line, ordered by frequency (most common first).
 
 import { readFileSync, writeFileSync } from "fs";
 
-// Curated stop-list of non-words a dictionary filter can't catch — acronyms,
+// Curated stop-list of non-words a dictionary filter can't catch: acronyms,
 // abbreviations, foreign words, prefixes. Shared with tests/data.test.mjs so
 // words.json and any regeneration stay in sync. See BACKLOG → Word pool.
 const BLOCKLIST = JSON.parse(readFileSync(new URL("../data/blocklist.json", import.meta.url), "utf8"));
@@ -24,7 +24,7 @@ const CFG = {
 };
 
 // Default letter-unlock order (stage 1 = home row; each stage adds letters).
-// Tuning this is a design decision — counts per stage are reported below.
+// Tuning this is a design decision: counts per stage are reported below.
 const UNLOCK_STAGES = [
   { name: "1. home row", adds: "asdfghjkl" },
   { name: "2. +e +i",    adds: "ei" },

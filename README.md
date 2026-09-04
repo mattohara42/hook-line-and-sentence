@@ -1,61 +1,61 @@
 # Hook, Line and Sentence 🎣
 
 A cozy fishing game that teaches kids to type. Casting, reeling,
-and catching all happen through the keyboard — practice that never feels
+and catching all happen through the keyboard: practice that never feels
 like practice.
 
 **Status:** built and playable. The core game (M1–M10) and the Advanced
-Progression epic (A0–A8) are both done — four ranks, three fishing spots, words
+Progression epic (A0–A8) are both done: four ranks, three fishing spots, words
 → phrases → punctuated sentences. Current work is the **Art & Animation
 Refresh** (`BUILD_PLAN_REFRESH.md`): the whole visual layer has been restarted
 in a warm painterly style (`ART_DIRECTION.md`), and the cast, line and reel have
 real motion (`ANIMATION.md`). R1–R6 have landed; R7 (the gear) has its nine rods
 left. The **Catch Feel** epic (`BUILD_PLAN_FEEL.md`) shipped alongside it and
-fixed the moment of the catch — where the line lands, what rises out of the
+fixed the moment of the catch: where the line lands, what rises out of the
 water, a trophy card that waits for you instead of a message that vanishes, and
-a wait you can do something in. The engine underneath — progression, the
-ghost-hands keyboard, the unlockables — isn't changing. Hosted on Netlify —
+a wait you can do something in. The engine underneath: progression, the
+ghost-hands keyboard, the unlockables: isn't changing. Hosted on Netlify,
 pushes to `main` are promoted to production manually.
 
 > **Renamed 2026-08-31.** This project was *Typing Fishing*, in a repo called
 > `WordsPerM...`, and lived at `fishtyping.netlify.app`. Everything moved to
-> **Hook, Line and Sentence** — a better fit now that the game grades up from
+> **Hook, Line and Sentence**: a better fit now that the game grades up from
 > words to phrases to full punctuated sentences. Saved games are unaffected.
 
 ## Start here
 
 | File | What it is |
 |------|-----------|
-| `HANDOFF.md` | Session-to-session notes — read this first when resuming work |
-| `SPEC.md` | Design source of truth — all decisions and v1 scope |
+| `HANDOFF.md` | Session-to-session notes: read this first when resuming work |
+| `SPEC.md` | Design source of truth: all decisions and v1 scope |
 | `BUILD_PLAN.md` | v1 milestone order (M1–M10, all done) with done-criteria |
-| `BUILD_PLAN_ADVANCED.md` | Post-v1 Advanced Progression epic — tiers (Minnow→Muskie), phrases/sentences, WPM-as-goal; phased A0–A8 (done) |
-| `BUILD_PLAN_REFRESH.md` | **Current epic** — the Art & Animation Refresh, R1–R7: motion, palette, painted backgrounds, one rigged angler, vessels, a rig per fish, gear |
-| `BUILD_PLAN_FEEL.md` | The Catch Feel epic, F1–F5 (shipped) — the moment of the catch, and what each milestone measured |
-| `ART_DIRECTION.md` | How the game looks — warm painterly storybook; governs every visual choice, generated or CSS-drawn |
-| `ANIMATION.md` | How the cast, line and reel move — the R1 spec, plus where the lure lands and how the catch card arrives |
-| `GEMINI_NOTES.md` | How the image generator actually behaves — required reading before writing an art prompt |
+| `BUILD_PLAN_ADVANCED.md` | Post-v1 Advanced Progression epic: tiers (Minnow→Muskie), phrases/sentences, WPM-as-goal; phased A0–A8 (done) |
+| `BUILD_PLAN_REFRESH.md` | **Current epic**: the Art & Animation Refresh, R1–R7: motion, palette, painted backgrounds, one rigged angler, vessels, a rig per fish, gear |
+| `BUILD_PLAN_FEEL.md` | The Catch Feel epic, F1–F5 (shipped): the moment of the catch, and what each milestone measured |
+| `ART_DIRECTION.md` | How the game looks: warm painterly storybook; governs every visual choice, generated or CSS-drawn |
+| `ANIMATION.md` | How the cast, line and reel move: the R1 spec, plus where the lure lands and how the catch card arrives |
+| `GEMINI_NOTES.md` | How the image generator actually behaves: required reading before writing an art prompt |
 | `BUILD_PLAN_VISUAL.md` | Superseded by the refresh (V1 shipped and survives); kept for the reasoning trail |
 | `BUILD_PLAN_GRAPHICS.md` | Superseded twice over; kept for the reasoning trail |
 | `CLAUDE.md` | Instructions for Claude Code sessions |
 | `FIRESTORE.md` | Profile/save data schema + cloud-saves setup (self-hosting) |
 | `BACKLOG.md` | Ideas parked to protect milestone scope, plus shipped post-v1 features |
-| `ART.md` | Art pipeline — Claude writes Gemini prompts, Matt generates the PNGs |
+| `ART.md` | Art pipeline: Claude writes Gemini prompts, Matt generates the PNGs |
 | `config.js` | Every tuning knob, one file |
 | `data/words.json` | 2,851 words tagged by letters/difficulty (generated, minus `data/blocklist.json`) |
-| `data/phrases.json` | Stream content — multi-word phrases (hand-curated) |
-| `data/sentences.json` | Ocean content — punctuated sentences (hand-curated) |
-| `data/fish.json` | The roster — say hi to Muskie Quixote |
+| `data/phrases.json` | Stream content: multi-word phrases (hand-curated) |
+| `data/sentences.json` | Ocean content: punctuated sentences (hand-curated) |
+| `data/fish.json` | The roster: say hi to Muskie Quixote |
 | `prototype/` | Playable design artifacts, kept as a reasoning trail: the reel feel test, the R1 line-animation prototype, and the V1 visual mockup (still in the retired pixel style) |
-| `tools/README.md` | The nine pipeline tools — what each cuts, the two browser checks, and the deps a fresh box lacks |
+| `tools/README.md` | The nine pipeline tools: what each cuts, the two browser checks, and the deps a fresh box lacks |
 
 ## How it plays
 
 Type the word on screen to cast. Sometimes the pond isn't interested and you
-type a couple of short words to **wiggle the bait** first — no wiggle, no bite,
+type a couple of short words to **wiggle the bait** first, no wiggle, no bite,
 though the words can be typed as slowly as you like. Then a fish bites, and
 reeling it in is word-at-a-time typing with a beat between words. **Tension only
-reacts to mistakes, never to speed** — a slow, careful typist always lands the
+reacts to mistakes, never to speed**: a slow, careful typist always lands the
 fish. Landing one raises a card with the fish on it, its weight and a bad pun,
 and a gold plaque if it's a new species or a personal best; the card has no
 timer and waits until you start the next word. A ghost-hands keyboard under the
@@ -66,10 +66,10 @@ Four ranks open three spots: the Pond (single words, lowercase only), the
 Stream (multi-word phrases, spacebar and capitals), and the Ocean (full
 sentences with punctuation). Catch the legendary and you're a Muskie.
 
-## Quick Cast — the speed test
+## Quick Cast: the speed test
 
 A timed typing test lives in the tackle box (⏱️ **Quick cast**), and it is
-**always available** — every profile, from the first minute, whatever they have
+**always available**: every profile, from the first minute, whatever they have
 unlocked. Type as many words as you can in 30 seconds; you get words-per-minute,
 accuracy, and a personal best to beat.
 
@@ -78,7 +78,7 @@ It sits deliberately outside the game:
 - **No progression gate**, and by default it draws from the *whole* word pool
   rather than a kid's unlocked letters, so a score means the same thing in week
   one as in month six. `CONFIG.speedTest.useUnlockedLettersOnly` flips that.
-- **It cannot touch the fishing save** — no coins, no catches, no badges, and
+- **It cannot touch the fishing save**, no coins, no catches, no badges, and
   none of the per-key stats behind the Grown-ups view. "Hooked on Typing" counts
   words reeled from real fish, and typing under a clock is not the same evidence
   about which keys a kid finds hard. Its only stored state is `speedBest`.
@@ -102,18 +102,18 @@ Then open http://localhost:8000. No build step. That's the whole point.
 
 ## Deploy
 
-No build step, so deploy the repo's static files to any static host — Netlify,
+No build step, so deploy the repo's static files to any static host: Netlify,
 GitHub Pages, Cloudflare Pages, Firebase Hosting, etc. The reference install is
 on Netlify; pushes to `main` are promoted to production manually.
 
 ## Cloud saves (optional)
 
-The game plays **fully offline on localStorage** — no account, no server, no
+The game plays **fully offline on localStorage**, no account, no server, no
 setup. Every profile, catch, and stat is saved on that device/browser.
 
 To sync a kid's progress **across devices** behind one parent Google sign-in,
 wire up Firebase Firestore. It works with either a brand-new Firebase project or
-one you already use for something else — step-by-step for both paths (plus what
+one you already use for something else: step-by-step for both paths (plus what
 to put in `config.js`, the security rules, and a verification checklist) is in
 **`FIRESTORE.md` → Cloud saves setup**. With no Firebase config the feature is
 simply off and the game still works.
@@ -124,7 +124,7 @@ simply off and the game still works.
 node --test
 ```
 
-Zero dependencies — Node's built-in runner.
+Zero dependencies: Node's built-in runner.
 
 - `tests/data.test.mjs` validates the hand-edited content and tuning knobs
   (`data/*.json` and `config.js`): word invariants, fish roster, tier-odds sums,
@@ -132,8 +132,8 @@ Zero dependencies — Node's built-in runner.
   the keyboard's exemption from it, and the wiggle's config and content limits.
   Catches the bug class where a bad merge or manual edit silently corrupts the
   data.
-- `tests/logic.test.mjs` covers the pure game math in `logic.js` — tier rolls,
-  weight/lunker classification, stage gating, and the reel-pool fallback — with
+- `tests/logic.test.mjs` covers the pure game math in `logic.js`: tier rolls,
+  weight/lunker classification, stage gating, and the reel-pool fallback, with
   RNG injected so the tests are deterministic.
 
 `logic.js` holds the pure, DOM-free math; `app.js` keeps thin wrappers that feed
@@ -142,4 +142,4 @@ is DOM/state-bound and verified in a real browser: `tools/spot-check.mjs` takes
 one still of a fishing spot with its layer stack printed, and
 `tools/play-check.mjs` plays a whole catch and screenshots every beat of it.
 That second one exists because some bugs are only wrong for three frames and
-would never fail an assertion — see `tools/README.md`.
+would never fail an assertion: see `tools/README.md`.

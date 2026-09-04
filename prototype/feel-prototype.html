@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Hook, Line and Sentence — Feel Prototype</title>
+<title>Hook, Line and Sentence: Feel Prototype</title>
 <style>
   :root {
     --water-deep: #16323f;
@@ -110,7 +110,7 @@
 </style>
 </head>
 <body>
-  <h1>Hook, Line and Sentence — Feel Prototype</h1>
+  <h1>Hook, Line and Sentence: Feel Prototype</h1>
 
   <div id="controls">
     <span>Reel pacing:</span>
@@ -141,10 +141,10 @@
   <div id="hud">
     <span>Caught: <b id="caught">0</b></span>
     <span>Escaped: <b id="escaped">0</b></span>
-    <span>Reeling: <b id="dist">—</b></span>
+    <span>Reeling: <b id="dist">–</b></span>
   </div>
 
-  <p id="hint">Errors raise tension; correct letters lower it. Slow typing is always safe — only mashing wrong keys loses the fish. Switch pacing modes any time to compare the feel.</p>
+  <p id="hint">Errors raise tension; correct letters lower it. Slow typing is always safe: only mashing wrong keys loses the fish. Switch pacing modes any time to compare the feel.</p>
 
 <script>
 (() => {
@@ -158,7 +158,7 @@
     wordPauseMs: 450,       // pause between words in word-at-a-time mode
   };
 
-  // Simple common lowercase words — feel-testing only, not the real curriculum pool
+  // Simple common lowercase words: feel-testing only, not the real curriculum pool
   const WORDS = ["fish","lake","reel","cast","dad","sun","water","boat","calm","line",
                  "pond","fin","tail","swim","wave","hook","bait","rod","dock","frog",
                  "moss","reed","drift","still","ripple","catch","shore","stone"];
@@ -206,7 +206,7 @@
     phase = "cast"; inputLocked = false;
     target = pick(WORDS); typed = 0;
     tension = 0; renderTension();
-    el.dist.textContent = "—";
+    el.dist.textContent = "–";
     el.line.style.width = "0px";
     el.fish.style.opacity = 0;
     el.fish.classList.remove("rare");

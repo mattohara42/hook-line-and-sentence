@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The per-pose geometry of the three painted anglers — one copy, two readers.
+"""The per-pose geometry of the three painted anglers: one copy, two readers.
 
 An ART PIPELINE module, not part of the game. `tools/cut-angler.py` cuts a
 pose's rig layers with these numbers and `tools/gear-register.py` puts a gear
@@ -31,16 +31,16 @@ a fitted axis is the kind of duplication that goes wrong silently.
 #               It has to cover the reel the pose was PAINTED with, not just
 #               enough of it to read: whatever it leaves behind stays in the
 #               body and arm layers, where the gate rod's own reel hides it
-#               perfectly — until a rod with no reel is equipped and it hangs in
+#               perfectly: until a rod with no reel is equipped and it hangs in
 #               mid-air. The Ocean's was 58, which stopped exactly at the brass
 #               reel's rim and left a 2,766 px crescent in the body layer. 90
 #               covers it and destroys nothing: the child's own nearest paint is
 #               76 px from that centre and the hand band protects the fingers.
-#               The Stream's 42 is right and must not be grown the same way —
+#               The Stream's 42 is right and must not be grown the same way,
 #               there the child's own arm is inside 70.
 #   rod_xmin    a hard left bound, where the corridor would otherwise bite into
 #               the body (the Stream's butt passes close to the waders)
-#   rod_len     grip to tip, in DESIGN px — the delivered rod is cropped by the
+#   rod_len     grip to tip, in DESIGN px: the delivered rod is cropped by the
 #               canvas, so this is a decision, not a measurement
 #   arm         pivot / wrist / hand centre, and an optional elbow when the
 #               limb bends visibly (the Ocean's does; the other two hide their
@@ -48,14 +48,14 @@ a fitted axis is the kind of duplication that goes wrong silently.
 #               something the body layer carries: the Pond's forearm behind the
 #               drawn-up knee, the Stream's and Ocean's sleeve behind the vest.
 #               The cut end then sits AT the pivot and never moves.
-#   figure_h    see below — measured as the widest row in the top 20% of the
+#   figure_h    see below: measured as the widest row in the top 20% of the
 #               figure, which is the one head measure that has stayed consistent
 #               across all three poses (318 / 217 / 315 source px).
 #   figure_h    how tall the figure should render, in design px. NOT scaled from
 #               the source: the generator draws every pose to fill its frame, so
 #               the standing Stream kid came back only 2% taller than the seated
 #               Pond one. 50 seated / 75 standing comes from matching the two
-#               HEADS — the Pond's is 318 source px wide at its scale, which is
+#               HEADS: the Pond's is 318 source px wide at its scale, which is
 #               18.1 design px, and the Stream's 217 px head matches at 0.083.
 #   feet_y      where the figure's feet land, in scene design px
 #   centre_x    where the figure's centre lands, in scene design px

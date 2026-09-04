@@ -3,8 +3,8 @@
 //
 //   NODE_PATH=/tmp/node_modules node tools/play-check.mjs --loc pond --tag f1 --out /tmp/shots
 //
-// spot-check.mjs takes one still of a spot; this takes the whole catch — cast,
-// wait, approach, bite, reel, landing, and the beat after it — because the
+// spot-check.mjs takes one still of a spot; this takes the whole catch: cast,
+// wait, approach, bite, reel, landing, and the beat after it, because the
 // Catch Feel epic (BUILD_PLAN_FEEL.md) is entirely about things that are only
 // wrong for a moment. Every F1 bug was found here and none of them would have
 // failed an assertion: the duplicate ripple, the placeholder body showing
@@ -14,7 +14,7 @@
 // It also prints, at each beat, the numbers behind the picture: #fish's
 // position and class list, how many species layers are mounted, and where the
 // line's <path> actually ends (in design px, since the path is drawn inside
-// the scaled #scene-frame). Read those, then look at the shot — the class list
+// the scaled #scene-frame). Read those, then look at the shot: the class list
 // is what showed `.rigged` being wiped.
 //
 // Needs the repo served (python3 -m http.server 8080) and playwright available
@@ -28,7 +28,7 @@ const loc = args.loc ?? "pond";
 const outDir = args.out ?? "/tmp/shots";   // one PNG per beat, named <tag>-<beat>.png
 const tag = args.tag ?? "now";
 // --catches lands you ON an unlock boundary. The ladder counts the COLLECTION,
-// not save.totalCatches, so this seeds the collection — pass 2 and the catch
+// not save.totalCatches, so this seeds the collection: pass 2 and the catch
 // you play is the third, which unlocks stage 2 and fires the letter banner.
 const catches = Number(args.catches ?? 40);
 const url = args.url ?? "http://localhost:8080/index.html";
@@ -72,7 +72,7 @@ const scene = await page.evaluate(() => document.getElementById("scene").classNa
 console.log("scene     |", scene);
 if (scene !== `loc-${loc}`) {
   console.error(`asked for --loc ${loc} and got ${scene}. The seeded profile cannot`
-    + ` reach that spot — check owned.rod against shop.rods[].unlocksLocation.`);
+    + ` reach that spot: check owned.rod against shop.rods[].unlocksLocation.`);
   await browser.close();
   process.exit(1);
 }
@@ -122,7 +122,7 @@ for (let i = 0; i < 60 && settled < 2; i++) {
   await page.waitForTimeout(150);
 }
 if (settled < 2) {
-  console.error("the cast never came to rest — the line's end is still moving after 9s");
+  console.error("the cast never came to rest: the line's end is still moving after 9s");
   await browser.close();
   process.exit(1);
 }
@@ -131,7 +131,7 @@ console.log("waiting   | line end:", await lineEnd(), "| status:", await status(
 await shot("2-waiting");
 
 // F4: a wiggle cast puts a short word up and does not bite until it is typed.
-// Nothing here decides that it IS one — it just types whatever appears, which
+// Nothing here decides that it IS one: it just types whatever appears, which
 // is also the proof that no-wiggle-no-bite holds: if the word box fills during
 // the wait, the fish is waiting on the kid.
 let wiggled = 0;
@@ -198,7 +198,7 @@ await page.waitForTimeout(2600);
 console.log("+2.6s     | card:", await card(), "| banner:",
   await page.evaluate(() => document.getElementById("unlock-banner").className));
 await shot("7-caught");
-// F3: the card has no timer — prove it is still there long after the old
+// F3: the card has no timer, prove it is still there long after the old
 // 1500ms message would have gone, and that a keystroke is what clears it
 await page.waitForTimeout(4000);
 console.log("+4s       | card:", await card(), "| word:", await word());

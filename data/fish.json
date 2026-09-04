@@ -19,7 +19,7 @@
     "coins": 1,
     "color": "#b4a76d",
     "location": "pond",
-    "blurb": "To dream? No — to snack."
+    "blurb": "To dream? No, to snack."
   },
   {
     "id": "minnow",
@@ -107,7 +107,7 @@
     "coins": 20,
     "color": "#dac493",
     "location": "pond",
-    "blurb": "To the far bank — and beyond!"
+    "blurb": "To the far bank, and beyond!"
   },
   {
     "id": "dace",
