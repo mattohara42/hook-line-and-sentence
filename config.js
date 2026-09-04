@@ -231,13 +231,13 @@ export const CONFIG = {
         // shins so he sits down IN the boat. Geometry places the sheer at design
         // y≈190 (his thigh) and the hull straddling the y=198 waterline.
         //
-        // NOT skinnable for now, and that is a visible regression worth knowing
-        // about: shop.boats' four alternate hulls are still single pixel-era
-        // PNGs with no far/near split, so equipping one would either paste a
-        // pixel rowboat over this or, if matched by suffix, 404 into an
-        // invisible boat. They each need the same cut — see ART.md.
+        // Skinnable, and it is the only vessel that is: shop.boats sells rowboat
+        // colours, and rowboat paint has no business on a Boston Whaler. A skin
+        // tints BOTH halves — a red hull with a brown near gunwale in front of
+        // the kid is not a red boat — which is why the tint lives on the vessel
+        // element rather than on a swapped file.
         vessel: { far: "boat-pond-far", near: "boat-pond-near",
-                  x: -16, y: 2, w: 156, h: 42, skinnable: false,
+                  x: -16, y: 2, w: 156, h: 42, skinnable: true,
                   shadow: { x: 24, y: 212, w: 116 } },
         // rod → arm → body. The hand is painted in front of the pole, and the
         // forearm's cut end tucks behind the knee, which the body carries — so
@@ -696,14 +696,34 @@ export const CONFIG = {
       { id: "cricket", name: "Lucky Cricket", cost: 15, biteSpeedMult: 0.75 },
       { id: "glow",    name: "Glow Grub",     cost: 50, biteSpeedMult: 0.55 },
     ],
-    // Cosmetic only — `file` is the assets/<file>.png swapped onto #boat. The
-    // free default `classic` points at the existing boat.png.
+    // Cosmetic only, and a hull skin is a TINT rather than its own painting:
+    // `tint` is a CSS filter applied to BOTH halves of the pose's own painted
+    // vessel. There is no per-skin PNG and no `file` — the pixel-era
+    // boat-red/blue/leaf/purple.png are no longer referenced by anything.
+    //
+    // Chosen over four repaints of boat-pond.png after shooting both in the
+    // real game (ART.md → R5 debt): the filter costs no generations, no assets
+    // and no registration check, and at these saturations it reads as warm
+    // muted painted timber. Its one cost is that the thwarts and the interior
+    // tint along with the planking, where the repaint prompt asks for bare
+    // timber — Matt's call was to ship this now and keep the repaints as a
+    // later option, so ART.md keeps that prompt.
+    //
+    // The numbers are eyeballed against ART_DIRECTION's "no neon": the first
+    // pass at saturate(0.85–1.45) came back candy-bright on three of four, and
+    // pulling the three cool hues to ~0.5 is what made them read as storybook.
+    // The hull sits at hue 23°, so `red` barely rotates and needs saturation
+    // added instead, while the other three rotate far and need it taken away.
+    //
+    // The free default `classic` carries NO tint, exactly the way the hats'
+    // "Just Hair" carries no file: it is the painted rowboat as delivered, and
+    // it is how you take a colour back off.
     boats: [
-      { id: "classic", name: "Ol' Faithful", cost: 0,  file: "boat"        },
-      { id: "red",     name: "Red Rover",    cost: 20, file: "boat-red"    },
-      { id: "blue",    name: "Blue Bayou",   cost: 20, file: "boat-blue"   },
-      { id: "leaf",    name: "Lily Pad",     cost: 40, file: "boat-leaf"   },
-      { id: "purple",  name: "Purple Reign", cost: 60, file: "boat-purple" },
+      { id: "classic", name: "Ol' Faithful", cost: 0                                                          },
+      { id: "red",     name: "Red Rover",    cost: 20, tint: "hue-rotate(-14deg) saturate(1.25) brightness(0.97)" },
+      { id: "blue",    name: "Blue Bayou",   cost: 20, tint: "hue-rotate(178deg) saturate(0.5) brightness(1.02)"  },
+      { id: "leaf",    name: "Lily Pad",     cost: 40, tint: "hue-rotate(72deg) saturate(0.5)"                    },
+      { id: "purple",  name: "Purple Reign", cost: 60, tint: "hue-rotate(248deg) saturate(0.45) brightness(1.02)" },
     ],
     // R7: cosmetic only, and named the same way rods are — `hat-straw` plus the
     // pose. The free default paints NOTHING: R4 drew all three anglers

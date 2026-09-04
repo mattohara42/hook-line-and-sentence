@@ -451,11 +451,21 @@ state — they are questions nobody has answered yet.
   it — ~2.4MB across the full roster. It would set the rule for the anglers and
   vessels too, which is why it is a question rather than a commit.
 
-## The four shop hulls still do nothing (carried from R5, user-visible)
+## Four repainted hulls, if the tinted thwarts ever bother anyone (R5 debt, 2026-09-04)
 
-Both painted vessels are `skinnable: false`, so equipping one of `shop.boats`'
-four alternate hulls is a no-op at every spot: they are pixel-era PNGs with no
-far/near split. R7's `gearArt` is now the pattern that fixes it — a hull is a
-gear slot with a per-pose registry — and the boat shop is the one shop kind
-still on its own older mechanism, so fold it in rather than re-solving it.
-Prompt and a cheaper CSS-tint fallback: `ART.md` → *R5 debt*.
+The shop hulls were broken — every vessel was `skinnable: false`, so buying one
+did nothing — and that is **fixed**: they are CSS tints of the Pond rowboat's own
+painting now, chosen over four repaints after shooting both in the real game.
+The one thing the tint gets wrong is that the thwarts and the interior colour
+along with the planking, where `ART.md`'s repaint prompt asks for bare timber.
+
+Matt's call was to ship the tint and keep the repaints as a later option, so the
+prompt stays written out in `ART.md` → *R5 debt*, along with what taking that
+path now costs: four generations, four cut pairs, a per-pose registry like
+`CONFIG.rig.gearArt`, and dropping the `tint` field. Play it first — the tinted
+thwarts may well not be worth four generations.
+
+**Unreferenced since the tint shipped:** `assets/boat-red.png`, `boat-blue.png`,
+`boat-leaf.png`, `boat-purple.png` and `boat.png` are pixel-era files nothing
+loads any more. They are exactly the filenames the repaint prompt says to
+overwrite, which is the only reason they are still in the repo.

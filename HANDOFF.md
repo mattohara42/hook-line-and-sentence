@@ -24,20 +24,18 @@ something is the way it is, `git log` and the PR body have it in full.
 all that is outstanding, none of it code: the play-tests are Matt's, and the
 carried debts are decisions rather than bugs.
 
-**The obvious next pieces of work, in rough order of how much they would be
-missed** — all in `BACKLOG.md` except the first, and none of them started:
+**R5's last debt is paid too: the four shop hulls work** (2026-09-04). They are
+CSS tints of the Pond rowboat's own painting, chosen over four repaints after
+shooting both in the real game; the repaints stay an option in `BACKLOG.md` if
+the tinted thwarts bother you once you have played it.
 
-1. **The four shop hulls still do nothing** (carried from R5). `shop.boats`'
-   alternate hulls are pixel-era PNGs with no far/near split, so equipping one
-   is a no-op at every spot. R7's `gearArt` is now the pattern that fixes it —
-   a hull is a gear slot with a per-pose registry — and the boat shop is the one
-   shop kind still on its own older mechanism. Prompt and a cheaper CSS-tint
-   fallback: `ART.md` → *R5 debt*.
-2. **`cut-angler.py`'s despill should move to `cut-gear.py`'s unmix model.** It
+**The obvious next pieces of work**, both in `BACKLOG.md` and neither started:
+
+1. **`cut-angler.py`'s despill should move to `cut-gear.py`'s unmix model.** It
    reddens thin neutral pieces by about 11 points of R − B. Deliberately not
    done inside a delivery, because it changes how every rod is cut and they all
    re-cut byte-identically today (`BACKLOG.md` has the numbers).
-3. **`ART.md`'s *"no pure black"* delivery check is wrong as written** and would
+2. **`ART.md`'s *"no pure black"* delivery check is wrong as written** and would
    reject every rod in the game, R4's included. The measure that means something
    is the shaft's **interior** colour, not the presence of any (0,0,0) pixel.
 
