@@ -16,7 +16,7 @@ something is the way it is, `git log` and the PR body have it in full.
 | **The refresh** | ✅ **R1–R7 all shipped.** Every angler, vessel, background, fish and shop item is painted in the new direction. |
 | **Catch Feel** | ✅ **F1–F5 all shipped 2026-09-03**, `BUILD_PLAN_FEEL.md`. One thing left and it is Matt's: play it. |
 | `origin/main` | clean, nothing unpushed |
-| Tests | 109/109 (`npm test`), plus `tools/ui-check.mjs` for the chrome (needs a served repo + playwright) |
+| Tests | 110/110 (`npm test`), plus `tools/ui-check.mjs` for the chrome (needs a served repo + playwright) |
 | Open PRs | **#55 only**: close it unmerged, see below |
 | Deploys | Netlify is **manual**; merging to `main` does not go live |
 
@@ -42,6 +42,11 @@ to a tablet. Three node tests came with it, for the classes of bug that produce
 no error at all: an id `app.js` reaches for that the markup does not have, a
 `var(--typo)` that silently renders nothing, and config naming a painting that
 was never delivered. `logic.js` also has a coverage floor now.
+
+**The catch card's subtitle was the last thing out of that review** and is
+fixed: it read `3.7 lb · a LUNKER! · · 257 wpm` at every Stream and Ocean catch,
+because two of its pieces each carried the separator. The join is
+`logic.catchSubtitle` now, tested, with the doubled dot as its own case.
 
 **R5's last debt is paid too: the four shop hulls work** (2026-09-04). They are
 CSS tints of the Pond rowboat's own painting, chosen over four repaints after
