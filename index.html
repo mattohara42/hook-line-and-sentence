@@ -294,6 +294,25 @@
     </div>
   </div>
 
+  <!-- Every fish here is caught by typing, so a device with nothing to type on
+       can look at the pond and no more. This says so once, up front, instead of
+       leaving a kid tapping at a picture of a keyboard. It is last in the file
+       on purpose: every .overlay shares z-index 10, so DOM order decides which
+       is topmost, and this has to sit over the profile picker. -->
+  <div id="no-keyboard" class="overlay" hidden>
+    <div class="overlay-panel">
+      <div class="overlay-title">YOU'LL NEED A KEYBOARD</div>
+      <p class="nudge-text">Every fish in this game is caught by typing, so the
+        one thing it cannot do without is keys to type on. This device looks
+        like it hasn't got any.</p>
+      <p class="nudge-text">Have a look around by all means, the water is nice.
+        To actually fish, plug a keyboard in or come back on a computer.</p>
+      <div class="nudge-actions">
+        <button class="toggle-btn" id="no-keyboard-close">LET ME LOOK AROUND</button>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="app.js"></script>
 </body>
 </html>

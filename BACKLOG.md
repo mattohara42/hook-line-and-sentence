@@ -64,25 +64,40 @@ same ones A5's notes parked: whether numbers are their own progression after the
 letters or a mode of their own, and what a six-year-old actually needs versus
 what a complete keyboard implies. Big enough to be its own epic, not a milestone.
 
-## Found while measuring L1: a portrait phone cannot see the fishing (2026-09-05)
+## ✅ Closed: mobile is a shop window, not a play surface (2026-09-05)
 
-**Everything a kid types for is off the right-hand edge of a phone held
-upright.** The scene is a 720x360 canvas scaled to COVER the viewport and
-anchored bottom-left, so on a 390x844 phone the scale is 2.34 and only design
-**x 0..166** is on screen. The boat is x -16..140, and after that the visible
-scene is over. The lure lands at x=458, which is viewport x **1063 in a 390px
-window**: verified by typing a real cast at that size, where the line simply
-leaves the frame and nothing else happens. The bobber, its ripples, the bite and
-the fish rising are all outside the picture, so the payoff for typing the word
-is a boy in a boat and a line going off the top corner.
+**The decision.** The game is typing, all of it, so a phone without a keyboard
+was never going to be playable whatever the layout did. Matt's call is that
+mobile stays polished enough that someone who taps a shared link sees a
+handsome pond, and stops there. **What shipped instead of a layout milestone is
+one notice**: a device that points with a finger and has no mouse behind it
+gets "you'll need a keyboard" over the profile picker, dismissible, and it
+closes itself on the first real keystroke (a tablet with a Bluetooth keyboard
+clears it by being typed on). The rule is `logic.looksKeyboardless`.
 
-Not touched in L1, because the fix is a design call rather than a patch, and
-there are at least three: let the scene CONTAIN rather than cover on tall
-screens (letterboxed sky, whole scene visible); anchor the cast to a share of
-the *visible* width rather than to design x=458; or centre the frame on the
-action instead of on the left edge. All three move numbers that R1, F1 and T2
-each measured against the current geometry, so it wants its own milestone.
-`CONFIG.anim.cast.landing`'s comment is the best account of what depends on it.
+**What that retires**, all of it measured and all of it now accepted rather
+than pending:
+
+- **A portrait phone sees only design x 0..166 of 720.** The scene covers and
+  crops from the right, so the lure's landing at design x=458 is viewport x
+  1063 in a 390px window: the line leaves the frame and the bobber, the bite
+  and the fish are all off-screen. Verified by typing a real cast at that size.
+  The three candidate fixes (contain rather than cover, anchor the cast to a
+  share of the visible width, centre the frame on the action) all move numbers
+  R1, F1 and T2 measured, and none of them buys a playable phone.
+- **A phone on its side has nowhere to put the celebrations.** At 740x360 the
+  catch card's band is negative and the card collapses to a 24px sliver, and
+  the badge toast's only free strip is where the unlock banner lands. Still
+  listed in `tools/ui-check.mjs`'s `KNOWN` so the sweep stays honest, now as
+  accepted rather than as a fix owed.
+- **`#word` is pinned at `bottom: 250px` at every size**, which is what makes
+  the landscape band negative in the first place. Positioning it as a share of
+  the free band (the way `#card-slot` already is) would take the constraint
+  away, and is worth doing if a landscape pass ever happens for its own sake.
+
+The geometry itself is still true and still worth knowing when placing anything
+in the scene: `BUILD_PLAN_LIVING.md` has the table, and **where a thing may sit
+is measured, not chosen** stays a rule in `CLAUDE.md`.
 
 ## What next, now the look and the sound are done (asked 2026-09-04)
 
@@ -125,14 +140,16 @@ has, and it trains coming back for a payout rather than for the fishing. The
 honest version of that idea is flavour, not currency: a line on return saying
 what the pond got up to while you were gone.
 
-**Before it is "released" to anyone outside the family**, four things that are
-not features: it should work offline and add to a home screen (a manifest and
-a service worker over 166 assets, and this is the one that makes it feel like
-an app on an iPad); a new kid is dropped straight into "type the word to cast"
-with nothing explaining the ghost hands; sound is one ON/OFF and wants a
-volume; and a phone held sideways is a known-broken layout (above, and in
-`ui-check.mjs`'s KNOWN list). The Firebase blast-radius decision that used to
-gate sharing the URL is **answered and shipped**: see *Release hygiene*.
+**Before it is "released" to anyone outside the family**, two things that are
+not features: a new kid is dropped straight into "type the word to cast" with
+nothing explaining the ghost hands, and sound is one ON/OFF and wants a volume.
+Two more came off this list on 2026-09-05: the Firebase blast-radius decision
+is **answered and shipped** (see *Release hygiene*), and mobile is **closed as
+a decision rather than a layout** (see the section above it). Offline and
+add-to-home-screen is worth its own thought now rather than being lumped in
+here: a manifest and a service worker over 155 assets is what would make it
+feel like an app on an iPad, and an iPad with a keyboard case is a device that
+can actually play.
 
 ## Flavor & fun
 - **Groan counter**: after each catch pun, a 🙄 button increments a lifetime "Dad Jokes Endured" stat per profile. Zero gameplay impact, maximum family lore.
@@ -151,11 +168,19 @@ gate sharing the URL is **answered and shipped**: see *Release hygiene*.
   is held, which is a label change and can ship on its own.
 
 ## Layout, found during the top-bar rework (2026-09-04)
+
+*The two landscape items here are **accepted, not owed**, as of 2026-09-05: a
+phone is a shop window (see the closed mobile section above). They stay written
+down because the numbers are the reason `ui-check.mjs` prints them as `KNOWN`
+rather than failing.*
+
 - **`#word` is pinned at `bottom: 250px` at every viewport size.** On a phone
   held sideways (~360px tall) that puts the word box ~55px from the top, which
   is why the pun bubble has to shrink under `max-height: 520px` and why `#word`
   now outranks the top bar in z-order. A word box positioned as a share of the
-  free band (the way `#card-slot` already is) would take the constraint away.
+  free band (the way `#card-slot` already is) would take the constraint away,
+  and it is also what pins its height: F2's Baloo 2 swap needed an explicit
+  `line-height` because `#card-slot`'s `bottom` is derived from a 54px box.
 - **✅ Nothing swept viewports (fixed 2026-09-04).** `tools/ui-check.mjs` now
   checks twelve shapes and drives the top bar. `play-check.mjs` still shoots
   1280x720 only, which is fine: it owns the beats of a catch, not the chrome.
@@ -165,9 +190,9 @@ gate sharing the URL is **answered and shipped**: see *Release hygiene*.
   is *negative* and the card collapses to a 24px sliver. The badge toast's only
   free strip (between the keyboard's top edge at 201px and the word's bottom at
   250px) is also where the unlock banner lands at `top: 40%`. Both are listed in
-  that tool's `KNOWN` list so the sweep stays honest. The fix is a landscape
-  pass (where `#word` sits, and a compact card), not a nudge: it is a design
-  call about a shape the game has never been laid out for.
+  that tool's `KNOWN` list so the sweep stays honest. **Not being fixed**: it
+  would be a landscape pass (where `#word` sits, and a compact card) rather
+  than a nudge, and a phone on its side is a shape nobody can type on.
 - **The badge toast was landing on the HUD chips at phone width** (top-centre
   versus a right-aligned HUD that wraps across most of the row). Moved below the
   card band under 620px rather than redesigned; it is still a nowrap pill on a

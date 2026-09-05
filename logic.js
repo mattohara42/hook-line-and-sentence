@@ -432,3 +432,22 @@ export function nextVoiceDelayMs(everyMs, rnd = Math.random) {
   const max = Number.isFinite(hi) && hi > min ? hi : min;
   return Math.round(min + rnd() * (max - min));
 }
+
+// Whether to warn that this device has nothing to type on. The whole game is
+// typing, so a phone or a bare tablet can look at the pond and no more.
+//
+// A browser cannot ask whether a keyboard is attached. The closest it gets is
+// what the device points WITH: `coarse` is a finger, `fine` is a mouse, a
+// trackpad or a stylus. A desktop has fine and no coarse; a phone has coarse
+// and no fine; an iPad in a keyboard case brings a trackpad, so it has both and
+// is (correctly) left alone. What this cannot see is a plain Bluetooth keyboard
+// on a tablet, which is exactly why the notice app.js puts up is dismissible
+// and closes itself on the first real keystroke: the guess opens, the keyboard
+// gets the last word.
+//
+// Both flags absent (an old browser, or a JSDOM-ish environment that answers
+// nothing) means say nothing: a false warning on a real keyboard is worse than
+// a missing one on a phone, where the game visibly does not respond anyway.
+export function looksKeyboardless(hasCoarsePointer, hasFinePointer) {
+  return hasCoarsePointer === true && hasFinePointer !== true;
+}

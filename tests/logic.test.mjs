@@ -13,7 +13,8 @@ import {
   rankForProfile, earnsPrestige, speedTestPool, typingAccuracy,
   castArcPoint, lineSagPx, lineControlPoint, stepTug, rotateAboutPivot, easeIn, easeOut,
   easeInOut, reelProgressAtX, revealAt,
-  gearFile, punPool, catchSubtitle, ambienceFor, actorFor, nextVoiceDelayMs
+  gearFile, punPool, catchSubtitle, ambienceFor, actorFor, nextVoiceDelayMs,
+  looksKeyboardless
 } from "../logic.js";
 
 const TIER_ORDER = ["legendary", "rare", "uncommon", "common"];   // hardest → easiest
@@ -675,4 +676,19 @@ test("every function logic.js exports is exercised by this file", () => {
   const here = readFileSync(new URL(import.meta.url), "utf8");
   const untested = exported.filter(name => !new RegExp(`\\b${name}\\b`).test(here));
   assert.deepEqual(untested, [], "logic.js exports these with no test in logic.test.mjs");
+});
+
+// The whole game is typing, so a device with nothing to type on gets a notice
+// rather than a pond it cannot fish. A browser cannot see a keyboard, only what
+// the device POINTS with, and the four combinations are the whole rule: the one
+// that warns is a finger with no mouse behind it. The case that matters most is
+// the third: an iPad in a keyboard case has a trackpad, so it reports both and
+// must not be warned. Missing answers say nothing, because a false warning on a
+// real keyboard is worse than a missing one on a phone.
+test("only a coarse pointer with no fine pointer behind it looks keyboardless", () => {
+  assert.equal(looksKeyboardless(true, false), true,   "a phone: finger, no mouse");
+  assert.equal(looksKeyboardless(false, true), false,  "a desktop: mouse, no finger");
+  assert.equal(looksKeyboardless(true, true), false,   "a tablet with a trackpad has a keyboard with it");
+  assert.equal(looksKeyboardless(false, false), false, "a browser that answers neither");
+  assert.equal(looksKeyboardless(undefined, undefined), false, "and one that answers nothing at all");
 });

@@ -84,15 +84,17 @@ upright gets the frog and little else**: the dragonfly fades out at x≈208 whil
 the crop starts at x≈203, so it goes dark within a few pixels of arriving (it
 scrapes in on a 320 and a 360, and is gone on a 390), and the gull finishes
 under the top bar. Landscape phones get none of them, because the keyboard
-covers everything below y=165 there, which is the shape `ui-check.mjs` already
-lists as known-broken.
+covers everything below y=165 there, which is the shape `ui-check.mjs` lists as
+known and accepted.
 
 Moving the gull down and left to rescue it on a phone was considered and
 dropped: to clear both the top bar and the crop it would have to finish on top
 of the angler. That is the scene's geometry arguing with itself, and the honest
-version of the problem is much larger than an actor. **A phone held upright
-cannot see where the lure lands either**, which is now the top entry in
-`BACKLOG.md`.
+version of the problem is much larger than an actor: **a phone held upright
+cannot see where the lure lands either.** That was closed on 2026-09-05 as a
+decision rather than a layout (`BACKLOG.md`): the game is typing, a phone has
+nothing to type on, and one is now told so on arrival. So no actor is owed a
+phone, and the sweep's numbers are about the shapes somebody can play on.
 
 ### The registry
 

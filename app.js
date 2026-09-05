@@ -1808,7 +1808,7 @@ function recordKey(expected, correct) {
 
 // ---- Input ----
 document.addEventListener("keydown", (e) => {
-  if (!save || pickerOpen || collectionOpen || shopOpen || nudgeOpen || progressOpen || journalOpen || speedOpen || inputLocked) return;
+  if (!save || pickerOpen || noKeyboardOpen || collectionOpen || shopOpen || nudgeOpen || progressOpen || journalOpen || speedOpen || inputLocked) return;
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (e.key.length !== 1) return;
   // F3: starting the next word yanks the catch card off. It happens here, above
@@ -2874,6 +2874,7 @@ $("st-done").addEventListener("click", () => toggleSpeed(false));
 // last.
 document.addEventListener("keydown", (e) => {
   if (e.key !== "Escape") return;
+  if (noKeyboardOpen) return closeKeyboardNotice();
   if (nudgeOpen) return toggleNudge(false);
   if (speedOpen) return toggleSpeed(false);
   if (progressOpen) return toggleProgress(false);
@@ -2882,6 +2883,29 @@ document.addEventListener("keydown", (e) => {
   if (collectionOpen) return toggleCollection(false);
   if (!controlsTray.hidden) return toggleControls(false);
 });
+
+// ---- No keyboard, no fishing ----
+// The rule about what a browser can and cannot tell is in logic.js; this is the
+// wiring. The notice opens on a guess and closes on proof: a first keystroke is
+// the only evidence a page ever gets that a keyboard is really there, so a
+// tablet with a plain Bluetooth keyboard clears it by being typed on. It is
+// dismissible either way, because a phone can still look at the pond, which is
+// the whole reason the layout is polished for a screen nobody can play on.
+const noKeyboardRoot = $("no-keyboard");
+let noKeyboardOpen = false;
+function closeKeyboardNotice() {
+  if (!noKeyboardOpen) return;
+  noKeyboardOpen = false;
+  noKeyboardRoot.hidden = true;
+}
+$("no-keyboard-close").addEventListener("click", closeKeyboardNotice);
+function maybeWarnNoKeyboard() {
+  const ask = q => typeof matchMedia === "function" && matchMedia(q).matches;
+  if (!logic.looksKeyboardless(ask("(any-pointer: coarse)"), ask("(any-pointer: fine)"))) return;
+  noKeyboardOpen = true;
+  noKeyboardRoot.hidden = false;
+  document.addEventListener("keydown", closeKeyboardNotice, { once: true });
+}
 
 // ---- Profile picker (shown on launch; gates the game until a kid is chosen) ----
 const profilesRoot = $("profiles");
@@ -2987,6 +3011,7 @@ try {
   ]);
   migrateLegacySave();
   showProfilePicker();
+  maybeWarnNoKeyboard();   // over the picker, and only where there is nothing to type on
 
 } catch (err) {
   setStatus("The word pool got away… reload to try again");

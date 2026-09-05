@@ -10,8 +10,8 @@ something is the way it is, `git log` and the PR body have it in full.
 | | |
 |---|---|
 | **Active milestone** | **None.** Nothing is blocked on code. The next one is Matt's call, and the shortlist is below. |
-| **Last change** | **Two of the six play-session findings, fixed** (#183), 2026-09-05: a gate rod now says which water it opens, and holding Shift capitalises the guide's key caps. Two dead pixel-era PNGs deleted with it. |
-| **The game has been played** | By Matt, and shared with friends and family. Verdict: fun, and it looks good. **It is close to release-ready**, which makes the Firebase question below live rather than theoretical. |
+| **Last change** | **Four backlog decisions, shipped together**, 2026-09-05: cloud saves removed, mobile closed with a keyboard notice, the last pixel-era art deleted, and nothing is monospace but the keyboard. |
+| **The game has been played** | By Matt, and shared with friends and family. Verdict: fun, and it looks good. **It is close to release-ready**, and the Firebase question that gated sharing is now answered. |
 | **Living Water** | L1 ✅. **L2 (the actors with no voice: heron, stream leaves, sail) is not started.** |
 | **Tackle & Junk** | T1–T3 ✅. **T4 (junk art) is still waiting on one generation from Matt**, prompt written whole in `ART.md`. |
 | **The refresh** | ✅ R1–R7 all shipped, `BUILD_PLAN_REFRESH.md`, closed 2026-09-04. |
@@ -44,13 +44,14 @@ do them:
    waiting on one generation. The new fact is only that the scene shows it too,
    so the card's 96px mitigation does not cover it.
 
-**A phone held upright still cannot see the fishing**, and friends and family
-have now been handed the URL on unknown devices. The lure lands at design x=458,
-which is viewport x 1063 in a 390px window, verified by typing a real cast at
-that size. It is the top of `BACKLOG.md` under the L1 heading, and it has the
-strongest claim to being the next milestone: everything a kid types for is off
-the right-hand edge. The three candidate fixes all move numbers that R1, F1 and
-T2 each measured, so it is a milestone rather than a patch.
+**Mobile is closed, not fixed.** A phone held upright still cannot see the
+fishing (the lure lands at design x=458, which is viewport x 1063 in a 390px
+window), and it never will: the game is typing and a phone has nothing to type
+on. Matt's call is that mobile stays a shop window. What shipped instead of a
+layout milestone is a dismissible "you'll need a keyboard" notice on any device
+that points with a finger and has no mouse behind it, which closes itself on
+the first real keystroke. The landscape overlaps in `ui-check.mjs`'s `KNOWN`
+are accepted now rather than owed.
 
 **L1 was the last milestone to land.** The Pond's frog and dragonfly and the
 Ocean's gull have bodies now, in CSS, spawned off the same tick as their sound.
@@ -60,8 +61,8 @@ schedules**, and **where a thing may sit is measured, not chosen** (the canvas
 covers and crops from the right, so a portrait phone sees only design x 0..166
 of 720, and the keyboard's top edge reaches y=240 at 900x600).
 
-**Landed, reasoning in each PR:** the two play-session fixes, plus a shop row
-that wraps rather than squeezing (#183) · L1's bodies (#180) · nine of the
+**Landed, reasoning in each PR:** the four backlog decisions above, plus the
+two play-session fixes and a shop row that wraps rather than squeezing (#183) · L1's bodies (#180) · nine of the
 code review's ten findings plus the tray bug they turned up (#176) · the README
 and the repo's own picture (#177) · S1 and P1, the soundscape per spot and the
 panels (#175). Anything older is `git log`'s job.
@@ -79,16 +80,17 @@ indexes all fifteen tools; the gear pipeline is `gear-ref.py` → prompt →
 
 ## Waiting on Matt
 
-**The one that matters now it has been shared: the Firebase blast-radius
-decision.** `BACKLOG.md` → *Release hygiene*, and the ⚠️ block at the top of
-`firestore.rules`. `request.auth != null` authorises *any* Google account, not
-just family, and the database is shared with Family Hub. Nobody has to sign in
-to play (the game is complete on localStorage), so handing out the URL is not
-itself the problem, but any guest who did sign in is writing to that shared
-project. Options, best first: a separate Firebase project · App Check · a uid
-allowlist · or ship the public build with no Firebase at all, and collect
-nothing about other people's children. This was always the gate on sharing the
-URL; sharing has happened, so it is a decision now rather than a plan.
+**One step that code cannot do, and it is the only thing still exposed:
+publish `firestore.rules` in the Firebase console.** Cloud saves are gone from
+the game (no config, no SDK, no sign-in, no write path), and the file now denies
+everything, but **the rules that are live are the ones published in the
+console**. Until they are replaced, any Google account on earth can still create
+documents in the `typingFishing` collection of the project shared with Family
+Hub, whatever the game does. The file's header has the four steps; the one that
+matters is pasting only the `typingFishing` block, never the whole file, or
+Family Hub's rules go with it. Old documents are not deleted by this, just
+unreachable from a browser: the console still reads them if the saves are
+wanted before the collection is cleared.
 
 Still open, and all one-line knobs:
 
@@ -110,7 +112,6 @@ Still open, and all one-line knobs:
 - **The bite emerges 32px higher** (#103) and **R1's line prototype** wants an
   eye test (`/prototype/line-animation.html`, and `ANIMATION.md` flags its own
   assumption). Both are one-line reverts.
-- **Is `#word` meant to be monospace?** `BACKLOG.md` → *Code review, whole repo*.
 
 Repo housekeeping, unchanged and all still true:
 
