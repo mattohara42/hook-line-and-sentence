@@ -112,17 +112,17 @@ No build step, so deploy the repo's static files to any static host: Netlify,
 GitHub Pages, Cloudflare Pages, Firebase Hosting, etc. The reference install is
 on Netlify; pushes to `main` are promoted to production manually.
 
-## Cloud saves (optional)
+## Saves
 
-The game plays **fully offline on localStorage**, no account, no server, no
-setup. Every profile, catch, and stat is saved on that device/browser.
+Every profile, catch and stat is saved in that browser's localStorage, on that
+device, and nowhere else. No account, no server, no sign-in, no analytics, no
+third-party scripts.
 
-To sync a kid's progress **across devices** behind one parent Google sign-in,
-wire up Firebase Firestore. It works with either a brand-new Firebase project or
-one you already use for something else: step-by-step for both paths (plus what
-to put in `config.js`, the security rules, and a verification checklist) is in
-**`FIRESTORE.md` → Cloud saves setup**. With no Firebase config the feature is
-simply off and the game still works.
+That also means saves do not follow a kid to another device, and clearing site
+data clears them. Cloud sync existed until 2026-09-05 and was removed on
+purpose: it collected other people's children's data into a shared Firebase
+project, which is not a trade this game needs to make. `FIRESTORE.md` has the
+save document's shape, and what a revival would take.
 
 ## Tests
 

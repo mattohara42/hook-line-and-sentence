@@ -1,64 +1,35 @@
-// Firestore security rules for Hook, Line and Sentence (M4b).
+// Firestore security rules for Hook, Line and Sentence.
 //
-// ⚠️  DO NOT paste this whole file over your Family Hub rules: it would delete
-//     them and break Family Hub. This database is shared. Instead:
+// THE GAME NO LONGER USES FIRESTORE AT ALL. Cloud saves were removed on
+// 2026-09-05: there is no Firebase config in `config.js`, no SDK import, no
+// sign-in and no write path. Every save lives in the browser's localStorage.
+// This file exists because deleting it would not have changed anything that
+// matters: the rules that are LIVE are the ones published in the Firebase
+// console, and until they are replaced, any Google account on earth can still
+// create documents in the `typingFishing` collection of a project shared with
+// Family Hub. The game's URL has been handed to friends and family.
 //
-//   1. Firebase console → Firestore Database → Rules.
+// ⚠️  MATT: THIS IS THE ONE STEP CODE CANNOT DO. Publish the block below.
+//
+//   1. Firebase console -> Firestore Database -> Rules.
 //   2. Find your existing `match /databases/{database}/documents { … }` block.
-//   3. Paste ONLY the `match /typingFishing/{profileId} { … }` block below,
-//      INSIDE that block, alongside your current Family Hub match rules.
+//   3. REPLACE your current `match /typingFishing/{profileId} { … }` block
+//      with the one below. Leave every Family Hub rule alone: pasting this
+//      whole file over your ruleset would delete them and break Family Hub.
 //   4. Publish.
 //
-// What these enforce: a signed-in parent can read and write only the profile
-// docs they own (ownerUid == their uid). Nobody can read another family's
-// kids, and writes must stamp the caller's own uid. No sign-in → no access,
-// which is why the game falls back to localStorage when signed out.
-
-// ⚠️  KNOWN LIMIT: worth reading before sharing the game's URL with anyone.
-//     `request.auth != null` is *authentication, not authorisation for your
-//     family*: any Google account on earth can sign in and create documents
-//     here. Nobody can read or touch YOUR docs: ownership is enforced below,
-//     but a stranger can create their own, and this database is shared with
-//     Family Hub. The shape checks below cap how big any one document can get.
-//     They cannot cap how MANY get created: Firestore rules can't count
-//     documents. If the game ever goes properly public, the real fixes, in
-//     order of how much they help:
-//       1. Give Hook, Line and Sentence its OWN Firebase project, so abuse can never
-//          reach Family Hub. (Best blast-radius fix.)
-//       2. Turn on Firebase App Check, so only the real app can call the API.
-//       3. Or keep sync family-only: add `&& request.auth.uid in ['uid1', …]`
-//          to create.
-//     Simplest of all: ship the public build with no Firebase config at all.
-//     The game is fully playable on localStorage, so strangers lose nothing but
-//     cross-device sync, and you collect no data about other people's children.
+// After that, nothing can read or write `typingFishing` through the client
+// API, including the game, including you. Documents already there are not
+// deleted by this: they are simply unreachable from a browser, and the console
+// (which bypasses rules) can still read or export them if you want the old
+// saves before you clear the collection.
 
 match /typingFishing/{profileId} {
-  function incoming() { return request.resource.data; }
-  function isMine()   { return request.auth != null && incoming().ownerUid == request.auth.uid; }
-  function wasMine()  { return request.auth != null && resource.data.ownerUid == request.auth.uid; }
-
-  // a map a buggy or hostile client could otherwise grow without limit
-  function boundedMap(m, max) { return m is map && m.keys().size() <= max; }
-
-  // Deliberately generous: this is an abuse ceiling, not a schema. It must not
-  // start rejecting honest saves the next time a profile field is added.
-  // Today's real values: ~19 top-level keys, 33 fish, 12 badges, 26 letters, 4 junk.
-  function sane() {
-    return incoming().keys().size() <= 32
-        && incoming().ownerUid is string
-        && (!('name'   in incoming()) || (incoming().name   is string && incoming().name.size()   <= 40))
-        && (!('avatar' in incoming()) || (incoming().avatar is string && incoming().avatar.size() <= 16))
-        && (!('badges' in incoming()) || (incoming().badges is list   && incoming().badges.size() <= 64))
-        && boundedMap(incoming().get('collection', {}), 200)
-        && boundedMap(incoming().get('records',    {}), 200)
-        && boundedMap(incoming().get('junk',       {}), 200)
-        && boundedMap(incoming().get('stats', {}).get('letters', {}), 64);
-  }
-
-  allow read:   if wasMine();
-  allow create: if isMine() && sane();
-  allow update: if wasMine() && isMine() && sane();
-  allow delete: if wasMine();
+  // Deny by default and say so out loud, rather than leaving the collection
+  // to a broad `request.auth != null` that authorises strangers. This is the
+  // whole rule on purpose: an allowlist would still be a door, and there is
+  // nothing left on the game's side that needs to walk through one.
+  allow read, write: if false;
 }
 
 // ── For reference only: the shape your full ruleset should have after step 3.
@@ -70,9 +41,11 @@ match /typingFishing/{profileId} {
 //
 //     // … your existing Family Hub match blocks stay here, untouched …
 //
-//     match /typingFishing/{profileId} { … paste the block above, verbatim … }
+//     match /typingFishing/{profileId} { allow read, write: if false; }
 //   }
 // }
 //
-// (This used to repeat the rules inline, which promptly went stale the first
-// time they changed. Copy the real block above: there's only one of it now.)
+// If cloud saves ever come back, they need their OWN Firebase project rather
+// than this one reopened: the blast radius here is Family Hub's data, and that
+// is the thing no game feature is worth risking. FIRESTORE.md keeps the schema
+// and the setup that would be needed.

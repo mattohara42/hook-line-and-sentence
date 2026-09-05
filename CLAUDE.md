@@ -63,12 +63,15 @@ Renamed from `WordsPerM...` on 2026-08-31, along with the game itself (it was
 "Typing Fishing") and the Netlify site. GitHub redirects the old URL, so an
 old clone's remote keeps working, but use the new name in new work.
 
-**Two old names survive on purpose, and are not to be "fixed":** the
-localStorage keys `tf:*` (`app.js`) and the Firestore collection
-`typingFishing` (`config.js`). Both address saved games on real devices and in
-the live Firebase project: renaming either orphans real kids' progress. They
-are storage paths, not display names. `LEGACY_KEY = "typing-fishing-save"` is
-older still and is load-bearing for the pre-profiles migration.
+**One old name survives on purpose, and is not to be "fixed":** the
+localStorage keys `tf:*` (`app.js`). They address saved games on real devices,
+so renaming them orphans real kids' progress. They are storage paths, not
+display names. `LEGACY_KEY = "typing-fishing-save"` is older still and is
+load-bearing for the pre-profiles migration. The Firestore collection
+`typingFishing` was the other one, and it went with cloud saves on 2026-09-05:
+the game is **localStorage only**, with no Firebase config, no SDK and no
+sign-in (`FIRESTORE.md`). `firestore.rules` denies everything and **has to be
+published in the console by Matt** for that to be true of the live project too.
 
 ## Architecture rules
 
@@ -81,9 +84,11 @@ older still and is load-bearing for the pre-profiles migration.
   that is really a rule (a fallback chain, a threshold, a shape) belongs next
   door. A test enforces the floor: every function `logic.js` exports has to be
   exercised by `tests/logic.test.mjs`.
-- **Firestore per `FIRESTORE.md`**: one read per launch, one write per
-  catch, localStorage mirror. Do not add subcollections or per-keystroke
-  writes.
+- **Saves are localStorage and stay that way** (`FIRESTORE.md`). One document
+  per kid, written whole by `persistSave()`. No network write of any kind: no
+  sync, no analytics, no third-party script on the page. Adding a cloud back is
+  a privacy decision before it is a feature, and it would need its own Firebase
+  project rather than the shared one that was removed.
 - Rendering is DOM/CSS (validated by `prototype/visual-mockup.html`). Do not
   introduce canvas or Phaser without discussing first. **Inline SVG is allowed**
   for shapes CSS can't express: R1's curved fishing line is one `<path>` in the
@@ -191,8 +196,8 @@ older still and is load-bearing for the pre-profiles migration.
   on flat magenta) and only the caller's intent separates them. So make the path
   that destroys work the one you have to ask for, and let the tool refuse when
   nobody asked (#157).
-- Local dev: `python3 -m http.server 8080`. Firestore/OAuth work (M4+) needs
-  HTTPS: deploy previews on Netlify or ngrok.
+- Local dev: `python3 -m http.server 8080`, and that is the whole of it now
+  that nothing needs HTTPS for a sign-in popup.
 - Surface code smells as separate issues; don't refactor unrelated code.
 - If a requirement is ambiguous: for structural/architectural questions, ask;
   for small reversible details, pick the most reasonable option and record

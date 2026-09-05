@@ -131,8 +131,8 @@ a service worker over 166 assets, and this is the one that makes it feel like
 an app on an iPad); a new kid is dropped straight into "type the word to cast"
 with nothing explaining the ghost hands; sound is one ON/OFF and wants a
 volume; and a phone held sideways is a known-broken layout (above, and in
-`ui-check.mjs`'s KNOWN list). The Firebase blast-radius decision under *Release
-hygiene* is still the gate on sharing the URL at all.
+`ui-check.mjs`'s KNOWN list). The Firebase blast-radius decision that used to
+gate sharing the URL is **answered and shipped**: see *Release hygiene*.
 
 ## Flavor & fun
 - **Groan counter**: after each catch pun, a 🙄 button increments a lifetime "Dad Jokes Endured" stat per profile. Zero gameplay impact, maximum family lore.
@@ -282,14 +282,14 @@ them, 96px and 34px, against the originals: no visible difference.
   from the hostname (`isDevHost()`): localhost, `.local` machines and Netlify
   deploy previews get it, production and anything unfamiliar fail closed. A data
   test pins both directions.
-- **Decide the Firebase blast-radius question before sharing the URL.** See the
-  ⚠️ block at the top of `firestore.rules`: `request.auth != null` authorises
-  *any* Google account, not just family, and the database is shared with Family
-  Hub. Document shape/size is now capped, but rules cannot cap document *count*.
-  Options, best first: a separate Firebase project for this game · App Check ·
-  a uid allowlist · or ship the public build with no Firebase at all (the game
-  is fully playable on localStorage, and then you collect no data about other
-  people's children).
+- **✅ The Firebase blast-radius question is answered: no Firebase (2026-09-05).**
+  Matt's call was the last of the options this entry listed, and the only one
+  that closes the hole rather than narrowing it. Cloud saves are removed whole:
+  no config, no SDK import, no sign-in, no write path, and `firestore.rules`
+  denies everything. The cost is cross-device sync, which was all it bought.
+  **One step is still Matt's and code cannot do it: publish the new rules in
+  the Firebase console.** Until that happens the live project still accepts
+  writes from any Google account, whatever the game does.
 - **No analytics, no crash reporting, no third-party scripts.** Worth keeping
   that way: it's most of what makes this safe to hand to another family.
 

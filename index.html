@@ -169,9 +169,11 @@
           <button class="toggle-btn" id="profile-cancel">back</button>
         </div>
       </div>
+      <!-- There is no account and no cloud: every save lives in this browser's
+           localStorage and nowhere else. The line stays because a parent
+           deleting site data should know what they are deleting. -->
       <div id="sync-bar">
-        <span id="sync-status">playing offline: saves on this device</span>
-        <button class="toggle-btn" id="sync-btn" hidden>SIGN IN TO SYNC</button>
+        <span id="sync-status">saved on this device, in this browser</span>
       </div>
     </div>
   </div>
