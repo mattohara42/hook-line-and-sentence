@@ -40,6 +40,13 @@
          is what makes the hull sit *in* the water and the fish read as under
          it; the landing is the fish rising up through this layer. -->
     <div id="surface"></div>
+    <!-- L1: what lives here. Ambient actors (the frog, the dragonfly, the gull)
+         are spawned into this by app.js when their voice speaks, and they pick
+         the front side of #surface because all three are ON or ABOVE the water,
+         never under it. It sits before #bg-fore and shares its z-index, so a
+         dragonfly passes BEHIND the near reeds and in front of everything
+         else. -->
+    <div id="life" aria-hidden="true"></div>
     <!-- R3: the Pond's foreground plane, reeds, lily pads, the dock edge.
          After #surface and sharing its z-index, so it paints over the water
          wash and the mid plane (rig/fish) the way #surface already does, but

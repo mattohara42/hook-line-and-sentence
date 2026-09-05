@@ -2,6 +2,26 @@
 
 Ideas captured during design/build. Nothing here expands the current milestone.
 
+## Found while measuring L1: a portrait phone cannot see the fishing (2026-09-05)
+
+**Everything a kid types for is off the right-hand edge of a phone held
+upright.** The scene is a 720x360 canvas scaled to COVER the viewport and
+anchored bottom-left, so on a 390x844 phone the scale is 2.34 and only design
+**x 0..166** is on screen. The boat is x -16..140, and after that the visible
+scene is over. The lure lands at x=458, which is viewport x **1063 in a 390px
+window**: verified by typing a real cast at that size, where the line simply
+leaves the frame and nothing else happens. The bobber, its ripples, the bite and
+the fish rising are all outside the picture, so the payoff for typing the word
+is a boy in a boat and a line going off the top corner.
+
+Not touched in L1, because the fix is a design call rather than a patch, and
+there are at least three: let the scene CONTAIN rather than cover on tall
+screens (letterboxed sky, whole scene visible); anchor the cast to a share of
+the *visible* width rather than to design x=458; or centre the frame on the
+action instead of on the left edge. All three move numbers that R1, F1 and T2
+each measured against the current geometry, so it wants its own milestone.
+`CONFIG.anim.cast.landing`'s comment is the best account of what depends on it.
+
 ## What next, now the look and the sound are done (asked 2026-09-04)
 
 Matt asked what would make it worth playing again, and whether the answer is
@@ -9,16 +29,15 @@ more modes, more gates, birds and frogs, or an idle earner. This is the
 shortlist and the order I would do it in. Nothing here is started and none of
 it is an active milestone: the next one is Matt's call.
 
-**1. Living water (do this one first).** Each spot gets ambient *actors* to go
-with the voices S1 gave it: a dragonfly that crosses the pond while it buzzes,
-a frog on a lily pad that puffs when it croaks, a heron that stalks the reeds
-and leaves when you cast, leaves riding the stream, a gull crossing the ocean
-sky on its cry, a sail on the horizon. It is DOM and CSS on the planes that
-already exist, it needs no new system (`CONFIG.audio.ambience` is already a
-per-spot registry of what lives here, and this is the same list with a sprite
-on it), and it makes the sound work land twice: right now a frog croaks and
-nothing on screen agrees. Highest value per line in this file. The rule the
-scene already has holds: nothing may land in the bottom-centre guide panel.
+**1. Living water. ✅ Started 2026-09-05: L1 shipped, see
+`BUILD_PLAN_LIVING.md`.** The three actors that already had a voice (the Pond's
+frog and dragonfly, the Ocean's gull) now have bodies, drawn in CSS and spawned
+off the same tick as their sound. What is left of the idea is L2: the actors
+with no voice to hang off, a heron that stalks the reeds and leaves when you
+cast, leaves riding the stream, a sail on the horizon. They need a schedule that
+is not the voice list, and the heron needs a hook into the cast. The frog's lily
+pad is in there too and is a real loss: every pad in the painting sits behind
+the keyboard, so a pad version needs the scene geometry fixed first (above).
 
 **2. Weather and time of day.** One tint layer over the three planes plus a
 matching bed, rolled per session: morning gold, overcast, light rain, dusk.

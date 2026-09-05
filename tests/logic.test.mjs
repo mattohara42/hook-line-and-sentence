@@ -13,7 +13,7 @@ import {
   rankForProfile, earnsPrestige, speedTestPool, typingAccuracy,
   castArcPoint, lineSagPx, lineControlPoint, stepTug, rotateAboutPivot, easeIn, easeOut,
   easeInOut, reelProgressAtX, revealAt,
-  gearFile, punPool, catchSubtitle, ambienceFor, nextVoiceDelayMs
+  gearFile, punPool, catchSubtitle, ambienceFor, actorFor, nextVoiceDelayMs
 } from "../logic.js";
 
 const TIER_ORDER = ["legendary", "rare", "uncommon", "common"];   // hardest → easiest
@@ -374,6 +374,17 @@ test("ambienceFor falls back to the shared bed, and to nothing at all", () => {
   // crash at boot rather than a quiet game.
   assert.equal(ambienceFor({ pond: { bed: "frogs" } }, "ocean"), null);
   assert.equal(ambienceFor(undefined, "pond"), null);
+});
+
+test("actorFor gives a spot only its own life, and never borrows", () => {
+  const life = { pond: { frog: { ms: 2600 } }, ocean: { gull: { ms: 9000 } } };
+  assert.deepEqual(actorFor(life, "pond", "frog"), { ms: 2600 }, "a spot's own actor");
+  // Deliberately unlike ambienceFor: there is no `shared` fallback, because a
+  // Stream that borrowed the Pond's frog is a bug, not a graceful degradation.
+  assert.equal(actorFor(life, "stream", "frog"), null, "a spot with no life of its own gets none");
+  assert.equal(actorFor(life, "pond", "bubble"), null, "a voice with no body is a sound and nothing else");
+  assert.equal(actorFor(undefined, "pond", "frog"), null, "no registry at all is null, not a crash");
+  assert.equal(actorFor(life, undefined, "frog"), null, "and so is no spot at all");
 });
 
 test("nextVoiceDelayMs lands inside its range, and never at zero", () => {

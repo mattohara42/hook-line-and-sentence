@@ -394,6 +394,17 @@ export function ambienceFor(ambience, location, fallbackKey = "shared") {
   return ambience?.[location] ?? ambience?.[fallbackKey] ?? null;
 }
 
+// L1: the body a voice puts on screen, if it has one. Deliberately WITHOUT the
+// `shared` fallback ambienceFor has: a bed is something every spot must have,
+// so a spot with no sound design of its own still gets quiet water, but an
+// actor is something a spot either keeps or does not, and a Stream that
+// borrowed the Pond's frog would be a bug rather than a graceful degradation.
+// A voice with no entry here is a sound and nothing else, which is what the
+// Stream's bubbles are.
+export function actorFor(life, location, voiceId) {
+  return life?.[location]?.[voiceId] ?? null;
+}
+
 // The gap before an ambient voice speaks again. Random inside `everyMs` so a
 // frog never lands on a beat, which is the whole difference between a place
 // and a loop. A malformed or missing range is a long silence rather than a

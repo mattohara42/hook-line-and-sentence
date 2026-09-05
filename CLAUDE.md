@@ -31,12 +31,20 @@ unlockables are as they were. `ART.md` carries the palette's real hex values and
 what each milestone cost: R6's 33 species in eight sheets and nine generations
 with one reroll; R7's 21 pieces in 16 generations with one reroll, the hats at
 12 from six paintings because a hat painted at the Pond transplants onto the
-Stream's head for free (`tools/hat-transplant.py`). **There is no active epic,
-the next milestone is Matt's call.** What is outstanding is in `HANDOFF.md` and
-is all his: the play-tests, including a real kid playtest of the A7 fight beats.
-R5's last debt was paid on 2026-09-04: the four shop hulls work, as CSS tints
-of the Pond rowboat rather than four repaints (`ART.md` → *R5 debt*); the
-repaints stay an option in `BACKLOG.md`.
+Stream's head for free (`tools/hat-transplant.py`). What is outstanding is in
+`HANDOFF.md` and is all his: the play-tests, including a real kid playtest of
+the A7 fight beats. R5's last debt was paid on 2026-09-04: the four shop hulls
+work, as CSS tints of the Pond rowboat rather than four repaints (`ART.md` →
+*R5 debt*); the repaints stay an option in `BACKLOG.md`.
+
+Two epics are open. **Tackle & Junk**: `BUILD_PLAN_TACKLE.md` (T1-T3 shipped
+2026-09-04; **T4, the junk art, is waiting on one generation from Matt**).
+**Living Water**: `BUILD_PLAN_LIVING.md` (L1 shipped 2026-09-05), which gives
+the voices S1 wrote bodies you can see, in CSS rather than in paint. Two rules
+from it are worth carrying anywhere else in the scene: **an actor and its sound
+are one event off one tick, never two schedules**, and **where a thing may sit
+is measured, not chosen**, because the canvas is scaled to cover and cropped
+from the right, so a portrait phone sees only design x 0..166 of 720.
 
 Work on exactly one milestone at a time. `ART.md` is the art pipeline: Claude
 writes Gemini prompts + filenames, Matt generates the PNGs. **`GEMINI_NOTES.md`
@@ -46,9 +54,9 @@ ignores, the flat-magenta backdrop convention, the alpha-salvage recipes and the
 delivery checklist). Two rules from it shape every prompt: **position by edges
 and corners, never by percentage**, and **name a flat backdrop colour rather
 than asking for transparency, then detect the colour you actually got.**
-**`tools/README.md` indexes the thirteen pipeline tools**: what each cuts, why the
+**`tools/README.md` indexes the fifteen pipeline tools**: what each cuts, why the
 cutting family exists at all ("don't generate a piece you could cut"), and the
-dependencies a fresh container does not have. Read it before writing a fourteenth.
+dependencies a fresh container does not have. Read it before writing a sixteenth.
 
 **GitHub repo:** owner `mattohara42`, repo name `hook-line-and-sentence`.
 Renamed from `WordsPerM...` on 2026-08-31, along with the game itself (it was

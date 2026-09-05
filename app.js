@@ -489,18 +489,17 @@ function buildBed(cfg) {
   return nodes;
 }
 
+// The bed, and only the bed. The schedule that speaks this spot's voices used
+// to live here too, which is what L1 had to undo: see startLife() below.
 function startAmbient(loc) {
   if (!actx || ambient) return;
   const cfg = logic.ambienceFor(CONFIG.audio.ambience, loc);
   if (!cfg) return;
-  const nodes = cfg.bed ? buildBed(cfg.bed) : [];
-  const timers = (cfg.voices ?? []).map(v => scheduleVoice(v));
-  ambient = { nodes, timers, location: loc };
+  ambient = { nodes: cfg.bed ? buildBed(cfg.bed) : [], location: loc };
 }
 
 function stopAmbient() {
   if (!ambient) return;
-  ambient.timers.forEach(s => { s.live = false; clearTimeout(s.timer); });
   ambient.nodes.forEach(n => { try { n.stop(); } catch { /* already stopped */ } });
   ambient = null;
 }
@@ -511,22 +510,6 @@ function refreshAmbient() {
   if (!actx || ambient?.location === audioLocation()) return;
   stopAmbient();
   startAmbient(audioLocation());
-}
-
-// Each voice re-arms itself, so the gaps stay random forever rather than
-// repeating a pattern of however many were queued up front. The timer runs
-// even with the sound off: playVoice checks, so turning sound on mid-game
-// gets you a live pond rather than a bed with nothing in it.
-function scheduleVoice(v) {
-  const slot = { timer: null, live: true };
-  const arm = () => {
-    slot.timer = setTimeout(() => {
-      playVoice(v.id, v.gain);
-      if (slot.live) arm();
-    }, logic.nextVoiceDelayMs(v.everyMs));
-  };
-  arm();
-  return slot;
 }
 
 function playVoice(id, gain = 0.4) {
@@ -808,6 +791,94 @@ setInterval(() => {
   ripple(rand(80, 640), rand(230, 330));
   rippleHeard();
 }, JUICE.ambientRippleMs);
+
+// ---- What lives here (L1) ----
+// The schedule that speaks a spot's voices, and shows the bodies that come with
+// them. S1 built this inside startAmbient(), which meant it only existed once
+// the AudioContext did, and audioGesture() returns early when the sound is off,
+// so ensureAudio() never runs: hanging actors off those timers would have given
+// a kid playing silently a pond with nothing in it. So the schedule belongs to
+// the SPOT, next to the costume and the tackle. playVoice() is still the only
+// thing that checks soundOn, so the sound switch turns off the sound and
+// nothing else.
+//
+// Each voice re-arms itself, so the gaps stay random forever rather than
+// repeating a pattern of however many were queued up front. Plain setTimeout
+// rather than later(): the water keeps living across a profile switch, and
+// stopLife() is what ends it.
+let life = null;                        // { timers, location }
+const lifeLayer = $("life");
+const lessMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+
+function startLife(loc) {
+  if (life) return;
+  const cfg = logic.ambienceFor(CONFIG.audio.ambience, loc);
+  life = { timers: (cfg?.voices ?? []).map(v => scheduleVoice(loc, v)), location: loc };
+}
+
+function stopLife() {
+  if (!life) return;
+  life.timers.forEach(s => { s.live = false; clearTimeout(s.timer); });
+  lifeLayer.replaceChildren();          // nothing from the old water swims in the new one
+  life = null;
+}
+
+function refreshLife() {
+  if (life?.location === audioLocation()) return;
+  stopLife();
+  startLife(audioLocation());
+}
+
+function scheduleVoice(loc, v) {
+  const slot = { timer: null, live: true };
+  const arm = () => {
+    slot.timer = setTimeout(() => {
+      playVoice(v.id, v.gain);
+      showActor(loc, v.id);
+      if (slot.live) arm();
+    }, logic.nextVoiceDelayMs(v.everyMs));
+  };
+  arm();
+  return slot;
+}
+
+// One voice speaking, with a body on it. A voice with no entry in CONFIG.life
+// is a sound and nothing else, which is what the Stream's bubbles are.
+function showActor(loc, id) {
+  const cfg = logic.actorFor(CONFIG.life, loc, id);
+  if (!cfg || document.hidden) return;
+  // A gull gliding the width of the screen is exactly the motion this setting
+  // asks to be spared. It also could not work: with animations off the actor
+  // would sit frozen at its start point for its whole life instead of
+  // travelling, so it does not appear at all rather than appearing broken.
+  if (lessMotion?.matches) return;
+
+  const a = document.createElement("div");
+  a.className = `actor actor-${id}`;
+  a.style.animationDuration = cfg.ms + "ms";
+
+  if (cfg.box) {
+    // Rolled per appearance: a frog that surfaces in the same pixel every time
+    // reads as a bug rather than as a frog.
+    const x = rand(cfg.box.x[0], cfg.box.x[1]), y = rand(cfg.box.y[0], cfg.box.y[1]);
+    a.style.left = x + "px"; a.style.top = y + "px";
+    ripple(x, y);             // it comes up THROUGH the water, so the water rings
+  } else {
+    a.style.left = cfg.from.x + "px"; a.style.top = cfg.from.y + "px";
+    a.style.setProperty("--dx", (cfg.to.x - cfg.from.x) + "px");
+    a.style.setProperty("--dy", (cfg.to.y - cfg.from.y) + "px");
+    a.style.setProperty("--dip", (cfg.dip ?? 0) + "px");
+    // The art is drawn facing left because both crossings run right to left;
+    // this is what keeps it true if a from/to is ever flipped in config.
+    a.style.setProperty("--face", cfg.to.x > cfg.from.x ? -1 : 1);
+  }
+
+  lifeLayer.appendChild(a);
+  // Removed on a timer rather than on animationend, which never fires if the
+  // animation is off, and never through later(), which would strand the actor
+  // on screen forever the moment the game generation changed.
+  setTimeout(() => a.remove(), cfg.ms);
+}
 
 // bobber ripples while the line waits for a bite
 let bobberRippleTimer = null;
@@ -2245,6 +2316,7 @@ function applyScene() {
   el.scene.classList.add("loc-" + loc);
   renderRig(loc);   // R4: the costume and the pose belong to the water, not to the boot
   refreshAmbient(); // S1: and so does what it sounds like
+  refreshLife();    // L1: and what lives in it, which is the same schedule as the voices
 }
 tackleBtn.addEventListener("click", (e) => { e.stopPropagation(); toggleControls(); });
 // picking a nav item (collection/shop/…) closes the tray; the ON/OFF toggles leave it open
