@@ -2,6 +2,89 @@
 
 Ideas captured during design/build. Nothing here expands the current milestone.
 
+## From a play session at the Stream (Matt, 2026-09-05)
+
+Six things noticed in one sitting. Nothing here is started and none of it is an
+active milestone. Where I checked the code, the numbers are below; where I did
+not, it says so.
+
+**You cannot tell which letters are locked and which are not.** Locked keys are
+opacity alone (`.key.locked { opacity: 0.18 }`), there is no positive mark on an
+unlocked one, and nothing anywhere on screen says what the current letter set
+is. It shows up at the Stream in particular because the two ladders are
+independent: locations come from rods, letters come from `totalCatches`, and the
+Bamboo Beauty costs 25 coins, so a kid can be standing in the Stream with the
+home row plus `ei` and no idea why the words feel narrow. Worth deciding whether
+the fix is a stronger locked treatment (a slashed or greyed cap rather than a
+near-invisible one), a positive one on the unlocked keys, or a line of text that
+names the set and what earns the next batch. **Not yet reproduced in a browser
+at the Stream**: the reading above is from `app.js` `renderKeyLocks()` and
+`style.css`, so it is possible something worse is happening (a stale render, the
+guide scale) and the faint style is only half the story.
+
+**Holding Shift should capitalise the letters on the virtual keyboard.** Right
+now the caps on screen are always lowercase, so a sentence asking for `T` points
+at a key that reads `t`, and the connection between the Shift key that lights up
+and the shape the kid is being asked to make is left for them to infer. This is
+a display change (a `keydown`/`keyup` on Shift toggling the guide's labels), not
+a progression change, so it is separate from *Gameplay*'s parked "Shift key as a
+late letter unlock", and it can ship without it. Watch two things: the guide
+already lights Shift as a *target* via `SHIFTED_PUNCT`, and the frozen `--kb-*`
+colours are not to be touched.
+
+**The Stream chirps too high and far too often.** The numbers agree with the
+ear. `CONFIG.audio.ambience.stream` fires the `bubble` voice every 70 to 480ms,
+which averages roughly four a second, or a couple of hundred a minute, and
+`voiceBubble()` picks a sine at 700 to 2200Hz and then ramps it up by 1.7x to
+2.7x, so the top end lands near 6kHz. The bed underneath it is also the
+brightest of the three spots (`shimmer.hz` 2600, against 760 at the Pond and 700
+in the Ocean). "Hundreds of these a minute is what babbling is" was the design
+note, and it is too literal: a real brook has that many events but almost none of
+them are audible as a discrete pitched ting. Cheapest first pass is data only,
+widen `everyMs`, drop the gain, and pull `f0` and the shimmer down an octave.
+It wants a listen rather than a calculation.
+
+**Pixel-era art is still on screen, not just on the card.** Matt saw it during a
+boot catch, before the card appeared, which means the junk sprite in the scene.
+That is the same four files the Catch Feel epic wrote up below, `junk-boot`,
+`junk-can`, `junk-weed` and `junk-nugget`, and they are the only pixel-era
+images the game still *draws*. The repaint is already specified and scheduled:
+**T4 in `BUILD_PLAN_TACKLE.md`**, one sheet, prompt written out in `ART.md` →
+*Open art requests*, waiting on one generation from Matt. So the junk art is in
+the backlog and in a build plan already. It just needs the PNG. The new information is
+only that the card's 96px mitigation does not cover it, the scene shows it too.
+
+**What else is lurking:** a sweep of `assets/` against every reference in the
+JS, CSS, HTML and JSON finds `body-kid.png` and `rod-basic.png` (pixel-era, now
+dead), `boat-blue/leaf/purple/red.png` and `boat.png` (dead since the hull tint
+shipped, kept on purpose because the R5-debt repaint prompt names those exact
+filenames), and 32 `Gemini_*.png/jpg` raw generator deliveries that the cutters
+consume by hand. Nothing loads any of them, so no kid can see one. Deleting the
+dead pixel files is a five-minute PR whenever we want it. The `Gemini_*`
+originals are the provenance for every cut sprite and should stay.
+
+**Nothing says that a rod is what opens the next spot.** `unlocksLocation` is
+set on the Bamboo Beauty and the Deep Endeavor in `config.js`, and it is read
+only by `logic.locationsForRods()`. The string never reaches the shop: `rodHint`
+returns `"luck " + "★".repeat(rodLevel)` and nothing else, so the row that opens
+the Stream looks exactly like the row that just improves your odds. A kid buying
+in cost order gets there eventually and by accident. Smallest honest fix is one
+clause in `rodHint` ("opens the Stream"), and the better version is that the
+gate rod says so before it is affordable, so it reads as a goal rather than a
+surprise. This is also the "graduation is gated by rods, and celebrated" thread
+further down: the celebration exists, the *signposting* is what is missing.
+
+**Numbers, symbols and more punctuation, eventually.** The unlock ladder stops
+at 26 letters and `,` `.` `/` `?`. A kid who can touch-type words is not done: a
+number row and the symbols over it are the rest of the keyboard. The guide has
+been waiting for this for a while, and A5 left the hooks in place. `!` is
+already mapped to `"1"` in `SHIFTED_PUNCT` and lights up for free the day a
+number row is rendered (see *Finger guide*), and `updateGuide` already leaves no
+stale highlight when a key it wants does not exist. The open questions are the
+same ones A5's notes parked: whether numbers are their own progression after the
+letters or a mode of their own, and what a six-year-old actually needs versus
+what a complete keyboard implies. Big enough to be its own epic, not a milestone.
+
 ## Found while measuring L1: a portrait phone cannot see the fishing (2026-09-05)
 
 **Everything a kid types for is off the right-hand edge of a phone held
@@ -84,7 +167,9 @@ hygiene* is still the gate on sharing the URL at all.
 - Adaptive tension meter (accuracy/timing stats already being logged in v1 for this).
 - Themed word packs; custom school spelling lists (parent-editable).
 - Accuracy-gated letter unlocks as an alternative to fish-count milestones.
-- Shift key as a late "letter unlock" (capitals).
+- Shift key as a late "letter unlock" (capitals). Separate from the *play
+  session at the Stream* item about showing capitals on the guide while Shift
+  is held, which is a label change and can ship on its own.
 
 ## Layout, found during the top-bar rework (2026-09-04)
 - **`#word` is pinned at `bottom: 250px` at every viewport size.** On a phone
