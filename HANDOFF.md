@@ -9,12 +9,13 @@ something is the way it is, `git log` and the PR body have it in full.
 
 | | |
 |---|---|
-| **Active milestone** | **None.** Two epics are open and both are waiting on Matt, not on code. |
-| **Last change** | **L1: the voices got bodies** (`BUILD_PLAN_LIVING.md`), 2026-09-05. |
+| **Active milestone** | **None.** Nothing is blocked on code. The next one is Matt's call, and the shortlist is below. |
+| **Last change** | **Six findings from Matt's play session, filed** (#181), 2026-09-05. Docs only. |
+| **The game has been played** | By Matt, and shared with friends and family. Verdict: fun, and it looks good. **It is close to release-ready**, which makes the Firebase question below live rather than theoretical. |
 | **Living Water** | L1 ✅. **L2 (the actors with no voice: heron, stream leaves, sail) is not started.** |
 | **Tackle & Junk** | T1–T3 ✅. **T4 (junk art) is still waiting on one generation from Matt**, prompt written whole in `ART.md`. |
 | **The refresh** | ✅ R1–R7 all shipped, `BUILD_PLAN_REFRESH.md`, closed 2026-09-04. |
-| **Catch Feel** | ✅ F1–F5 shipped 2026-09-03, `BUILD_PLAN_FEEL.md`. One thing left and it is Matt's: play it. |
+| **Catch Feel** | ✅ F1–F5 shipped 2026-09-03, `BUILD_PLAN_FEEL.md`. |
 | `origin/main` | clean, nothing unpushed |
 | Tests | 115/115 (`npm test`), plus `tools/ui-check.mjs` for the chrome (needs a served repo + playwright) |
 | Open PRs | **#55 only**: close it unmerged, see below |
@@ -22,42 +23,48 @@ something is the way it is, `git log` and the PR body have it in full.
 
 ## Start here
 
-**L1 is the last thing that landed.** The Pond's frog and dragonfly and the
-Ocean's gull now have bodies, in CSS, spawned off the same tick as their sound.
-`BUILD_PLAN_LIVING.md` has the whole of it, including the measured table of what
-each screen shape can actually see. Three things in it are worth knowing before
-touching the scene again:
+**Matt played it, and then shared it.** That is the thing that changed. Six
+findings came out of one session at the Stream and they are the top section of
+`BACKLOG.md`, each with the code checked so the entry carries a number rather
+than an impression. In the order I would do them:
 
-- **The voice schedule no longer lives in the audio system.** S1 built it inside
-  `startAmbient()`, so it only existed once the `AudioContext` did, and that
-  needs both a gesture and the sound switched on. A kid playing silently would
-  have had a pond with nothing in it. It belongs to the spot now, next to the
-  costume and the tackle.
-- **Where a scene element may sit is arithmetic.** The canvas is scaled to
-  *cover* and anchored bottom-left, so a portrait phone sees only design
-  **x 0..166** of 720, and the keyboard's top edge reaches design **y=240** at
-  900x600. The band that survives both is x 150..470, y 100..240.
-- **Which turned up something much bigger, and it is in `BACKLOG.md` at the
-  top: a phone held upright cannot see the fishing at all.** The lure lands at
-  design x=458, which is viewport x 1063 in a 390px window. Verified by typing a
-  real cast at that size. Not fixed: the three candidate fixes all move numbers
-  that R1, F1 and T2 each measured against the current geometry, so it wants its
-  own milestone rather than a patch.
+1. **The Stream chirps too high and too often.** Almost certainly config-only:
+   the `bubble` voice fires every 70–480ms at 700–2200Hz and then ramps up to
+   2.7x. Cheapest real improvement on the list, and it needs ears, not a
+   spectrogram.
+2. **Nothing tells a kid that a rod opens the next spot.** `unlocksLocation`
+   never reaches the shop; `rodHint` returns only the luck stars. One clause
+   closes a genuine progression gap.
+3. **You cannot tell which letters are locked.** Opacity 0.18 and nothing else.
+   **Not yet reproduced in a browser at the Stream**, so confirm the faint style
+   is the whole story before designing a fix.
+4. **Holding Shift should capitalise the guide's key caps.** A label change, not
+   a progression change.
+5. **Numbers, symbols and more punctuation.** Its own epic, not a milestone.
+6. **The pixel boot is still on screen.** Already T4, already prompted, still
+   waiting on one generation. The new fact is only that the scene shows it too,
+   so the card's 96px mitigation does not cover it.
 
-**What to build next is Matt's call**, and the shortlist is still at the top of
-`BACKLOG.md`: L2, then weather, then a daily goal, with the argument for *not*
-adding modes, gates or an idle earner. The portrait-phone finding above now has
-a claim to being first.
+**A phone held upright still cannot see the fishing**, and friends and family
+have now been handed the URL on unknown devices. The lure lands at design x=458,
+which is viewport x 1063 in a 390px window, verified by typing a real cast at
+that size. It is the top of `BACKLOG.md` under the L1 heading, and it has the
+strongest claim to being the next milestone: everything a kid types for is off
+the right-hand edge. The three candidate fixes all move numbers that R1, F1 and
+T2 each measured, so it is a milestone rather than a patch.
 
-**Nothing is half-finished.** The play-tests below are Matt's and the carried
-debts are decisions rather than bugs.
+**L1 was the last code to land.** The Pond's frog and dragonfly and the Ocean's
+gull have bodies now, in CSS, spawned off the same tick as their sound.
+`BUILD_PLAN_LIVING.md` owns it. Two rules from it carry anywhere else in the
+scene: **an actor and its sound are one event off one tick, never two
+schedules**, and **where a thing may sit is measured, not chosen** (the canvas
+covers and crops from the right, so a portrait phone sees only design x 0..166
+of 720, and the keyboard's top edge reaches y=240 at 900x600).
 
-**Landed before this, one line each, reasoning in the PR:** nine of the code
-review's ten findings plus the tray bug they turned up (#176) · the README and
-the repo's own picture (#177) · two junk words blocklisted (#178) · S1 (a
-soundscape per spot) and P1 (panels with tabs and a reachable close) (#175) ·
-the top bar as one flex row and per-spot pun pools (#170) · `tools/ui-check.mjs`
-(#171) · T1–T3, the thin line, per-spot tackle and junk trophies (#165–#168).
+**Landed before this, reasoning in each PR:** L1's bodies (#180) · nine of the
+code review's ten findings plus the tray bug they turned up (#176) · the README
+and the repo's own picture (#177) · S1 and P1, the soundscape per spot and the
+panels (#175). Anything older is `git log`'s job.
 
 **One debt still open and not started:** `cut-angler.py`'s despill should move
 to `cut-gear.py`'s unmix model. It reddens thin neutral pieces by about 11
@@ -65,47 +72,48 @@ points of R − B. Deliberately not done inside a delivery, because it changes h
 every rod is cut and they all re-cut byte-identically today (`BACKLOG.md` has
 the numbers).
 
-**One question and one finding are Matt's**, in `BACKLOG.md` → *Code review,
-whole repo*: whether the ~4.8MB of unreferenced art and the 32 `Gemini_*` source
-deliveries belong in `assets/` at all, and whether `#word` is meant to be
-monospace.
-
 **Before any cut in a fresh container:** `pip install Pillow numpy scipy`, and
 for the browser checks `cd /tmp && npm install playwright`. `tools/README.md`
 indexes all fifteen tools; the gear pipeline is `gear-ref.py` → prompt →
 `gear-register.py` → `cut-angler.py --rod` → one `rig.gearArt` line.
 
-## Waiting on Matt (all of it, now: nothing is blocked on code)
+## Waiting on Matt
 
-- **Watch the water** (L1, new). Three judgement calls, each one line in
-  `CONFIG.life`: how often (it inherits the voices' gaps, so the frog is every
-  7–19s and the gull every 17–52s), how long each one lasts (`ms`), and where
-  the frog is allowed to surface (`box`, currently a 45px stretch hemmed between
-  the boat and the word box). The frog on a **lily pad** was cut for a measured
-  reason and it is a real loss: every pad in the painting sits behind the
-  keyboard.
-- **Listen to the game** (S1). Every level came from a spectrogram, never from
-  ears. The knobs are one line each in `CONFIG.audio.ambience`, and the first to
-  disagree with is that the Stream sits louder than the other two (medians
-  22 / 50 / 33). Sound is also **on by default** now, one line in `app.js`.
-- **The panels want a thumb** (P1). Two judgement calls: the collection is a tab
-  per spot, so you cannot see all 33 fish at once any more, and Quick Cast kept
-  its own big buttons rather than the new top-left close.
-- **The new reel feel wants an eye test** (#135). Every number came from
-  measurement, never from watching a kid: `CONFIG.fish.pull` and
-  `CONFIG.fish.reveal` (`startAt` 0.3 was a judgement call about "gradual").
-- **The whole Catch Feel epic wants a play** (F1–F5). Four knobs, each one line
-  in `config.js`: **`CONFIG.wiggle.wordsRange`** (the number most likely to be
-  wrong in the epic: two or three short words measures 3.3s at adult speed and
-  nearer ten at a six-year-old's), `CONFIG.anim.cast.landing`, Baloo 2 as the
-  display face, and the catch card held until you type.
-- **The new top bar wants a play on a real phone.** Two knobs, both one line:
-  the bubble's type size and how many of the three spots' lines land as jokes.
+**The one that matters now it has been shared: the Firebase blast-radius
+decision.** `BACKLOG.md` → *Release hygiene*, and the ⚠️ block at the top of
+`firestore.rules`. `request.auth != null` authorises *any* Google account, not
+just family, and the database is shared with Family Hub. Nobody has to sign in
+to play (the game is complete on localStorage), so handing out the URL is not
+itself the problem, but any guest who did sign in is writing to that shared
+project. Options, best first: a separate Firebase project · App Check · a uid
+allowlist · or ship the public build with no Firebase at all, and collect
+nothing about other people's children. This was always the gate on sharing the
+URL; sharing has happened, so it is a decision now rather than a plan.
+
+Still open, and all one-line knobs:
+
+- **Watch the water** (L1). Three calls in `CONFIG.life`: how often (it inherits
+  the voices' gaps, so the frog is every 7–19s and the gull every 17–52s), how
+  long each lasts (`ms`), and where the frog may surface (`box`, a 45px stretch
+  hemmed between the boat and the word box). The frog on a **lily pad** was cut
+  for a measured reason and it is a real loss: every pad in the painting sits
+  behind the keyboard.
+- **`CONFIG.wiggle.wordsRange`** is the one Catch Feel knob no play session has
+  reported back on, and it is the number in that epic most likely to be wrong:
+  two or three short words measures 3.3s at adult speed and nearer ten at a
+  six-year-old's.
+- **A7's fight beats have never been tested on a real kid.**
+  `CONFIG.fight.clauseRunMs` (550) and `segmentRunMs` (900) were picked by feel.
+- **The panels want a thumb** (P1). The collection is a tab per spot, so you
+  cannot see all 33 fish at once any more, and Quick Cast kept its own big
+  buttons rather than the new top-left close.
 - **The bite emerges 32px higher** (#103) and **R1's line prototype** wants an
   eye test (`/prototype/line-animation.html`, and `ANIMATION.md` flags its own
   assumption). Both are one-line reverts.
-- **A7 fight beats have never been tested on a real kid.**
-  `CONFIG.fight.clauseRunMs` (550) and `segmentRunMs` (900) were picked by feel.
+- **Is `#word` meant to be monospace?** `BACKLOG.md` → *Code review, whole repo*.
+
+Repo housekeeping, unchanged and all still true:
+
 - **Close PR #55 unmerged.** Verified 2026-09-01: it is a strict *subset* of
   `main` and merging it would delete 3463 lines including the whole refresh
   epic. Evidence in PR #60. Its branch `claude/graphics-assets-plan-rza791`
@@ -136,7 +144,6 @@ indexes all fifteen tools; the gear pipeline is `gear-ref.py` → prompt →
 
 - **Upload the social preview** at Settings → General → Social preview. The
   image is committed at `docs/images/social-preview.png` (#177). Web UI only.
-- **The Firebase blast-radius decision**, in `BACKLOG.md`.
 
 ## Rules of thumb
 
@@ -147,6 +154,9 @@ indexes all fifteen tools; the gear pipeline is `gear-ref.py` → prompt →
   `tools/life-check.mjs` spawns the ambient actors on demand and measures how
   much of each one any screen shape can actually see. Serve the repo first, and
   all of them want playwright on `NODE_PATH`.
+- **None of that replaces playing it.** Every one of Matt's six findings sat
+  behind 115 green tests and four browser tools. Three of them are single config
+  numbers that no assertion could ever have called wrong.
 - **A layout bug is arithmetic, so stop looking at it and measure it.** Four
   hand-checked viewports missed seven real collisions that a rectangle-overlap
   loop found in fifteen seconds. L1 found two more the same way, and then found
