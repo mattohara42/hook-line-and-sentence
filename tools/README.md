@@ -252,7 +252,10 @@ never once be seen by anybody.
 It found that twice in one sitting: a frog surfacing squarely behind the word
 box, which is a croak with nothing to look at, and then the far bigger version
 of the same fact, which is that a phone held upright cannot see where the lure
-lands either (`BACKLOG.md`).
+lands either. That second one is **closed rather than fixed**: the game is
+typing, a phone has nothing to type on, and a keyboardless device is now told
+so on arrival instead (`BACKLOG.md`). The measurement still matters for
+anything placed in the scene on a screen somebody CAN play on.
 
 It speeds the voices up by rewriting `config.js` **in flight**, not on disk, so
 a frog that speaks every 7-19s can be photographed in seconds. That deliberately

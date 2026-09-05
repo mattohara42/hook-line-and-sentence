@@ -45,14 +45,13 @@ images the game still *draws*. The repaint is already specified and scheduled:
 the backlog and in a build plan already. It just needs the PNG. The new information is
 only that the card's 96px mitigation does not cover it, the scene shows it too.
 
-**What else is lurking:** `body-kid.png` and `rod-basic.png` (pixel-era, dead)
-are **deleted** as of #183. Still there: `boat-blue/leaf/purple/red.png` and
-`boat.png` (dead since the hull tint shipped, kept on purpose because the
-R5-debt repaint prompt names those exact filenames, and `boat.png` is still
-loaded by `prototype/line-animation.html`), and 32 `Gemini_*.png/jpg` raw
-generator deliveries that the cutters consume by hand. The `Gemini_*` originals
-are the provenance for every cut sprite and should stay. See *Code review, whole
-repo* below for the rest, which wants a decision rather than a delete.
+**✅ The rest of the pixel era is gone (2026-09-05).** `body-kid.png` and
+`rod-basic.png` went in #183; `kid.png`, the four `boat-{red,blue,leaf,purple}`
+skins, the three pre-refresh whole-scene backgrounds and a duplicate
+`social-preview.png` followed, 5.2MB in nine files. What is deliberately kept is
+provenance, not dead weight: the 32 `Gemini_*` raw deliveries the cutters
+consume by hand, the three uncut `angler-<pose>.png` masters, and `boat.png`,
+which `prototype/line-animation.html` still loads.
 
 **Numbers, symbols and more punctuation, eventually.** The unlock ladder stops
 at 26 letters and `,` `.` `/` `?`. A kid who can touch-type words is not done: a
@@ -65,25 +64,40 @@ same ones A5's notes parked: whether numbers are their own progression after the
 letters or a mode of their own, and what a six-year-old actually needs versus
 what a complete keyboard implies. Big enough to be its own epic, not a milestone.
 
-## Found while measuring L1: a portrait phone cannot see the fishing (2026-09-05)
+## ✅ Closed: mobile is a shop window, not a play surface (2026-09-05)
 
-**Everything a kid types for is off the right-hand edge of a phone held
-upright.** The scene is a 720x360 canvas scaled to COVER the viewport and
-anchored bottom-left, so on a 390x844 phone the scale is 2.34 and only design
-**x 0..166** is on screen. The boat is x -16..140, and after that the visible
-scene is over. The lure lands at x=458, which is viewport x **1063 in a 390px
-window**: verified by typing a real cast at that size, where the line simply
-leaves the frame and nothing else happens. The bobber, its ripples, the bite and
-the fish rising are all outside the picture, so the payoff for typing the word
-is a boy in a boat and a line going off the top corner.
+**The decision.** The game is typing, all of it, so a phone without a keyboard
+was never going to be playable whatever the layout did. Matt's call is that
+mobile stays polished enough that someone who taps a shared link sees a
+handsome pond, and stops there. **What shipped instead of a layout milestone is
+one notice**: a device that points with a finger and has no mouse behind it
+gets "you'll need a keyboard" over the profile picker, dismissible, and it
+closes itself on the first real keystroke (a tablet with a Bluetooth keyboard
+clears it by being typed on). The rule is `logic.looksKeyboardless`.
 
-Not touched in L1, because the fix is a design call rather than a patch, and
-there are at least three: let the scene CONTAIN rather than cover on tall
-screens (letterboxed sky, whole scene visible); anchor the cast to a share of
-the *visible* width rather than to design x=458; or centre the frame on the
-action instead of on the left edge. All three move numbers that R1, F1 and T2
-each measured against the current geometry, so it wants its own milestone.
-`CONFIG.anim.cast.landing`'s comment is the best account of what depends on it.
+**What that retires**, all of it measured and all of it now accepted rather
+than pending:
+
+- **A portrait phone sees only design x 0..166 of 720.** The scene covers and
+  crops from the right, so the lure's landing at design x=458 is viewport x
+  1063 in a 390px window: the line leaves the frame and the bobber, the bite
+  and the fish are all off-screen. Verified by typing a real cast at that size.
+  The three candidate fixes (contain rather than cover, anchor the cast to a
+  share of the visible width, centre the frame on the action) all move numbers
+  R1, F1 and T2 measured, and none of them buys a playable phone.
+- **A phone on its side has nowhere to put the celebrations.** At 740x360 the
+  catch card's band is negative and the card collapses to a 24px sliver, and
+  the badge toast's only free strip is where the unlock banner lands. Still
+  listed in `tools/ui-check.mjs`'s `KNOWN` so the sweep stays honest, now as
+  accepted rather than as a fix owed.
+- **`#word` is pinned at `bottom: 250px` at every size**, which is what makes
+  the landscape band negative in the first place. Positioning it as a share of
+  the free band (the way `#card-slot` already is) would take the constraint
+  away, and is worth doing if a landscape pass ever happens for its own sake.
+
+The geometry itself is still true and still worth knowing when placing anything
+in the scene: `BUILD_PLAN_LIVING.md` has the table, and **where a thing may sit
+is measured, not chosen** stays a rule in `CLAUDE.md`.
 
 ## What next, now the look and the sound are done (asked 2026-09-04)
 
@@ -126,14 +140,16 @@ has, and it trains coming back for a payout rather than for the fishing. The
 honest version of that idea is flavour, not currency: a line on return saying
 what the pond got up to while you were gone.
 
-**Before it is "released" to anyone outside the family**, four things that are
-not features: it should work offline and add to a home screen (a manifest and
-a service worker over 166 assets, and this is the one that makes it feel like
-an app on an iPad); a new kid is dropped straight into "type the word to cast"
-with nothing explaining the ghost hands; sound is one ON/OFF and wants a
-volume; and a phone held sideways is a known-broken layout (above, and in
-`ui-check.mjs`'s KNOWN list). The Firebase blast-radius decision under *Release
-hygiene* is still the gate on sharing the URL at all.
+**Before it is "released" to anyone outside the family**, two things that are
+not features: a new kid is dropped straight into "type the word to cast" with
+nothing explaining the ghost hands, and sound is one ON/OFF and wants a volume.
+Two more came off this list on 2026-09-05: the Firebase blast-radius decision
+is **answered and shipped** (see *Release hygiene*), and mobile is **closed as
+a decision rather than a layout** (see the section above it). Offline and
+add-to-home-screen is worth its own thought now rather than being lumped in
+here: a manifest and a service worker over 155 assets is what would make it
+feel like an app on an iPad, and an iPad with a keyboard case is a device that
+can actually play.
 
 ## Flavor & fun
 - **Groan counter**: after each catch pun, a 🙄 button increments a lifetime "Dad Jokes Endured" stat per profile. Zero gameplay impact, maximum family lore.
@@ -152,11 +168,19 @@ hygiene* is still the gate on sharing the URL at all.
   is held, which is a label change and can ship on its own.
 
 ## Layout, found during the top-bar rework (2026-09-04)
+
+*The two landscape items here are **accepted, not owed**, as of 2026-09-05: a
+phone is a shop window (see the closed mobile section above). They stay written
+down because the numbers are the reason `ui-check.mjs` prints them as `KNOWN`
+rather than failing.*
+
 - **`#word` is pinned at `bottom: 250px` at every viewport size.** On a phone
   held sideways (~360px tall) that puts the word box ~55px from the top, which
   is why the pun bubble has to shrink under `max-height: 520px` and why `#word`
   now outranks the top bar in z-order. A word box positioned as a share of the
-  free band (the way `#card-slot` already is) would take the constraint away.
+  free band (the way `#card-slot` already is) would take the constraint away,
+  and it is also what pins its height: F2's Baloo 2 swap needed an explicit
+  `line-height` because `#card-slot`'s `bottom` is derived from a 54px box.
 - **✅ Nothing swept viewports (fixed 2026-09-04).** `tools/ui-check.mjs` now
   checks twelve shapes and drives the top bar. `play-check.mjs` still shoots
   1280x720 only, which is fine: it owns the beats of a catch, not the chrome.
@@ -166,9 +190,9 @@ hygiene* is still the gate on sharing the URL at all.
   is *negative* and the card collapses to a 24px sliver. The badge toast's only
   free strip (between the keyboard's top edge at 201px and the word's bottom at
   250px) is also where the unlock banner lands at `top: 40%`. Both are listed in
-  that tool's `KNOWN` list so the sweep stays honest. The fix is a landscape
-  pass (where `#word` sits, and a compact card), not a nudge: it is a design
-  call about a shape the game has never been laid out for.
+  that tool's `KNOWN` list so the sweep stays honest. **Not being fixed**: it
+  would be a landscape pass (where `#word` sits, and a compact card) rather
+  than a nudge, and a phone on its side is a shape nobody can type on.
 - **The badge toast was landing on the HUD chips at phone width** (top-centre
   versus a right-aligned HUD that wraps across most of the row). Moved below the
   card band under 620px rather than redesigned; it is still a nowrap pill on a
@@ -215,22 +239,19 @@ them, 96px and 34px, against the originals: no visible difference.
 
 **Left, and both want a decision rather than a patch:**
 
-- **About 4.4MB of unreferenced art ships, plus 5.6MB of source deliveries.**
-  `body-kid` and `rod-basic` are deleted (#183). Nothing references
-  `boat-blue`, `boat-leaf`, `boat-purple`, `background.png`,
-  `background-ocean.png`, `angler-ocean.png` or `angler-stream.png` either;
-  `config.js:709` already records that the boat ones are dead, and the
-  `angler-*` pair are `cut-angler.py`'s own keyed outputs, so they are
-  provenance rather than dead weight. `assets/social-preview.png` is a third
-  case again: a 495KB near-duplicate of the committed
-  `docs/images/social-preview.png` that nothing points at. Separately, 32 `Gemini_*` source deliveries sit in `assets/` and go
-  out with the deploy. They are pipeline inputs, so the question is whether they
-  belong in `assets/` at all rather than whether to delete them.
-- **One question rather than a finding: is `#word` meant to be monospace?** It
-  carries no `font-family`, so the reel target inherits `--mono` while F2 moved
-  everything else to Baloo 2. A monospace typing target is defensible (character
-  width stays put as you type), so this may be decided rather than missed. It
-  is visible as soon as an Ocean sentence is on screen against a Baloo 2 HUD.
+**Both are now decided and done (2026-09-05).**
+
+- **✅ The unreferenced art is deleted.** Matt's call was the dead art only:
+  `kid.png`, `boat-{red,blue,leaf,purple}.png`, the three pre-refresh
+  whole-scene backgrounds and the duplicate `social-preview.png`, 5.2MB across
+  nine files, `assets/` 29MB → 24MB. The pipeline sources stay where they are:
+  the 32 `Gemini_*` deliveries and the three uncut `angler-<pose>.png` masters
+  are what a re-cut reads, and `cut-angler.py`'s open despill fix would need
+  them. So they still go out with the deploy, and that is the accepted cost of
+  keeping every sprite's provenance one command away.
+- **✅ `#word` is not meant to be monospace, and nothing else is either.** Body
+  is Baloo 2 now and the keyboard carries its own frozen `--kb-font`, which is
+  the only monospace left in the game.
 
 ## World
 - More ponds/locations; weather; real day/night tied to clock (see the shortlist
@@ -286,14 +307,14 @@ them, 96px and 34px, against the originals: no visible difference.
   from the hostname (`isDevHost()`): localhost, `.local` machines and Netlify
   deploy previews get it, production and anything unfamiliar fail closed. A data
   test pins both directions.
-- **Decide the Firebase blast-radius question before sharing the URL.** See the
-  ⚠️ block at the top of `firestore.rules`: `request.auth != null` authorises
-  *any* Google account, not just family, and the database is shared with Family
-  Hub. Document shape/size is now capped, but rules cannot cap document *count*.
-  Options, best first: a separate Firebase project for this game · App Check ·
-  a uid allowlist · or ship the public build with no Firebase at all (the game
-  is fully playable on localStorage, and then you collect no data about other
-  people's children).
+- **✅ The Firebase blast-radius question is answered: no Firebase (2026-09-05).**
+  Matt's call was the last of the options this entry listed, and the only one
+  that closes the hole rather than narrowing it. Cloud saves are removed whole:
+  no config, no SDK import, no sign-in, no write path, and `firestore.rules`
+  denies everything. The cost is cross-device sync, which was all it bought.
+  **One step is still Matt's and code cannot do it: publish the new rules in
+  the Firebase console.** Until that happens the live project still accepts
+  writes from any Google account, whatever the game does.
 - **No analytics, no crash reporting, no third-party scripts.** Worth keeping
   that way: it's most of what makes this safe to hand to another family.
 
@@ -695,10 +716,10 @@ path now costs: four generations, four cut pairs, a per-pose registry like
 `CONFIG.rig.gearArt`, and dropping the `tint` field. Play it first: the tinted
 thwarts may well not be worth four generations.
 
-**Unreferenced since the tint shipped:** `assets/boat-red.png`, `boat-blue.png`,
-`boat-leaf.png`, `boat-purple.png` and `boat.png` are pixel-era files nothing
-loads any more. They are exactly the filenames the repaint prompt says to
-overwrite, which is the only reason they are still in the repo.
+**The four pixel-era hull PNGs are deleted** (2026-09-05), so the repaint prompt
+writes fresh files under those names rather than overwriting anything. Nothing
+else about the path changes. `boat.png` survives them: it is the boat
+`prototype/line-animation.html` draws.
 
 ## ✅ The wait puns are not location-aware (noticed during T2, fixed in #170)
 

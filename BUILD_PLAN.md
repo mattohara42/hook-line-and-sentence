@@ -48,8 +48,13 @@ Profile picker on launch. Per-kid: unlocked letters, coins, collection, upgrades
   errors). **Live-verified 2026-07-23:** the Firebase console setup is done
   (hook-line-and-sentence.netlify.app added to Auth authorized domains, firestore.rules
   merged into the shared ruleset) and the signed-in cross-device path is
-  confirmed: **cloud saves work.** See the M4b verification checklist in
-  `FIRESTORE.md`.
+  confirmed: **cloud saves work.**
+- **M4b was removed on 2026-09-05**, and the milestone's done-when still holds
+  without it: two profiles keep fully separate state across reloads, which M4a
+  met on localStorage alone. The sync's rules authorised any Google account in
+  a project shared with Family Hub, and the game had been shared, so it went
+  whole rather than being narrowed (`BACKLOG.md` -> *Release hygiene*,
+  `FIRESTORE.md`).
 
   **→ v1 is now complete. This also clears the stated prerequisite for the
   Advanced Progression epic (`BUILD_PLAN_ADVANCED.md`), whose first buildable

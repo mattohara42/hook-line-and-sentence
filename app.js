@@ -21,17 +21,19 @@ async function loadJson(path) {
   return res.json();
 }
 
-// ---- Profiles (localStorage mirror; M4b layers Firestore sync on top) ----
+// ---- Profiles (localStorage, and that is the whole of it) ----
 // One document per kid, shaped per FIRESTORE.md. localStorage keys:
-//   tf:profile:{id}: the save document (which IS the offline save file)
+//   tf:profile:{id}: the save document (which IS the save file)
 //   tf:profiles    : lightweight index for the picker [{id,name,avatar,updatedAt}]
 //   tf:active      : last-picked profile id
-// All reads/writes funnel through here so M4b can add Firestore in one place.
+// All reads and writes funnel through here. M4b used to add a Firestore
+// write-through in this one place, which is what made it a clean thing to
+// remove again when sync went (see the note further down).
 const AVATARS = ["🐸", "🐟", "🐠", "🦆", "🐢", "🦖", "🐙", "🦈", "⭐", "🍀", "🐳", "🦑"];
 // These key names predate the rename to Hook, Line and Sentence and are kept
 // verbatim on purpose: they address saved games on real devices, so renaming
-// them would orphan every existing profile. Same goes for the `typingFishing`
-// Firestore collection in config.js. They are storage paths, not display names.
+// them would orphan every existing profile. They are storage paths, not
+// display names.
 const PROFILE_KEY = id => "tf:profile:" + id;
 const INDEX_KEY = "tf:profiles";
 const ACTIVE_KEY = "tf:active";
@@ -81,7 +83,6 @@ function persistSave() {
   const idx = readIndex();
   const row = idx.find(p => p.id === save.id);
   if (row) { row.name = save.name; row.avatar = save.avatar; row.updatedAt = save.updatedAt; writeIndex(idx); }
-  syncPush(save);   // M4b: push to Firestore when signed in; no-op otherwise
 }
 
 function createProfile(name, avatar) {
@@ -117,85 +118,21 @@ function migrateLegacySave() {
   } catch { /* ignore a malformed legacy save */ }
 }
 
-// ---- Firestore sync (M4b) ----
-// One parent Google sign-in backs up every kid's profile to Firestore and
-// pulls them on other devices. Everything here is best-effort: if Firebase
-// can't load, isn't configured, or nobody's signed in, the game runs entirely
-// on the localStorage mirror and none of this throws. Profiles are stored as
-// one doc per kid in the CONFIG.firebase.collection collection, scoped by
-// ownerUid so the security rules can keep families separate.
-const COL = CONFIG.firebase.collection;
-let fb = null;   // { db, auth, fs, authNs, uid } once Firebase has loaded
-
-async function syncInit() {
-  try {
-    const base = "https://www.gstatic.com/firebasejs/" + CONFIG.firebase.sdkVersion;
-    const [appNs, fs, authNs] = await Promise.all([
-      import(base + "/firebase-app.js"),
-      import(base + "/firebase-firestore.js"),
-      import(base + "/firebase-auth.js"),
-    ]);
-    const app = appNs.initializeApp(CONFIG.firebase.config);
-    fb = { db: fs.getFirestore(app), auth: authNs.getAuth(app), fs, authNs, uid: null };
-    setSyncStatus("sync-out");
-    authNs.onAuthStateChanged(fb.auth, async (user) => {
-      fb.uid = user?.uid ?? null;
-      if (user) {
-        setSyncStatus("sync-in", user.email || user.displayName || "signed in");
-        try { await pullProfiles(); } catch (e) { console.warn("profile pull failed", e); }
-      } else {
-        setSyncStatus("sync-out");
-      }
-    });
-  } catch (err) {
-    // Offline, blocked, or misconfigured: stay local-only and silent.
-    console.info("Sync unavailable; playing offline on localStorage.", err?.message || err);
-    setSyncStatus("sync-off");
-  }
-}
-
-function signIn() {
-  if (!fb) return;
-  fb.authNs.signInWithPopup(fb.auth, new fb.authNs.GoogleAuthProvider())
-    .catch(err => { console.warn("sign-in failed", err); setSyncStatus("sync-out", "sign-in cancelled"); });
-}
-function signOutSync() { if (fb) fb.authNs.signOut(fb.auth).catch(() => {}); }
-
-// write-through on every persistSave() when signed in; fire-and-forget
-function syncPush(profile) {
-  if (!fb?.uid) return;
-  const { doc, setDoc } = fb.fs;
-  setDoc(doc(fb.db, COL, profile.id), { ...profile, ownerUid: fb.uid }, { merge: true })
-    .catch(err => console.warn("sync push failed", err));
-}
-
-// pull the family's profiles and reconcile with local by updatedAt (newest wins)
-async function pullProfiles() {
-  if (!fb?.uid) return;
-  const { collection, query, where, getDocs, doc, setDoc } = fb.fs;
-  const snap = await getDocs(query(collection(fb.db, COL), where("ownerUid", "==", fb.uid)));
-  const remote = {};
-  snap.forEach(d => { remote[d.id] = d.data(); });
-
-  const ids = new Set([...readIndex().map(p => p.id), ...Object.keys(remote)]);
-  for (const id of ids) {
-    const loc = readProfile(id);
-    const rem = remote[id];
-    const locT = loc?.updatedAt ?? 0, remT = rem?.updatedAt ?? 0;
-    if (rem && remT > locT) {
-      // remote is newer: adopt it locally, but never yank a kid mid-game
-      if (!(save && save.id === id && !pickerOpen)) localStorage.setItem(PROFILE_KEY(id), JSON.stringify(rem));
-    } else if (loc && locT >= remT) {
-      // local is newer or remote-missing: back it up
-      setDoc(doc(fb.db, COL, id), { ...loc, ownerUid: fb.uid }, { merge: true }).catch(() => {});
-    }
-  }
-  // rebuild the picker index from whatever now exists locally
-  const idx = [];
-  for (const id of ids) { const d = readProfile(id); if (d) idx.push({ id, name: d.name, avatar: d.avatar, updatedAt: d.updatedAt }); }
-  writeIndex(idx);
-  if (pickerOpen) renderProfileGrid();
-}
+// ---- Saves live on this device, and only on this device ----
+// There is no cloud sync and no account. The whole save is the localStorage
+// mirror the Firestore path used to write through to: one `tf:profile:<id>`
+// document per kid, plus the `tf:index` the picker reads.
+//
+// The sync was removed on 2026-09-05 (BACKLOG.md -> Release hygiene). It rode
+// on a Firebase project shared with Family Hub, where `request.auth != null`
+// authorised any Google account on earth to create documents, and the game had
+// been handed to friends and family by then. Nobody outside the family should
+// be able to write to that project, and the least code that guarantees it is
+// none: no SDK import, no sign-in, no write path. What it costs is cross-device
+// sync, which was the one thing it bought. Kids play one device at a time.
+//
+// If it ever comes back it needs its OWN Firebase project rather than this
+// hole patched: FIRESTORE.md keeps the schema and the setup for that.
 
 function equippedRod()  { return CONFIG.shop.rods.find(r => r.id === save.upgrades.rod); }
 function equippedBait() { return CONFIG.shop.baits.find(b => b.id === save.upgrades.bait); }
@@ -207,8 +144,8 @@ function recomputeUnlocks() {
   // The 🧪 shortcut unlocks the whole keyboard as well as the spots: the letter
   // stages are earned by catch count alone, so a fresh test profile standing in
   // the Ocean still only had the home row, which filters out every sentence
-  // and silently drops the reel back to single words. Dev hosts only; a synced
-  // save carrying the flag is ignored in production.
+  // and silently drops the reel back to single words. Dev hosts only; a save
+  // carrying the flag is ignored in production.
   const allKeys = CONFIG.dev?.testShortcuts && save?.devAllKeys;
   const n = allKeys ? CONFIG.unlock.stages.length : unlockedStageCount(totalCatches());
   unlockedLetters = logic.lettersForStages(CONFIG.unlock.stages, n);
@@ -1624,9 +1561,9 @@ function land(success) {
     el.fish.classList.add("landing");
     surfaceBreak();
     save.jokesEndured = (save.jokesEndured ?? 0) + 1;
-    // T3: which junk, not just how much of it. Same shape as save.collection so
-    // the sync story is the one FIRESTORE.md already describes: an increment
-    // on one key, folded into the write this catch was making anyway.
+    // T3: which junk, not just how much of it. Same shape as save.collection,
+    // an increment on one key folded into the write this catch was making
+    // anyway.
     save.junk ??= {};
     save.junk[junk.id] = (save.junk[junk.id] ?? 0) + 1;
     const freshJunkBadges = evaluateBadges();
@@ -1871,7 +1808,7 @@ function recordKey(expected, correct) {
 
 // ---- Input ----
 document.addEventListener("keydown", (e) => {
-  if (!save || pickerOpen || collectionOpen || shopOpen || nudgeOpen || progressOpen || journalOpen || speedOpen || inputLocked) return;
+  if (!save || pickerOpen || noKeyboardOpen || collectionOpen || shopOpen || nudgeOpen || progressOpen || journalOpen || speedOpen || inputLocked) return;
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (e.key.length !== 1) return;
   // F3: starting the next word yanks the catch card off. It happens here, above
@@ -2322,9 +2259,10 @@ function renderRig(loc) {
 }
 renderRig();
 
-// A3: swap the biome scene by location. Sets a loc-<location> class on #scene;
-// CSS layers the stream background over the pond one, so this stays visually
-// safe until assets/background-stream.png exists, then the stream scene appears.
+// A3: swap the biome scene by location. Sets a loc-<location> class on #scene,
+// and R3's three cut layer sets (far/water/fore per spot) do the rest in CSS.
+// The single whole-scene PNG this comment used to wait on is gone with the rest
+// of the pixel-era art.
 function applyScene() {
   const loc = save?.location ?? CONFIG.tiers[0].location;
   el.scene.classList.remove(...CONFIG.tiers.map(t => "loc-" + t.location));
@@ -2707,8 +2645,9 @@ function renderJournal() {
   // Backfill badges earned retroactively (an old save, or progress from before
   // the journal existed). The write is guarded on there being one, because
   // opening a panel is not a game event: unconditionally, this was the only
-  // call site in the game that spent a Firestore write on somebody looking at
-  // a screen, against the one-write-per-catch budget `FIRESTORE.md` opens with.
+  // call site in the game that wrote a save because somebody looked at a
+  // screen. It cost a Firestore write per journal open back when there was a
+  // Firestore, and the guard is still right without one.
   if (evaluateBadges().length) persistSave();
   const earned = BADGES.filter(b => save.badges.includes(b.id)).length;
   // A8 also surfaces the kid's rank here: it was stored from A0 onward but
@@ -2935,6 +2874,7 @@ $("st-done").addEventListener("click", () => toggleSpeed(false));
 // last.
 document.addEventListener("keydown", (e) => {
   if (e.key !== "Escape") return;
+  if (noKeyboardOpen) return closeKeyboardNotice();
   if (nudgeOpen) return toggleNudge(false);
   if (speedOpen) return toggleSpeed(false);
   if (progressOpen) return toggleProgress(false);
@@ -2943,6 +2883,29 @@ document.addEventListener("keydown", (e) => {
   if (collectionOpen) return toggleCollection(false);
   if (!controlsTray.hidden) return toggleControls(false);
 });
+
+// ---- No keyboard, no fishing ----
+// The rule about what a browser can and cannot tell is in logic.js; this is the
+// wiring. The notice opens on a guess and closes on proof: a first keystroke is
+// the only evidence a page ever gets that a keyboard is really there, so a
+// tablet with a plain Bluetooth keyboard clears it by being typed on. It is
+// dismissible either way, because a phone can still look at the pond, which is
+// the whole reason the layout is polished for a screen nobody can play on.
+const noKeyboardRoot = $("no-keyboard");
+let noKeyboardOpen = false;
+function closeKeyboardNotice() {
+  if (!noKeyboardOpen) return;
+  noKeyboardOpen = false;
+  noKeyboardRoot.hidden = true;
+}
+$("no-keyboard-close").addEventListener("click", closeKeyboardNotice);
+function maybeWarnNoKeyboard() {
+  const ask = q => typeof matchMedia === "function" && matchMedia(q).matches;
+  if (!logic.looksKeyboardless(ask("(any-pointer: coarse)"), ask("(any-pointer: fine)"))) return;
+  noKeyboardOpen = true;
+  noKeyboardRoot.hidden = false;
+  document.addEventListener("keydown", closeKeyboardNotice, { once: true });
+}
 
 // ---- Profile picker (shown on launch; gates the game until a kid is chosen) ----
 const profilesRoot = $("profiles");
@@ -3009,24 +2972,6 @@ $("profile-name").addEventListener("keydown", (e) => { if (e.key === "Enter") $(
 $("profile-cancel").addEventListener("click", () => { profileNew.hidden = true; });
 $("switch-btn").addEventListener("click", () => { if (save) persistSave(); showProfilePicker(); });
 
-// sync bar in the picker: reflects Firebase/sign-in state
-const syncBtn = $("sync-btn");
-const syncStatus = $("sync-status");
-function setSyncStatus(state, detail) {
-  // states: sync-off (unavailable) | sync-out (signed out) | sync-in (signed in)
-  syncBtn.hidden = state === "sync-off";
-  if (state === "sync-in") {
-    syncStatus.textContent = "☁ synced" + (detail ? " · " + detail : "");
-    syncBtn.textContent = "SIGN OUT";
-  } else if (state === "sync-out") {
-    syncStatus.textContent = detail || "play saves on this device";
-    syncBtn.textContent = "SIGN IN TO SYNC";
-  } else {
-    syncStatus.textContent = "playing offline, saved on this device";
-  }
-}
-syncBtn.addEventListener("click", () => { fb?.uid ? signOutSync() : signIn(); });
-
 function activateProfile(id) {
   const doc = readProfile(id);
   if (!doc) return;
@@ -3066,8 +3011,7 @@ try {
   ]);
   migrateLegacySave();
   showProfilePicker();
-  syncInit();                        // fire-and-forget: wires sign-in + pulls when ready,
-                                     // never blocks play if the network is slow or down
+  maybeWarnNoKeyboard();   // over the picker, and only where there is nothing to type on
 
 } catch (err) {
   setStatus("The word pool got away… reload to try again");

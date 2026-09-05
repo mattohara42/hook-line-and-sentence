@@ -61,8 +61,13 @@ const VIEWPORTS = [
 
 // Every fixed overlay that can be on screen at once. #scene-viewport is the
 // game itself and is meant to be under all of it, so it is not in the list.
+// #no-keyboard is in the list even though this sweep never sees it: a desktop
+// browser has a fine pointer, so the notice stays hidden and contributes no box.
+// It is here so that if it ever appears where a keyboard exists, the overlap is
+// a failure rather than a surprise.
 const OVERLAYS = ["h1", "pun", "hud", "tacklebox", "controls", "catch-card",
-                  "word", "guide-panel", "badge-toast", "unlock-banner"];
+                  "word", "guide-panel", "badge-toast", "unlock-banner",
+                  "no-keyboard"];
 
 // Overlaps that are correct, with the reason. Anything not in here is a bug.
 const ALLOWED = [
@@ -77,13 +82,15 @@ const ALLOWED = [
 const allowed = (a, b) => ALLOWED.some(([x, y]) =>
   (x === a && (y === b || y === "*")) || (x === b && (y === a || y === "*")));
 
-// Overlaps that ARE wrong and are not being fixed here, each with where the
-// decision is written down. They print as `known` rather than failing, so the
-// sweep can be green when the game is as good as it is meant to be today, and
-// the list stays short enough to read. A phone on its side is ~360px tall and
-// has to hold the HUD, #word at 250px up and a 200px keyboard: the celebration
-// overlays have nowhere left to go, and the fix is a landscape pass, not a
-// nudge (BACKLOG.md, "Layout, found during the top-bar rework").
+// Overlaps that are wrong and are ACCEPTED, each with where the decision is
+// written down. They print as `known` rather than failing, so the sweep can be
+// green when the game is as good as it is meant to be, and the list stays short
+// enough to read. A phone on its side is ~360px tall and has to hold the HUD,
+// #word at 250px up and a 200px keyboard: the celebration overlays have nowhere
+// left to go. As of 2026-09-05 these are closed rather than owed, because the
+// game is typing and a phone cannot be typed on: mobile is polished enough to
+// look at and no further, and a keyboardless device is told so on arrival
+// (BACKLOG.md, "Closed: mobile is a shop window, not a play surface").
 const KNOWN = [
   { pair: ["catch-card", "word"], when: vp => vp.h <= 400,
     why: "landscape: the card's band collapses to nothing, so the card is a sliver" },
@@ -438,7 +445,7 @@ async function panels() {
 if (!args["skip-behaviour"] && !only) { console.log(""); await behaviour(); await panels(); }
 
 await browser.close();
-if (notes.length) console.log(`\n${notes.length} known and not fixed here (BACKLOG.md):\n`
+if (notes.length) console.log(`\n${notes.length} known and accepted (BACKLOG.md):\n`
   + notes.map(n => "  " + n).join("\n"));
 console.log(problems.length ? `\n${problems.length} PROBLEM(S):\n` + problems.map(p => "  " + p).join("\n")
                             : "\nno layout problems at any viewport");

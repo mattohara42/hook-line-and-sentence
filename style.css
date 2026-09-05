@@ -13,9 +13,11 @@
    The ghost-hands keyboard is the one deliberate exception (CLAUDE.md): it is
    off limits, so its colours are frozen below as --kb-* at their pre-refresh
    values and it references nothing else. Changing the palette must never drag
-   the keyboard with it. The same goes for its type: `.key` deliberately carries
-   no font-family, so it inherits --mono from body and F2's display swap went
-   straight past it. Never point a .key rule at --display. */
+   the keyboard with it. The same goes for its type: the monospace stack is a
+   frozen --kb-font token that only `.key` reads, because body is Baloo 2 now
+   and the old arrangement (carry no font-family, inherit --mono from body)
+   would have swept the keyboard up with it. Never point a .key rule at
+   --display. */
 
 :root {
   /* Sky and light. REFERENCE VALUES: nothing consumes these yet: the sky and
@@ -67,6 +69,12 @@
   --kb-panel:   8,18,26;
   --kb-key:     18,39,54;
   --kb-line:    157,180,184;
+  /* Its type is frozen the same way and for the same reason. This used to be a
+     scene token (--mono) that the keyboard picked up by inheriting it from
+     body; body is Baloo 2 now, and the keyboard is the only thing in the game
+     that wants a monospace, so the stack lives here with the rest of what is
+     off limits. */
+  --kb-font:    ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace;
 
   /* F2: the display face. Silkscreen was the last pixel-era thing in the
      game after R2 repainted the palette, and it was carrying every pun,
@@ -86,19 +94,16 @@
      "no analytics, no third-party scripts" as a value), it cannot
      silently fall back to monospace when the CDN is unreachable, and it
      is one 33KB file in assets/ instead of a network round trip.
-     One fewer, not zero: syncInit() still imports the Firebase SDK from
-     gstatic on every launch while cloud saves are configured. That one
-     is the sync feature rather than presentation, it is documented in
-     FIRESTORE.md, and its privacy question is the blast-radius item in
-     BACKLOG.md. SIL OFL 1.1,
+     Zero, as of 2026-09-05: the Firebase SDK import that used to make it
+     "one fewer, not zero" went with cloud saves, so the page now loads
+     nothing from anyone else's server. SIL OFL 1.1,
      licence in assets/baloo2-OFL.txt. Latin subset only; the game is
      English and the variable weight axis covers 400-800 in the one file.
 
-     The ghost-hands keyboard is untouched by this and must stay that way,
-     but not because of anything here: `.key` has never carried a
-     font-family at all, so it inherits --mono from body. */
+     The ghost-hands keyboard is untouched by this and must stay that way:
+     it carries its own frozen --kb-font, which is the only monospace left
+     in the game. */
   --display: "Baloo 2", ui-rounded, system-ui, sans-serif;
-  --mono: ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace;
 }
 @font-face {
   font-family: "Baloo 2";
@@ -109,7 +114,13 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
 body {
-  font-family: var(--mono);
+  /* Baloo 2, game-wide. The 29 explicit `font-family: var(--display)` rules
+     below predate this: F2 swapped the panels one at a time and left body on
+     --mono, so anything it missed (the word box, the profile picker) stayed
+     monospace by inheritance rather than by choice. Nothing in this game is
+     meant to be monospace except the keyboard, which carries its own frozen
+     --kb-font. */
+  font-family: var(--display);
   background: var(--umber);
   color: var(--ink);
   overflow: hidden;
@@ -744,6 +755,12 @@ h1 {
      that has to stay readable */
   z-index: 7;
   font-size: 36px; letter-spacing: 0.14em; min-width: 120px; min-height: 54px;
+  /* Pinned, because the box's height is load-bearing: #card-slot's `bottom`
+     is 250 + this box + a margin, and Baloo 2's default line box is ~12px
+     taller than the monospace one this was measured against, which pushed the
+     word up into the card's band at three viewport shapes. 45 + 8px padding
+     keeps the 54px box that number was derived from. */
+  line-height: 45px;
   padding: 4px 22px; border-radius: 27px; text-align: center;
   background: rgba(var(--umber-rgb),0.5);
   backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
@@ -1023,6 +1040,9 @@ h1 {
 #guide { position: relative; max-width: 100%; }   /* size set in JS (scales with GUIDE_SCALE) */
 .key {
   position: absolute;
+  /* Type is part of the exemption, and it has to be stated now rather than
+     left to fall through from body. Never point a .key rule at --display. */
+  font-family: var(--kb-font);
   border: 1px solid rgba(var(--kb-line),0.25); border-radius: 6px;
   display: flex; align-items: center; justify-content: center;
   color: var(--kb-dim); background: rgba(var(--kb-key),0.6);
@@ -1282,7 +1302,7 @@ h1 {
   position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px;
   width: 128px; padding: 16px 8px; border-radius: 12px; cursor: pointer;
   background: rgba(var(--ink-rgb),0.04); border: 1px solid rgba(var(--ink-rgb),0.12);
-  font-family: var(--mono); color: var(--ink);
+  color: var(--ink);
 }
 .profile-cell:hover { border-color: rgba(var(--gold-rgb),0.5); background: rgba(var(--gold-rgb),0.06); }
 .profile-cell:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
@@ -1300,7 +1320,7 @@ h1 {
 #profile-new { margin-top: 12px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
 #profile-new[hidden] { display: none; }   /* ID specificity beats [hidden]; restore it */
 #profile-name {
-  font-family: var(--mono); font-size: 17px; text-align: center; padding: 9px 14px;
+  font-size: 17px; text-align: center; padding: 9px 14px;
   border-radius: 8px; border: 1px solid rgba(var(--ink-rgb),0.22);
   background: rgba(var(--shadow-rgb),0.28); color: var(--ink); width: 200px;
 }
