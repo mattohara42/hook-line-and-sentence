@@ -10,14 +10,14 @@ something is the way it is, `git log` and the PR body have it in full.
 | | |
 |---|---|
 | **Active milestone** | **None.** Nothing is blocked on code. The next one is Matt's call, and the shortlist is below. |
-| **Last change** | **Six findings from Matt's play session, filed** (#181), 2026-09-05. Docs only. |
+| **Last change** | **Two of the six play-session findings, fixed** (#183), 2026-09-05: a gate rod now says which water it opens, and holding Shift capitalises the guide's key caps. Two dead pixel-era PNGs deleted with it. |
 | **The game has been played** | By Matt, and shared with friends and family. Verdict: fun, and it looks good. **It is close to release-ready**, which makes the Firebase question below live rather than theoretical. |
 | **Living Water** | L1 ✅. **L2 (the actors with no voice: heron, stream leaves, sail) is not started.** |
 | **Tackle & Junk** | T1–T3 ✅. **T4 (junk art) is still waiting on one generation from Matt**, prompt written whole in `ART.md`. |
 | **The refresh** | ✅ R1–R7 all shipped, `BUILD_PLAN_REFRESH.md`, closed 2026-09-04. |
 | **Catch Feel** | ✅ F1–F5 shipped 2026-09-03, `BUILD_PLAN_FEEL.md`. |
 | `origin/main` | clean, nothing unpushed |
-| Tests | 115/115 (`npm test`), plus `tools/ui-check.mjs` for the chrome (needs a served repo + playwright) |
+| Tests | 117/117 (`npm test`), plus `tools/ui-check.mjs` for the chrome (needs a served repo + playwright) |
 | Open PRs | **#55 only**: close it unmerged, see below |
 | Deploys | Netlify is **manual**; merging to `main` does not go live |
 
@@ -26,22 +26,21 @@ something is the way it is, `git log` and the PR body have it in full.
 **Matt played it, and then shared it.** That is the thing that changed. Six
 findings came out of one session at the Stream and they are the top section of
 `BACKLOG.md`, each with the code checked so the entry carries a number rather
-than an impression. In the order I would do them:
+than an impression. **Two are done** (#183, and the two that needed nobody's
+opinion): the shop's gate rods now read "opens the Stream · luck ★★", and
+holding Shift capitalises the guide's caps. Four are left, in the order I would
+do them:
 
 1. **The Stream chirps too high and too often.** Almost certainly config-only:
    the `bubble` voice fires every 70–480ms at 700–2200Hz and then ramps up to
    2.7x. Cheapest real improvement on the list, and it needs ears, not a
    spectrogram.
-2. **Nothing tells a kid that a rod opens the next spot.** `unlocksLocation`
-   never reaches the shop; `rodHint` returns only the luck stars. One clause
-   closes a genuine progression gap.
-3. **You cannot tell which letters are locked.** Opacity 0.18 and nothing else.
+2. **You cannot tell which letters are locked.** Opacity 0.18 and nothing else.
    **Not yet reproduced in a browser at the Stream**, so confirm the faint style
-   is the whole story before designing a fix.
-4. **Holding Shift should capitalise the guide's key caps.** A label change, not
-   a progression change.
-5. **Numbers, symbols and more punctuation.** Its own epic, not a milestone.
-6. **The pixel boot is still on screen.** Already T4, already prompted, still
+   is the whole story before designing a fix. A guide screenshot with Shift held
+   is in #183 if a starting picture helps.
+3. **Numbers, symbols and more punctuation.** Its own epic, not a milestone.
+4. **The pixel boot is still on screen.** Already T4, already prompted, still
    waiting on one generation. The new fact is only that the scene shows it too,
    so the card's 96px mitigation does not cover it.
 
@@ -53,15 +52,16 @@ strongest claim to being the next milestone: everything a kid types for is off
 the right-hand edge. The three candidate fixes all move numbers that R1, F1 and
 T2 each measured, so it is a milestone rather than a patch.
 
-**L1 was the last code to land.** The Pond's frog and dragonfly and the Ocean's
-gull have bodies now, in CSS, spawned off the same tick as their sound.
+**L1 was the last milestone to land.** The Pond's frog and dragonfly and the
+Ocean's gull have bodies now, in CSS, spawned off the same tick as their sound.
 `BUILD_PLAN_LIVING.md` owns it. Two rules from it carry anywhere else in the
 scene: **an actor and its sound are one event off one tick, never two
 schedules**, and **where a thing may sit is measured, not chosen** (the canvas
 covers and crops from the right, so a portrait phone sees only design x 0..166
 of 720, and the keyboard's top edge reaches y=240 at 900x600).
 
-**Landed before this, reasoning in each PR:** L1's bodies (#180) · nine of the
+**Landed, reasoning in each PR:** the two play-session fixes, plus a shop row
+that wraps rather than squeezing (#183) · L1's bodies (#180) · nine of the
 code review's ten findings plus the tray bug they turned up (#176) · the README
 and the repo's own picture (#177) · S1 and P1, the soundscape per spot and the
 panels (#175). Anything older is `git log`'s job.

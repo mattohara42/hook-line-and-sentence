@@ -4,8 +4,9 @@ Ideas captured during design/build. Nothing here expands the current milestone.
 
 ## From a play session at the Stream (Matt, 2026-09-05)
 
-Six things noticed in one sitting. Nothing here is started and none of it is an
-active milestone. Where I checked the code, the numbers are below; where I did
+Six things noticed in one sitting. **Two are now done** (#183): a gate rod says
+which water it opens, and holding Shift capitalises the guide's caps. The other
+four are below. Where I checked the code, the numbers are there; where I did
 not, it says so.
 
 **You cannot tell which letters are locked and which are not.** Locked keys are
@@ -21,16 +22,6 @@ names the set and what earns the next batch. **Not yet reproduced in a browser
 at the Stream**: the reading above is from `app.js` `renderKeyLocks()` and
 `style.css`, so it is possible something worse is happening (a stale render, the
 guide scale) and the faint style is only half the story.
-
-**Holding Shift should capitalise the letters on the virtual keyboard.** Right
-now the caps on screen are always lowercase, so a sentence asking for `T` points
-at a key that reads `t`, and the connection between the Shift key that lights up
-and the shape the kid is being asked to make is left for them to infer. This is
-a display change (a `keydown`/`keyup` on Shift toggling the guide's labels), not
-a progression change, so it is separate from *Gameplay*'s parked "Shift key as a
-late letter unlock", and it can ship without it. Watch two things: the guide
-already lights Shift as a *target* via `SHIFTED_PUNCT`, and the frozen `--kb-*`
-colours are not to be touched.
 
 **The Stream chirps too high and far too often.** The numbers agree with the
 ear. `CONFIG.audio.ambience.stream` fires the `bubble` voice every 70 to 480ms,
@@ -54,25 +45,14 @@ images the game still *draws*. The repaint is already specified and scheduled:
 the backlog and in a build plan already. It just needs the PNG. The new information is
 only that the card's 96px mitigation does not cover it, the scene shows it too.
 
-**What else is lurking:** a sweep of `assets/` against every reference in the
-JS, CSS, HTML and JSON finds `body-kid.png` and `rod-basic.png` (pixel-era, now
-dead), `boat-blue/leaf/purple/red.png` and `boat.png` (dead since the hull tint
-shipped, kept on purpose because the R5-debt repaint prompt names those exact
-filenames), and 32 `Gemini_*.png/jpg` raw generator deliveries that the cutters
-consume by hand. Nothing loads any of them, so no kid can see one. Deleting the
-dead pixel files is a five-minute PR whenever we want it. The `Gemini_*`
-originals are the provenance for every cut sprite and should stay.
-
-**Nothing says that a rod is what opens the next spot.** `unlocksLocation` is
-set on the Bamboo Beauty and the Deep Endeavor in `config.js`, and it is read
-only by `logic.locationsForRods()`. The string never reaches the shop: `rodHint`
-returns `"luck " + "★".repeat(rodLevel)` and nothing else, so the row that opens
-the Stream looks exactly like the row that just improves your odds. A kid buying
-in cost order gets there eventually and by accident. Smallest honest fix is one
-clause in `rodHint` ("opens the Stream"), and the better version is that the
-gate rod says so before it is affordable, so it reads as a goal rather than a
-surprise. This is also the "graduation is gated by rods, and celebrated" thread
-further down: the celebration exists, the *signposting* is what is missing.
+**What else is lurking:** `body-kid.png` and `rod-basic.png` (pixel-era, dead)
+are **deleted** as of #183. Still there: `boat-blue/leaf/purple/red.png` and
+`boat.png` (dead since the hull tint shipped, kept on purpose because the
+R5-debt repaint prompt names those exact filenames, and `boat.png` is still
+loaded by `prototype/line-animation.html`), and 32 `Gemini_*.png/jpg` raw
+generator deliveries that the cutters consume by hand. The `Gemini_*` originals
+are the provenance for every cut sprite and should stay. See *Code review, whole
+repo* below for the rest, which wants a decision rather than a delete.
 
 **Numbers, symbols and more punctuation, eventually.** The unlock ladder stops
 at 26 letters and `,` `.` `/` `?`. A kid who can touch-type words is not done: a
@@ -235,11 +215,15 @@ them, 96px and 34px, against the originals: no visible difference.
 
 **Left, and both want a decision rather than a patch:**
 
-- **About 4.8MB of unreferenced art ships, plus 5.6MB of source deliveries.**
-  Nothing references `body-kid`, `rod-basic`, `boat-blue`, `boat-leaf`,
-  `boat-purple`, `background.png`, `background-ocean.png`, `angler-ocean.png`
-  or `angler-stream.png`; `config.js:709` already records that the boat ones
-  are dead. Separately, 32 `Gemini_*` source deliveries sit in `assets/` and go
+- **About 4.4MB of unreferenced art ships, plus 5.6MB of source deliveries.**
+  `body-kid` and `rod-basic` are deleted (#183). Nothing references
+  `boat-blue`, `boat-leaf`, `boat-purple`, `background.png`,
+  `background-ocean.png`, `angler-ocean.png` or `angler-stream.png` either;
+  `config.js:709` already records that the boat ones are dead, and the
+  `angler-*` pair are `cut-angler.py`'s own keyed outputs, so they are
+  provenance rather than dead weight. `assets/social-preview.png` is a third
+  case again: a 495KB near-duplicate of the committed
+  `docs/images/social-preview.png` that nothing points at. Separately, 32 `Gemini_*` source deliveries sit in `assets/` and go
   out with the deploy. They are pipeline inputs, so the question is whether they
   belong in `assets/` at all rather than whether to delete them.
 - **One question rather than a finding: is `#word` meant to be monospace?** It
