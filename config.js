@@ -706,7 +706,7 @@ export const CONFIG = {
     // Cosmetic only, and a hull skin is a TINT rather than its own painting:
     // `tint` is a CSS filter applied to BOTH halves of the pose's own painted
     // vessel. There is no per-skin PNG and no `file`: the pixel-era
-    // boat-red/blue/leaf/purple.png are no longer referenced by anything.
+    // boat-red/blue/leaf/purple.png were unreferenced and are deleted.
     //
     // Chosen over four repaints of boat-pond.png after shooting both in the
     // real game (ART.md → R5 debt): the filter costs no generations, no assets

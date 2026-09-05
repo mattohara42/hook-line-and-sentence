@@ -34,9 +34,9 @@ once the file exists).
 
 - All art lives flat in **`assets/`** (no subfolders currently).
 - **Final** assets use lowercase, semantic, hyphenated names that match how the
-  code references them: `background.png`, `boat.png`, `kid.png`,
-  `fish-common.png`, `fish-rare.png`, `fish-legendary.png`. New art follows the
-  same style: `hat-straw.png`, `boat-canoe.png`, `junk-boot.png`.
+  code references them: `background-pond-far.png`, `boat-pond-near.png`,
+  `angler-pond-body.png`, `fish-walleye-body.png`. New art follows the same
+  style: `hat-straw-pond.png`, `rod-bamboo-stream.png`, `junk-boot.png`.
 - **Raw** Gemini generations may be kept as `Gemini_*.png` for reference/reroll,
   but the code never points at those: only at the clean final name.
 
@@ -3941,7 +3941,8 @@ Prompt:   Repaint this exact rowboat in <COLOUR>. Keep everything else identical
           green  → a soft sage/lily-pad green     (shop id `leaf`,   Lily Pad)
           purple → a dusty muted heather purple   (shop id `purple`, Purple Reign)
 Save as:  assets/boat-red.png, boat-blue.png, boat-leaf.png, boat-purple.png
-          (overwriting the pixel-era files, whose names shop.boats already uses)
+          (fresh files: the pixel-era ones that used to hold these names were
+          unreferenced and are deleted, so nothing is overwritten)
 Wired in: not yet, and it is now a bigger change than it was, the tint
           shipped instead, so `shop.boats` carries no `file` at all and the
           vessel always draws the pose's own halves. Taking this path means
@@ -5267,6 +5268,11 @@ hidden everywhere, and **every waterline landing on screen y=396 = design
 y=198**.
 
 ### ✅ G1: the angler, taken apart (landed 2026-08-25)
+
+**Archive.** Everything below is the pixel era, superseded whole by the refresh
+(R4/R7 painted, cut and rigged all three anglers). The source PNGs it names
+(`kid.png`, `body-kid.png`, `rod-basic.png`) were unreferenced and are deleted;
+`git log` has them if a prompt here is ever run again.
 
 All three PNGs are in, salvaged and wired: `body-kid.png` (RGBA 560×864),
 `hat-straw.png` (1131×617) and `rod-basic.png` (800×800). Offsets in

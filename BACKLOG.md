@@ -45,14 +45,13 @@ images the game still *draws*. The repaint is already specified and scheduled:
 the backlog and in a build plan already. It just needs the PNG. The new information is
 only that the card's 96px mitigation does not cover it, the scene shows it too.
 
-**What else is lurking:** `body-kid.png` and `rod-basic.png` (pixel-era, dead)
-are **deleted** as of #183. Still there: `boat-blue/leaf/purple/red.png` and
-`boat.png` (dead since the hull tint shipped, kept on purpose because the
-R5-debt repaint prompt names those exact filenames, and `boat.png` is still
-loaded by `prototype/line-animation.html`), and 32 `Gemini_*.png/jpg` raw
-generator deliveries that the cutters consume by hand. The `Gemini_*` originals
-are the provenance for every cut sprite and should stay. See *Code review, whole
-repo* below for the rest, which wants a decision rather than a delete.
+**✅ The rest of the pixel era is gone (2026-09-05).** `body-kid.png` and
+`rod-basic.png` went in #183; `kid.png`, the four `boat-{red,blue,leaf,purple}`
+skins, the three pre-refresh whole-scene backgrounds and a duplicate
+`social-preview.png` followed, 5.2MB in nine files. What is deliberately kept is
+provenance, not dead weight: the 32 `Gemini_*` raw deliveries the cutters
+consume by hand, the three uncut `angler-<pose>.png` masters, and `boat.png`,
+which `prototype/line-animation.html` still loads.
 
 **Numbers, symbols and more punctuation, eventually.** The unlock ladder stops
 at 26 letters and `,` `.` `/` `?`. A kid who can touch-type words is not done: a
@@ -215,22 +214,19 @@ them, 96px and 34px, against the originals: no visible difference.
 
 **Left, and both want a decision rather than a patch:**
 
-- **About 4.4MB of unreferenced art ships, plus 5.6MB of source deliveries.**
-  `body-kid` and `rod-basic` are deleted (#183). Nothing references
-  `boat-blue`, `boat-leaf`, `boat-purple`, `background.png`,
-  `background-ocean.png`, `angler-ocean.png` or `angler-stream.png` either;
-  `config.js:709` already records that the boat ones are dead, and the
-  `angler-*` pair are `cut-angler.py`'s own keyed outputs, so they are
-  provenance rather than dead weight. `assets/social-preview.png` is a third
-  case again: a 495KB near-duplicate of the committed
-  `docs/images/social-preview.png` that nothing points at. Separately, 32 `Gemini_*` source deliveries sit in `assets/` and go
-  out with the deploy. They are pipeline inputs, so the question is whether they
-  belong in `assets/` at all rather than whether to delete them.
-- **One question rather than a finding: is `#word` meant to be monospace?** It
-  carries no `font-family`, so the reel target inherits `--mono` while F2 moved
-  everything else to Baloo 2. A monospace typing target is defensible (character
-  width stays put as you type), so this may be decided rather than missed. It
-  is visible as soon as an Ocean sentence is on screen against a Baloo 2 HUD.
+**Both are now decided and done (2026-09-05).**
+
+- **✅ The unreferenced art is deleted.** Matt's call was the dead art only:
+  `kid.png`, `boat-{red,blue,leaf,purple}.png`, the three pre-refresh
+  whole-scene backgrounds and the duplicate `social-preview.png`, 5.2MB across
+  nine files, `assets/` 29MB → 24MB. The pipeline sources stay where they are:
+  the 32 `Gemini_*` deliveries and the three uncut `angler-<pose>.png` masters
+  are what a re-cut reads, and `cut-angler.py`'s open despill fix would need
+  them. So they still go out with the deploy, and that is the accepted cost of
+  keeping every sprite's provenance one command away.
+- **✅ `#word` is not meant to be monospace, and nothing else is either.** Body
+  is Baloo 2 now and the keyboard carries its own frozen `--kb-font`, which is
+  the only monospace left in the game.
 
 ## World
 - More ponds/locations; weather; real day/night tied to clock (see the shortlist
@@ -695,10 +691,10 @@ path now costs: four generations, four cut pairs, a per-pose registry like
 `CONFIG.rig.gearArt`, and dropping the `tint` field. Play it first: the tinted
 thwarts may well not be worth four generations.
 
-**Unreferenced since the tint shipped:** `assets/boat-red.png`, `boat-blue.png`,
-`boat-leaf.png`, `boat-purple.png` and `boat.png` are pixel-era files nothing
-loads any more. They are exactly the filenames the repaint prompt says to
-overwrite, which is the only reason they are still in the repo.
+**The four pixel-era hull PNGs are deleted** (2026-09-05), so the repaint prompt
+writes fresh files under those names rather than overwriting anything. Nothing
+else about the path changes. `boat.png` survives them: it is the boat
+`prototype/line-animation.html` draws.
 
 ## ✅ The wait puns are not location-aware (noticed during T2, fixed in #170)
 

@@ -2322,9 +2322,10 @@ function renderRig(loc) {
 }
 renderRig();
 
-// A3: swap the biome scene by location. Sets a loc-<location> class on #scene;
-// CSS layers the stream background over the pond one, so this stays visually
-// safe until assets/background-stream.png exists, then the stream scene appears.
+// A3: swap the biome scene by location. Sets a loc-<location> class on #scene,
+// and R3's three cut layer sets (far/water/fore per spot) do the rest in CSS.
+// The single whole-scene PNG this comment used to wait on is gone with the rest
+// of the pixel-era art.
 function applyScene() {
   const loc = save?.location ?? CONFIG.tiers[0].location;
   el.scene.classList.remove(...CONFIG.tiers.map(t => "loc-" + t.location));
