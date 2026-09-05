@@ -1029,6 +1029,11 @@ h1 {
 }
 .key.ghost-key { opacity: 0.35; }
 .key.locked { opacity: 0.18; }
+/* Holding Shift capitalises the caps, so the key under a kid's finger shows the
+   shape the word box is asking for. text-transform rather than a JS relabel
+   because it touches exactly the letters and nothing else: the ghost keys
+   (`; , . /`) and the shift glyph have no uppercase form and are left alone. */
+#guide.shift-held .key { text-transform: uppercase; }
 .key.fresh {
   border-color: var(--kb-gold); color: var(--kb-gold);
   animation: freshpulse 0.7s ease-in-out infinite alternate;
@@ -1317,14 +1322,21 @@ h1 {
 /* ============ SHOP ============ */
 #shop-coins { font-family: var(--display); font-size: 11px; color: var(--dim); margin-left: auto; white-space: nowrap; }
 #shop-coins b { color: var(--gold); font-size: 14px; }
+/* The row wraps rather than squeezing, because a gate rod's hint ("opens the
+   Stream · luck ★★") is twice the length of "luck ★★" and a 320px phone has
+   about 270px of row to spend. Wrapping drops the button onto its own line and
+   keeps the hint whole; without it the hint broke into a ragged five-line
+   column mid-clause. `margin-left: auto` keeps every button on the right edge
+   whether or not its row wrapped, so the column of BUY buttons stays a column.
+   Measured at 320/360/390/768/1280 on all four tabs. */
 .shop-row {
-  display: flex; align-items: center; gap: 12px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
   padding: 9px 12px; margin-bottom: 6px; border-radius: 8px;
   background: rgba(var(--ink-rgb),0.04); border: 1px solid rgba(var(--ink-rgb),0.1);
 }
 .shop-name { font-family: var(--display); font-size: 11px; color: var(--ink); flex: 1; text-align: left; }
-.shop-hint { font-size: 11px; color: var(--dim); }
-.shop-btn { min-width: 104px; }
+.shop-hint { font-size: 11px; color: var(--dim); white-space: nowrap; }
+.shop-btn { min-width: 104px; margin-left: auto; }
 .shop-btn:disabled { opacity: 0.4; cursor: default; }
 .shop-btn.equipped { color: var(--umber); background: var(--moss); border-color: var(--moss); }
 
