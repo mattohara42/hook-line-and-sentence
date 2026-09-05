@@ -424,6 +424,124 @@ h1 {
   to   { opacity: 0;   width: 64px; height: 26px; }
 }
 
+/* ---- L1: what lives here ----
+   Ambient actors, spawned by app.js when a spot's voice speaks and removed on a
+   timer. Drawn in CSS rather than generated, because at this size (a dragonfly
+   is 15 design px, a gull 18) the silhouette and the motion are the entire
+   read: the same call T2 made for the bobber. #life shares #surface's z-index
+   and comes after it in the markup, so an actor paints over the water wash and
+   under the near foreground, which is how a dragonfly passes behind a reed.
+   Positions come from CONFIG.life and are all in design space.
+
+   None of these spawn under prefers-reduced-motion (app.js), so they are
+   deliberately absent from the animation: none block at the foot of this file:
+   an actor that cannot travel is not shown at all. */
+#life { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.actor { position: absolute; pointer-events: none; will-change: transform; }
+
+/* The crossing: right to left, sagging by --dip in the middle because nothing
+   alive flies in a straight line. --face keeps the art pointing the way it is
+   travelling if a from/to is ever flipped in config. */
+@keyframes actorCross {
+  0%   { transform: translate(0, 0) scaleX(var(--face)); opacity: 0; }
+  10%  { opacity: 1; }
+  50%  { transform: translate(calc(var(--dx) / 2), calc(var(--dy) / 2 + var(--dip)))
+                    scaleX(var(--face)); }
+  88%  { opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scaleX(var(--face)); opacity: 0; }
+}
+
+/* The Pond's frog: two eyes and a nose on the film, which is both what a frog
+   in a pond actually shows and all that reads at 16px. It rises, puffs its
+   throat on the croak, and sinks. app.js rings the water where it comes up. */
+.actor-frog {
+  width: 16px; height: 7px;
+  border-radius: 50% 50% 40% 40% / 80% 80% 30% 30%;
+  background: linear-gradient(180deg, var(--moss) 0%,
+              color-mix(in srgb, var(--moss) 62%, var(--water-deep)) 100%);
+  border: 1px solid color-mix(in srgb, var(--umber) 70%, var(--moss));
+  border-bottom: none;
+  transform-origin: center bottom;
+  animation-name: actorSurface;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+}
+/* the eyes: two bumps proud of the head, which is the whole silhouette */
+.actor-frog::before, .actor-frog::after {
+  content: ""; position: absolute; top: -3px; width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--moss);
+  border: 1px solid color-mix(in srgb, var(--umber) 70%, var(--moss));
+  box-shadow: inset -0.5px -0.5px 0 color-mix(in srgb, var(--umber) 40%, transparent);
+}
+.actor-frog::before { left: 2px; }
+.actor-frog::after  { right: 2px; }
+@keyframes actorSurface {
+  0%   { transform: translateY(4px) scale(0.7, 0.5);  opacity: 0; }
+  14%  { transform: translateY(0)   scale(1, 1);      opacity: 1; }
+  24%  { transform: translateY(0)   scale(1.1, 1.25); }   /* the croak */
+  38%  { transform: translateY(0)   scale(1, 1); }
+  82%  { transform: translateY(0)   scale(1, 1);      opacity: 1; }
+  100% { transform: translateY(4px) scale(0.7, 0.5);  opacity: 0; }
+}
+
+/* The Pond's dragonfly: a dark needle with two pale wings, crossing the open
+   water. The wings beat far too fast to count, which is the read. */
+.actor-dragonfly {
+  width: 19px; height: 2px;
+  border-radius: 1px;
+  background: linear-gradient(90deg,
+              color-mix(in srgb, var(--umber) 78%, var(--water-deep)) 0%,
+              color-mix(in srgb, var(--umber) 62%, var(--water-deep)) 55%,
+              color-mix(in srgb, var(--umber) 30%, var(--water-teal)) 100%);
+  /* the head, as a fatter dark tip on the leading end: without it the body is a
+     dash, and a dash with a pale smear beside it reads as debris on the water */
+  box-shadow: -1px 0 0 0.5px color-mix(in srgb, var(--umber) 72%, var(--water-deep));
+  animation-name: actorCross;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+}
+/* Both wings pivot at the thorax and sweep BACK over the body, which is the
+   shape that reads: wings hung off one end made it look like a comet. */
+.actor-dragonfly::before, .actor-dragonfly::after {
+  content: ""; position: absolute; left: 2px; top: -1px; width: 9px; height: 3px;
+  border-radius: 50%;
+  /* a beating wing is a blur, not a paddle: at 62% opacity these read as two
+     white oars and the whole thing became a moth. The abdomen has to stay the
+     longest thing on screen, which is the entire dragonfly silhouette. */
+  background: color-mix(in srgb, var(--foam) 38%, transparent);
+  border: 0.4px solid color-mix(in srgb, var(--umber) 14%, transparent);
+  transform-origin: 1.5px center;
+}
+.actor-dragonfly::before { animation: dragonflyWingUp 110ms linear infinite alternate; }
+.actor-dragonfly::after  { animation: dragonflyWingDown 110ms linear infinite alternate; }
+@keyframes dragonflyWingUp   { from { transform: rotate(-27deg); } to { transform: rotate(-9deg); } }
+@keyframes dragonflyWingDown { from { transform: rotate(9deg); }   to { transform: rotate(25deg); } }
+
+/* The Ocean's gull: "one bird a long way off", so it is two arcs and nothing
+   else, and it crosses the sky slowly enough to read as distant. */
+.actor-gull {
+  width: 18px; height: 7px;
+  animation-name: actorCross;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+/* Each wing droops at its OUTER tip only and stays flat where it meets its
+   partner, so the two make one shallow arch. Rounding both top corners (the
+   obvious way to draw an arc) curved each wing down at the middle as well, and
+   two humps with a notch between them read as a pair of croquet hoops rather
+   than as a bird. They pivot on the join, so the flap cannot open a gap. */
+.actor-gull::before, .actor-gull::after {
+  content: ""; position: absolute; top: 0; width: 9px; height: 4px;
+  border-top: 1.4px solid color-mix(in srgb, var(--bark-deep) 72%, transparent);
+}
+.actor-gull::before { left: 0;  border-radius: 100% 0 0 0 / 100% 0 0 0;
+                      transform-origin: right center; animation: gullFlap 1.5s ease-in-out infinite; }
+.actor-gull::after  { right: 0; border-radius: 0 100% 0 0 / 0 100% 0 0;
+                      transform-origin: left center;  animation: gullFlapMirror 1.5s ease-in-out infinite; }
+@keyframes gullFlap       { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(9deg); } }
+@keyframes gullFlapMirror { 0%, 100% { transform: rotate(7deg); }  50% { transform: rotate(-9deg); } }
+
 /* foreground reeds sway at the pond edges */
 /* V1's CSS-drawn stand-in foreground, now unused: all three levels have real
    painted foregrounds in #bg-fore. Kept hidden rather than deleted only because

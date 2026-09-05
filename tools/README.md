@@ -1,4 +1,4 @@
-# tools/: the art pipeline, a palette gate, four browser checks, and one word generator
+# tools/: the art pipeline, a palette gate, five browser checks, and one word generator
 
 **None of this is the game.** Nothing in here is loaded at runtime, nothing is a
 build step, and the no-build-step rule in `CLAUDE.md` is not bent by any of it.
@@ -20,10 +20,10 @@ others should restate it.
 
 ```
 pip install Pillow numpy scipy          # every cut-*.py, gear-ref.py, hat-transplant.py, palette-check.py
-cd /tmp && npm install playwright       # spot-check, play-check, ui-check, audio-check
+cd /tmp && npm install playwright       # spot-check, play-check, ui-check, audio-check, life-check
 ```
 
-All four `.mjs` verification tools also need the repo served
+All five `.mjs` verification tools also need the repo served
 (`python3 -m http.server 8080`) and are run as
 `NODE_PATH=/tmp/node_modules node tools/<tool>.mjs …`. Chromium is already on
 the box; do not let playwright download its own.
@@ -231,6 +231,34 @@ is dense enough to *be* a bed, and the Ocean's slow swell crosses any level
 threshold you pick on its own. No single reading of the output separates a
 texture from an event when the bed is a texture too. Counting what the voices
 build is direct, and a bed with no voices reads 0.
+
+`life-check.mjs [--loc <spot>] [--sweep] [--gap ms] [--out dir]`
+
+The ambient actors (L1): the frog, the dragonfly and the gull that appear when
+their voice speaks. It reads `CONFIG.life` from disk, plays each spot, and fails
+if a configured actor never appears or an unconfigured one does. `--sweep` adds
+the number that actually matters, which is **how much of each actor any screen
+shape can ever see**, across the same twelve viewports `ui-check.mjs` uses.
+
+`ui-check.mjs` is not this tool and cannot be. It excludes `#scene-viewport` on
+purpose: the scene is *meant* to be under every overlay, so its rectangle
+overlaps everything and proves nothing. The question here is the other one, and
+it is not about overlays at all. The scene is a 720x360 canvas scaled to COVER
+the viewport and anchored bottom-left, so how much of it exists on screen varies
+by a factor of four (a portrait phone gets design x 0..166 of 720). An actor can
+be perfectly placed, perfectly animated, pass every assertion in the suite, and
+never once be seen by anybody.
+
+It found that twice in one sitting: a frog surfacing squarely behind the word
+box, which is a croak with nothing to look at, and then the far bigger version
+of the same fact, which is that a phone held upright cannot see where the lure
+lands either (`BACKLOG.md`).
+
+It speeds the voices up by rewriting `config.js` **in flight**, not on disk, so
+a frog that speaks every 7-19s can be photographed in seconds. That deliberately
+breaks the invariant a data test holds (an actor must not outlive the gap
+between its voice's firings), so actors overlap in these shots in a way they
+never do in the game: the density is the tool's, not the design's.
 
 ## Not art pipeline
 

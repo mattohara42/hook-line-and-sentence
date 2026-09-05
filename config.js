@@ -903,6 +903,55 @@ export const CONFIG = {
     },
   },
 
+  // L1: what you SEE when a voice speaks. Keyed by spot and then BY THE VOICE
+  // ID above, because that key is the join: a body is only ever scheduled off a
+  // sound, and the same id is the CSS modifier that draws it (`.actor-frog`),
+  // so the config, the sound and the drawing cannot disagree about what a frog
+  // is. The fourth time this registry shape has been reached for (fish.species,
+  // rig.poses, rig.gearArt); a spot with no entry simply has no actors, the way
+  // the Ocean names no tackle. The voice still fires whether or not it has a
+  // body, and the body still appears with the sound off: the picture and the
+  // sound are ONE event, which is the rule rippleHeard() set.
+  //
+  // Positions are design-space px in the 720x360 canvas, and they are measured
+  // rather than composed: the canvas is scaled to COVER the viewport and
+  // anchored bottom-left, so a portrait phone sees only x 0..166 of it, and the
+  // guide panel's top edge reaches design y=240 at 900x600. x 150..470,
+  // y 100..240 is the band that survives both. `BUILD_PLAN_LIVING.md` has the
+  // table, and moving anything out of that band is how you lose it behind the
+  // keyboard. `ms` is the actor's whole life and MUST stay shorter than the
+  // shortest gap its voice can leave (a data test holds it there), otherwise a
+  // fast voice stacks bodies on top of each other.
+  life: {
+    pond: {
+      // A frog in a pond is mostly two eyes and a nose on the surface, which is
+      // also all that reads at 14px. It rings the water where it comes up, by
+      // calling the same ripple() the idle pond already uses, rather than
+      // drawing a second kind of ring. NOT on a lily pad: every pad the Pond is
+      // painted with sits below y=285, behind the keyboard at every shape but
+      // an ultrawide (BUILD_PLAN_LIVING.md). The box is rolled per croak so it
+      // never surfaces twice in the same spot, and it is hemmed in on three
+      // sides: the boat ends at x=140, and #word's left edge comes as far in as
+      // x=198 (a landscape tablet), which is the one that matters, because a
+      // frog surfacing behind the word box is a croak with nothing to see. It
+      // is also the only actor a portrait phone can see, since the scene is
+      // cropped to x<166 there.
+      frog:      { ms: 2600, box: { x: [150, 195], y: [210, 232] } },
+      // Right to left across the open water, above the far bank (y≈202) and
+      // above where the bobber floats, so it crosses in front of the cast
+      // rather than through it. `dip` is how far it sags mid-flight: a
+      // dragonfly does not fly in a straight line.
+      dragonfly: { ms: 5200, from: { x: 468, y: 216 }, to: { x: 172, y: 208 }, dip: 9 },
+    },
+    ocean: {
+      // "One bird a long way off" is what the ambience calls it, so it is small
+      // and slow and it stays in the open sky: below the top bar's reach on a
+      // laptop (y=55) and well above the horizon (y≈202). It turns back from
+      // x=186 so it never crosses the angler.
+      gull:      { ms: 9000, from: { x: 542, y: 92 }, to: { x: 186, y: 112 }, dip: -14 },
+    },
+  },
+
   // Firebase / Firestore sync (M4b). These values are public by design: a
   // Firebase web config is an identifier, not a secret; access is controlled
   // by the Firestore security rules (see firestore.rules). Reuses the Family

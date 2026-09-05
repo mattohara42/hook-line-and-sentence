@@ -431,6 +431,47 @@ test("every spot's ambience names real voices, and every spot has one", () => {
   assert.equal(new Set(casts).size, casts.length, "two spots have the identical cast of voices");
 });
 
+// L1: the same trap again, one layer further out. An actor is scheduled off its
+// voice's timer and drawn by a class built from its id, so CONFIG.life has two
+// ways to name something that isn't there and neither says a word at runtime:
+// a voice its spot never speaks (a body that never appears) and a class the
+// stylesheet has no rule for (a 0x0 div crossing the pond invisibly).
+test("every actor comes off a voice its spot has, and has art to draw it", () => {
+  const css = readFileSync(new URL("../style.css", import.meta.url), "utf8");
+  const spots = CONFIG.tiers.map(t => t.location);
+  const amb = CONFIG.audio.ambience;
+
+  assert.ok(Object.keys(CONFIG.life).length, "no spot has any life in it at all");
+  for (const [spot, actors] of Object.entries(CONFIG.life)) {
+    assert.ok(spots.includes(spot), `CONFIG.life has "${spot}", which is not a fishing spot`);
+    for (const [id, cfg] of Object.entries(actors)) {
+      const voice = (amb[spot]?.voices ?? []).find(v => v.id === id);
+      assert.ok(voice, `${spot} shows a "${id}" and never makes that sound: it would never appear`);
+      assert.ok(css.includes(`.actor-${id}`),
+        `${spot}/${id} has no .actor-${id} rule: it would cross the scene as an invisible 0x0 div`);
+      assert.ok(cfg.ms > 0, `${spot}/${id}: an actor with no life lasts no time at all`);
+      // An actor that outlives the shortest gap its own voice can leave stacks
+      // bodies on top of each other. It is why the Stream's bubbles (70ms apart
+      // at their fastest) have no body: they could never hold one.
+      assert.ok(cfg.ms < voice.everyMs[0],
+        `${spot}/${id} lasts ${cfg.ms}ms but its voice can speak again after ${voice.everyMs[0]}ms: they would pile up`);
+      // Placement is measured, not chosen, and the two axes have different
+      // rules because the canvas is cropped on one and not the other. The scene
+      // scales to COVER, so its full height is always on screen and y is a hard
+      // bound: below 240 is behind the guide panel at 900x600, above 60 is
+      // behind the top bar. Width is cropped from the right, so a crosser may
+      // START off-crop (flying in from the edge is the point) but has to END
+      // somewhere a kid can actually see it. BUILD_PLAN_LIVING.md has the table.
+      const ys = cfg.box ? cfg.box.y : [cfg.from.y, cfg.to.y];
+      for (const y of ys)
+        assert.ok(y >= 60 && y <= 240, `${spot}/${id} at y=${y} is behind the guide panel or the top bar`);
+      const endsAt = cfg.box ? cfg.box.x : [cfg.to.x, cfg.to.x];
+      for (const x of endsAt)
+        assert.ok(x >= 100 && x <= 500, `${spot}/${id} comes to rest at x=${x}, off the crop on everything but a wide desktop`);
+    }
+  }
+});
+
 // R5 debt: the boat shop was the last one still on its own older mechanism, and
 // it had quietly stopped working: every vessel was skinnable:false, so buying a
 // hull changed nothing at any spot and nothing caught it. These are the traps
