@@ -859,3 +859,29 @@ test("every unlock stage has short words to wiggle with (F4)", () => {
       `but a wiggle can ask for ${CONFIG.wiggle.wordsRange[1]}`);
   });
 });
+
+// The avatar roster a player picks from. Three ways it goes wrong, and all
+// three are silent: a duplicate makes two cells that look identical and only
+// one of which lights up, an empty string makes an invisible button, and
+// dropping one of the original twelve makes an existing profile open its own
+// edit form with nothing selected, because its animal is no longer offered.
+test("every avatar is offered exactly once, and the original twelve survive", () => {
+  const list = CONFIG.avatars;
+  assert.ok(Array.isArray(list) && list.length > 40,
+    "the roster is meant to be all the animals, not a handful");
+  assert.deepEqual([...new Set(list)], list, "an avatar is offered twice");
+  assert.equal(list.filter(a => typeof a !== "string" || !a.trim()).length, 0,
+    "an empty avatar is an invisible button");
+
+  // The twelve that shipped before the roster grew. A real save is wearing one
+  // of these; removing it orphans that profile's selection.
+  const original = ["\u{1F438}", "\u{1F41F}", "\u{1F420}", "\u{1F986}", "\u{1F422}",
+                    "\u{1F996}", "\u{1F419}", "\u{1F988}", "\u2B50", "\u{1F340}",
+                    "\u{1F433}", "\u{1F991}"];
+  const missing = original.filter(a => !list.includes(a));
+  assert.deepEqual(missing, [], "these were pickable once, so a real profile may be wearing one");
+
+  // \u{1F3A3} is what migrateLegacySave() stamps on the pre-profiles save, so it
+  // has to be pickable too or that player cannot re-select their own avatar.
+  assert.ok(list.includes("\u{1F3A3}"), "the legacy migration's avatar has to be in the roster");
+});

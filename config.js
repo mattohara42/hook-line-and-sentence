@@ -3,6 +3,30 @@
 // starting guesses to be tuned at M8 against real kid typing.
 
 export const CONFIG = {
+  // Who a player can be. One flat list rather than tabs or a search box: a
+  // six-year-old picks by looking, and the row scrolls. Ordered so like sits
+  // with like (pets and farm, wild mammals, birds, the sea, reptiles, bugs)
+  // because that is how a kid hunts for one, not alphabetically and not by
+  // codepoint.
+  //
+  // The last three are not animals and are here for one reason: they were in
+  // the original twelve, so a profile created before this list existed still
+  // finds its own avatar selected when it is edited. Never remove one of them
+  // without checking what real saves are wearing.
+  avatars: [
+    "🐶", "🐱", "🐭", "🐹", "🐰", "🐴", "🐮", "🐷", "🐑", "🐐", "🐔", "🐓",
+    "🐕", "🐈", "🐇", "🐖", "🐄", "🐎", "🦆", "🐤", "🐣", "🐥",
+    "🦊", "🐻", "🐻‍❄️", "🐼", "🐨", "🐯", "🦁", "🐺", "🦝", "🦡", "🦫", "🦦",
+    "🦥", "🐒", "🦍", "🦧", "🐘", "🦣", "🦏", "🦛", "🐪", "🐫", "🦒", "🦘",
+    "🦌", "🐂", "🦬", "🐗", "🦇", "🐁", "🐀", "🦔", "🐿️", "🦨",
+    "🐦", "🐧", "🕊️", "🦅", "🦉", "🦜", "🦢", "🦩", "🦚", "🦤", "🦃",
+    "🐟", "🐠", "🐡", "🦈", "🐬", "🐳", "🐋", "🦭", "🐙", "🦑", "🦐", "🦞",
+    "🦀", "🐚", "🪼", "🐊", "🐢",
+    "🐸", "🦎", "🐍", "🦕", "🦖",
+    "🐛", "🦋", "🐌", "🐞", "🐜", "🪲", "🦗", "🕷️", "🦂", "🐝", "🪱",
+    "⭐", "🍀", "🎣",
+  ],
+
   reel: {
     errorTension: 12,       // [PROTO] tension added per wrong key
     correctRelief: 3,       // [PROTO] tension removed per correct key (any speed)

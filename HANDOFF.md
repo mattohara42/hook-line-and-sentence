@@ -10,7 +10,8 @@ something is the way it is, `git log` and the PR body have it in full.
 | | |
 |---|---|
 | **Active milestone** | **None.** Nothing is blocked on code. The next one is Matt's call, and the shortlist is below. |
-| **Last change** | **Four backlog decisions, shipped together**, 2026-09-05: cloud saves removed, mobile closed with a keyboard notice, the last pixel-era art deleted, and nothing is monospace but the keyboard. |
+| **Last change** | **The picker can edit a player**, 2026-09-05: "Switch player" (Mommy plays too), a pencil on each cell that renames and re-animals, 103 animals to choose from, and start-this-player-again behind a two-press question. |
+| **Before that** | **Four backlog decisions, shipped together**, 2026-09-05: cloud saves removed, mobile closed with a keyboard notice, the last pixel-era art deleted, and nothing is monospace but the keyboard. |
 | **The game has been played** | By Matt, and shared with friends and family. Verdict: fun, and it looks good. **It is close to release-ready**, and the Firebase question that gated sharing is now answered. |
 | **Living Water** | L1 ✅. **L2 (the actors with no voice: heron, stream leaves, sail) is not started.** |
 | **Tackle & Junk** | T1–T3 ✅. **T4 (junk art) is still waiting on one generation from Matt**, prompt written whole in `ART.md`. |

@@ -130,7 +130,7 @@
         <div class="ctrl-row"><span>😄 Jokes</span><button class="toggle-btn active" id="pun-toggle">ON</button></div>
         <div class="ctrl-row"><span>🔊 Sound</span><button class="toggle-btn active" id="sound-toggle">ON</button></div>
         <button class="toggle-btn nav" id="progress-btn">👓 Grown-ups</button>
-        <button class="toggle-btn nav" id="switch-btn">🔄 Switch kid</button>
+        <button class="toggle-btn nav" id="switch-btn">🔄 Switch player</button>
       </div>
     </div>
   </div>
@@ -161,12 +161,30 @@
     <div class="overlay-panel">
       <div class="overlay-title">WHO'S FISHING?</div>
       <div id="profile-grid"></div>
+      <!-- One form for both jobs: making a player and editing one. The only
+           differences are its title, what its first button says, and whether
+           the start-again row below it exists at all, so there is one input,
+           one avatar row and one place for either to go wrong. -->
       <div id="profile-new" hidden>
+        <div class="overlay-title" id="profile-form-title">NEW ANGLER</div>
         <input id="profile-name" type="text" maxlength="12" placeholder="your name" autocomplete="off" />
         <div id="avatar-row"></div>
         <div class="profile-actions">
           <button class="toggle-btn" id="profile-create">START FISHING</button>
           <button class="toggle-btn" id="profile-cancel">back</button>
+        </div>
+        <!-- Editing only, and it asks twice on purpose: the first press only
+             turns this row into the question, and the answer is the second
+             press. Nothing is written until then. -->
+        <div id="profile-reset" hidden>
+          <button class="toggle-btn danger" id="reset-start">START THIS PLAYER AGAIN</button>
+          <div id="reset-confirm" hidden>
+            <p class="nudge-text" id="reset-warning"></p>
+            <div class="profile-actions">
+              <button class="toggle-btn danger" id="reset-yes">YES, START AGAIN</button>
+              <button class="toggle-btn" id="reset-no">NO, KEEP MY FISH</button>
+            </div>
+          </div>
         </div>
       </div>
       <!-- There is no account and no cloud: every save lives in this browser's

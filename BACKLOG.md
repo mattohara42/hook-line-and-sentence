@@ -151,6 +151,25 @@ here: a manifest and a service worker over 155 assets is what would make it
 feel like an app on an iPad, and an iPad with a keyboard case is a device that
 can actually play.
 
+## Players and profiles
+
+- **✅ The picker edits a player now (2026-09-05).** Rename, change the animal,
+  and start that player again from nothing, behind a two-press question. The
+  roster went from 12 avatars to 103 (all the animals, Kate's flamingo
+  included) and lives in `CONFIG.avatars`, with a data test pinning the
+  original twelve so no existing profile loses its own face. "Switch kid"
+  reads "Switch player": Mommy plays too.
+- **A reset keeps `speedBest`.** Quick Cast is sealed off from the fishing save
+  by design (`SPEC.md`), so a fishing reset stays out of it. That is a call
+  rather than an oversight and it is one line in `logic.keepThroughReset` if it
+  ever reads wrong to a kid who expected everything gone.
+- **Names are capped at 12 characters** by the input's `maxlength`, which is
+  where "Kate the Great" becomes "Kate the Gre". It has always been so and it
+  is not obvious while typing: the box just stops. A counter, a wider cap or a
+  smaller font in the cell would each fix it.
+- **Nothing names the profile you are playing as except the HUD chip.** Fine
+  with two players, worth a thought at four.
+
 ## Flavor & fun
 - **Groan counter**: after each catch pun, a 🙄 button increments a lifetime "Dad Jokes Endured" stat per profile. Zero gameplay impact, maximum family lore.
 - Kids contribute puns: the pools are now `data/puns.json` (per spot), so a
