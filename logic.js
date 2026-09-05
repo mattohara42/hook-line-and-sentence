@@ -117,6 +117,22 @@ export function locationsForRods(tiers, rods, ownedRodIds) {
   return tiers.slice(0, furthest + 1).map(t => t.location);
 }
 
+// The shop's one-line blurb for a rod. Every rod sells its luck; a GATE rod
+// (shop.rods[].unlocksLocation) sells the water it opens as well, and this is
+// the only place that fact ever reaches a kid. Before it, the row that opens
+// the Stream read exactly like the row that only improves your odds, so the
+// next spot was something you bought by accident rather than saved for. The
+// clause leads because it is the reason to want the rod, and it shows whether
+// or not the rod is affordable, which is what makes it a goal.
+//
+// A rod naming a location the tiers table does not have degrades to the stars
+// alone rather than inventing a place name.
+export function rodHint(tiers, rod) {
+  const stars = "luck " + "★".repeat(rod.rodLevel);
+  const gate = tiers.find(t => t.location === rod.unlocksLocation);
+  return gate ? `opens ${gate.locationName} · ${stars}` : stars;
+}
+
 // The earned rank: the furthest tier whose location the profile has unlocked.
 // tiers are ordered easiest→hardest; pond is always unlocked so this is never
 // below tiers[0].rank. (Muskie is a prestige rank awarded on the legendary

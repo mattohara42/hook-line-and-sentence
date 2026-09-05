@@ -2089,6 +2089,21 @@ function updateGuide(letter) {
   }
 }
 
+// Holding Shift capitalises the guide's letter caps. A capital is typed with
+// Shift (A2) and the guide already lights the opposite pinky's Shift key as a
+// target, but the caps themselves stayed lowercase, so a sentence asking for
+// "T" pointed at a key reading "t" and left the kid to make the connection.
+// Display only: no progression, no unlock, and the frozen --kb-* colours are
+// untouched (the cap changes shape, not colour).
+//
+// The state is read off the event's modifier state rather than counted up and
+// down, so a Shift released while another window had focus cannot strand the
+// board in capitals; blur clears it for the same reason.
+function setShiftHeld(held) { guide.classList.toggle("shift-held", held); }
+window.addEventListener("keydown", (e) => setShiftHeld(e.getModifierState("Shift")));
+window.addEventListener("keyup",   (e) => setShiftHeld(e.getModifierState("Shift")));
+window.addEventListener("blur",    () => setShiftHeld(false));
+
 const guideBtn = $("guide-toggle");
 guideBtn.addEventListener("click", () => {
   guideOn = !guideOn;
@@ -2444,7 +2459,7 @@ let shopOpen = false;
 const shopRoot = $("shop");
 
 // kid-readable effect blurbs derived from the config numbers
-function rodHint(rod)   { return "luck " + "★".repeat(rod.rodLevel); }
+function rodHint(rod)   { return logic.rodHint(CONFIG.tiers, rod); }
 function baitHint(bait) {
   const pct = Math.round((1 - bait.biteSpeedMult) * 100);
   return pct === 0 ? "a patient wiggle" : pct + "% faster bites";

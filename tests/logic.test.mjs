@@ -8,7 +8,7 @@ import { CONFIG } from "../config.js";
 import {
   unlockedStageCount, lettersForStages, pickTier, weightClass, rollWeight, buildReelPool,
   applyTension, catchReward, isPersonalBest, countsTowardTiming, overallAccuracy,
-  locationsForRods, rankForState, tokenize, wordCount, tierWithFallback,
+  locationsForRods, rodHint, rankForState, tokenize, wordCount, tierWithFallback,
   computeWpm, isPersonalBestWpm, isEvenCadence, pickDistinct, segmentsForTier,
   rankForProfile, earnsPrestige, speedTestPool, typingAccuracy,
   castArcPoint, lineSagPx, lineControlPoint, stepTug, rotateAboutPivot, easeIn, easeOut,
@@ -157,9 +157,9 @@ test("countsTowardTiming ignores the first key of a word and long idle gaps", ()
 });
 
 const tiers = [
-  { rank: "minnow",   location: "pond"   },
-  { rank: "mackerel", location: "stream" },
-  { rank: "marlin",   location: "ocean"  },
+  { rank: "minnow",   location: "pond",   locationName: "the Pond"   },
+  { rank: "mackerel", location: "stream", locationName: "the Stream" },
+  { rank: "marlin",   location: "ocean",  locationName: "the Ocean"  },
 ];
 // mirrors the real CONFIG.shop.rods shape (A6): bamboo gates the Stream,
 // deepsea gates the Ocean, and carbon is a luck-only upgrade in between
@@ -187,6 +187,28 @@ test("locationsForRods is cumulative: a skipped tier still opens (A6)", () => {
   // always tier order, never rod order or insertion order
   assert.deepEqual(locationsForRods(tiers, rods, ["deepsea", "bamboo", "stick"]),
                    ["pond", "stream", "ocean"]);
+});
+
+test("rodHint names the water a gate rod opens, and only a gate rod", () => {
+  // the whole point: the row that opens the Stream must not read like the row
+  // that only improves your odds (BACKLOG, play session 2026-09-05)
+  assert.equal(rodHint(tiers, { rodLevel: 2, unlocksLocation: "stream" }),
+               "opens the Stream · luck ★★");
+  assert.equal(rodHint(tiers, { rodLevel: 3 }), "luck ★★★");
+  // a rod pointing at a location the tiers table doesn't have keeps the stars
+  // rather than inventing a place name
+  assert.equal(rodHint(tiers, { rodLevel: 1, unlocksLocation: "lagoon" }), "luck ★");
+});
+
+test("rodHint: every gate rod in the real shop names a real place", () => {
+  const gates = CONFIG.shop.rods.filter(r => r.unlocksLocation);
+  assert.ok(gates.length, "the shop has gate rods to signpost");
+  for (const rod of gates) {
+    const hint = rodHint(CONFIG.tiers, rod);
+    const name = CONFIG.tiers.find(t => t.location === rod.unlocksLocation)?.locationName;
+    assert.ok(name, `${rod.id} unlocks "${rod.unlocksLocation}", which is not a tier`);
+    assert.ok(hint.startsWith(`opens ${name} ·`), `${rod.id} hint reads "${hint}"`);
+  }
 });
 
 test("rankForState: furthest unlocked location, never below the home rank", () => {
