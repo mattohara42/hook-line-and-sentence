@@ -451,3 +451,36 @@ export function nextVoiceDelayMs(everyMs, rnd = Math.random) {
 export function looksKeyboardless(hasCoarsePointer, hasFinePointer) {
   return hasCoarsePointer === true && hasFinePointer !== true;
 }
+
+// A player's name, as typed. Trimmed, capped, and never empty: a blank name
+// makes an unpickable cell in the picker, so an unnamed angler is "Angler".
+// The cap matches the input's own maxlength, which is a courtesy rather than a
+// guarantee (an input can be pasted into, and 40 characters would blow the
+// cell's layout apart).
+export function cleanProfileName(raw, max = 12, fallback = "Angler") {
+  return String(raw ?? "").trim().slice(0, max) || fallback;
+}
+
+// Starting a player over. `fresh` is what a brand-new profile looks like, so
+// the reset can never drift from it: a field added to a new profile is reset by
+// this the same day it lands, with nothing to remember.
+//
+// What survives is who you are rather than what you did: the id (the save's
+// address, so renaming it would orphan the document), the name and avatar (you
+// are starting again, not becoming somebody else), and createdAt (the day this
+// angler was born, which a reset does not undo).
+//
+// `speedBest` survives too, and that one is a judgement call worth stating:
+// Quick Cast is deliberately outside the progression and sealed off from the
+// fishing save (SPEC.md), so a fishing reset has no business inside it. One
+// line to change if that ever reads wrong.
+export function keepThroughReset(existing, fresh) {
+  return {
+    ...fresh,
+    id: existing.id,
+    name: existing.name,
+    avatar: existing.avatar,
+    createdAt: existing.createdAt ?? fresh.createdAt,
+    speedBest: existing.speedBest ?? null,
+  };
+}

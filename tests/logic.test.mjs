@@ -14,7 +14,7 @@ import {
   castArcPoint, lineSagPx, lineControlPoint, stepTug, rotateAboutPivot, easeIn, easeOut,
   easeInOut, reelProgressAtX, revealAt,
   gearFile, punPool, catchSubtitle, ambienceFor, actorFor, nextVoiceDelayMs,
-  looksKeyboardless
+  looksKeyboardless, cleanProfileName, keepThroughReset
 } from "../logic.js";
 
 const TIER_ORDER = ["legendary", "rare", "uncommon", "common"];   // hardest → easiest
@@ -691,4 +691,52 @@ test("only a coarse pointer with no fine pointer behind it looks keyboardless", 
   assert.equal(looksKeyboardless(true, true), false,   "a tablet with a trackpad has a keyboard with it");
   assert.equal(looksKeyboardless(false, false), false, "a browser that answers neither");
   assert.equal(looksKeyboardless(undefined, undefined), false, "and one that answers nothing at all");
+});
+
+// A name is typed by a six-year-old into a box they can paste into, so the
+// three ways it goes wrong are whitespace, nothing at all, and far too much.
+test("a player's name is trimmed, capped and never empty", () => {
+  assert.equal(cleanProfileName("  Kate  "), "Kate");
+  assert.equal(cleanProfileName(""), "Angler", "a blank name makes an unpickable cell");
+  assert.equal(cleanProfileName("   "), "Angler");
+  assert.equal(cleanProfileName(null), "Angler", "and so does never having typed at all");
+  assert.equal(cleanProfileName("abcdefghijklmnop").length, 12, "capped at the input's own maxlength");
+  assert.equal(cleanProfileName("Mommy"), "Mommy", "an ordinary name is left alone");
+});
+
+// Starting a player again keeps WHO they are and drops WHAT they did. The
+// second half of that is the half worth trapping: a reset that quietly keeps a
+// field is a kid who starts again with 900 coins.
+test("a reset keeps the angler and drops the fishing", () => {
+  const fresh = { id: "new", name: "n", avatar: "a", createdAt: 999, coins: 0,
+                  collection: {}, badges: [], speedBest: null, totalCatches: 0 };
+  const played = { id: "p1", name: "Kate", avatar: "\u{1F9A9}", createdAt: 111, coins: 900,
+                   collection: { walleye: 12 }, badges: ["homerow"], speedBest: { wpm: 31 },
+                   totalCatches: 41 };
+  const out = keepThroughReset(played, fresh);
+
+  assert.equal(out.id, "p1", "the id is the save's address: changing it orphans the document");
+  assert.equal(out.name, "Kate");
+  assert.equal(out.avatar, "\u{1F9A9}", "you are starting again, not becoming somebody else");
+  assert.equal(out.createdAt, 111, "the day this angler was born is not undone by a reset");
+  assert.deepEqual(out.speedBest, { wpm: 31 }, "Quick Cast is outside the progression (SPEC.md)");
+
+  assert.equal(out.coins, 0);
+  assert.equal(out.totalCatches, 0);
+  assert.deepEqual(out.collection, {});
+  assert.deepEqual(out.badges, []);
+
+  // The point of taking `fresh` as an argument: a field added to a new profile
+  // is reset by this the day it lands, with nobody having to remember.
+  const out2 = keepThroughReset(played, { ...fresh, somethingNew: "start" });
+  assert.equal(out2.somethingNew, "start");
+});
+
+// A profile with no createdAt (an old save, or one hand-written by a tool) must
+// still reset rather than carrying `undefined` into a document the picker reads.
+test("a reset survives a profile that is missing its dates", () => {
+  const out = keepThroughReset({ id: "p1", name: "n", avatar: "a" },
+                               { id: "new", name: "x", avatar: "y", createdAt: 42 });
+  assert.equal(out.createdAt, 42);
+  assert.equal(out.speedBest, null);
 });

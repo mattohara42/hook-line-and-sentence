@@ -29,7 +29,7 @@ async function loadJson(path) {
 // All reads and writes funnel through here. M4b used to add a Firestore
 // write-through in this one place, which is what made it a clean thing to
 // remove again when sync went (see the note further down).
-const AVATARS = ["🐸", "🐟", "🐠", "🦆", "🐢", "🦖", "🐙", "🦈", "⭐", "🍀", "🐳", "🦑"];
+const AVATARS = CONFIG.avatars;
 // These key names predate the rename to Hook, Line and Sentence and are kept
 // verbatim on purpose: they address saved games on real devices, so renaming
 // them would orphan every existing profile. They are storage paths, not
@@ -79,10 +79,19 @@ function persistSave() {
   save.totalCatches = totalCatches();
   save.stage = unlockedStageCount(save.totalCatches);
   save.stats.lastPlayed = save.updatedAt;
-  localStorage.setItem(PROFILE_KEY(save.id), JSON.stringify(save));
+  writeProfile(save);
+}
+
+// Write one profile document and keep the picker's index row in step with it,
+// because the index carries the name and avatar the grid draws. Split out of
+// persistSave when the picker learned to edit a profile that is not the one
+// being played: two write paths that both had to remember the index is exactly
+// how a renamed angler keeps its old name in the grid.
+function writeProfile(doc) {
+  localStorage.setItem(PROFILE_KEY(doc.id), JSON.stringify(doc));
   const idx = readIndex();
-  const row = idx.find(p => p.id === save.id);
-  if (row) { row.name = save.name; row.avatar = save.avatar; row.updatedAt = save.updatedAt; writeIndex(idx); }
+  const row = idx.find(p => p.id === doc.id);
+  if (row) { row.name = doc.name; row.avatar = doc.avatar; row.updatedAt = doc.updatedAt; writeIndex(idx); }
 }
 
 function createProfile(name, avatar) {
@@ -2915,7 +2924,7 @@ let chosenAvatar = AVATARS[0];
 
 function showProfilePicker() {
   pickerOpen = true;
-  profileNew.hidden = true;
+  closeProfileForm();
   renderProfileGrid();
   profilesRoot.hidden = false;
 }
@@ -2931,13 +2940,10 @@ function renderProfileGrid() {
       `<span class="pavatar">${row.avatar}</span><span class="pname"></span><span class="pmeta">${caught} caught</span>`;
     cell.querySelector(".pname").textContent = row.name;
     cell.addEventListener("click", () => activateProfile(row.id));
-    const del = document.createElement("span");
-    del.className = "pdelete"; del.textContent = "✕"; del.title = "delete " + row.name;
-    del.addEventListener("click", (e) => {
-      e.stopPropagation();
+    cell.appendChild(cornerMark("pedit", "✎", "edit " + row.name, () => openEditProfile(row.id)));
+    cell.appendChild(cornerMark("pdelete", "✕", "delete " + row.name, () => {
       if (confirm(`Delete ${row.name}'s pond? This can't be undone.`)) { deleteProfile(row.id); renderProfileGrid(); }
-    });
-    cell.appendChild(del);
+    }));
     profileGrid.appendChild(cell);
   }
   const add = document.createElement("button");
@@ -2947,13 +2953,54 @@ function renderProfileGrid() {
   profileGrid.appendChild(add);
 }
 
+// The two marks in a cell's top corners. They stop the click reaching the cell
+// underneath, which would otherwise start the game instead of editing it.
+function cornerMark(cls, glyph, title, onClick) {
+  const el = document.createElement("span");
+  el.className = cls; el.textContent = glyph; el.title = title;
+  el.addEventListener("click", (e) => { e.stopPropagation(); onClick(); });
+  return el;
+}
+
+// ---- The profile form, in two modes ----
+// `editing` is the id of the profile being changed, or null when making a new
+// one. Everything below reads it rather than carrying two copies of the form.
+let editing = null;
+
 function openNewProfile() {
+  editing = null;
+  $("profile-form-title").textContent = "NEW ANGLER";
+  $("profile-create").textContent = "START FISHING";
+  $("profile-reset").hidden = true;
+  showProfileForm("", AVATARS[0]);
+}
+
+function openEditProfile(id) {
+  const doc = readProfile(id);
+  if (!doc) return;
+  editing = id;
+  $("profile-form-title").textContent = "EDIT THIS PLAYER";
+  $("profile-create").textContent = "SAVE";
+  $("profile-reset").hidden = false;
+  hideResetConfirm();
+  showProfileForm(doc.name, doc.avatar);
+}
+
+function showProfileForm(name, avatar) {
   profileNew.hidden = false;
-  $("profile-name").value = "";
-  chosenAvatar = AVATARS[0];
+  $("profile-name").value = name;
+  chosenAvatar = avatar;
   renderAvatarRow();
   $("profile-name").focus();
+  $("profile-name").select();
 }
+
+function closeProfileForm() {
+  profileNew.hidden = true;
+  hideResetConfirm();
+  editing = null;
+}
+
 function renderAvatarRow() {
   const rowEl = $("avatar-row"); rowEl.innerHTML = "";
   for (const a of AVATARS) {
@@ -2963,13 +3010,65 @@ function renderAvatarRow() {
     b.addEventListener("click", () => { chosenAvatar = a; renderAvatarRow(); });
     rowEl.appendChild(b);
   }
+  // The row scrolls now that it holds a hundred animals, and rebuilding it puts
+  // that scroll back to the top. Without this, editing a player whose animal is
+  // a flamingo opens on a screenful of dogs with nothing selected in sight, and
+  // picking one jumps away from where you were looking.
+  rowEl.querySelector(".avatar-opt.sel")?.scrollIntoView({ block: "nearest" });
 }
+
 $("profile-create").addEventListener("click", () => {
-  const name = $("profile-name").value.trim().slice(0, 12) || "Angler";
+  const name = logic.cleanProfileName($("profile-name").value);
+  if (editing) {
+    const doc = readProfile(editing);
+    if (doc) { doc.name = name; doc.avatar = chosenAvatar; writeProfile(doc); }
+    const id = editing;
+    closeProfileForm();
+    renderProfileGrid();
+    activateProfile(id);        // you edited the player you meant to play as
+    return;
+  }
   activateProfile(createProfile(name, chosenAvatar).id);
 });
 $("profile-name").addEventListener("keydown", (e) => { if (e.key === "Enter") $("profile-create").click(); });
-$("profile-cancel").addEventListener("click", () => { profileNew.hidden = true; });
+$("profile-cancel").addEventListener("click", closeProfileForm);
+
+// ---- Starting a player again ----
+// Two presses, and the first one writes nothing: it only turns the button into
+// the question, naming what is about to go. A kid who reaches for this by
+// accident has to agree to it in words that say what it costs.
+function hideResetConfirm() {
+  $("reset-confirm").hidden = true;
+  $("reset-start").hidden = false;
+}
+$("reset-start").addEventListener("click", () => {
+  const doc = editing && readProfile(editing);
+  if (!doc) return;
+  const caught = Object.values(doc.collection).reduce((a, b) => a + b, 0);
+  $("reset-warning").textContent =
+    `This puts ${doc.name} back at the very beginning: ${caught} fish caught, `
+    + `${doc.coins} coins, every badge and every rod, all gone. The name and `
+    + `the animal stay. There is no undo.`;
+  $("reset-start").hidden = true;
+  $("reset-confirm").hidden = false;
+  // the panel scrolls on a short window, and the question is no use off the
+  // bottom of it: the answer buttons have to be where the eye already is
+  $("reset-confirm").scrollIntoView({ block: "nearest" });
+});
+$("reset-no").addEventListener("click", hideResetConfirm);
+$("reset-yes").addEventListener("click", () => {
+  const doc = editing && readProfile(editing);
+  if (!doc) return;
+  // blankProfile is what a NEW angler gets, so a reset is that plus who you
+  // are: logic.keepThroughReset owns which fields survive, and neither this
+  // nor blankProfile has to remember the other.
+  writeProfile(logic.keepThroughReset(doc, blankProfile(doc.name, doc.avatar)));
+  const id = editing;
+  closeProfileForm();
+  renderProfileGrid();
+  activateProfile(id);          // straight back to the Pond, first cast
+});
+
 $("switch-btn").addEventListener("click", () => { if (save) persistSave(); showProfilePicker(); });
 
 function activateProfile(id) {
