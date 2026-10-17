@@ -1662,6 +1662,7 @@ function land(success) {
       files: art ? art.layers.map(L => L.file) : [],
       box: art ?? CONFIG.fish.placeholder,
       name: fish.name,
+      species: fish.species,
       sub: logic.catchSubtitle(weight, cls, reelMode === "phrase" ? wpm : 0),
       pun, coins: amount, flags,
     });
@@ -1701,10 +1702,16 @@ function land(success) {
     sfxEscape();
     const escPun = punFor("escape");
     setStatus("");                      // the card carries it now, and announces it
-    // No species on this one, deliberately: the reveal never tells you what a
-    // fish was until it is close, and an escape is the fish you never found out
-    // about. The card shows the same shape that rose out of the depths.
-    showCatchCard({ kind: "escape", box: CONFIG.fish.placeholder,
+    // No species NAME on this one, deliberately: the reveal never tells you what
+    // a fish was until it is close, and an escape is the fish you never found
+    // out about. The card shows its shadow instead, drawn from its own art
+    // (the stylesheet darkens it), so it is the same shape that rose out of
+    // the depths rather than the old shared pixel body. A junk pull that gets
+    // away is its own sprite under the same shadow.
+    const art = fishArt(fish);
+    showCatchCard({ kind: "escape",
+                    files: art ? art.layers.map(L => L.file) : junk ? [junk.file] : [],
+                    box: art ?? (junk ? CONFIG.card.junkBox : CONFIG.fish.placeholder),
                     name: "the one that got away", sub: "it'll be back", pun: escPun });
   }
   later(startCast, CONFIG.reel.recastDelayMs);
@@ -1733,7 +1740,7 @@ let cardGen = 0;
 // own cut layers for a catch, one sprite for junk, none for an escape. CSS
 // paints the FIRST background-image on top, so the list is reversed here: the
 // same trick the journal grid uses, and the reason a card fish has its tail.
-function showCatchCard({ kind, files = [], box, name, sub, pun, coins = 0, flags = [] }) {
+function showCatchCard({ kind, files = [], box, name, species, sub, pun, coins = 0, flags = [] }) {
   const card = $("catch-card");
   card.className = kind + (flags.length ? " plaque" : "");
   card.style.setProperty("--card-in", CONFIG.card.inMs + "ms");
@@ -1751,6 +1758,8 @@ function showCatchCard({ kind, files = [], box, name, sub, pun, coins = 0, flags
   shape.style.height = (box ? box.h * scale : px * 0.55) + "px";
   card.querySelector(".card-ribbon").textContent = flags.join("  ·  ");
   card.querySelector(".card-name").textContent = name;
+  // the joke name is the fish's; the real one under it is what a kid can look up
+  card.querySelector(".card-species").textContent = species ?? "";
   card.querySelector(".card-sub").textContent = sub ?? "";
   card.querySelector(".card-pun").textContent = pun ?? "";
   card.querySelector(".card-coins").textContent = coins ? `+${coins} coins` : "";

@@ -829,22 +829,29 @@ h1 {
   margin: 2px auto 10px; background: center / contain no-repeat;
   filter: drop-shadow(0 6px 10px rgba(var(--shadow-rgb),0.45));
 }
-/* An escape has no species: the reveal (CONFIG.fish.reveal) never tells you
-   what a fish is until it is close, and the one that got away is the one you
-   never found out about. So the card shows the shared placeholder body under
-   the same treatment #fish.silhouette uses: the shape that rose out of the
-   depths, and nothing more. Not a blank space, which is what an empty box
-   looked like, and not the species, which would give away the secret the whole
-   reel is built on. */
+/* An escape has no species NAME: the reveal (CONFIG.fish.reveal) never tells
+   you what a fish is until it is close, and the one that got away is the one
+   you never found out about. So the card shows its shadow: the escaping fish's
+   own layers (app.js passes them), pressed down to a warm dark shape. That is
+   the outline that rose out of the depths and nothing more. It used to be the
+   shared pixel-era fish-common.png, the last place a kid could still see it.
+   contrast(0) flattens every painted pixel to one grey while keeping the
+   alpha, so the eye and the scales go and only the outline is left; sepia and
+   brightness then make that grey a warm dark brown, never black
+   (ART_DIRECTION.md). */
 .escape .card-fish {
-  background-image: url("assets/fish-common.png") !important;
-  filter: brightness(0.42) saturate(0.35) contrast(0.85) blur(1.4px);
-  opacity: 0.75;
+  filter: contrast(0) sepia(1) brightness(0.18) blur(0.6px);
+  opacity: 0.9;
 }
 .card-name {
   font-family: var(--display); font-size: 21px; font-weight: 600;
   color: var(--ink); letter-spacing: 0.02em;
 }
+.card-species {
+  font-family: var(--display); font-size: 13px; font-style: italic;
+  color: var(--ink); opacity: 0.75;
+}
+.card-species:empty { display: none; }
 .card-sub { font-family: var(--display); font-size: 13px; color: var(--gold); margin-top: 2px; }
 .card-pun {
   font-family: var(--display); font-size: 14px; color: var(--ink);

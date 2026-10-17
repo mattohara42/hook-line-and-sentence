@@ -10,9 +10,9 @@ something is the way it is, `git log` and the PR body have it in full.
 | | |
 |---|---|
 | **Active milestone** | **None.** Nothing is blocked on code. The next one is Matt's call, and the shortlist is below. |
-| **Last change** | **The Firestore story was wrong and is corrected**, 2026-09-07: the rules file could not have closed anything and the exposure it described was not what Family Hub's rules do. File deleted, `FIRESTORE.md` owns it. |
-| **Before that** | **The keyboard says which letters are locked**: six keys across two spots were rendering *brighter* than the live ones, and the panel has its own ground now (#192). |
-| **Older** | **T4, and the art is finished**: ten junk pieces from two Gemini sheets (#188, #189), then **per-item junk jokes** (#190). No pixel-era art is left in the game. |
+| **Last change** | **The catch card names the real species** under the joke name ("Sunny Gill", then *Bluegill*), and **an escape shows the shadow of the fish that got away**, cut from its own art, instead of the last pixel-era fish a kid could still see (2026-10-17). |
+| **Before that** | **The Firestore story was wrong and is corrected**, 2026-09-07: the rules file could not have closed anything and the exposure it described was not what Family Hub's rules do. File deleted, `FIRESTORE.md` owns it. |
+| **Older** | **The keyboard says which letters are locked** (#192) · **T4, and the art is finished** (#188, #189, #190). No pixel-era art is left in the game. |
 | **Older still** | **The Stream stops chirping** (#186), which **still wants ears** · the picker can edit a player (#185) · four backlog decisions (#184). |
 | **The game has been played** | By Matt, shared with friends and family, and **the kids love it and said thank you** (2026-09-07). Verdict: fun, and it looks good. **It is close to release-ready**, and the Firebase question that gated sharing is now answered. |
 | **Living Water** | L1 ✅. **L2 (the actors with no voice: heron, stream leaves, sail) is not started.** |
